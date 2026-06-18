@@ -23,6 +23,7 @@
             </div>
 
             {# 4-col grid (2 on mobile) #}
+            {% if component.products|length %}
             <div class="qprods__grid">
                 {% for product in component.products %}
                     <article class="qprod">
@@ -70,6 +71,10 @@
                     </article>
                 {% endfor %}
             </div>
+            {% else %}
+            {# fallback: auto-show latest products when merchant hasn't selected any #}
+            <salla-products-list source="latest" limit="8" class="qprods__fallback"></salla-products-list>
+            {% endif %}
 
         </div>
     </div>
