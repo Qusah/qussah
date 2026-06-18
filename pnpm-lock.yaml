@@ -67,8 +67,8 @@ importers:
         specifier: ^13.0.1
         version: 13.0.1(webpack@5.107.1)
       css-loader:
-        specifier: ^6.5.0
-        version: 6.11.0(webpack@5.107.1)
+        specifier: ^7.1.4
+        version: 7.1.4(webpack@5.107.1)
       css-minimizer-webpack-plugin:
         specifier: ^7.0.2
         version: 7.0.2(webpack@5.107.1)
@@ -929,42 +929,36 @@ packages:
     engines: {node: '>= 10.0.0'}
     cpu: [arm]
     os: [linux]
-    libc: [glibc]
 
   '@parcel/watcher-linux-arm-musl@2.5.6':
     resolution: {integrity: sha512-Ve3gUCG57nuUUSyjBq/MAM0CzArtuIOxsBdQ+ftz6ho8n7s1i9E1Nmk/xmP323r2YL0SONs1EuwqBp2u1k5fxg==}
     engines: {node: '>= 10.0.0'}
     cpu: [arm]
     os: [linux]
-    libc: [musl]
 
   '@parcel/watcher-linux-arm64-glibc@2.5.6':
     resolution: {integrity: sha512-f2g/DT3NhGPdBmMWYoxixqYr3v/UXcmLOYy16Bx0TM20Tchduwr4EaCbmxh1321TABqPGDpS8D/ggOTaljijOA==}
     engines: {node: '>= 10.0.0'}
     cpu: [arm64]
     os: [linux]
-    libc: [glibc]
 
   '@parcel/watcher-linux-arm64-musl@2.5.6':
     resolution: {integrity: sha512-qb6naMDGlbCwdhLj6hgoVKJl2odL34z2sqkC7Z6kzir8b5W65WYDpLB6R06KabvZdgoHI/zxke4b3zR0wAbDTA==}
     engines: {node: '>= 10.0.0'}
     cpu: [arm64]
     os: [linux]
-    libc: [musl]
 
   '@parcel/watcher-linux-x64-glibc@2.5.6':
     resolution: {integrity: sha512-kbT5wvNQlx7NaGjzPFu8nVIW1rWqV780O7ZtkjuWaPUgpv2NMFpjYERVi0UYj1msZNyCzGlaCWEtzc+exjMGbQ==}
     engines: {node: '>= 10.0.0'}
     cpu: [x64]
     os: [linux]
-    libc: [glibc]
 
   '@parcel/watcher-linux-x64-musl@2.5.6':
     resolution: {integrity: sha512-1JRFeC+h7RdXwldHzTsmdtYR/Ku8SylLgTU/reMuqdVD7CtLwf0VR1FqeprZ0eHQkO0vqsbvFLXUmYm/uNKJBg==}
     engines: {node: '>= 10.0.0'}
     cpu: [x64]
     os: [linux]
-    libc: [musl]
 
   '@parcel/watcher-win32-arm64@2.5.6':
     resolution: {integrity: sha512-3ukyebjc6eGlw9yRt678DxVF7rjXatWiHvTXqphZLvo7aC5NdEgFufVwjFfY51ijYEWpXbqF5jtrK275z52D4Q==}
@@ -1437,12 +1431,12 @@ packages:
     peerDependencies:
       postcss: ^8.4
 
-  css-loader@6.11.0:
-    resolution: {integrity: sha512-CTJ+AEQJjq5NzLga5pE39qdiSV56F8ywCIsqNIRF0r7BDgWsN25aazToqAFg7ZrtA/U016xudB3ffgweORxX7g==}
-    engines: {node: '>= 12.13.0'}
+  css-loader@7.1.4:
+    resolution: {integrity: sha512-vv3J9tlOl04WjiMvHQI/9tmIrCxVrj6PFbHemBB1iihpeRbi/I4h033eoFIhwxBBqLhI0KYFS7yvynBFhIZfTw==}
+    engines: {node: '>= 18.12.0'}
     peerDependencies:
-      '@rspack/core': 0.x || 1.x
-      webpack: ^5.0.0
+      '@rspack/core': 0.x || ^1.0.0 || ^2.0.0-0
+      webpack: ^5.27.0
     peerDependenciesMeta:
       '@rspack/core':
         optional: true
@@ -2606,8 +2600,8 @@ packages:
     resolution: {integrity: sha512-Q8qQfPiZ+THO/3ZrOrO0cJJKfpYCagtMUkXbnEfmgUjwXg6z/WBeOyS9APBBPCTSiDV+s4SwQGu8yFsiMRIudg==}
     engines: {node: '>=4'}
 
-  postcss-selector-parser@7.1.1:
-    resolution: {integrity: sha512-orRsuYpJVw8LdAwqqLykBj9ecS5/cRHlI5+nvTo8LcCKmzDmqVORXtOIYEEQuL9D4BxtA1lm5isAqzQZCoQ6Eg==}
+  postcss-selector-parser@7.1.4:
+    resolution: {integrity: sha512-HeP7D2wyhkR+XaK6v4W8oRF62Dsz4flyuczALJp61GckGm42u1saSSJ/0auvcBqxs3jMRFEcPK34At/0JBKdOg==}
     engines: {node: '>=4'}
 
   postcss-svgo@7.1.0:
@@ -2757,13 +2751,13 @@ packages:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
     hasBin: true
 
-  semver@7.7.1:
-    resolution: {integrity: sha512-hlq8tAfn0m/61p4BVRcPzIGr6LKiMwo4VM6dGi6pt4qcRkmNzTcWq6eCEjEh+qXjkMDvPlOFFSGwQjoEa6gyMA==}
+  semver@7.7.3:
+    resolution: {integrity: sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==}
     engines: {node: '>=10'}
     hasBin: true
 
-  semver@7.7.3:
-    resolution: {integrity: sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==}
+  semver@7.8.4:
+    resolution: {integrity: sha512-rUCObTnP32Q08R2uuIrt7r9PlEonuTmtuXYcW6s5kjdlj3xbnwe+21yXptAUYcMAABLkYYTtnmzb3w3EDZfueA==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -4589,7 +4583,7 @@ snapshots:
       postcss-selector-parser: 6.1.2
       postcss-value-parser: 4.2.0
 
-  css-loader@6.11.0(webpack@5.107.1):
+  css-loader@7.1.4(webpack@5.107.1):
     dependencies:
       icss-utils: 5.1.0(postcss@8.5.6)
       postcss: 8.5.6
@@ -4598,7 +4592,7 @@ snapshots:
       postcss-modules-scope: 3.2.1(postcss@8.5.6)
       postcss-modules-values: 4.0.0(postcss@8.5.6)
       postcss-value-parser: 4.2.0
-      semver: 7.7.1
+      semver: 7.8.4
     optionalDependencies:
       webpack: 5.107.1(postcss@8.5.6)(webpack-cli@5.1.4)
 
@@ -5274,7 +5268,7 @@ snapshots:
   postcss-calc@10.1.1(postcss@8.5.6):
     dependencies:
       postcss: 8.5.6
-      postcss-selector-parser: 7.1.1
+      postcss-selector-parser: 7.1.4
       postcss-value-parser: 4.2.0
 
   postcss-clamp@4.1.0(postcss@8.5.6):
@@ -5346,7 +5340,7 @@ snapshots:
   postcss-discard-comments@7.0.4(postcss@8.5.6):
     dependencies:
       postcss: 8.5.6
-      postcss-selector-parser: 7.1.1
+      postcss-selector-parser: 7.1.4
 
   postcss-discard-duplicates@7.0.2(postcss@8.5.6):
     dependencies:
@@ -5455,7 +5449,7 @@ snapshots:
       caniuse-api: 3.0.0
       cssnano-utils: 5.0.1(postcss@8.5.6)
       postcss: 8.5.6
-      postcss-selector-parser: 7.1.1
+      postcss-selector-parser: 7.1.4
 
   postcss-minify-font-values@7.0.1(postcss@8.5.6):
     dependencies:
@@ -5480,7 +5474,7 @@ snapshots:
     dependencies:
       cssesc: 3.0.0
       postcss: 8.5.6
-      postcss-selector-parser: 7.1.1
+      postcss-selector-parser: 7.1.4
 
   postcss-modules-extract-imports@3.1.0(postcss@8.5.6):
     dependencies:
@@ -5490,13 +5484,13 @@ snapshots:
     dependencies:
       icss-utils: 5.1.0(postcss@8.5.6)
       postcss: 8.5.6
-      postcss-selector-parser: 7.1.1
+      postcss-selector-parser: 7.1.4
       postcss-value-parser: 4.2.0
 
   postcss-modules-scope@3.2.1(postcss@8.5.6):
     dependencies:
       postcss: 8.5.6
-      postcss-selector-parser: 7.1.1
+      postcss-selector-parser: 7.1.4
 
   postcss-modules-values@4.0.0(postcss@8.5.6):
     dependencies:
@@ -5678,7 +5672,7 @@ snapshots:
       cssesc: 3.0.0
       util-deprecate: 1.0.2
 
-  postcss-selector-parser@7.1.1:
+  postcss-selector-parser@7.1.4:
     dependencies:
       cssesc: 3.0.0
       util-deprecate: 1.0.2
@@ -5692,7 +5686,7 @@ snapshots:
   postcss-unique-selectors@7.0.4(postcss@8.5.6):
     dependencies:
       postcss: 8.5.6
-      postcss-selector-parser: 7.1.1
+      postcss-selector-parser: 7.1.4
 
   postcss-value-parser@4.2.0: {}
 
@@ -5817,9 +5811,9 @@ snapshots:
 
   semver@6.3.1: {}
 
-  semver@7.7.1: {}
-
   semver@7.7.3: {}
+
+  semver@7.8.4: {}
 
   serialize-javascript@6.0.2:
     dependencies:
@@ -5850,7 +5844,7 @@ snapshots:
     dependencies:
       browserslist: 4.28.2
       postcss: 8.5.6
-      postcss-selector-parser: 7.1.1
+      postcss-selector-parser: 7.1.4
 
   sucrase@3.35.1:
     dependencies:

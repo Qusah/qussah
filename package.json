@@ -38,7 +38,7 @@
     "babel-loader": "^10.0.0",
     "babel-loader-exclude-node-modules-except": "^1.2.4",
     "copy-webpack-plugin": "^13.0.1",
-    "css-loader": "^6.5.0",
+    "css-loader": "^7.1.4",
     "css-minimizer-webpack-plugin": "^7.0.2",
     "glob": "^13.0.6",
     "mini-css-extract-plugin": "^2.10.0",
