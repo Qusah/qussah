@@ -26685,6 +26685,7 @@ input[type=radio].sr-only:checked ~ div.radio-images__badge {
 }
 .qissa-hero__btn {
   display: inline-flex;
+  align-self: flex-end;
   align-items: center;
   justify-content: center;
   gap: 8px;

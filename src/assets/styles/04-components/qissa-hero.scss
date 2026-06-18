@@ -60,6 +60,7 @@
   // ---- CTA button ----
   &__btn {
     display: inline-flex;
+    align-self: flex-end;         // right side in RTL
     align-items: center;
     justify-content: center;
     gap: 8px;
