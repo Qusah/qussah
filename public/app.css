@@ -27099,15 +27099,26 @@ body, main, #app {
 }
 .qcats__row {
   display: flex;
-  justify-content: flex-end;
+  direction: rtl;
+  justify-content: flex-start;
   align-items: center;
   gap: 32.85px;
-  flex-wrap: wrap;
-  row-gap: 56px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding-top: 40px;
+  padding-bottom: 8px;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.qcats__row::-webkit-scrollbar {
+  display: none;
 }
 .qcats__card {
   position: relative;
   flex: 0 0 auto;
+  scroll-snap-align: start;
   width: 196.08px;
   height: 196.08px;
   border-radius: 50%;

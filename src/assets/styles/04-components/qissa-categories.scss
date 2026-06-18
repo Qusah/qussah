@@ -33,20 +33,28 @@
     margin: 0;
   }
 
-  // ---- cards row (RTL: starts from right) ----
+  // ---- cards row (RTL: starts from right, scrolls horizontally) ----
   &__row {
     display: flex;
-    justify-content: flex-end;
+    direction: rtl;                  // first card on the RIGHT
+    justify-content: flex-start;     // pack from the right edge
     align-items: center;
     gap: 32.85px;                    // Figma gap
-    flex-wrap: wrap;
-    row-gap: 56px;
+    flex-wrap: nowrap;               // single line
+    overflow-x: auto;
+    overflow-y: visible;
+    padding-block: 40px 8px;         // room for images bursting out the top
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;           // hide scrollbar (Firefox)
+    &::-webkit-scrollbar { display: none; }   // hide scrollbar (Chrome/Safari)
   }
 
   // ---- single circular card ----
   &__card {
     position: relative;
     flex: 0 0 auto;
+    scroll-snap-align: start;
     width: 196.08px; height: 196.08px;
     border-radius: 50%;
     display: flex; align-items: flex-end; justify-content: center;
