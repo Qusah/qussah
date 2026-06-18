@@ -21,9 +21,11 @@
                     <p class="qissa-hero__subtitle">{{ component.subheading }}</p>
                 {% endif %}
                 {% if component.button_text %}
+                    {# Figma node 100:127 — order: arrow_left (left) · text · cart (right) #}
                     <a href="{{ component.button_url|default('#') }}" class="qissa-hero__btn">
-                        <i class="sicon-shopping-cart"></i>
+                        <i class="sicon-arrow-left qissa-hero__btn-arrow"></i>
                         <span>{{ component.button_text }}</span>
+                        <i class="sicon-shopping-cart qissa-hero__btn-cart"></i>
                     </a>
                 {% endif %}
             </div>

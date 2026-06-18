@@ -26708,8 +26708,13 @@ input[type=radio].sr-only:checked ~ div.radio-images__badge {
   transform: translateY(-2px);
   box-shadow: 0 12px 28px rgba(218, 239, 247, 0.3);
 }
-.qissa-hero__btn i {
-  font-size: 1.15rem;
+.qissa-hero__btn-arrow {
+  font-size: 16px;
+  line-height: 1;
+}
+.qissa-hero__btn-cart {
+  font-size: 20px;
+  line-height: 1;
 }
 .qissa-hero__media {
   flex: 1 1 50%;

@@ -84,7 +84,9 @@
       box-shadow: 0 12px 28px rgba(218, 239, 247, 0.3);
     }
 
-    i { font-size: 1.15rem; }
+    // Figma: arrow_left 16px (leftmost), cart 23px (rightmost)
+    &-arrow { font-size: 16px; line-height: 1; }
+    &-cart  { font-size: 20px; line-height: 1; }
   }
 
   // ---- image side (left in RTL) ----
