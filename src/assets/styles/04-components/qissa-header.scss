@@ -1,66 +1,178 @@
 // ====================================================================
-// Qissa Header — transparent nav overlaying the hero (matches Figma)
-// Top bar: dark navy #172951 | Main nav: transparent | pill menu
+// Qissa Header — EXACT Figma specs (nodes 100:40, 187:17880)
+// Top bar #172951 | nav transparent over hero | pill menu
 // ====================================================================
 
-.store-header {
-  position: relative;
-  z-index: 30;
+.qissa-header {
+  position: absolute;          // overlay hero
+  top: 0; left: 0; right: 0;
+  z-index: 40;
+  font-family: 'GE SS Two', sans-serif;
 
-  // ---- Top dark bar (#172951) ----
-  .top-navbar {
-    background: #172951;
-    color: #ffffff;
-    min-height: 44px;
+  // ---------- TOP BAR ----------
+  .qheader-topbar {
+    padding-top: 12px;
 
-    a, .salla-menu a, salla-contacts {
-      color: rgba(255, 255, 255, 0.85);
-      font-size: 13px;
+    &__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: #172951;                 // base/stamp-pad-blue
+      border: 1px solid #daeff7;           // baby blue
+      border-radius: 100px;
+      padding: 8px 40px;
     }
-    a:hover { color: #ffffff; }
+
+    &__links,
+    &__contact {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    a, .qheader-contact-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #ffffff;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 300;
+      &:hover { color: #daeff7; }
+    }
+    .qheader-contact-item i { font-size: 14px; }
   }
 
-  // ---- Main nav: transparent, sits over the hero ----
-  .main-nav-container {
-    background: transparent !important;
-    box-shadow: none !important;
+  .qheader-divider {
+    width: 1px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.4);
+    display: inline-block;
+  }
 
-    .navbar-brand img { filter: brightness(0) invert(1); } // white logo over gradient
-
-    // nav links color = white over the gradient
-    custom-main-menu,
-    custom-main-menu a,
-    .s-user-menu__trigger,
-    .header-btn__icon,
-    salla-cart-summary {
-      color: #ffffff !important;
+  // ---------- MAIN NAV ----------
+  .qheader-nav {
+    &__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 97px;
+      padding: 12px 0;
     }
   }
 
-  // ---- Pill-shaped menu container (Figma) ----
-  custom-main-menu {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 999px;
-    padding: 0.4rem 1.25rem;
+  // cart + profile blocks
+  .qheader-actions {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    order: 1;          // left in RTL
+  }
 
-    a {
-      font-family: 'GE SS Two', sans-serif;
+  .qheader-action {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &__text {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      line-height: 1.2;
+    }
+    &__label {
+      font-size: 14px;
+      font-weight: 300;
+      color: #e8fcff;          // blue/50
+    }
+    &__value {
       font-size: 16px;
-      padding: 0.35rem 0.9rem;
-      transition: color .15s ease;
-      &:hover { color: #daeff7 !important; }
+      font-weight: 300;
+      color: #ffffff;
+    }
+    &__icon {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: rgba(48, 55, 142, 0.33);   // royal blue @33%
+      border-radius: 50px;
+      color: #ffffff;
+      i { font-size: 20px; }
+    }
+    &__badge {
+      position: absolute;
+      top: -4px;
+      inset-inline-end: -4px;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 4px;
+      background: #fd7e14;     // orange/500
+      border: 1px solid #ffffff;
+      border-radius: 30px;
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 
-  // cart + account icons white
-  .icon, .sicon-shopping-bag, .sicon-user { color: #ffffff !important; }
+  // pill menu (center)
+  .qheader-menu {
+    order: 2;
+    background: linear-gradient(to right, rgba(51, 84, 143, 0.19), rgba(255, 255, 255, 0));
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 100px;
+    padding: 15px 25px;
+
+    custom-main-menu {
+      display: flex;
+      gap: 20px;
+      a, li > a {
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 20px;
+        white-space: nowrap;
+        &:hover { color: #daeff7; }
+      }
+    }
+  }
+
+  // logo (right in RTL)
+  .qheader-logo {
+    order: 3;
+    width: 98px;
+    display: flex;
+    justify-content: flex-end;
+    img {
+      width: 98px;
+      height: auto;
+      filter: brightness(0) invert(1);    // white logo over gradient
+    }
+  }
+
+  .qheader-burger {
+    order: 0;
+    color: #ffffff;
+    font-size: 24px;
+    display: none;
+  }
+
+  // ---------- responsive ----------
+  @media (max-width: 1024px) {
+    .qheader-topbar { display: none; }
+    .qheader-menu { display: none; }
+    .qheader-burger { display: inline-flex; }
+    .qheader-nav__inner { height: 70px; }
+    .qheader-action__text { display: none; }
+  }
 }
 
-// On the homepage, pull the header up so it overlays the hero gradient
-.is-home,
-body:has(#qissa-hero-0),
-body:has(.qissa-hero) {
-  .store-header { position: absolute; top: 0; left: 0; right: 0; }
-  .qissa-hero { margin-top: 0; border-radius: 0; }
-}
+// Hide theme-raed leftovers if any & ensure hero starts at top under header
+.qissa-hero { margin-top: 0; }
