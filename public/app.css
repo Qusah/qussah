@@ -2998,9 +2998,14 @@ textarea.s-input{
     padding-bottom: 0.625rem;
 }
 .qheader .s-advertisement-content {
-  max-width: 1380px;
+  max-width: none;
   margin-left: auto;
   margin-right: auto;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+.qheader .qheader-topwrap .s-advertisement-content {
+  max-width: none;
   padding-left: 50px;
   padding-right: 50px;
 }
@@ -26762,7 +26767,7 @@ body, main, #app {
   color: #fff;
 }
 .qheader .container {
-  max-width: 1380px;
+  max-width: none;
   margin-left: auto;
   margin-right: auto;
   padding-left: 50px;
@@ -26770,7 +26775,12 @@ body, main, #app {
 }
 .qheader .qheader-topwrap {
   background: #fff;
-  padding: 12px 0;
+  padding: 56px 0 12px;
+}
+.qheader .qheader-topwrap .container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
 }
 .qheader > .container:last-of-type {
   position: relative;
@@ -29601,9 +29611,14 @@ model-viewer[style*=width]:before{
     }
 }
 .qheader .s-comments-product .s-comments-container {
-  max-width: 1380px;
+  max-width: none;
   margin-left: auto;
   margin-right: auto;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+.qheader .qheader-topwrap .s-comments-product .s-comments-container {
+  max-width: none;
   padding-left: 50px;
   padding-right: 50px;
 }
