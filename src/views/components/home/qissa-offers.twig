@@ -46,10 +46,10 @@
                             {# price #}
                             <div class="qoffer__price">
                                 {% if product.is_on_sale %}
-                                    <b class="qoffer__price-now">{{ product.sale_price }}</b>
-                                    <s class="qoffer__price-old">{{ product.regular_price }}</s>
+                                    <b class="qoffer__price-now">{{ product.sale_price|money }}</b>
+                                    <s class="qoffer__price-old">{{ product.regular_price|money }}</s>
                                 {% else %}
-                                    <b class="qoffer__price-now">{{ product.price }}</b>
+                                    <b class="qoffer__price-now">{{ product.price|money }}</b>
                                 {% endif %}
                             </div>
 

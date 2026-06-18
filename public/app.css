@@ -27642,13 +27642,15 @@ body, main, #app {
   flex: 1 1 0;
   min-width: 1px;
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+  direction: ltr;
   background: #fff;
   border-radius: 16px;
-  direction: rtl;
 }
 .qoffer__info {
+  direction: rtl;
   width: 322px;
   flex: 0 0 auto;
   display: flex;
@@ -27769,6 +27771,8 @@ body, main, #app {
 }
 .qoffer__btns {
   display: flex;
+  flex-direction: row;
+  direction: ltr;
   gap: 8px;
   width: 100%;
   align-items: stretch;

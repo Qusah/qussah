@@ -55,12 +55,14 @@
 // ---- single offer card (horizontal: info + image) ----
 .qoffer {
   flex: 1 1 0; min-width: 1px;
-  display: flex; align-items: center; justify-content: flex-end;
+  // Figma: info on the LEFT (x17), image on the RIGHT (x339) — LTR flow
+  display: flex; flex-direction: row; align-items: center; justify-content: space-between;
+  direction: ltr;
   background: #fff; border-radius: 16px;
-  direction: rtl;
 
-  // info column (Figma listContainer w322, py16 gap16)
+  // info column (Figma listContainer w322, py16 gap16) — content right-aligned RTL
   &__info {
+    direction: rtl;
     width: 322px; flex: 0 0 auto;
     display: flex; flex-direction: column; align-items: flex-end;
     gap: 16px; padding-block: 16px;
@@ -115,8 +117,8 @@
     span { font-size: 14px; font-weight: 300; color: #6c757d; line-height: 1; }
   }
 
-  // buttons
-  &__btns { display: flex; gap: 8px; width: 100%; align-items: stretch; }
+  // buttons — Figma: like LEFT (x0 w50), add-to-cart RIGHT fills (x58 w264)
+  &__btns { display: flex; flex-direction: row; direction: ltr; gap: 8px; width: 100%; align-items: stretch; }
   &__like {
     flex: 0 0 auto; width: 50px;
     display: inline-flex; align-items: center; justify-content: center;

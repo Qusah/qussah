@@ -56,10 +56,10 @@
                             {# price #}
                             <div class="qprod__price">
                                 {% if product.is_on_sale %}
-                                    <b class="qprod__price-now">{{ product.sale_price }}</b>
-                                    <s class="qprod__price-old">{{ product.regular_price }}</s>
+                                    <b class="qprod__price-now">{{ product.sale_price|money }}</b>
+                                    <s class="qprod__price-old">{{ product.regular_price|money }}</s>
                                 {% else %}
-                                    <b class="qprod__price-now">{{ product.price }}</b>
+                                    <b class="qprod__price-now">{{ product.price|money }}</b>
                                 {% endif %}
                             </div>
                         </div>
