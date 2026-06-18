@@ -14,10 +14,10 @@
     display: flex; align-items: center; justify-content: space-between;
     gap: 48px;
     padding: 90px 80px;
-    // Figma: royal-blue base + cyan-tinted diagonal gradient glow
+    // Figma: royal-blue base + cyan glow top-left fading to deep navy bottom-right
     background:
-      radial-gradient(120% 120% at 12% 18%, rgba(145,230,247,.30) 0%, rgba(145,230,247,0) 45%),
-      linear-gradient(125deg, #2b338a 0%, #30378e 55%, #292e81 100%);
+      radial-gradient(90% 130% at 8% 0%, rgba(145,230,247,.45) 0%, rgba(145,230,247,.12) 28%, rgba(145,230,247,0) 50%),
+      linear-gradient(135deg, #3a43a6 0%, #30378e 45%, #2a2f82 100%);
     border-radius: 30px;
     overflow: hidden;
     direction: rtl;
@@ -63,9 +63,9 @@
     position: relative; z-index: 2; order: 2;
     flex: 1 1 0; min-width: 0; align-self: stretch;
     display: flex; align-items: flex-end; justify-content: flex-start;
-    margin: -90px 0;                       // let it bleed past the vertical padding
+    margin: -90px 0;                       // bleed past the vertical padding
     img {
-      max-width: 100%; max-height: 560px; height: auto;
+      width: 100%; height: auto; max-height: 640px;
       object-fit: contain; object-position: bottom left;
     }
   }
