@@ -3047,6 +3047,17 @@ textarea.s-input{
     padding-right: 15px;
   }
 }
+.qallprods .s-advertisement-content {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+@media (max-width: 768px) {
+  .qallprods .s-advertisement-content {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
 .qbanner .s-advertisement-content {
   max-width: none;
   padding-left: 50px;
@@ -27951,6 +27962,152 @@ body, main, #app {
     padding: 4px 6px 6px;
   }
 }
+.qallprods {
+  font-family: "GE SS Two", sans-serif;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+.qallprods .container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+.qallprods__box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  padding: 50px;
+  background: linear-gradient(180deg, #daeff7 0%, #ffffff 100%);
+  border-radius: 50px;
+}
+.qallprods__top {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.qallprods__head {
+  order: 1;
+  direction: rtl;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  text-align: right;
+}
+.qallprods__title {
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 38px;
+  letter-spacing: -0.2px;
+  color: #0a1f30;
+  margin: 0;
+}
+.qallprods__title-hl {
+  color: #30378e;
+}
+.qallprods__subtitle {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 24px;
+  color: #6c757d;
+  margin: 0;
+}
+.qallprods__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-column-gap: 16px;
+  -moz-column-gap: 16px;
+       column-gap: 16px;
+  grid-row-gap: 24px;
+  row-gap: 24px;
+  width: 100%;
+  max-width: 1200px;
+  direction: rtl;
+}
+.qallprods__all {
+  order: 2;
+  flex: 0 0 auto;
+  display: inline-flex;
+  flex-direction: row;
+  direction: ltr;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 200px;
+  height: 55px;
+  background: #91e6f7;
+  border: 1px solid #91e6f7;
+  color: #0a1f30;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 500;
+}
+.qallprods__all i {
+  font-size: 16px;
+}
+.qallprods__all:hover {
+  filter: brightness(0.96);
+}
+@media (max-width: 768px) {
+  .qallprods {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .qallprods .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .qallprods__box {
+    padding: 30px 15px;
+    border-radius: 30px;
+    gap: 24px;
+  }
+  .qallprods__top {
+    display: contents;
+  }
+  .qallprods__head {
+    order: 1;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+  .qallprods__title {
+    font-size: 24px;
+    line-height: 30px;
+    letter-spacing: -0.15px;
+  }
+  .qallprods__subtitle {
+    font-size: 16px;
+    line-height: 24px;
+  }
+  .qallprods__grid {
+    order: 2;
+    max-width: none;
+    grid-template-columns: repeat(2, 1fr);
+    -moz-column-gap: 8px;
+         column-gap: 8px;
+    row-gap: 10px;
+  }
+  .qallprods__all {
+    order: 3;
+    width: 203px;
+    max-width: 100%;
+    height: 55px;
+    background: linear-gradient(to right, #172951, #30378e);
+    border-color: transparent;
+    color: #fff;
+    margin-top: 4px;
+  }
+  .qallprods__all:hover {
+    filter: none;
+    color: #daeff7;
+  }
+}
 .qbanner {
   font-family: "GE SS Two", sans-serif;
   padding-top: 24px;
@@ -30797,6 +30954,17 @@ model-viewer[style*=width]:before{
 }
 @media (max-width: 768px) {
   .qoffers .s-comments-product .s-comments-container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+.qallprods .s-comments-product .s-comments-container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+@media (max-width: 768px) {
+  .qallprods .s-comments-product .s-comments-container {
     padding-left: 15px;
     padding-right: 15px;
   }

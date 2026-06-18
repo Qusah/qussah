@@ -611,6 +611,74 @@
       ]
     },
     {
+      "key": "5fdf1f78-22c1-4eef-9180-48c976f4f553",
+      "title": {
+        "en": "All Qusah Products",
+        "ar": "جميع منتجات قصة"
+      },
+      "icon": "sicon-bag",
+      "path": "home.qissa-all-products",
+      "fields": [
+        {
+          "id": "title_highlight",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Highlighted word",
+            "ar": "الكلمة المميزة"
+          },
+          "value": "منتجات"
+        },
+        {
+          "id": "title",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Title",
+            "ar": "العنوان"
+          },
+          "value": " وصل حديثا في قصة"
+        },
+        {
+          "id": "subtitle",
+          "type": "string",
+          "format": "textarea",
+          "label": {
+            "en": "Subtitle",
+            "ar": "النص الفرعي"
+          },
+          "value": "تسوق احدث المنتجات المميزة المضافة جديد"
+        },
+        {
+          "id": "products",
+          "type": "items",
+          "icon": "sicon-keyboard_arrow_down",
+          "label": "المنتجات",
+          "format": "dropdown-list",
+          "description": null,
+          "selected": [],
+          "options": [],
+          "required": true,
+          "multichoice": true,
+          "source": "products",
+          "searchable": true,
+          "maxLength": 8,
+          "minLength": 1,
+          "value": []
+        },
+        {
+          "id": "button_url",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Button URL",
+            "ar": "رابط الزر"
+          },
+          "value": "/products"
+        }
+      ]
+    },
+    {
       "key": "9e3d8876-805d-41fc-a156-1751712f6a74",
       "title": {
         "en": "Qissa Banner",
