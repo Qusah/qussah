@@ -6,13 +6,13 @@ body, main, #app { background: transparent; }
   z-index: 50;
   font-family: 'GE SS Two', sans-serif;
   color: #fff;
+  padding-top: 40px;   // push the whole header (top bar + nav) down from the page top
 
+  // full-bleed edges aligned to the hero (hero = margin 0 50px, no max-width)
   .container { max-width: none; margin-inline: auto; padding-inline: 50px; }
 
-  // top bar: normal flow ABOVE hero — push everything down from the top
-  .qheader-topwrap { background: #fff; padding: 56px 0 12px; }
-  // top bar edges must line up EXACTLY with the hero (hero = margin 0 50px, no max-width)
-  .qheader-topwrap .container { max-width: none; padding-inline: 50px; }
+  // top bar: normal flow ABOVE hero
+  .qheader-topwrap { background: #fff; padding: 0 0 12px; }
 
   // main nav wrapper: normal flow, then hero pulls up to overlap it
   > .container:last-of-type {
@@ -90,11 +90,12 @@ body, main, #app { background: transparent; }
   .qheader-logo img { width: 98px; height: auto; object-fit: contain; filter: brightness(0) invert(1); }
 }
 
-// nav row: pull DOWN over the hero (negative bottom margin), so hero starts under it
+// nav row sits ON TOP of the hero, overlapping it, so the hero's rounded
+// top corners stay fully visible (nav is shorter than the corner radius zone)
 .qheader > .container:last-of-type {
   position: relative;
   z-index: 60;
-  margin-bottom: -97px;     // nav overlaps the hero below it
+  margin-bottom: -90px;     // nav overlaps the hero below it
 }
 // hero starts right after the nav, top bar stays fully above on white
 .qissa-hero {

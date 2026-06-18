@@ -3004,15 +3004,10 @@ textarea.s-input{
   padding-left: 50px;
   padding-right: 50px;
 }
-.qheader .qheader-topwrap .s-advertisement-content {
-  max-width: none;
-  padding-left: 50px;
-  padding-right: 50px;
-}
 .qheader > .s-advertisement-content:last-of-type {
   position: relative;
   z-index: 60;
-  margin-bottom: -97px;
+  margin-bottom: -90px;
 }
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-advertisement-content ul{
@@ -26765,6 +26760,7 @@ body, main, #app {
   z-index: 50;
   font-family: "GE SS Two", sans-serif;
   color: #fff;
+  padding-top: 40px;
 }
 .qheader .container {
   max-width: none;
@@ -26775,12 +26771,7 @@ body, main, #app {
 }
 .qheader .qheader-topwrap {
   background: #fff;
-  padding: 56px 0 12px;
-}
-.qheader .qheader-topwrap .container {
-  max-width: none;
-  padding-left: 50px;
-  padding-right: 50px;
+  padding: 0 0 12px;
 }
 .qheader > .container:last-of-type {
   position: relative;
@@ -26928,7 +26919,7 @@ body, main, #app {
 .qheader > .container:last-of-type {
   position: relative;
   z-index: 60;
-  margin-bottom: -97px;
+  margin-bottom: -90px;
 }
 .qissa-hero {
   margin: 0 50px !important;
@@ -29617,15 +29608,10 @@ model-viewer[style*=width]:before{
   padding-left: 50px;
   padding-right: 50px;
 }
-.qheader .qheader-topwrap .s-comments-product .s-comments-container {
-  max-width: none;
-  padding-left: 50px;
-  padding-right: 50px;
-}
 .qheader > .s-comments-product .s-comments-container:last-of-type {
   position: relative;
   z-index: 60;
-  margin-bottom: -97px;
+  margin-bottom: -90px;
 }
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-comments-product .s-comments-container ul{
