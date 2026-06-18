@@ -26877,6 +26877,8 @@ body, main, #app {
   padding: 15px 25px;
 }
 .qheader .qheader-menu a {
+  display: inline-block;
+  margin: 0 12px;
   color: #fff;
   font-size: 14px;
   font-weight: 500;

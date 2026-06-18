@@ -61,6 +61,8 @@ body, main, #app { background: transparent; }
     border: 1px solid rgba(255,255,255,.06); border-radius: 100px; padding: 15px 25px;
 
     a {
+      display: inline-block;
+      margin: 0 12px;
       color: #fff; font-size: 14px; font-weight: 500; line-height: 20px; white-space: nowrap;
       &:hover { color: #daeff7; }
     }
