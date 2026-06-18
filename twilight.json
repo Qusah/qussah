@@ -501,6 +501,74 @@
       ]
     },
     {
+      "key": "b4f44cee-e650-4395-9659-994892a9b85f",
+      "title": {
+        "en": "Qissa Offers",
+        "ar": "عروض قصة"
+      },
+      "icon": "sicon-clock",
+      "path": "home.qissa-offers",
+      "fields": [
+        {
+          "id": "title_highlight",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Highlighted word",
+            "ar": "الكلمة المميزة"
+          },
+          "value": "عروض"
+        },
+        {
+          "id": "title",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Title",
+            "ar": "العنوان"
+          },
+          "value": " تنتهى قريبا"
+        },
+        {
+          "id": "subtitle",
+          "type": "string",
+          "format": "textarea",
+          "label": {
+            "en": "Subtitle",
+            "ar": "النص الفرعي"
+          },
+          "value": "تسوق احدث المنتجات المميزة المضافة جديد"
+        },
+        {
+          "id": "products",
+          "type": "items",
+          "icon": "sicon-keyboard_arrow_down",
+          "label": "المنتجات",
+          "format": "dropdown-list",
+          "description": null,
+          "selected": [],
+          "options": [],
+          "required": true,
+          "multichoice": true,
+          "source": "products",
+          "searchable": true,
+          "maxLength": 2,
+          "minLength": 1,
+          "value": []
+        },
+        {
+          "id": "button_url",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Button URL",
+            "ar": "رابط الزر"
+          },
+          "value": "/products"
+        }
+      ]
+    },
+    {
       "key": "186b3f4f-25cf-4d3c-abca-cef7eed6f0ab",
       "title": {
         "en": "Enhances Animated Images",

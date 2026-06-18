@@ -1,0 +1,115 @@
+{#
+| Variable                  | Type      | Description                                       |
+|---------------------------|-----------|---------------------------------------------------|
+| component                 | object    | merchant settings from twilight.json              |
+| component.title           | string    | heading rest (e.g. " تنتهى قريبا")                |
+| component.title_highlight | string    | highlighted heading word (e.g. "عروض")            |
+| component.subtitle        | string    | subheading                                        |
+| component.products        | Product[] | merchant-selected offer products                  |
+| component.button_url      | string    | "تسوق كل المنتجات" link                            |
+| position                  | int       | sorting block                                     |
+#}
+<section class="s-block qoffers" id="qoffers-{{ position }}">
+    <div class="container">
+        <div class="qoffers__box">
+
+            {# title (right-aligned) #}
+            <div class="qoffers__head">
+                <h2 class="qoffers__title">
+                    <span class="qoffers__title-hl">{{ component.title_highlight }}</span>{{ component.title }}
+                </h2>
+                {% if component.subtitle %}
+                    <p class="qoffers__subtitle">{{ component.subtitle }}</p>
+                {% endif %}
+            </div>
+
+            {# 2 wide cards #}
+            <div class="qoffers__row">
+                {% for product in component.products %}
+                    <article class="qoffer">
+                        {# info (left in RTL) #}
+                        <div class="qoffer__info">
+                            <div class="qoffer__text">
+                                {% if product.brand.name %}<span class="qoffer__cat">{{ product.brand.name }}</span>{% endif %}
+                                <a href="{{ product.url }}" class="qoffer__name">{{ product.name }}</a>
+                                {% if product.subtitle %}<span class="qoffer__sub">{{ product.subtitle }}</span>{% endif %}
+                            </div>
+
+                            {# rating #}
+                            <div class="qoffer__star">
+                                <span class="qoffer__star-num">({{ product.rating.stars|default('4.5') }})</span>
+                                <span class="qoffer__star-icons">
+                                    {% for i in 1..5 %}<i class="sicon-star {{ i <= (product.rating.stars|default(5)) ? 'is-on' : 'is-off' }}"></i>{% endfor %}
+                                </span>
+                            </div>
+
+                            {# price #}
+                            <div class="qoffer__price">
+                                {% if product.is_on_sale %}
+                                    <b class="qoffer__price-now">{{ product.sale_price }}</b>
+                                    <s class="qoffer__price-old">{{ product.regular_price }}</s>
+                                {% else %}
+                                    <b class="qoffer__price-now">{{ product.price }}</b>
+                                {% endif %}
+                            </div>
+
+                            {# countdown — يوم / ساعة / دقيقة / ثانية #}
+                            <div class="qoffer__time" data-end="{{ product.offer_end|default(product.promotion_end) }}">
+                                <div class="qoffer__cell"><b data-d>02</b><span>يوم</span></div>
+                                <div class="qoffer__cell"><b data-h>16</b><span>ساعة</span></div>
+                                <div class="qoffer__cell"><b data-m>55</b><span>دقيقة</span></div>
+                                <div class="qoffer__cell"><b data-s>55</b><span>ثانية</span></div>
+                            </div>
+
+                            {# buttons #}
+                            <div class="qoffer__btns">
+                                <button class="qoffer__like" onclick="salla.wishlist.toggle({{ product.id }})" aria-label="المفضلة">
+                                    <i class="sicon-heart"></i>
+                                </button>
+                                <salla-add-product-to-cart fill class="qoffer__add" product-id="{{ product.id }}">
+                                    أضف للسلة
+                                    <i class="sicon-shopping-bag"></i>
+                                </salla-add-product-to-cart>
+                            </div>
+                        </div>
+
+                        {# image (right in RTL) #}
+                        <a href="{{ product.url }}" class="qoffer__img">
+                            {% if product.is_on_sale %}
+                                <span class="qoffer__badge">{{ product.promotion_title|default('خصم') }}</span>
+                            {% endif %}
+                            <img src="{{ product.image.url|default(product.images[0].url) }}" alt="{{ product.name }}" loading="lazy"/>
+                        </a>
+                    </article>
+                {% endfor %}
+            </div>
+
+            {# bottom button #}
+            <a href="{{ component.button_url|default('/products') }}" class="qoffers__all">
+                <i class="sicon-arrow-left"></i>
+                <span>تسوق كل المنتجات</span>
+            </a>
+
+        </div>
+    </div>
+</section>
+
+<script>
+(function(){
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function tick(){
+    document.querySelectorAll('.qoffer__time[data-end]').forEach(function(el){
+      var end = Date.parse(el.getAttribute('data-end'));
+      if(isNaN(end)) return;                     // no end date → keep static values
+      var diff = Math.max(0, end - Date.now());
+      var s = Math.floor(diff/1000);
+      var d = Math.floor(s/86400); s-=d*86400;
+      var h = Math.floor(s/3600);  s-=h*3600;
+      var m = Math.floor(s/60);    s-=m*60;
+      var set=function(q,v){ var t=el.querySelector(q); if(t) t.textContent=pad(v); };
+      set('[data-d]',d); set('[data-h]',h); set('[data-m]',m); set('[data-s]',s);
+    });
+  }
+  tick(); setInterval(tick, 1000);
+})();
+</script>

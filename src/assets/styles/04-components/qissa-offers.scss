@@ -1,0 +1,172 @@
+// ====================================================================
+// Qissa Offers — "عروض تنتهى قريبا" + countdown (Figma node 100:710)
+// Section: gradient #daeff7->#fff, radius 30, pad 50/80/20, gap 32.
+// 2 wide cards (info left + image right), countdown timer, bottom CTA.
+// ====================================================================
+
+.qoffers {
+  font-family: 'GE SS Two', sans-serif;
+  padding-block: 24px;
+
+  .container { max-width: none; padding-inline: 50px; }
+
+  &__box {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 32px;
+    padding: 50px 80px 20px;
+    background: linear-gradient(180deg, #daeff7 0%, #ffffff 100%);
+    border-radius: 30px;
+  }
+
+  // ---- title (right-aligned) ----
+  &__head {
+    width: 100%; max-width: 1200px;
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 12px; text-align: right;
+  }
+  &__title {
+    font-size: 32px; font-weight: 500; line-height: 38px;
+    letter-spacing: -0.2px; color: #0a1f30; margin: 0;
+  }
+  &__title-hl { color: #30378e; }
+  &__subtitle {
+    font-size: 16px; font-weight: 300; line-height: 24px;
+    color: #6c757d; margin: 0;
+  }
+
+  // ---- cards row ----
+  &__row {
+    display: flex; gap: 24px; align-items: stretch;
+    width: 100%; max-width: 1200px; direction: rtl;
+  }
+
+  // ---- bottom CTA pill ----
+  &__all {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    width: 200px; height: 55px;
+    background: linear-gradient(to right, #172951, #30378e);
+    color: #fff; border-radius: 16px;
+    font-size: 16px; font-weight: 500;
+    i { font-size: 16px; }
+    &:hover { color: #daeff7; }
+  }
+}
+
+// ---- single offer card (horizontal: info + image) ----
+.qoffer {
+  flex: 1 1 0; min-width: 1px;
+  display: flex; align-items: center; justify-content: flex-end;
+  background: #fff; border-radius: 16px;
+  direction: rtl;
+
+  // info column (Figma listContainer w322, py16 gap16)
+  &__info {
+    width: 322px; flex: 0 0 auto;
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 16px; padding-block: 16px;
+    padding-inline-start: 16px;
+  }
+  &__text {
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 4px; width: 100%; text-align: right;
+  }
+  &__cat  { font-size: 14px; font-weight: 300; color: #91e6f7; line-height: 1; }
+  &__name {
+    font-size: 16px; font-weight: 500; color: #0a1f30; line-height: 1.3; width: 100%;
+    &:hover { color: #30378e; }
+  }
+  &__sub  { font-size: 14px; font-weight: 300; color: #6c757d; line-height: 1; }
+
+  // rating
+  &__star {
+    display: flex; align-items: center; justify-content: flex-end; gap: 8px; width: 100%;
+    &-num { font-size: 14px; font-weight: 500; color: #6c757d; }
+    &-icons {
+      display: inline-flex; gap: 2px;
+      i { font-size: 13px; }
+      i.is-on  { color: #f5b50a; }
+      i.is-off { color: #d9dce3; }
+    }
+  }
+
+  // price
+  &__price {
+    display: flex; align-items: baseline; justify-content: flex-end; gap: 6px; width: 100%;
+  }
+  &__price-now {
+    font-family: 'Poppins','GE SS Two',sans-serif;
+    font-size: 16px; font-weight: 600; color: #30378e; line-height: 25px;
+  }
+  &__price-old {
+    font-family: 'Poppins','GE SS Two',sans-serif;
+    font-size: 14px; font-weight: 400; color: #a5a5a5; line-height: 24px; text-decoration: line-through;
+  }
+
+  // countdown — 4 baby-blue cells, num 18 Poppins, label 14
+  &__time {
+    display: flex; gap: 8px; width: 100%;
+  }
+  &__cell {
+    flex: 1 1 0; min-width: 1px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 2px; padding: 4px 16px 8px;
+    background: #daeff7; border-radius: 10px;
+    b { font-family: 'Poppins','GE SS Two',sans-serif; font-size: 18px; font-weight: 500; color: #0a1f30; line-height: 25px; }
+    span { font-size: 14px; font-weight: 300; color: #6c757d; line-height: 1; }
+  }
+
+  // buttons
+  &__btns { display: flex; gap: 8px; width: 100%; align-items: stretch; }
+  &__like {
+    flex: 0 0 auto; width: 50px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #fff; border: 1px solid #eee; border-radius: 12px;
+    color: #0a1f30; cursor: pointer;
+    i { font-size: 18px; }
+    &:hover { color: #f55157; border-color: #f55157; }
+  }
+  &__add {
+    flex: 1 1 auto; min-width: 1px; height: 50px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: #30378e !important; border: 1px solid #30378e !important; color: #fff !important;
+    font-family: 'GE SS Two',sans-serif; font-size: 16px; font-weight: 500; border-radius: 12px;
+    --salla-button-primary-background-color: #30378e;
+    i { font-size: 16px; }
+    &:hover { background: #91e6f7 !important; border-color: #91e6f7 !important; color: #30378e !important; }
+  }
+
+  // image (Figma 237x330; inner image 206x292 radius15 baby-blue bg)
+  &__img {
+    position: relative; flex: 0 0 237px;
+    height: 330px; display: flex; align-items: center; justify-content: center;
+    img {
+      width: 206px; height: 292px; object-fit: cover;
+      background: #daeff7; border-radius: 15px;
+    }
+  }
+  &__badge {
+    position: absolute; top: 30px; inset-inline-start: 16px;
+    min-width: 67px; height: 30px;
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 5px 10px; background: #f55157; color: #fff;
+    font-size: 12px; font-weight: 300; border-radius: 4px; white-space: nowrap;
+  }
+}
+
+// ---- mobile ----
+@media (max-width: 768px) {
+  .qoffers { padding-block: 8px; }
+  .qoffers .container { padding-inline: 15px; }
+  .qoffers__box { padding: 24px 16px 16px; border-radius: 24px; gap: 24px; }
+  .qoffers__title { font-size: 20px; line-height: 28px; }
+  .qoffers__subtitle { font-size: 13px; }
+  .qoffers__row { flex-direction: column; gap: 16px; }
+
+  .qoffer { width: 100%; }
+  .qoffer__info { width: auto; flex: 1 1 auto; padding-inline-start: 12px; }
+  .qoffer__img { flex-basis: 140px; height: 240px; }
+  .qoffer__img img { width: 120px; height: 210px; }
+  .qoffer__cell b { font-size: 16px; }
+  .qoffer__cell span { font-size: 12px; }
+  .qoffer__cell { padding: 4px 6px 6px; }
+}
