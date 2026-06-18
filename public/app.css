@@ -3014,6 +3014,17 @@ textarea.s-input{
     margin-bottom: -76px;
   }
 }
+.qcats .s-advertisement-content {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+@media (max-width: 768px) {
+  .qcats .s-advertisement-content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-advertisement-content ul{
         margin: 0px;
@@ -27048,6 +27059,173 @@ body, main, #app {
     padding: 12px 12px;
   }
 }
+.qcats {
+  font-family: "GE SS Two", sans-serif;
+  padding-top: 64px;
+  padding-bottom: 64px;
+}
+.qcats .container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+.qcats__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  margin-bottom: 32px;
+}
+.qcats__title {
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 38px;
+  letter-spacing: -0.2px;
+  color: #0a1f30;
+  margin: 0;
+}
+.qcats__title-hl {
+  color: #30378e;
+}
+.qcats__subtitle {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 24px;
+  color: #6c757d;
+  width: 546px;
+  max-width: 100%;
+  margin: 0;
+}
+.qcats__row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 32.85px;
+  flex-wrap: wrap;
+  row-gap: 56px;
+}
+.qcats__card {
+  position: relative;
+  flex: 0 0 auto;
+  width: 196.08px;
+  height: 196.08px;
+  border-radius: 50%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 16.87px;
+  overflow: visible;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.qcats__card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(23, 41, 81, 0.12);
+}
+.qcats__card:nth-child(8n+1) {
+  background: #dee8f0;
+}
+.qcats__card:nth-child(8n+2) {
+  background: #dee8f0;
+}
+.qcats__card:nth-child(8n+3) {
+  background: #fdf7d4;
+}
+.qcats__card:nth-child(8n+4) {
+  background: #d5f8ff;
+}
+.qcats__card:nth-child(8n+5) {
+  background: #fbecf5;
+}
+.qcats__card:nth-child(8n+6) {
+  background: #f9f1df;
+}
+.qcats__card:nth-child(8n+7) {
+  background: #daeff7;
+}
+.qcats__card:nth-child(8n+0) {
+  background: #dee8f0;
+}
+.qcats__card-img {
+  position: absolute;
+  left: 50%;
+  top: -34px;
+  transform: translateX(-50%);
+  width: 170px;
+  height: 150px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+}
+.qcats__card-img img {
+  max-width: 100%;
+  max-height: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.qcats__card-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+.qcats__card-name {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  color: #0a1f30;
+}
+.qcats__card-count {
+  font-size: 13.5px;
+  font-weight: 300;
+  color: #6c757d;
+}
+.qcats__card-count em {
+  font-family: "Poppins", "GE SS Two", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+@media (max-width: 768px) {
+  .qcats {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+  .qcats .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .qcats__title {
+    font-size: 22px;
+    line-height: 30px;
+  }
+  .qcats__subtitle {
+    font-size: 14px;
+    line-height: 20px;
+    width: 100%;
+  }
+  .qcats__row {
+    justify-content: center;
+    gap: 20px;
+    row-gap: 48px;
+  }
+  .qcats__card {
+    width: 150px;
+    height: 150px;
+    padding-bottom: 12px;
+  }
+  .qcats__card-img {
+    width: 130px;
+    height: 115px;
+    top: -26px;
+  }
+  .qcats__card-name {
+    font-size: 14px;
+  }
+}
 /* Top Nav */
 .top-navbar{
     display: flex;
@@ -29723,6 +29901,17 @@ model-viewer[style*=width]:before{
 @media (max-width: 768px) {
   .qheader > .s-comments-product .s-comments-container:last-of-type {
     margin-bottom: -76px;
+  }
+}
+.qcats .s-comments-product .s-comments-container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+@media (max-width: 768px) {
+  .qcats .s-comments-product .s-comments-container {
+    padding-left: 16px;
+    padding-right: 16px;
   }
 }
 @media only screen and (min-width: 1024px) {
