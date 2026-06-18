@@ -81,17 +81,21 @@ body, main, #app { background: transparent; }
   .qheader-logo img { width: 98px; height: auto; object-fit: contain; filter: brightness(0) invert(1); }
 }
 
-// hero — pulled up so the nav overlaps it; top bar stays above
+// nav row: pull DOWN over the hero (negative bottom margin), so hero starts under it
+.qheader > .container:last-of-type {
+  position: relative;
+  z-index: 60;
+  margin-bottom: -97px;     // nav overlaps the hero below it
+}
+// hero starts right after the nav, top bar stays fully above on white
 .qissa-hero {
-  margin: -97px 50px 0 !important;   // overlap the nav row
+  margin: 0 50px !important;
   border-radius: 30px !important;
   overflow: hidden;
   position: relative;
-  z-index: 1;                         // under the nav text
+  z-index: 1;
 }
 .qissa-hero .qissa-hero__inner { padding-top: 130px; }   // clear the overlaid nav
-// nav text above the hero
-.qheader > .container:last-of-type { z-index: 60 !important; }
 
 @media (max-width: 1024px) {
   .qheader .qheader-topbar, .qheader .qheader-menu, .qheader .qheader-act__txt { display: none; }

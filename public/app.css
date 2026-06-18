@@ -3004,6 +3004,11 @@ textarea.s-input{
   padding-left: 50px;
   padding-right: 50px;
 }
+.qheader > .s-advertisement-content:last-of-type {
+  position: relative;
+  z-index: 60;
+  margin-bottom: -97px;
+}
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-advertisement-content ul{
         margin: 0px;
@@ -26748,13 +26753,7 @@ body, main, #app {
   background: transparent;
 }
 .qheader {
-  background: transparent !important;
-}
-.qheader {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  position: relative;
   z-index: 50;
   font-family: "GE SS Two", sans-serif;
   color: #fff;
@@ -26765,6 +26764,14 @@ body, main, #app {
   margin-right: auto;
   padding-left: 50px;
   padding-right: 50px;
+}
+.qheader .qheader-topwrap {
+  background: #fff;
+  padding: 12px 0;
+}
+.qheader > .container:last-of-type {
+  position: relative;
+  z-index: 50;
 }
 .qheader .qheader-topbar {
   display: flex;
@@ -26899,12 +26906,22 @@ body, main, #app {
      object-fit: contain;
   filter: brightness(0) invert(1);
 }
+.qheader > .container:last-of-type {
+  position: relative;
+  z-index: 60;
+  margin-bottom: -97px;
+}
 .qissa-hero {
   margin: 0 50px !important;
   border-radius: 30px !important;
 }
 .qissa-hero {
   overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+.qissa-hero .qissa-hero__inner {
+  padding-top: 130px;
 }
 @media (max-width: 1024px) {
   .qheader .qheader-topbar, .qheader .qheader-menu, .qheader .qheader-act__txt {
@@ -29580,6 +29597,11 @@ model-viewer[style*=width]:before{
   margin-right: auto;
   padding-left: 50px;
   padding-right: 50px;
+}
+.qheader > .s-comments-product .s-comments-container:last-of-type {
+  position: relative;
+  z-index: 60;
+  margin-bottom: -97px;
 }
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-comments-product .s-comments-container ul{
