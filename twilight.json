@@ -557,17 +557,46 @@
           "value": []
         },
         {
-          "id": "offer_end",
-          "type": "string",
-          "format": "text",
+          "id": "duration_days",
+          "type": "number",
+          "format": "integer",
+          "icon": "sicon-calendar",
+          "label": {
+            "en": "Duration — days",
+            "ar": "مدة العرض — أيام"
+          },
+          "placeholder": "0",
+          "value": 2,
+          "minimum": 0,
+          "maximum": 365
+        },
+        {
+          "id": "duration_hours",
+          "type": "number",
+          "format": "integer",
           "icon": "sicon-clock",
           "label": {
-            "en": "Offer end date",
-            "ar": "تاريخ انتهاء العرض"
+            "en": "Duration — hours",
+            "ar": "مدة العرض — ساعات"
           },
-          "description": "صيغة: YYYY-MM-DD HH:mm  مثال: 2026-06-30 23:59",
-          "placeholder": "2026-06-30 23:59",
-          "value": ""
+          "placeholder": "0",
+          "value": 16,
+          "minimum": 0,
+          "maximum": 23
+        },
+        {
+          "id": "duration_minutes",
+          "type": "number",
+          "format": "integer",
+          "icon": "sicon-clock",
+          "label": {
+            "en": "Duration — minutes",
+            "ar": "مدة العرض — دقائق"
+          },
+          "placeholder": "0",
+          "value": 55,
+          "minimum": 0,
+          "maximum": 59
         },
         {
           "id": "button_url",

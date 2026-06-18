@@ -53,12 +53,13 @@
                                 {% endif %}
                             </div>
 
-                            {# countdown — يوم / ساعة / دقيقة / ثانية (merchant offer_end overrides product) #}
-                            <div class="qoffer__time" data-end="{{ component.offer_end|default(product.offer_end|default(product.promotion_end)) }}">
-                                <div class="qoffer__cell"><b data-d>02</b><span>يوم</span></div>
-                                <div class="qoffer__cell"><b data-h>16</b><span>ساعة</span></div>
-                                <div class="qoffer__cell"><b data-m>55</b><span>دقيقة</span></div>
-                                <div class="qoffer__cell"><b data-s>55</b><span>ثانية</span></div>
+                            {# countdown — يوم / ساعة / دقيقة / ثانية (duration set by merchant) #}
+                            {% set total_secs = (component.duration_days|default(0)) * 86400 + (component.duration_hours|default(0)) * 3600 + (component.duration_minutes|default(0)) * 60 %}
+                            <div class="qoffer__time" data-secs="{{ total_secs }}" data-key="qoffer-{{ position }}-{{ loop.index }}">
+                                <div class="qoffer__cell"><b data-d>00</b><span>يوم</span></div>
+                                <div class="qoffer__cell"><b data-h>00</b><span>ساعة</span></div>
+                                <div class="qoffer__cell"><b data-m>00</b><span>دقيقة</span></div>
+                                <div class="qoffer__cell"><b data-s>00</b><span>ثانية</span></div>
                             </div>
 
                             {# buttons #}
@@ -97,11 +98,21 @@
 <script>
 (function(){
   function pad(n){ return String(n).padStart(2,'0'); }
+  // resolve a fixed end-timestamp per card, persisted so refresh doesn't reset it
+  function endFor(el){
+    var secs = parseInt(el.getAttribute('data-secs'),10) || 0;
+    if(secs <= 0) return null;
+    var key = 'qoffer_end_' + (el.getAttribute('data-key')||'') + '_' + secs;
+    var stored = sessionStorage.getItem(key);
+    var end;
+    if(stored){ end = parseInt(stored,10); }
+    else { end = Date.now() + secs*1000; sessionStorage.setItem(key, end); }
+    return end;
+  }
   function tick(){
-    document.querySelectorAll('.qoffer__time[data-end]').forEach(function(el){
-      var raw = (el.getAttribute('data-end')||'').trim().replace(' ','T');
-      var end = Date.parse(raw);
-      if(isNaN(end)) return;                     // no/invalid end date → keep static values
+    document.querySelectorAll('.qoffer__time[data-secs]').forEach(function(el){
+      var end = endFor(el);
+      if(end === null) return;                   // no duration set → keep zeros
       var diff = Math.max(0, end - Date.now());
       var s = Math.floor(diff/1000);
       var d = Math.floor(s/86400); s-=d*86400;
