@@ -56,21 +56,14 @@ body, main, #app { background: transparent; }
 
   // pill menu (Figma px-25 py-15)
   .qheader-menu {
+    display: flex; align-items: center; gap: 20px;
     background: linear-gradient(to right, rgba(51,84,143,.19), rgba(255,255,255,0));
     border: 1px solid rgba(255,255,255,.06); border-radius: 100px; padding: 15px 25px;
 
-    custom-main-menu { display: flex; gap: 20px; align-items: center; }
-    // flatten the web component's internal layout
-    custom-main-menu ul, custom-main-menu nav, custom-main-menu > * {
-      display: flex !important; gap: 20px !important; align-items: center !important;
-      margin: 0 !important; padding: 0 !important; list-style: none !important;
+    a {
+      color: #fff; font-size: 14px; font-weight: 500; line-height: 20px; white-space: nowrap;
+      &:hover { color: #daeff7; }
     }
-    custom-main-menu li { margin: 0 !important; }
-    custom-main-menu a, custom-main-menu * {
-      color: #fff !important; font-size: 14px !important; font-weight: 500 !important;
-      line-height: 20px !important; white-space: nowrap;
-    }
-    custom-main-menu a:hover { color: #daeff7 !important; }
   }
 
   // logo

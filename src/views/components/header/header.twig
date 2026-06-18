@@ -54,8 +54,14 @@
         </a>
       </div>
 
-      {# pill menu (center) #}
-      <nav class="qheader-menu"><custom-main-menu></custom-main-menu></nav>
+      {# pill menu (center) — static links to match Figma exactly #}
+      <nav class="qheader-menu">
+        <a href="{{ store.url }}">الرئيسية</a>
+        <a href="{{ store.url }}">المنتجات</a>
+        <a href="{{ store.url }}">العروض</a>
+        <a href="{{ store.url }}">عن قصة</a>
+        <a href="{{ store.url }}">تواصل معنا</a>
+      </nav>
 
       {# logo (right) #}
       <a class="qheader-logo" href="{{ store.url }}">
