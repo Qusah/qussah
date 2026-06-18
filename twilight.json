@@ -443,6 +443,59 @@
       ]
     },
     {
+      "key": "ffa24052-65bc-4dab-81cc-24401b8e51f4",
+      "title": {
+        "en": "Qissa Products",
+        "ar": "منتجات قصة"
+      },
+      "icon": "sicon-bag-shopping",
+      "path": "home.qissa-products",
+      "fields": [
+        {
+          "id": "title",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Title",
+            "ar": "العنوان"
+          },
+          "value": "خصيصاً من قصة"
+        },
+        {
+          "id": "title_highlight",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Highlighted word",
+            "ar": "الكلمة المميزة"
+          },
+          "value": "منتجات مميزة"
+        },
+        {
+          "id": "subtitle",
+          "type": "string",
+          "format": "textarea",
+          "label": {
+            "en": "Subtitle",
+            "ar": "النص الفرعي"
+          },
+          "value": "تسوق احدث المنتجات المميزة المضافة جديد"
+        },
+        {
+          "id": "products",
+          "type": "items",
+          "format": "dropdown-list",
+          "source": "products",
+          "multichoice": true,
+          "label": {
+            "en": "Products",
+            "ar": "المنتجات"
+          },
+          "value": []
+        }
+      ]
+    },
+    {
       "key": "186b3f4f-25cf-4d3c-abca-cef7eed6f0ab",
       "title": {
         "en": "Enhances Animated Images",

@@ -1,0 +1,76 @@
+{#
+| Variable                  | Type      | Description                                       |
+|---------------------------|-----------|---------------------------------------------------|
+| component                 | object    | merchant settings from twilight.json              |
+| component.title           | string    | heading first part                                |
+| component.title_highlight | string    | highlighted heading word(s) (royal blue)          |
+| component.subtitle        | string    | subheading                                        |
+| component.products        | Product[] | merchant-selected products (dropdown source)      |
+| position                  | int       | sorting block                                     |
+#}
+<section class="s-block qprods" id="qprods-{{ position }}">
+    <div class="container">
+        <div class="qprods__box">
+
+            {# centered title #}
+            <div class="qprods__head">
+                <h2 class="qprods__title">
+                    <span class="qprods__title-hl">{{ component.title_highlight }}</span> {{ component.title }}
+                </h2>
+                {% if component.subtitle %}
+                    <p class="qprods__subtitle">{{ component.subtitle }}</p>
+                {% endif %}
+            </div>
+
+            {# 4-col grid (2 on mobile) #}
+            <div class="qprods__grid">
+                {% for product in component.products %}
+                    <article class="qprod">
+                        {# image + discount badge #}
+                        <a href="{{ product.url }}" class="qprod__img">
+                            {% if product.is_on_sale and product.promotion_title %}
+                                <span class="qprod__badge">{{ product.promotion_title }}</span>
+                            {% elseif product.is_on_sale %}
+                                <span class="qprod__badge">خصم</span>
+                            {% endif %}
+                            <img src="{{ product.image.url|default(product.images[0].url) }}" alt="{{ product.name }}" loading="lazy"/>
+                        </a>
+
+                        {# info #}
+                        <div class="qprod__info">
+                            {% if product.brand.name %}
+                                <span class="qprod__cat">{{ product.brand.name }}</span>
+                            {% endif %}
+                            <a href="{{ product.url }}" class="qprod__name">{{ product.name }}</a>
+
+                            {# price #}
+                            <div class="qprod__price">
+                                {% if product.is_on_sale %}
+                                    <b class="qprod__price-now">{{ product.sale_price }}</b>
+                                    <s class="qprod__price-old">{{ product.regular_price }}</s>
+                                {% else %}
+                                    <b class="qprod__price-now">{{ product.price }}</b>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {# buttons #}
+                        <div class="qprod__btns">
+                            <salla-add-product-to-cart
+                                fill
+                                class="qprod__add"
+                                product-id="{{ product.id }}">
+                                أضف للسلة
+                                <i class="sicon-shopping-bag"></i>
+                            </salla-add-product-to-cart>
+                            <button class="qprod__like" onclick="salla.wishlist.toggle({{ product.id }})" aria-label="المفضلة">
+                                <i class="sicon-heart"></i>
+                            </button>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</section>

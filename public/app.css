@@ -3025,6 +3025,17 @@ textarea.s-input{
     padding-right: 16px;
   }
 }
+.qprods .s-advertisement-content {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+@media (max-width: 768px) {
+  .qprods .s-advertisement-content {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-advertisement-content ul{
         margin: 0px;
@@ -27237,6 +27248,286 @@ body, main, #app {
     font-size: 14px;
   }
 }
+.qprods {
+  font-family: "GE SS Two", sans-serif;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+.qprods .container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+.qprods__box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  padding: 50px;
+  background: linear-gradient(180deg, #daeff7 0%, #ffffff 100%);
+  border-radius: 50px;
+}
+.qprods__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.qprods__title {
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 38px;
+  letter-spacing: -0.2px;
+  color: #0a1f30;
+  margin: 0;
+}
+.qprods__title-hl {
+  color: #30378e;
+}
+.qprods__subtitle {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 25px;
+  color: #6c757d;
+  width: 554px;
+  max-width: 100%;
+  margin: 0;
+}
+.qprods__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-column-gap: 16px;
+  -moz-column-gap: 16px;
+       column-gap: 16px;
+  grid-row-gap: 24px;
+  row-gap: 24px;
+  width: 100%;
+  direction: rtl;
+}
+.qprod {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 24px;
+  padding: 15px;
+  direction: rtl;
+}
+.qprod__img {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 228px;
+  background: #fff9ec;
+  border-radius: 15px;
+  overflow: hidden;
+}
+.qprod__img img {
+  width: 100%;
+  height: 224px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 10px;
+}
+.qprod__badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  min-width: 67px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  background: #f55157;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1;
+  border-radius: 5px;
+}
+.qprod__badge::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 6px;
+  border-left: 6px solid transparent;
+  border-top: 6px solid #c0343a;
+}
+.qprod__info {
+  display: flex;
+  flex-direction: column;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  gap: 8px;
+  text-align: right;
+}
+.qprod__cat {
+  font-size: 14px;
+  font-weight: 300;
+  color: #30378e;
+  line-height: 1;
+}
+.qprod__name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #0a1f30;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.qprod__name:hover {
+  color: #30378e;
+}
+.qprod__price {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 4px;
+}
+.qprod__price-now {
+  font-family: "Poppins", "GE SS Two", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #30378e;
+  line-height: 25px;
+}
+.qprod__price-old {
+  font-family: "Poppins", "GE SS Two", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: #a5a5a5;
+  line-height: 24px;
+  -webkit-text-decoration: line-through;
+  text-decoration: line-through;
+}
+.qprod__btns {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+}
+.qprod__add {
+  background: #30378e !important;
+  border: 1px solid #30378e !important;
+  color: #fff !important;
+}
+.qprod__add {
+  flex: 1 1 auto;
+  min-width: 1px;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: "GE SS Two", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 12px;
+  --salla-button-primary-background-color: #30378e;
+}
+.qprod__add i {
+  font-size: 16px;
+}
+.qprod__add:hover {
+  background: #91e6f7 !important;
+  border-color: #91e6f7 !important;
+  color: #30378e !important;
+}
+.qprod__like {
+  flex: 0 0 50px;
+  width: 50px;
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  color: #0a1f30;
+  cursor: pointer;
+}
+.qprod__like i {
+  font-size: 18px;
+}
+.qprod__like:hover {
+  color: #f55157;
+  border-color: #f55157;
+}
+.qprod__like.s-product-card-wishlisted i, .qprod__like[wishlisted] i {
+  color: #f55157;
+}
+@media (max-width: 1200px) {
+  .qprods__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 900px) {
+  .qprods__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  .qprods {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .qprods .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .qprods__box {
+    padding: 20px 10px;
+    border-radius: 30px;
+    gap: 20px;
+  }
+  .qprods__title {
+    font-size: 20px;
+    line-height: 28px;
+  }
+  .qprods__subtitle {
+    font-size: 13px;
+    line-height: 20px;
+    width: 100%;
+  }
+  .qprods__grid {
+    grid-template-columns: repeat(2, 1fr);
+    -moz-column-gap: 8px;
+         column-gap: 8px;
+    row-gap: 10px;
+  }
+  .qprod {
+    padding: 10px;
+    border-radius: 18px;
+  }
+  .qprod__img {
+    height: 180px;
+  }
+  .qprod__img img {
+    height: 178px;
+  }
+  .qprod__name {
+    font-size: 14px;
+  }
+  .qprod__price-now {
+    font-size: 15px;
+  }
+  .qprod__price-old {
+    font-size: 13px;
+  }
+  .qprod__add {
+    height: 40px;
+    font-size: 14px;
+  }
+  .qprod__like {
+    flex-basis: 41px;
+    width: 41px;
+    height: 40px;
+  }
+}
 /* Top Nav */
 .top-navbar{
     display: flex;
@@ -29923,6 +30214,17 @@ model-viewer[style*=width]:before{
   .qcats .s-comments-product .s-comments-container {
     padding-left: 16px;
     padding-right: 16px;
+  }
+}
+.qprods .s-comments-product .s-comments-container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+@media (max-width: 768px) {
+  .qprods .s-comments-product .s-comments-container {
+    padding-left: 15px;
+    padding-right: 15px;
   }
 }
 @media only screen and (min-width: 1024px) {

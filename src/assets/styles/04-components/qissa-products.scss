@@ -1,0 +1,166 @@
+// ====================================================================
+// Qissa Products grid — "منتجات مميزة خصيصاً من قصة" (Figma node 102:2119)
+// EXACT values from Figma. 4 cols desktop, 2 cols mobile.
+// Section: pad 50, radius 50, gradient #daeff7 -> #fff. Title→grid gap 30.
+// ====================================================================
+
+.qprods {
+  font-family: 'GE SS Two', sans-serif;
+  padding-block: 24px;
+
+  .container { max-width: none; padding-inline: 50px; }
+
+  // gradient box wrapper
+  &__box {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 30px;                                   // Figma title→grid gap
+    padding: 50px;                               // Figma section padding
+    background: linear-gradient(180deg, #daeff7 0%, #ffffff 100%);
+    border-radius: 50px;                         // Figma
+  }
+
+  // ---- centered title ----
+  &__head {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; text-align: center;
+  }
+  &__title {
+    font-size: 32px; font-weight: 500; line-height: 38px;   // H4 Medium
+    letter-spacing: -0.2px; color: #0a1f30; margin: 0;
+  }
+  &__title-hl { color: #30378e; }                // highlighted "منتجات مميزة"
+  &__subtitle {
+    font-size: 16px; font-weight: 300; line-height: 25px;
+    color: #6c757d; width: 554px; max-width: 100%; margin: 0;
+  }
+
+  // ---- grid: 4 cols, col-gap 16, row-gap 24 ----
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 16px;
+    row-gap: 24px;
+    width: 100%;
+    direction: rtl;
+  }
+}
+
+// ---- single product card (Figma node 102:2408) ----
+.qprod {
+  display: flex; flex-direction: column;
+  background: #fff;
+  border-radius: 24px;                           // Figma 3xl
+  padding: 15px;                                 // Figma
+  direction: rtl;
+
+  // image area — cream bg, radius 15, height 228
+  &__img {
+    position: relative; display: block;
+    width: 100%; height: 228px;
+    background: #fff9ec;
+    border-radius: 15px;
+    overflow: hidden;
+    img { width: 100%; height: 224px; object-fit: cover; border-radius: 10px; }
+  }
+
+  // discount badge — top-left, red, radius 5, 12px text
+  &__badge {
+    position: absolute; top: 16px; left: 16px;
+    min-width: 67px; height: 30px;
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 5px 10px;
+    background: #f55157; color: #fff;
+    font-size: 12px; font-weight: 300; line-height: 1;
+    border-radius: 5px;
+    // folded-corner ribbon pointer on the trailing (right, RTL) edge
+    &::after {
+      content: ''; position: absolute; top: 100%; inset-inline-start: 6px;
+      border-inline-start: 6px solid transparent;
+      border-top: 6px solid #c0343a;
+    }
+  }
+
+  // info block — py16 gap16 between {text/price} and buttons
+  &__info {
+    display: flex; flex-direction: column;
+    padding-block: 16px; gap: 8px;
+    text-align: right;
+  }
+  &__cat {
+    font-size: 14px; font-weight: 300; color: #30378e; line-height: 1;
+  }
+  &__name {
+    font-size: 16px; font-weight: 500; color: #0a1f30; line-height: 1.4;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+    &:hover { color: #30378e; }
+  }
+
+  // price row — RTL right aligned, gap 6
+  &__price {
+    display: flex; align-items: baseline; justify-content: flex-end;
+    gap: 6px; margin-top: 4px;
+  }
+  &__price-now {
+    font-family: 'Poppins', 'GE SS Two', sans-serif;
+    font-size: 16px; font-weight: 600; color: #30378e; line-height: 25px;
+  }
+  &__price-old {
+    font-family: 'Poppins', 'GE SS Two', sans-serif;
+    font-size: 14px; font-weight: 400; color: #a5a5a5; line-height: 24px;
+    text-decoration: line-through;
+  }
+
+  // buttons row — gap 8, like button + add-to-cart fills rest
+  &__btns {
+    display: flex; align-items: stretch; gap: 8px; width: 100%;
+  }
+  &__add {
+    flex: 1 1 auto; min-width: 1px;
+    height: 50px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: #30378e !important; border: 1px solid #30378e !important;
+    color: #fff !important;
+    font-family: 'GE SS Two', sans-serif; font-size: 16px; font-weight: 500;
+    border-radius: 12px;
+    --salla-button-primary-background-color: #30378e;
+    i { font-size: 16px; }
+    &:hover { background: #91e6f7 !important; border-color: #91e6f7 !important; color: #30378e !important; }
+  }
+  &__like {
+    flex: 0 0 50px; width: 50px; height: 50px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #fff; border: 1px solid #e9ecef; border-radius: 12px;
+    color: #0a1f30; cursor: pointer;
+    i { font-size: 18px; }
+    &:hover { color: #f55157; border-color: #f55157; }
+    &.s-product-card-wishlisted i, &[wishlisted] i { color: #f55157; }
+  }
+}
+
+// ---- tablet: 3 then 2 cols ----
+@media (max-width: 1200px) {
+  .qprods__grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 900px) {
+  .qprods__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+// ---- mobile (Figma 187:20311): 2 cols, col-gap 8, row-gap 10, img 165x180 ----
+@media (max-width: 768px) {
+  .qprods { padding-block: 8px; }
+  .qprods .container { padding-inline: 15px; }
+  .qprods__box { padding: 20px 10px; border-radius: 30px; gap: 20px; }
+  .qprods__title { font-size: 20px; line-height: 28px; }
+  .qprods__subtitle { font-size: 13px; line-height: 20px; width: 100%; }
+  .qprods__grid { grid-template-columns: repeat(2, 1fr); column-gap: 8px; row-gap: 10px; }
+
+  .qprod { padding: 10px; border-radius: 18px; }
+  .qprod__img { height: 180px; }
+  .qprod__img img { height: 178px; }
+  .qprod__name { font-size: 14px; }
+  .qprod__price-now { font-size: 15px; }
+  .qprod__price-old { font-size: 13px; }
+  .qprod__add { height: 40px; font-size: 14px; }
+  .qprod__like { flex-basis: 41px; width: 41px; height: 40px; }
+}
