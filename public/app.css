@@ -26726,7 +26726,10 @@ input[type=radio].sr-only:checked ~ div.radio-images__badge {
   }
 }
 .qissa-header {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 40;
   font-family: "GE SS Two", sans-serif;
 }
@@ -26890,11 +26893,11 @@ input[type=radio].sr-only:checked ~ div.radio-images__badge {
   }
 }
 .qissa-hero {
-  margin-top: -170px;
+  margin-top: 0;
   border-radius: 0;
 }
 .qissa-hero .qissa-hero__inner {
-  padding-top: 190px;
+  padding-top: 180px;
 }
 /* Top Nav */
 .top-navbar{

@@ -4,7 +4,9 @@
 // ====================================================================
 
 .qissa-header {
-  position: relative;          // stay in flow (absolute hid it in the editor)
+  position: absolute;          // overlay the top of the hero on the real page
+  top: 0;
+  inset-inline: 0;
   z-index: 40;
   font-family: 'GE SS Two', sans-serif;
 
@@ -173,12 +175,6 @@
   }
 }
 
-// Pull the hero up so the transparent header overlays its gradient.
-// ~170px = top bar (~60) + nav (97) — keep hero content below it via padding.
-.qissa-hero {
-  margin-top: -170px;
-  border-radius: 0;
-}
-.qissa-hero .qissa-hero__inner {
-  padding-top: 190px;   // clear the overlaid header
-}
+// Header overlays hero WITHOUT covering it: hero gets top padding for clearance.
+.qissa-hero { margin-top: 0; border-radius: 0; }
+.qissa-hero .qissa-hero__inner { padding-top: 180px; }
