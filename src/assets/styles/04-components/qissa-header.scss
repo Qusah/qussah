@@ -1,54 +1,73 @@
-// Qissa header skin — CSS only. Overlay transparent header on the hero.
+// Qissa header — exact Figma layout, overlays hero.
+body, main, #app { background: transparent; }
 
-// kill any white wrapper around the header
-body, .min-h-screen, main, #app { background: transparent; }
-
-.store-header {
+.qheader {
   position: absolute;
-  top: 0;
-  inset-inline: 0;
-  z-index: 50;
+  top: 0; inset-inline: 0; z-index: 50;
   background: transparent !important;
   font-family: 'GE SS Two', sans-serif;
+  color: #fff;
 
-  // top bar -> dark navy pill, transparent wrapper
-  .top-navbar {
-    background: transparent !important;
-    color: #fff;
+  .container { max-width: 1340px; }
 
-    .container {
-      background: #172951;
-      border-radius: 100px;
-      padding: 6px 24px;
-      min-height: 44px;
-      margin-top: 12px;
-    }
-    a, salla-contacts, .s-search-input, * { color: #fff !important; }
-    .s-search-input { background: rgba(255,255,255,0.12) !important; border: none !important; }
+  // ---- top bar ----
+  .qheader-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    background: #172951; border: 1px solid #daeff7;
+    border-radius: 100px; padding: 8px 40px; margin-top: 12px;
+    font-size: 12px;
+
+    &__links, &__contact { display: flex; align-items: center; gap: 16px; }
+    a, span { color: #fff; }
+    a:hover { color: #daeff7; }
+    i { font-size: 14px; }
+  }
+  .qheader-sep { width: 1px; height: 12px; background: rgba(255,255,255,.4); }
+
+  // ---- main nav ----
+  .qheader-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 90px; padding: 12px 0;
   }
 
-  // main nav -> transparent over hero
-  .main-nav-container {
-    background: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
-
-    .navbar-brand img { filter: brightness(0) invert(1); }
-
-    custom-main-menu, custom-main-menu a, custom-main-menu *,
-    .header-btn__icon, .sicon-shopping-bag, .sicon-menu,
-    salla-user-menu, salla-cart-summary, .icon { color: #fff !important; }
-
-    custom-main-menu {
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 100px;
-      padding: 8px 20px;
-      a:hover { color: #daeff7 !important; }
+  // cart + profile
+  .qheader-actions { display: flex; align-items: center; gap: 32px; }
+  .qheader-act {
+    display: flex; align-items: center; gap: 8px;
+    &__txt { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.25; }
+    &__txt b { font-size: 14px; font-weight: 300; color: #e8fcff; }
+    &__txt em { font-size: 16px; font-weight: 300; font-style: normal; color: #fff; }
+    &__ic {
+      position: relative; display: inline-flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 50%; background: rgba(48,55,142,.33); color: #fff;
+      i { font-size: 20px; }
+    }
+    &__badge {
+      position: absolute; top: -4px; inset-inline-end: -4px;
+      min-width: 18px; height: 18px; padding: 0 4px;
+      background: #fd7e14; border: 1px solid #fff; border-radius: 30px;
+      color: #fff; font-size: 10px; display: flex; align-items: center; justify-content: center;
     }
   }
+
+  // pill menu
+  .qheader-menu {
+    background: linear-gradient(to right, rgba(51,84,143,.19), rgba(255,255,255,0));
+    border: 1px solid rgba(255,255,255,.08); border-radius: 100px; padding: 14px 24px;
+    custom-main-menu { display: flex; gap: 20px; }
+    custom-main-menu a, custom-main-menu * { color: #fff !important; font-size: 14px; font-weight: 500; }
+    custom-main-menu a:hover { color: #daeff7 !important; }
+  }
+
+  // logo
+  .qheader-logo img { width: 98px; height: auto; filter: brightness(0) invert(1); }
 }
 
-// hero sits under the absolute header
+// hero under header
 .qissa-hero { margin-top: 0; border-radius: 0; }
-.qissa-hero .qissa-hero__inner { padding-top: 170px; }
+.qissa-hero .qissa-hero__inner { padding-top: 160px; }
+
+@media (max-width: 1024px) {
+  .qheader .qheader-topbar, .qheader .qheader-menu, .qheader .qheader-act__txt { display: none; }
+  .qheader .qheader-nav { height: 64px; }
+}

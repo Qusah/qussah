@@ -3,71 +3,66 @@
 |------------------|---------|---------------------------------|
 | cart             | object  |                                 |
 | cart.items_count | int     |                                 |
-| cart.total       | string  | Formatted total ex: "١٠٠ ر.س"   |
+| cart.total       | string  |                                 |
 #}
-{% set important_links = theme.settings.get('important_links') %}
-<header class="store-header">
-  {# Top Nav #}
-  <div class="top-navbar">
-    <div class="container flex justify-between">
-      <div class="flex-1 flex items-center gap-2">
-          {# Footer Menu #}
-          {% if important_links %}
-            <salla-menu source="footer" topnav></salla-menu>
-          {% endif %}
+<header class="store-header qheader">
 
-          {# Language & Currency Component #}
-          <div class="header-buttons">
-              {% if store.settings.is_multilingual or store.settings.currencies_enabled %}
-                  <salla-localization-modal show-trigger></salla-localization-modal>
-              {% endif %}
-          </div>
-
-          {# Scopes | Branches #}
-          {% if store.scope %}
-              <button class="btn--rounded-gray"
-                      onclick="salla.event.dispatch('scopes::open', {'mode': 'default'})">
-                  <i class="sicon-location rtl:ml-1 ltr:mr-1"></i> {{ store.scope.name }}
-              </button>
-          {% endif %}
-
-          {# Search bar #}
-          <div class="header-search flex-1">
-            <salla-search inline oval height="36"></salla-search>
-          </div>
+  {# top bar #}
+  <div class="container">
+    <div class="qheader-topbar">
+      <div class="qheader-topbar__links">
+        <a href="{{ store.url }}">تواصل معنا</a>
+        <span class="qheader-sep"></span>
+        <a href="{{ store.url }}">سياسة الإستبدال أو الاسترجاع</a>
+        <span class="qheader-sep"></span>
+        <a href="{{ store.url }}">المفضلة</a>
+        <span class="qheader-sep"></span>
+        <span class="qheader-lang">العربية - رس</span>
       </div>
-
-      <salla-contacts is-header></salla-contacts>
+      <div class="qheader-topbar__contact">
+        <span>{{ store.email|default('Support@salla.sa') }}</span>
+        <i class="sicon-mail"></i>
+        <span class="qheader-sep"></span>
+        <span dir="ltr">{{ store.mobile|default('+966556754472') }}</span>
+        <i class="sicon-phone"></i>
+      </div>
     </div>
   </div>
 
-  {# Main Nav #}
-  <div id="mainnav" class="main-nav-container shadow-default bg-white flex items-center">
-      <div class="inner bg-inherit w-full">
-          <div class="container">
-              <div class="flex items-stretch justify-between relative">
-                  <div class="flex items-center">
-                      <a class="lg:hidden mburger mburger--collapse leading-none rtl:ml-4 ltr:mr-4" href="#mobile-menu" aria-label="Open-menu">
-                        <i class="sicon-menu text-primary text-2xl"></i>
-                      </a>
-                      <a class="navbar-brand" href="{{ store.url }}">
-                          <img fetchpriority="high" width="100%" height="100%" loading="eager" src="{{ store.logo|cdn(175) }}" alt="{{ store.name }} logo">
-                          {% if is_page('index') %}
-                            <h1 class="sr-only">{{ store.name }}</h1>
-                          {% else %}
-                            <h2 class="sr-only">{{ store.name }}</h2>
-                          {% endif %}
-                      </a>
-                      <custom-main-menu></custom-main-menu>
-                  </div>
-                  <div class="flex items-center justify-end my-2.5">
-                      <salla-user-menu avatar-only show-header show-trigger></salla-user-menu>
-                      <salla-cart-summary class="ml-4 rtl:ml-[unset] rtl:mr-4">
-                        <i slot="icon" class="header-btn__icon icon sicon-shopping-bag"></i>
-                      </salla-cart-summary>
-                  </div>
-              </div>
-          </div>
+  {# main nav #}
+  <div class="container">
+    <div class="qheader-nav">
+
+      {# cart + profile (left) #}
+      <div class="qheader-actions">
+        <a href="{{ store.url }}" class="qheader-act">
+          <span class="qheader-act__txt">
+            <b>سلة المشتريات</b>
+            <em>{{ cart.total|default('0 رس') }}</em>
+          </span>
+          <span class="qheader-act__ic">
+            <i class="sicon-shopping-bag"></i>
+            <span class="qheader-act__badge">{{ cart.items_count|default(0) }}</span>
+          </span>
+        </a>
+        <a href="{{ store.url }}" class="qheader-act">
+          <span class="qheader-act__txt">
+            <b>مرحبا بك</b>
+            <em>تسجيل دخول</em>
+          </span>
+          <span class="qheader-act__ic"><i class="sicon-user"></i></span>
+        </a>
       </div>
+
+      {# pill menu (center) #}
+      <nav class="qheader-menu"><custom-main-menu></custom-main-menu></nav>
+
+      {# logo (right) #}
+      <a class="qheader-logo" href="{{ store.url }}">
+        <img src="{{ store.logo|cdn(175) }}" alt="{{ store.name }}"/>
+        {% if is_page('index') %}<h1 class="sr-only">{{ store.name }}</h1>{% endif %}
+      </a>
+
+    </div>
   </div>
 </header>
