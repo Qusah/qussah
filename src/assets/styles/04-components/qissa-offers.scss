@@ -25,8 +25,8 @@
     gap: 16px;
   }
   &__head {
-    display: flex; flex-direction: column; align-items: flex-end;
-    gap: 12px; text-align: right; order: 2;
+    display: flex; flex-direction: column; align-items: flex-start;
+    gap: 12px; text-align: right; order: 1; direction: rtl;
   }
   &__title {
     font-size: 32px; font-weight: 500; line-height: 38px;
@@ -46,7 +46,7 @@
 
   // ---- "تسوق كل المنتجات" CTA pill (top-left) ----
   &__all {
-    order: 1; flex: 0 0 auto;
+    order: 2; flex: 0 0 auto;
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     width: 200px; height: 55px;
     background: linear-gradient(to right, #172951, #30378e);

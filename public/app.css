@@ -27598,10 +27598,11 @@ body, main, #app {
 .qoffers__head {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 12px;
   text-align: right;
-  order: 2;
+  order: 1;
+  direction: rtl;
 }
 .qoffers__title {
   font-size: 32px;
@@ -27630,7 +27631,7 @@ body, main, #app {
   direction: rtl;
 }
 .qoffers__all {
-  order: 1;
+  order: 2;
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
