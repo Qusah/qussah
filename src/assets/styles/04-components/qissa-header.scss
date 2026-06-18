@@ -50,11 +50,11 @@ body, main, #app { background: transparent; }
     }
   }
 
-  // pill menu
+  // pill menu (Figma px-25 py-15)
   .qheader-menu {
     background: linear-gradient(to right, rgba(51,84,143,.19), rgba(255,255,255,0));
-    border: 1px solid rgba(255,255,255,.08); border-radius: 100px; padding: 14px 24px;
-    custom-main-menu { display: flex; gap: 20px; }
+    border: 1px solid rgba(255,255,255,.06); border-radius: 100px; padding: 15px 25px;
+    custom-main-menu { display: flex; gap: 20px; align-items: center; }
     custom-main-menu a, custom-main-menu * { color: #fff !important; font-size: 14px; font-weight: 500; }
     custom-main-menu a:hover { color: #daeff7 !important; }
   }
@@ -66,11 +66,10 @@ body, main, #app { background: transparent; }
 
 // hero under header — keep rounded corners + side margins (Figma)
 .qissa-hero {
-  margin: 0 50px;
-  border-radius: 30px;
+  margin: 0 50px !important;
+  border-radius: 30px !important;
   overflow: hidden;
 }
-.qissa-hero .qissa-hero__inner { padding-top: 160px; }
 
 @media (max-width: 1024px) {
   .qheader .qheader-topbar, .qheader .qheader-menu, .qheader .qheader-act__txt { display: none; }

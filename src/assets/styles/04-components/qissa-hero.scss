@@ -15,53 +15,63 @@
   &__inner {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    min-height: 580px;
-    padding: 2rem 3.5rem 2rem 0; // RTL: right padding for text, image bleeds left
+    justify-content: flex-end;
+    gap: 96px;                     // Figma gap
+    min-height: 700px;
+    padding: 190px 80px 60px;      // Figma px-80 py-190
   }
 
   // ---- text side (right in RTL) ----
   &__content {
-    flex: 1 1 50%;
-    text-align: start;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;         // right-aligned column
+    text-align: right;
     color: #ffffff;
-    padding-inline-start: 1.5rem;
+    gap: 16px;                     // Figma spacing
   }
 
   &__title {
-    font-family: 'GE SS Two', 'GE SS', sans-serif;
-    font-size: 56px;               // Figma H1
-    font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: -0.5px;        // Figma H1 tracking
-    margin-bottom: 1.5rem;
+    font-family: 'GE SS Two', sans-serif;
+    font-size: 64px;               // Figma Title-2
+    font-weight: 500;              // Medium
+    line-height: 76px;
+    letter-spacing: -0.8px;
+    margin: 0;
     color: #ffffff;
+    width: 100%;
 
-    @media (max-width: 1280px) { font-size: 44px; }
-    @media (max-width: 768px)  { font-size: 32px; }
+    @media (max-width: 1280px) { font-size: 48px; line-height: 1.25; }
+    @media (max-width: 768px)  { font-size: 32px; line-height: 1.3; }
   }
 
   &__subtitle {
     font-family: 'GE SS Two', sans-serif;
     font-size: 16px;               // Figma Body-2
     font-weight: 300;
-    line-height: 1.75;
-    color: #c1c3dd;                // Figma Secondary Color
-    margin-bottom: 2.25rem;
-    max-width: 540px;
+    line-height: 24px;
+    color: #f8f8f8;
+    margin: 0;
+    width: 534px;                  // Figma width
+    max-width: 100%;
   }
 
   // ---- CTA button ----
   &__btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.6rem;
-    background: #daeff7;           // Figma smoothing baby blue
-    color: #172951;               // Figma stamp-pad navy
+    justify-content: center;
+    gap: 8px;
+    width: 200px;                 // Figma
+    height: 55px;
+    margin-top: 16px;
+    background: #91e6f7;          // Figma button color
+    border: 1px solid #30378e;
+    color: #0a1f30;              // Figma chosen-blue
     font-family: 'GE SS Two', sans-serif;
-    font-weight: 700;
+    font-weight: 500;
     font-size: 16px;
-    padding: 1rem 2rem;
     border-radius: 16px;
     transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
 
