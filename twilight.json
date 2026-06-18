@@ -557,6 +557,19 @@
           "value": []
         },
         {
+          "id": "offer_end",
+          "type": "string",
+          "format": "text",
+          "icon": "sicon-clock",
+          "label": {
+            "en": "Offer end date",
+            "ar": "تاريخ انتهاء العرض"
+          },
+          "description": "صيغة: YYYY-MM-DD HH:mm  مثال: 2026-06-30 23:59",
+          "placeholder": "2026-06-30 23:59",
+          "value": ""
+        },
+        {
           "id": "button_url",
           "type": "string",
           "format": "text",

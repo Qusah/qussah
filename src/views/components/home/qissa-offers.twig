@@ -16,7 +16,7 @@
             {# title (right-aligned) #}
             <div class="qoffers__head">
                 <h2 class="qoffers__title">
-                    <span class="qoffers__title-hl">{{ component.title_highlight }}</span>{{ component.title }}
+                    <span class="qoffers__title-hl">{{ component.title_highlight }}</span> {{ component.title }}
                 </h2>
                 {% if component.subtitle %}
                     <p class="qoffers__subtitle">{{ component.subtitle }}</p>
@@ -53,8 +53,8 @@
                                 {% endif %}
                             </div>
 
-                            {# countdown — يوم / ساعة / دقيقة / ثانية #}
-                            <div class="qoffer__time" data-end="{{ product.offer_end|default(product.promotion_end) }}">
+                            {# countdown — يوم / ساعة / دقيقة / ثانية (merchant offer_end overrides product) #}
+                            <div class="qoffer__time" data-end="{{ component.offer_end|default(product.offer_end|default(product.promotion_end)) }}">
                                 <div class="qoffer__cell"><b data-d>02</b><span>يوم</span></div>
                                 <div class="qoffer__cell"><b data-h>16</b><span>ساعة</span></div>
                                 <div class="qoffer__cell"><b data-m>55</b><span>دقيقة</span></div>
@@ -99,8 +99,9 @@
   function pad(n){ return String(n).padStart(2,'0'); }
   function tick(){
     document.querySelectorAll('.qoffer__time[data-end]').forEach(function(el){
-      var end = Date.parse(el.getAttribute('data-end'));
-      if(isNaN(end)) return;                     // no end date → keep static values
+      var raw = (el.getAttribute('data-end')||'').trim().replace(' ','T');
+      var end = Date.parse(raw);
+      if(isNaN(end)) return;                     // no/invalid end date → keep static values
       var diff = Math.max(0, end - Date.now());
       var s = Math.floor(diff/1000);
       var d = Math.floor(s/86400); s-=d*86400;
