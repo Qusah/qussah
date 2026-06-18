@@ -615,7 +615,7 @@
       "title": {
         "en": "All Qusah Products",
         "ar": "جميع منتجات قصة"
-      },
+      }, 
       "icon": "sicon-bag",
       "path": "home.qissa-all-products",
       "fields": [
