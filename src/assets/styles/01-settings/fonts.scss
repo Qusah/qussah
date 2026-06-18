@@ -43,3 +43,20 @@
   font-style: normal;
   font-display: swap;
 }
+
+// ---- Apply GE SS Two globally (Figma uses it everywhere) ----
+:root {
+  --font-main: 'GE SS Two', sans-serif;
+}
+
+body,
+button,
+input,
+select,
+textarea,
+h1, h2, h3, h4, h5, h6,
+.qissa-hero__title,
+.qissa-hero__subtitle,
+.qissa-hero__btn {
+  font-family: 'GE SS Two', 'GE SS', Tahoma, sans-serif !important;
+}
