@@ -2998,11 +2998,11 @@ textarea.s-input{
     padding-bottom: 0.625rem;
 }
 .qheader .s-advertisement-content {
-  max-width: 1340px;
+  max-width: 1380px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 24px;
-  padding-right: 24px;
+  padding-left: 50px;
+  padding-right: 50px;
 }
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-advertisement-content ul{
@@ -26748,11 +26748,11 @@ body, main, #app {
   color: #fff;
 }
 .qheader .container {
-  max-width: 1340px;
+  max-width: 1380px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 24px;
-  padding-right: 24px;
+  padding-left: 50px;
+  padding-right: 50px;
 }
 .qheader .qheader-topbar {
   display: flex;
@@ -26880,8 +26880,9 @@ body, main, #app {
   filter: brightness(0) invert(1);
 }
 .qissa-hero {
-  margin-top: 0;
-  border-radius: 0;
+  margin: 0 50px;
+  border-radius: 30px;
+  overflow: hidden;
 }
 .qissa-hero .qissa-hero__inner {
   padding-top: 160px;
@@ -29555,11 +29556,11 @@ model-viewer[style*=width]:before{
     }
 }
 .qheader .s-comments-product .s-comments-container {
-  max-width: 1340px;
+  max-width: 1380px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 24px;
-  padding-right: 24px;
+  padding-left: 50px;
+  padding-right: 50px;
 }
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-comments-product .s-comments-container ul{
