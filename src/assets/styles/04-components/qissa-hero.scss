@@ -61,6 +61,8 @@
   &__btn {
     display: inline-flex;
     align-self: flex-end;         // right side in RTL
+    margin-inline-start: auto;    // push to the right
+    margin-inline-end: 0;
     align-items: center;
     justify-content: center;
     gap: 8px;

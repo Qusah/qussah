@@ -34,25 +34,32 @@ body, main, #app { background: transparent; }
 
   // ---- main nav ----
   .qheader-nav {
+    position: relative;
     display: flex; align-items: center; justify-content: space-between;
     height: 90px; padding: 12px 0;
   }
-  // RTL order: logo right, menu center, actions left
+  // RTL order: logo right, actions left
   .qheader-logo    { order: 1; }
-  .qheader-menu    { order: 2; }
   .qheader-actions { order: 3; }
+  // pill perfectly centered regardless of side widths
+  .qheader-menu {
+    order: 2;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 
-  // cart + profile
-  .qheader-actions { display: flex; align-items: center; gap: 32px; }
+  // cart + profile (smaller)
+  .qheader-actions { display: flex; align-items: center; gap: 20px; }
   .qheader-act {
-    display: flex; align-items: center; gap: 8px;
-    &__txt { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.25; }
-    &__txt b { font-size: 14px; font-weight: 300; color: #e8fcff; }
-    &__txt em { font-size: 16px; font-weight: 300; font-style: normal; color: #fff; }
+    display: flex; align-items: center; gap: 6px;
+    &__txt { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; }
+    &__txt b { font-size: 12px; font-weight: 300; color: #e8fcff; }
+    &__txt em { font-size: 13px; font-weight: 300; font-style: normal; color: #fff; }
     &__ic {
       position: relative; display: inline-flex; align-items: center; justify-content: center;
-      width: 40px; height: 40px; border-radius: 50%; background: rgba(48,55,142,.33); color: #fff;
-      i { font-size: 20px; }
+      width: 34px; height: 34px; border-radius: 50%; background: rgba(48,55,142,.33); color: #fff;
+      i { font-size: 16px; }
     }
     &__badge {
       position: absolute; top: -4px; inset-inline-end: -4px;
