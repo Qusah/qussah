@@ -26735,6 +26735,59 @@ input[type=radio].sr-only:checked ~ div.radio-images__badge {
     flex-basis: auto;
   }
 }
+.store-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  font-family: "GE SS Two", sans-serif;
+}
+.store-header .top-navbar {
+  background: #172951;
+  color: #fff;
+  border-radius: 100px;
+  margin-top: 12px;
+  padding: 6px 24px;
+  min-height: 44px;
+}
+.store-header .top-navbar a, .store-header .top-navbar salla-contacts, .store-header .top-navbar .s-search-input {
+  color: #fff !important;
+}
+.store-header .top-navbar .s-search-input {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+.store-header .main-nav-container {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.store-header .main-nav-container .navbar-brand img {
+  filter: brightness(0) invert(1);
+}
+.store-header .main-nav-container custom-main-menu,
+.store-header .main-nav-container custom-main-menu a,
+.store-header .main-nav-container .header-btn__icon,
+.store-header .main-nav-container .sicon-shopping-bag,
+.store-header .main-nav-container .sicon-menu,
+.store-header .main-nav-container salla-user-menu, .store-header .main-nav-container salla-cart-summary {
+  color: #fff !important;
+}
+.store-header .main-nav-container custom-main-menu {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 100px;
+  padding: 8px 20px;
+}
+.store-header .main-nav-container custom-main-menu a:hover {
+  color: #daeff7 !important;
+}
+.qissa-hero {
+  margin-top: 0;
+  border-radius: 0;
+}
+.qissa-hero .qissa-hero__inner {
+  padding-top: 170px;
+}
 /* Top Nav */
 .top-navbar{
     display: flex;

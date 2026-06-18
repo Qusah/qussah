@@ -1,180 +1,51 @@
-// ====================================================================
-// Qissa Header — EXACT Figma specs (nodes 100:40, 187:17880)
-// Top bar #172951 | nav transparent over hero | pill menu
-// ====================================================================
+// Qissa header skin — CSS ONLY over theme-raed markup. No twig edits.
+// Figma: top bar #172951, transparent nav over hero, white logo, pill menu.
 
-.qissa-header {
-  position: absolute;          // overlay the top of the hero on the real page
+.store-header {
+  position: absolute;
   top: 0;
   inset-inline: 0;
-  z-index: 40;
+  z-index: 50;
   font-family: 'GE SS Two', sans-serif;
 
-  // ---------- TOP BAR ----------
-  .qheader-topbar {
-    padding-top: 12px;
-
-    &__inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      background: #172951;                 // base/stamp-pad-blue
-      border: 1px solid #daeff7;           // baby blue
-      border-radius: 100px;
-      padding: 8px 40px;
-    }
-
-    &__links,
-    &__contact {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    a, .qheader-contact-item {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: #ffffff;
-      font-size: 12px;
-      line-height: 16px;
-      font-weight: 300;
-      &:hover { color: #daeff7; }
-    }
-    .qheader-contact-item i { font-size: 14px; }
-  }
-
-  .qheader-divider {
-    width: 1px;
-    height: 10px;
-    background: rgba(255, 255, 255, 0.4);
-    display: inline-block;
-  }
-
-  // ---------- MAIN NAV ----------
-  .qheader-nav {
-    &__inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 97px;
-      padding: 12px 0;
-    }
-  }
-
-  // cart + profile blocks
-  .qheader-actions {
-    display: flex;
-    align-items: center;
-    gap: 32px;
-    order: 1;          // left in RTL
-  }
-
-  .qheader-action {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    &__text {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      line-height: 1.2;
-    }
-    &__label {
-      font-size: 14px;
-      font-weight: 300;
-      color: #e8fcff;          // blue/50
-    }
-    &__value {
-      font-size: 16px;
-      font-weight: 300;
-      color: #ffffff;
-    }
-    &__icon {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      background: rgba(48, 55, 142, 0.33);   // royal blue @33%
-      border-radius: 50px;
-      color: #ffffff;
-      i { font-size: 20px; }
-    }
-    &__badge {
-      position: absolute;
-      top: -4px;
-      inset-inline-end: -4px;
-      min-width: 18px;
-      height: 18px;
-      padding: 0 4px;
-      background: #fd7e14;     // orange/500
-      border: 1px solid #ffffff;
-      border-radius: 30px;
-      color: #ffffff;
-      font-size: 10px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  }
-
-  // pill menu (center)
-  .qheader-menu {
-    order: 2;
-    background: linear-gradient(to right, rgba(51, 84, 143, 0.19), rgba(255, 255, 255, 0));
-    border: 1px solid rgba(255, 255, 255, 0.06);
+  // top bar -> dark navy pill
+  .top-navbar {
+    background: #172951;
+    color: #fff;
     border-radius: 100px;
-    padding: 15px 25px;
+    margin-top: 12px;
+    padding: 6px 24px;
+    min-height: 44px;
 
+    a, salla-contacts, .s-search-input { color: #fff !important; }
+    .s-search-input { background: rgba(255,255,255,0.1) !important; }
+  }
+
+  // main nav -> transparent over hero
+  .main-nav-container {
+    background: transparent !important;
+    box-shadow: none !important;
+
+    .navbar-brand img { filter: brightness(0) invert(1); }   // white logo
+
+    custom-main-menu,
+    custom-main-menu a,
+    .header-btn__icon,
+    .sicon-shopping-bag,
+    .sicon-menu,
+    salla-user-menu, salla-cart-summary { color: #fff !important; }
+
+    // pill around the menu
     custom-main-menu {
-      display: flex;
-      gap: 20px;
-      a, li > a {
-        color: #ffffff;
-        font-size: 14px;
-        font-weight: 500;
-        line-height: 20px;
-        white-space: nowrap;
-        &:hover { color: #daeff7; }
-      }
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 100px;
+      padding: 8px 20px;
+      a:hover { color: #daeff7 !important; }
     }
-  }
-
-  // logo (right in RTL)
-  .qheader-logo {
-    order: 3;
-    width: 98px;
-    display: flex;
-    justify-content: flex-end;
-    img {
-      width: 98px;
-      height: auto;
-      filter: brightness(0) invert(1);    // white logo over gradient
-    }
-  }
-
-  .qheader-burger {
-    order: 0;
-    color: #ffffff;
-    font-size: 24px;
-    display: none;
-  }
-
-  // ---------- responsive ----------
-  @media (max-width: 1024px) {
-    .qheader-topbar { display: none; }
-    .qheader-menu { display: none; }
-    .qheader-burger { display: inline-flex; }
-    .qheader-nav__inner { height: 70px; }
-    .qheader-action__text { display: none; }
   }
 }
 
-// Header overlays hero WITHOUT covering it: hero gets top padding for clearance.
+// hero clears the absolute header
 .qissa-hero { margin-top: 0; border-radius: 0; }
-.qissa-hero .qissa-hero__inner { padding-top: 180px; }
+.qissa-hero .qissa-hero__inner { padding-top: 170px; }
