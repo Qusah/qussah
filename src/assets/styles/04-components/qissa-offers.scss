@@ -92,9 +92,11 @@
     &-num { font-size: 14px; font-weight: 500; color: #6c757d; }
     &-icons {
       display: inline-flex; gap: 2px;
-      i { font-size: 13px; }
-      i.is-on  { color: #f5b50a; }
-      i.is-off { color: #d9dce3; }
+    }
+    &-ic {
+      font-size: 14px; line-height: 1;
+      &.is-on  { color: #f5b50a; }   // filled gold
+      &.is-off { color: #d9dce3; }   // filled gray
     }
   }
 

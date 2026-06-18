@@ -27721,13 +27721,14 @@ body, main, #app {
   display: inline-flex;
   gap: 2px;
 }
-.qoffer__star-icons i {
-  font-size: 13px;
+.qoffer__star-ic {
+  font-size: 14px;
+  line-height: 1;
 }
-.qoffer__star-icons i.is-on {
+.qoffer__star-ic.is-on {
   color: #f5b50a;
 }
-.qoffer__star-icons i.is-off {
+.qoffer__star-ic.is-off {
   color: #d9dce3;
 }
 .qoffer__price {

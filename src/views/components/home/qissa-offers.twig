@@ -44,7 +44,7 @@
                             {# rating — stars on the RIGHT, (4.5) to their left #}
                             <div class="qoffer__star">
                                 <span class="qoffer__star-icons">
-                                    {% for i in 1..5 %}<i class="sicon-star {{ i <= (product.rating.stars|default(5)) ? 'is-on' : 'is-off' }}"></i>{% endfor %}
+                                    {% for i in 1..5 %}<span class="qoffer__star-ic {{ i <= (product.rating.stars|default(5)) ? 'is-on' : 'is-off' }}">★</span>{% endfor %}
                                 </span>
                                 <span class="qoffer__star-num">({{ product.rating.stars|default('4.5') }})</span>
                             </div>
