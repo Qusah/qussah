@@ -7,8 +7,9 @@
 #}
 <header class="store-header qheader">
 
-  {# top bar #}
-  <div class="container">
+  {# top bar — sits ABOVE hero (not overlaid) #}
+  <div class="qheader-topwrap">
+   <div class="container">
     <div class="qheader-topbar">
       <div class="qheader-topbar__links">
         <a href="{{ store.url }}">تواصل معنا</a>
@@ -27,6 +28,7 @@
         <i class="sicon-phone"></i>
       </div>
     </div>
+   </div>
   </div>
 
   {# main nav #}

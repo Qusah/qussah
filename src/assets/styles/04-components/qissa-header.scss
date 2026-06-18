@@ -2,13 +2,21 @@
 body, main, #app { background: transparent; }
 
 .qheader {
-  position: absolute;
-  top: 0; inset-inline: 0; z-index: 50;
-  background: transparent !important;
+  position: relative;
+  z-index: 50;
   font-family: 'GE SS Two', sans-serif;
   color: #fff;
 
   .container { max-width: 1380px; margin-inline: auto; padding-inline: 50px; }
+
+  // top bar: normal flow ABOVE hero
+  .qheader-topwrap { background: #fff; padding: 12px 0; }
+
+  // main nav wrapper: normal flow, then hero pulls up to overlap it
+  > .container:last-of-type {
+    position: relative;
+    z-index: 50;
+  }
 
   // ---- top bar ----
   .qheader-topbar {
@@ -73,12 +81,17 @@ body, main, #app { background: transparent; }
   .qheader-logo img { width: 98px; height: auto; object-fit: contain; filter: brightness(0) invert(1); }
 }
 
-// hero under header — keep rounded corners + side margins (Figma)
+// hero — pulled up so the nav overlaps it; top bar stays above
 .qissa-hero {
-  margin: 0 50px !important;
+  margin: -97px 50px 0 !important;   // overlap the nav row
   border-radius: 30px !important;
   overflow: hidden;
+  position: relative;
+  z-index: 1;                         // under the nav text
 }
+.qissa-hero .qissa-hero__inner { padding-top: 130px; }   // clear the overlaid nav
+// nav text above the hero
+.qheader > .container:last-of-type { z-index: 60 !important; }
 
 @media (max-width: 1024px) {
   .qheader .qheader-topbar, .qheader .qheader-menu, .qheader .qheader-act__txt { display: none; }
