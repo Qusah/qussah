@@ -27344,8 +27344,8 @@ body, main, #app {
   position: absolute;
   top: 16px;
   left: 16px;
-  min-width: 67px;
   height: 30px;
+  min-width: 67px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -27355,20 +27355,23 @@ body, main, #app {
   font-size: 12px;
   font-weight: 300;
   line-height: 1;
-  border-radius: 5px;
+  border-radius: 4px;
+  white-space: nowrap;
 }
-.qprod__badge::after {
+.qprod__badge::before {
   content: "";
   position: absolute;
-  top: 100%;
-  left: 6px;
-  border-left: 6px solid transparent;
-  border-top: 6px solid #c0343a;
+  top: 50%;
+  left: -6px;
+  transform: translateY(-50%);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 6px solid #f55157;
 }
 .qprod__info {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   padding-top: 16px;
   padding-bottom: 16px;
   gap: 8px;
@@ -27400,8 +27403,7 @@ body, main, #app {
 }
 .qprod__chips {
   display: flex;
-  flex-direction: row-reverse;
-  justify-content: flex-end;
+  justify-content: flex-start;
   flex-wrap: wrap;
   gap: 10px;
   width: 100%;
@@ -27420,7 +27422,7 @@ body, main, #app {
   display: flex;
   flex-direction: row;
   align-items: baseline;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 6px;
   margin-top: 4px;
   width: 100%;
@@ -27634,6 +27636,8 @@ body, main, #app {
   order: 2;
   flex: 0 0 auto;
   display: inline-flex;
+  flex-direction: row;
+  direction: ltr;
   align-items: center;
   justify-content: center;
   gap: 8px;
@@ -27724,12 +27728,7 @@ body, main, #app {
 .qoffer__star-ic {
   font-size: 14px;
   line-height: 1;
-}
-.qoffer__star-ic.is-on {
   color: #f5b50a;
-}
-.qoffer__star-ic.is-off {
-  color: #d9dce3;
 }
 .qoffer__price {
   display: flex;
@@ -27858,8 +27857,8 @@ body, main, #app {
   position: absolute;
   top: 30px;
   left: 16px;
-  min-width: 67px;
   height: 30px;
+  min-width: 67px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -27868,8 +27867,19 @@ body, main, #app {
   color: #fff;
   font-size: 12px;
   font-weight: 300;
+  line-height: 1;
   border-radius: 4px;
   white-space: nowrap;
+}
+.qoffer__badge::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -6px;
+  transform: translateY(-50%);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 6px solid #f55157;
 }
 @media (max-width: 768px) {
   .qoffers {
