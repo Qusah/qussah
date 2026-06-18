@@ -44,6 +44,15 @@
                             {% endif %}
                             <a href="{{ product.url }}" class="qprod__name">{{ product.name }}</a>
 
+                            {# spec chips (from product subtitle, split by | or ، ) #}
+                            {% if product.subtitle %}
+                                <div class="qprod__chips">
+                                    {% for chip in product.subtitle|split('،') %}
+                                        {% if chip|trim %}<span class="qprod__chip">{{ chip|trim }}</span>{% endif %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
                             {# price #}
                             <div class="qprod__price">
                                 {% if product.is_on_sale %}

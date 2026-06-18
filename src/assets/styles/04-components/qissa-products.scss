@@ -80,26 +80,39 @@
     }
   }
 
-  // info block — py16 gap16 between {text/price} and buttons
+  // info block — py16 gap8 between rows, everything right-aligned (RTL)
   &__info {
-    display: flex; flex-direction: column;
+    display: flex; flex-direction: column; align-items: flex-end;
     padding-block: 16px; gap: 8px;
-    text-align: right;
+    text-align: right; width: 100%;
   }
   &__cat {
     font-size: 14px; font-weight: 300; color: #30378e; line-height: 1;
+    width: 100%; text-align: right;
   }
   &__name {
     font-size: 16px; font-weight: 500; color: #0a1f30; line-height: 1.4;
+    width: 100%; text-align: right;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     overflow: hidden;
     &:hover { color: #30378e; }
   }
 
-  // price row — RTL right aligned, gap 6
+  // spec chips — blue bg, royal-blue text, radius 4, gap 10 (Figma 106:3474)
+  &__chips {
+    display: flex; flex-direction: row-reverse; justify-content: flex-end;
+    flex-wrap: wrap; gap: 10px; width: 100%; margin-top: 4px;
+  }
+  &__chip {
+    background: #e8fcff; color: #30378e;
+    font-size: 14px; line-height: 1;
+    padding: 6px 8px; border-radius: 4px; white-space: nowrap;
+  }
+
+  // price row — RTL right aligned, gap 6, sale first then struck
   &__price {
-    display: flex; align-items: baseline; justify-content: flex-end;
-    gap: 6px; margin-top: 4px;
+    display: flex; flex-direction: row; align-items: baseline; justify-content: flex-end;
+    gap: 6px; margin-top: 4px; width: 100%;
   }
   &__price-now {
     font-family: 'Poppins', 'GE SS Two', sans-serif;
