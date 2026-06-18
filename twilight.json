@@ -1,10 +1,10 @@
 {
     "name": {
-        "ar": "رائد",
-        "en": "Theme Raed"
+        "ar": "Qussah",
+        "en": "Qussah"
     },
-    "repository": "https://github.com/SallaApp/theme-raed",
-    "author_email": "support@salla.sa",
+    "repository": "https://github.com/Qusah/qussah",
+    "author_email": "HazemSalama108@gmail.com",
     "features": [
         "mega-menu",
         "fonts",
@@ -1128,9 +1128,9 @@
             ]
         }
     ],
-    "support_url": "https://salla.com/",
+    "support_url": "https://example.com",
     "description": {
-        "ar": "مجموعة كبيرة من المزايا لدعم تجارتك وتقديم تجربة تسوق مثيرة لعملائك",
-        "en": "A wide range of features to support your business and provide an exciting shopping experience for your customers"
+        "ar": "",
+        "en": ""
     }
 }
