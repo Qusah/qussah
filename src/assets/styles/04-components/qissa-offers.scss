@@ -47,7 +47,8 @@
   // ---- "تسوق كل المنتجات" CTA pill (top-left) ----
   &__all {
     order: 2; flex: 0 0 auto;
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    display: inline-flex; flex-direction: row; direction: ltr;
+    align-items: center; justify-content: center; gap: 8px;
     width: 200px; height: 55px;
     background: linear-gradient(to right, #172951, #30378e);
     color: #fff; border-radius: 16px;
@@ -94,9 +95,7 @@
       display: inline-flex; gap: 2px;
     }
     &-ic {
-      font-size: 14px; line-height: 1;
-      &.is-on  { color: #f5b50a; }   // filled gold
-      &.is-off { color: #d9dce3; }   // filled gray
+      font-size: 14px; line-height: 1; color: #f5b50a;   // yellow (filled ★ and outline ☆)
     }
   }
 
@@ -155,12 +154,20 @@
       background: #daeff7; border-radius: 15px;
     }
   }
+  // discount badge (Figma 107:12598) — red tag on the image, left-pointing folded tail
   &__badge {
-    position: absolute; top: 30px; inset-inline-start: 16px;
-    min-width: 67px; height: 30px;
+    position: absolute; top: 30px; left: 16px;
+    height: 30px; min-width: 67px;
     display: inline-flex; align-items: center; justify-content: center;
     padding: 5px 10px; background: #f55157; color: #fff;
-    font-size: 12px; font-weight: 300; border-radius: 4px; white-space: nowrap;
+    font-size: 12px; font-weight: 300; line-height: 1; border-radius: 4px; white-space: nowrap;
+    // folded triangle tail pointing LEFT
+    &::before {
+      content: ''; position: absolute; top: 50%; left: -6px;
+      transform: translateY(-50%);
+      border-block: 6px solid transparent;
+      border-inline-end: 6px solid #f55157;
+    }
   }
 }
 
