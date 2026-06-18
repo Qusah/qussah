@@ -484,13 +484,18 @@
         {
           "id": "products",
           "type": "items",
+          "icon": "sicon-keyboard_arrow_down",
+          "label": "المنتجات",
           "format": "dropdown-list",
-          "source": "products",
+          "description": null,
+          "selected": [],
+          "options": [],
+          "required": true,
           "multichoice": true,
-          "label": {
-            "en": "Products",
-            "ar": "المنتجات"
-          },
+          "source": "products",
+          "searchable": true,
+          "maxLength": 8,
+          "minLength": 1,
           "value": []
         }
       ]
