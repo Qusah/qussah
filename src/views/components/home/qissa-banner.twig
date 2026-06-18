@@ -1,0 +1,42 @@
+{#
+| Variable                | Type   | Description                          |
+|-------------------------|--------|--------------------------------------|
+| component               | object | merchant settings from twilight.json |
+| component.heading       | string | banner headline                      |
+| component.subheading    | string | supporting paragraph                 |
+| component.image         | string | products image (bursts from left)    |
+| component.button_text   | string | CTA label                            |
+| component.button_url    | string | CTA link                             |
+| position                | int    | sorting block                        |
+#}
+<section class="s-block qbanner" id="qbanner-{{ position }}">
+    <div class="container">
+        <div class="qbanner__box">
+
+            {# products image (left in RTL) #}
+            {% if component.image %}
+                <div class="qbanner__media">
+                    <img src="{{ component.image }}" alt="{{ component.heading }}" loading="lazy"/>
+                </div>
+            {% endif %}
+
+            {# text (right) #}
+            <div class="qbanner__text">
+                {% if component.heading %}
+                    <h2 class="qbanner__title">{{ component.heading }}</h2>
+                {% endif %}
+                {% if component.subheading %}
+                    <p class="qbanner__subtitle">{{ component.subheading }}</p>
+                {% endif %}
+                {% if component.button_text %}
+                    <a href="{{ component.button_url|default('/products') }}" class="qbanner__btn">
+                        <i class="sicon-arrow-left"></i>
+                        <span>{{ component.button_text }}</span>
+                        <i class="sicon-shopping-bag"></i>
+                    </a>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</section>

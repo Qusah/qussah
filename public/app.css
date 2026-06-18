@@ -3047,6 +3047,17 @@ textarea.s-input{
     padding-right: 15px;
   }
 }
+.qbanner .s-advertisement-content {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+@media (max-width: 768px) {
+  .qbanner .s-advertisement-content {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-advertisement-content ul{
         margin: 0px;
@@ -27932,6 +27943,130 @@ body, main, #app {
     padding: 4px 6px 6px;
   }
 }
+.qbanner {
+  font-family: "GE SS Two", sans-serif;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+.qbanner .container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+.qbanner__box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 48px;
+  padding: 90px 80px;
+  background: #30378e;
+  border-radius: 30px;
+  overflow: hidden;
+  direction: rtl;
+}
+.qbanner__text {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 592px;
+  max-width: 592px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 32px;
+  text-align: right;
+}
+.qbanner__title {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 70px;
+  color: #fff;
+  margin: 0;
+  width: 100%;
+}
+.qbanner__subtitle {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 25px;
+  color: #fff;
+  margin: 0;
+  width: 100%;
+}
+.qbanner__btn {
+  display: inline-flex;
+  flex-direction: row;
+  direction: ltr;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  min-width: 160px;
+  background: #30378e;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #fff;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+}
+.qbanner__btn i {
+  font-size: 16px;
+}
+.qbanner__btn:hover {
+  background: #fff;
+  color: #30378e;
+  border-color: #fff;
+}
+.qbanner__media {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  align-self: stretch;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+.qbanner__media img {
+  max-width: 100%;
+  height: auto;
+  -o-object-fit: contain;
+     object-fit: contain;
+  -o-object-position: bottom left;
+     object-position: bottom left;
+}
+@media (max-width: 768px) {
+  .qbanner {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .qbanner .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .qbanner__box {
+    flex-direction: column;
+    gap: 24px;
+    padding: 32px 20px;
+    border-radius: 24px;
+  }
+  .qbanner__text {
+    flex-basis: auto;
+    max-width: 100%;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+  }
+  .qbanner__title {
+    font-size: 26px;
+    line-height: 38px;
+  }
+  .qbanner__subtitle {
+    font-size: 14px;
+    line-height: 22px;
+  }
+  .qbanner__media {
+    justify-content: center;
+  }
+}
 /* Top Nav */
 .top-navbar{
     display: flex;
@@ -30638,6 +30773,17 @@ model-viewer[style*=width]:before{
 }
 @media (max-width: 768px) {
   .qoffers .s-comments-product .s-comments-container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+.qbanner .s-comments-product .s-comments-container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+@media (max-width: 768px) {
+  .qbanner .s-comments-product .s-comments-container {
     padding-left: 15px;
     padding-right: 15px;
   }

@@ -611,6 +611,67 @@
       ]
     },
     {
+      "key": "9e3d8876-805d-41fc-a156-1751712f6a74",
+      "title": {
+        "en": "Qissa Banner",
+        "ar": "بانر قصة"
+      },
+      "icon": "sicon-image",
+      "path": "home.qissa-banner",
+      "fields": [
+        {
+          "id": "heading",
+          "type": "string",
+          "format": "textarea",
+          "label": {
+            "en": "Heading",
+            "ar": "العنوان"
+          },
+          "value": "نظافة بيتك تبدأ من هنا لأن بيتك يستاهل الأفضل"
+        },
+        {
+          "id": "subheading",
+          "type": "string",
+          "format": "textarea",
+          "label": {
+            "en": "Subheading",
+            "ar": "النص الفرعي"
+          },
+          "value": "متجر سلة يوفر لك كل ماتحتاجه من إلكترونيات أو أثاث منزلي بالإضافة إلى أفضل التخفيضات على المنتجات , تسوق الان واستمتع بكل بالتخفيضات على المنتجات"
+        },
+        {
+          "id": "image",
+          "type": "string",
+          "format": "image",
+          "label": {
+            "en": "Banner Image",
+            "ar": "صورة البانر"
+          },
+          "value": null
+        },
+        {
+          "id": "button_text",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Button Text",
+            "ar": "نص الزر"
+          },
+          "value": "تسوق مع قصة"
+        },
+        {
+          "id": "button_url",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Button URL",
+            "ar": "رابط الزر"
+          },
+          "value": "/products"
+        }
+      ]
+    },
+    {
       "key": "186b3f4f-25cf-4d3c-abca-cef7eed6f0ab",
       "title": {
         "en": "Enhances Animated Images",
