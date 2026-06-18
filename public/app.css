@@ -26803,7 +26803,14 @@ body, main, #app {
   height: 90px;
   padding: 12px 0;
 }
+.qheader .qheader-logo {
+  order: 1;
+}
+.qheader .qheader-menu {
+  order: 2;
+}
 .qheader .qheader-actions {
+  order: 3;
   display: flex;
   align-items: center;
   gap: 32px;
@@ -26871,12 +26878,25 @@ body, main, #app {
   gap: 20px;
   align-items: center;
 }
-.qheader .qheader-menu custom-main-menu a, .qheader .qheader-menu custom-main-menu * {
-  color: #fff !important;
+.qheader .qheader-menu custom-main-menu ul, .qheader .qheader-menu custom-main-menu nav, .qheader .qheader-menu custom-main-menu > * {
+  display: flex !important;
+  gap: 20px !important;
+  align-items: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+.qheader .qheader-menu custom-main-menu li {
+  margin: 0 !important;
 }
 .qheader .qheader-menu custom-main-menu a, .qheader .qheader-menu custom-main-menu * {
-  font-size: 14px;
-  font-weight: 500;
+  color: #fff !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 20px !important;
+}
+.qheader .qheader-menu custom-main-menu a, .qheader .qheader-menu custom-main-menu * {
+  white-space: nowrap;
 }
 .qheader .qheader-menu custom-main-menu a:hover {
   color: #daeff7 !important;

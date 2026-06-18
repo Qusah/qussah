@@ -29,6 +29,10 @@ body, main, #app { background: transparent; }
     display: flex; align-items: center; justify-content: space-between;
     height: 90px; padding: 12px 0;
   }
+  // RTL order: logo right, menu center, actions left
+  .qheader-logo    { order: 1; }
+  .qheader-menu    { order: 2; }
+  .qheader-actions { order: 3; }
 
   // cart + profile
   .qheader-actions { display: flex; align-items: center; gap: 32px; }
@@ -54,8 +58,18 @@ body, main, #app { background: transparent; }
   .qheader-menu {
     background: linear-gradient(to right, rgba(51,84,143,.19), rgba(255,255,255,0));
     border: 1px solid rgba(255,255,255,.06); border-radius: 100px; padding: 15px 25px;
+
     custom-main-menu { display: flex; gap: 20px; align-items: center; }
-    custom-main-menu a, custom-main-menu * { color: #fff !important; font-size: 14px; font-weight: 500; }
+    // flatten the web component's internal layout
+    custom-main-menu ul, custom-main-menu nav, custom-main-menu > * {
+      display: flex !important; gap: 20px !important; align-items: center !important;
+      margin: 0 !important; padding: 0 !important; list-style: none !important;
+    }
+    custom-main-menu li { margin: 0 !important; }
+    custom-main-menu a, custom-main-menu * {
+      color: #fff !important; font-size: 14px !important; font-weight: 500 !important;
+      line-height: 20px !important; white-space: nowrap;
+    }
     custom-main-menu a:hover { color: #daeff7 !important; }
   }
 
