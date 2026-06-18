@@ -1,0 +1,66 @@
+// ====================================================================
+// Qissa Header — transparent nav overlaying the hero (matches Figma)
+// Top bar: dark navy #172951 | Main nav: transparent | pill menu
+// ====================================================================
+
+.store-header {
+  position: relative;
+  z-index: 30;
+
+  // ---- Top dark bar (#172951) ----
+  .top-navbar {
+    background: #172951;
+    color: #ffffff;
+    min-height: 44px;
+
+    a, .salla-menu a, salla-contacts {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 13px;
+    }
+    a:hover { color: #ffffff; }
+  }
+
+  // ---- Main nav: transparent, sits over the hero ----
+  .main-nav-container {
+    background: transparent !important;
+    box-shadow: none !important;
+
+    .navbar-brand img { filter: brightness(0) invert(1); } // white logo over gradient
+
+    // nav links color = white over the gradient
+    custom-main-menu,
+    custom-main-menu a,
+    .s-user-menu__trigger,
+    .header-btn__icon,
+    salla-cart-summary {
+      color: #ffffff !important;
+    }
+  }
+
+  // ---- Pill-shaped menu container (Figma) ----
+  custom-main-menu {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    padding: 0.4rem 1.25rem;
+
+    a {
+      font-family: 'GE SS Two', sans-serif;
+      font-size: 16px;
+      padding: 0.35rem 0.9rem;
+      transition: color .15s ease;
+      &:hover { color: #daeff7 !important; }
+    }
+  }
+
+  // cart + account icons white
+  .icon, .sicon-shopping-bag, .sicon-user { color: #ffffff !important; }
+}
+
+// On the homepage, pull the header up so it overlays the hero gradient
+.is-home,
+body:has(#qissa-hero-0),
+body:has(.qissa-hero) {
+  .store-header { position: absolute; top: 0; left: 0; right: 0; }
+  .qissa-hero { margin-top: 0; border-radius: 0; }
+}

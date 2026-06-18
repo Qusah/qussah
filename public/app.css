@@ -26735,6 +26735,68 @@ input[type=radio].sr-only:checked ~ div.radio-images__badge {
     flex-basis: auto;
   }
 }
+.store-header {
+  position: relative;
+  z-index: 30;
+}
+.store-header .top-navbar {
+  background: #172951;
+  color: #ffffff;
+  min-height: 44px;
+}
+.store-header .top-navbar a, .store-header .top-navbar .salla-menu a, .store-header .top-navbar salla-contacts {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 13px;
+}
+.store-header .top-navbar a:hover {
+  color: #ffffff;
+}
+.store-header .main-nav-container {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.store-header .main-nav-container .navbar-brand img {
+  filter: brightness(0) invert(1);
+}
+.store-header .main-nav-container custom-main-menu,
+.store-header .main-nav-container custom-main-menu a,
+.store-header .main-nav-container .s-user-menu__trigger,
+.store-header .main-nav-container .header-btn__icon,
+.store-header .main-nav-container salla-cart-summary {
+  color: #ffffff !important;
+}
+.store-header custom-main-menu {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  padding: 0.4rem 1.25rem;
+}
+.store-header custom-main-menu a {
+  font-family: "GE SS Two", sans-serif;
+  font-size: 16px;
+  padding: 0.35rem 0.9rem;
+  transition: color 0.15s ease;
+}
+.store-header custom-main-menu a:hover {
+  color: #daeff7 !important;
+}
+.store-header .icon, .store-header .sicon-shopping-bag, .store-header .sicon-user {
+  color: #ffffff !important;
+}
+.is-home .store-header,
+body:has(#qissa-hero-0) .store-header,
+body:has(.qissa-hero) .store-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+.is-home .qissa-hero,
+body:has(#qissa-hero-0) .qissa-hero,
+body:has(.qissa-hero) .qissa-hero {
+  margin-top: 0;
+  border-radius: 0;
+}
 /* Top Nav */
 .top-navbar{
     display: flex;
