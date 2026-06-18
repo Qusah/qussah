@@ -11,18 +11,28 @@
 
   &__box {
     position: relative;
-    display: flex; align-items: center; justify-content: flex-end;
+    display: flex; align-items: center; justify-content: space-between;
     gap: 48px;
     padding: 90px 80px;
-    background: #30378e;
+    // Figma: royal-blue base + cyan-tinted diagonal gradient glow
+    background:
+      radial-gradient(120% 120% at 12% 18%, rgba(145,230,247,.30) 0%, rgba(145,230,247,0) 45%),
+      linear-gradient(125deg, #2b338a 0%, #30378e 55%, #292e81 100%);
     border-radius: 30px;
     overflow: hidden;
     direction: rtl;
   }
 
-  // ---- text (right) ----
+  // bottom fade overlay (Figma node 100:410)
+  &__box::after {
+    content: ''; position: absolute; left: -10px; right: -10px; bottom: 0;
+    height: 306px; pointer-events: none; z-index: 1;
+    background: linear-gradient(180deg, rgba(47,57,140,0) 0%, #292e81 100%);
+  }
+
+  // ---- text (RIGHT — order 1 in RTL = right side) ----
   &__text {
-    position: relative; z-index: 2;
+    position: relative; z-index: 2; order: 1;
     flex: 0 0 592px; max-width: 592px;
     display: flex; flex-direction: column; align-items: flex-start;
     gap: 32px; text-align: right;
@@ -48,12 +58,16 @@
     &:hover { background: #fff; color: #30378e; border-color: #fff; }
   }
 
-  // ---- image (left, bursts from bottom) ----
+  // ---- image (LEFT — order 2 in RTL = left side; large, bursts from bottom) ----
   &__media {
-    position: relative; z-index: 1;
-    flex: 1 1 auto; align-self: stretch;
+    position: relative; z-index: 2; order: 2;
+    flex: 1 1 0; min-width: 0; align-self: stretch;
     display: flex; align-items: flex-end; justify-content: flex-start;
-    img { max-width: 100%; height: auto; object-fit: contain; object-position: bottom left; }
+    margin: -90px 0;                       // let it bleed past the vertical padding
+    img {
+      max-width: 100%; max-height: 560px; height: auto;
+      object-fit: contain; object-position: bottom left;
+    }
   }
 
   // ---- mobile ----

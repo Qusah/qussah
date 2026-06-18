@@ -27957,17 +27957,29 @@ body, main, #app {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 48px;
   padding: 90px 80px;
-  background: #30378e;
+  background: radial-gradient(120% 120% at 12% 18%, rgba(145, 230, 247, 0.3) 0%, rgba(145, 230, 247, 0) 45%), linear-gradient(125deg, #2b338a 0%, #30378e 55%, #292e81 100%);
   border-radius: 30px;
   overflow: hidden;
   direction: rtl;
 }
+.qbanner__box::after {
+  content: "";
+  position: absolute;
+  left: -10px;
+  right: -10px;
+  bottom: 0;
+  height: 306px;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(47, 57, 140, 0) 0%, #292e81 100%);
+}
 .qbanner__text {
   position: relative;
   z-index: 2;
+  order: 1;
   flex: 0 0 592px;
   max-width: 592px;
   display: flex;
@@ -28018,15 +28030,19 @@ body, main, #app {
 }
 .qbanner__media {
   position: relative;
-  z-index: 1;
-  flex: 1 1 auto;
+  z-index: 2;
+  order: 2;
+  flex: 1 1 0;
+  min-width: 0;
   align-self: stretch;
   display: flex;
   align-items: flex-end;
   justify-content: flex-start;
+  margin: -90px 0;
 }
 .qbanner__media img {
   max-width: 100%;
+  max-height: 560px;
   height: auto;
   -o-object-fit: contain;
      object-fit: contain;
