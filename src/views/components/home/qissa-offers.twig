@@ -13,14 +13,20 @@
     <div class="container">
         <div class="qoffers__box">
 
-            {# title (right-aligned) #}
-            <div class="qoffers__head">
-                <h2 class="qoffers__title">
-                    <span class="qoffers__title-hl">{{ component.title_highlight }}</span> {{ component.title }}
-                </h2>
-                {% if component.subtitle %}
-                    <p class="qoffers__subtitle">{{ component.subtitle }}</p>
-                {% endif %}
+            {# top bar: title on the RIGHT, "تسوق كل المنتجات" button on the LEFT #}
+            <div class="qoffers__top">
+                <a href="{{ component.button_url|default('/products') }}" class="qoffers__all">
+                    <i class="sicon-arrow-left"></i>
+                    <span>تسوق كل المنتجات</span>
+                </a>
+                <div class="qoffers__head">
+                    <h2 class="qoffers__title">
+                        <span class="qoffers__title-hl">{{ component.title_highlight }}</span> {{ component.title }}
+                    </h2>
+                    {% if component.subtitle %}
+                        <p class="qoffers__subtitle">{{ component.subtitle }}</p>
+                    {% endif %}
+                </div>
             </div>
 
             {# 2 wide cards #}
@@ -35,12 +41,12 @@
                                 {% if product.subtitle %}<span class="qoffer__sub">{{ product.subtitle }}</span>{% endif %}
                             </div>
 
-                            {# rating #}
+                            {# rating — stars on the RIGHT, (4.5) to their left #}
                             <div class="qoffer__star">
-                                <span class="qoffer__star-num">({{ product.rating.stars|default('4.5') }})</span>
                                 <span class="qoffer__star-icons">
                                     {% for i in 1..5 %}<i class="sicon-star {{ i <= (product.rating.stars|default(5)) ? 'is-on' : 'is-off' }}"></i>{% endfor %}
                                 </span>
+                                <span class="qoffer__star-num">({{ product.rating.stars|default('4.5') }})</span>
                             </div>
 
                             {# price #}
@@ -62,15 +68,16 @@
                                 <div class="qoffer__cell"><b data-s>00</b><span>ثانية</span></div>
                             </div>
 
-                            {# buttons #}
+                            {# buttons — like LEFT, add-to-cart fills RIGHT #}
                             <div class="qoffer__btns">
                                 <button class="qoffer__like" onclick="salla.wishlist.toggle({{ product.id }})" aria-label="المفضلة">
                                     <i class="sicon-heart"></i>
                                 </button>
-                                <salla-add-product-to-cart fill class="qoffer__add" product-id="{{ product.id }}">
-                                    أضف للسلة
+                                <button class="qoffer__add" type="button"
+                                    onclick="salla.cart.addItem({ id: {{ product.id }}, quantity: 1 })">
+                                    <span>أضف للسلة</span>
                                     <i class="sicon-shopping-bag"></i>
-                                </salla-add-product-to-cart>
+                                </button>
                             </div>
                         </div>
 
@@ -84,12 +91,6 @@
                     </article>
                 {% endfor %}
             </div>
-
-            {# bottom button #}
-            <a href="{{ component.button_url|default('/products') }}" class="qoffers__all">
-                <i class="sicon-arrow-left"></i>
-                <span>تسوق كل المنتجات</span>
-            </a>
 
         </div>
     </div>

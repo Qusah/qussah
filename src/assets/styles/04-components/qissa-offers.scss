@@ -18,11 +18,15 @@
     border-radius: 30px;
   }
 
-  // ---- title (right-aligned) ----
-  &__head {
+  // ---- top bar: button LEFT, title RIGHT ----
+  &__top {
     width: 100%; max-width: 1200px;
+    display: flex; flex-direction: row; align-items: center; justify-content: space-between;
+    gap: 16px;
+  }
+  &__head {
     display: flex; flex-direction: column; align-items: flex-end;
-    gap: 12px; text-align: right;
+    gap: 12px; text-align: right; order: 2;
   }
   &__title {
     font-size: 32px; font-weight: 500; line-height: 38px;
@@ -40,8 +44,9 @@
     width: 100%; max-width: 1200px; direction: rtl;
   }
 
-  // ---- bottom CTA pill ----
+  // ---- "تسوق كل المنتجات" CTA pill (top-left) ----
   &__all {
+    order: 1; flex: 0 0 auto;
     display: inline-flex; align-items: center; justify-content: center; gap: 8px;
     width: 200px; height: 55px;
     background: linear-gradient(to right, #172951, #30378e);
@@ -68,20 +73,22 @@
     gap: 16px; padding-block: 16px;
     padding-inline-start: 16px;
   }
+  // (parent is direction:rtl → flex-start = visual RIGHT)
   &__text {
-    display: flex; flex-direction: column; align-items: flex-end;
+    display: flex; flex-direction: column; align-items: flex-start;
     gap: 4px; width: 100%; text-align: right;
   }
   &__cat  { font-size: 14px; font-weight: 300; color: #91e6f7; line-height: 1; }
   &__name {
     font-size: 16px; font-weight: 500; color: #0a1f30; line-height: 1.3; width: 100%;
+    text-align: right;
     &:hover { color: #30378e; }
   }
   &__sub  { font-size: 14px; font-weight: 300; color: #6c757d; line-height: 1; }
 
-  // rating
+  // rating (right-aligned: stars then (4.5) to their left)
   &__star {
-    display: flex; align-items: center; justify-content: flex-end; gap: 8px; width: 100%;
+    display: flex; align-items: center; justify-content: flex-start; gap: 8px; width: 100%;
     &-num { font-size: 14px; font-weight: 500; color: #6c757d; }
     &-icons {
       display: inline-flex; gap: 2px;
@@ -91,9 +98,9 @@
     }
   }
 
-  // price
+  // price (right-aligned: sale then struck to its left)
   &__price {
-    display: flex; align-items: baseline; justify-content: flex-end; gap: 6px; width: 100%;
+    display: flex; align-items: baseline; justify-content: flex-start; gap: 6px; width: 100%;
   }
   &__price-now {
     font-family: 'Poppins','GE SS Two',sans-serif;
