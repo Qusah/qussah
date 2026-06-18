@@ -35,10 +35,13 @@ body, main, #app { background: transparent; }
   .qheader-sep { width: 1px; height: 12px; background: rgba(255,255,255,.4); }
 
   // ---- main nav ----
+  // Figma: inside the 1340-wide menu, Cart/Profile sits at x=50 and Logo's
+  // right edge at x=1290 → 50px inset on each side, in addition to the
+  // 50px the container already has. So add 50px inner padding here.
   .qheader-nav {
     position: relative;
     display: flex; align-items: center; justify-content: space-between;
-    height: 90px; padding: 12px 0;
+    height: 90px; padding: 12px 50px;
   }
   // RTL order: logo right, actions left
   .qheader-logo    { order: 1; }

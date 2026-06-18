@@ -26813,7 +26813,7 @@ body, main, #app {
   align-items: center;
   justify-content: space-between;
   height: 90px;
-  padding: 12px 0;
+  padding: 12px 50px;
 }
 .qheader .qheader-logo {
   order: 1;
