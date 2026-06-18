@@ -3007,6 +3007,13 @@ textarea.s-input{
     padding-top: 0.625rem;
     padding-bottom: 0.625rem;
 }
+.store-header .top-navbar .s-advertisement-content {
+  background: #172951;
+  border-radius: 100px;
+  padding: 6px 24px;
+  min-height: 44px;
+  margin-top: 12px;
+}
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-advertisement-content ul{
         margin: 0px;
@@ -26735,6 +26742,12 @@ input[type=radio].sr-only:checked ~ div.radio-images__badge {
     flex-basis: auto;
   }
 }
+body, .min-h-screen, main, #app {
+  background: transparent;
+}
+.store-header {
+  background: transparent !important;
+}
 .store-header {
   position: absolute;
   top: 0;
@@ -26744,32 +26757,36 @@ input[type=radio].sr-only:checked ~ div.radio-images__badge {
   font-family: "GE SS Two", sans-serif;
 }
 .store-header .top-navbar {
-  background: #172951;
+  background: transparent !important;
+}
+.store-header .top-navbar {
   color: #fff;
+}
+.store-header .top-navbar .container {
+  background: #172951;
   border-radius: 100px;
-  margin-top: 12px;
   padding: 6px 24px;
   min-height: 44px;
+  margin-top: 12px;
 }
-.store-header .top-navbar a, .store-header .top-navbar salla-contacts, .store-header .top-navbar .s-search-input {
+.store-header .top-navbar a, .store-header .top-navbar salla-contacts, .store-header .top-navbar .s-search-input, .store-header .top-navbar * {
   color: #fff !important;
 }
 .store-header .top-navbar .s-search-input {
-  background: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: none !important;
 }
 .store-header .main-nav-container {
   background: transparent !important;
   box-shadow: none !important;
+  border: none !important;
 }
 .store-header .main-nav-container .navbar-brand img {
   filter: brightness(0) invert(1);
 }
-.store-header .main-nav-container custom-main-menu,
-.store-header .main-nav-container custom-main-menu a,
-.store-header .main-nav-container .header-btn__icon,
-.store-header .main-nav-container .sicon-shopping-bag,
-.store-header .main-nav-container .sicon-menu,
-.store-header .main-nav-container salla-user-menu, .store-header .main-nav-container salla-cart-summary {
+.store-header .main-nav-container custom-main-menu, .store-header .main-nav-container custom-main-menu a, .store-header .main-nav-container custom-main-menu *,
+.store-header .main-nav-container .header-btn__icon, .store-header .main-nav-container .sicon-shopping-bag, .store-header .main-nav-container .sicon-menu,
+.store-header .main-nav-container salla-user-menu, .store-header .main-nav-container salla-cart-summary, .store-header .main-nav-container .icon {
   color: #fff !important;
 }
 .store-header .main-nav-container custom-main-menu {
@@ -29447,6 +29464,13 @@ model-viewer[style*=width]:before{
     .s-comments-product .s-comments-container{
         max-width: 1280px;
     }
+}
+.store-header .top-navbar .s-comments-product .s-comments-container {
+  background: #172951;
+  border-radius: 100px;
+  padding: 6px 24px;
+  min-height: 44px;
+  margin-top: 12px;
 }
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-comments-product .s-comments-container ul{

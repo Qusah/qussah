@@ -1,41 +1,44 @@
-// Qissa header skin — CSS ONLY over theme-raed markup. No twig edits.
-// Figma: top bar #172951, transparent nav over hero, white logo, pill menu.
+// Qissa header skin — CSS only. Overlay transparent header on the hero.
+
+// kill any white wrapper around the header
+body, .min-h-screen, main, #app { background: transparent; }
 
 .store-header {
   position: absolute;
   top: 0;
   inset-inline: 0;
   z-index: 50;
+  background: transparent !important;
   font-family: 'GE SS Two', sans-serif;
 
-  // top bar -> dark navy pill
+  // top bar -> dark navy pill, transparent wrapper
   .top-navbar {
-    background: #172951;
+    background: transparent !important;
     color: #fff;
-    border-radius: 100px;
-    margin-top: 12px;
-    padding: 6px 24px;
-    min-height: 44px;
 
-    a, salla-contacts, .s-search-input { color: #fff !important; }
-    .s-search-input { background: rgba(255,255,255,0.1) !important; }
+    .container {
+      background: #172951;
+      border-radius: 100px;
+      padding: 6px 24px;
+      min-height: 44px;
+      margin-top: 12px;
+    }
+    a, salla-contacts, .s-search-input, * { color: #fff !important; }
+    .s-search-input { background: rgba(255,255,255,0.12) !important; border: none !important; }
   }
 
   // main nav -> transparent over hero
   .main-nav-container {
     background: transparent !important;
     box-shadow: none !important;
+    border: none !important;
 
-    .navbar-brand img { filter: brightness(0) invert(1); }   // white logo
+    .navbar-brand img { filter: brightness(0) invert(1); }
 
-    custom-main-menu,
-    custom-main-menu a,
-    .header-btn__icon,
-    .sicon-shopping-bag,
-    .sicon-menu,
-    salla-user-menu, salla-cart-summary { color: #fff !important; }
+    custom-main-menu, custom-main-menu a, custom-main-menu *,
+    .header-btn__icon, .sicon-shopping-bag, .sicon-menu,
+    salla-user-menu, salla-cart-summary, .icon { color: #fff !important; }
 
-    // pill around the menu
     custom-main-menu {
       background: rgba(255,255,255,0.08);
       border: 1px solid rgba(255,255,255,0.15);
@@ -46,6 +49,6 @@
   }
 }
 
-// hero clears the absolute header
+// hero sits under the absolute header
 .qissa-hero { margin-top: 0; border-radius: 0; }
 .qissa-hero .qissa-hero__inner { padding-top: 170px; }
