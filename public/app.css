@@ -2999,6 +2999,10 @@ textarea.s-input{
 }
 .qheader .s-advertisement-content {
   max-width: 1340px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-advertisement-content ul{
@@ -26745,6 +26749,10 @@ body, main, #app {
 }
 .qheader .container {
   max-width: 1340px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 .qheader .qheader-topbar {
   display: flex;
@@ -26860,9 +26868,15 @@ body, main, #app {
 .qheader .qheader-menu custom-main-menu a:hover {
   color: #daeff7 !important;
 }
+.qheader .qheader-logo {
+  display: flex;
+  align-items: center;
+}
 .qheader .qheader-logo img {
   width: 98px;
   height: auto;
+  -o-object-fit: contain;
+     object-fit: contain;
   filter: brightness(0) invert(1);
 }
 .qissa-hero {
@@ -29542,6 +29556,10 @@ model-viewer[style*=width]:before{
 }
 .qheader .s-comments-product .s-comments-container {
   max-width: 1340px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-comments-product .s-comments-container ul{
