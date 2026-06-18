@@ -1,39 +1,26 @@
 {#
-| Variable       | Type   | Description                                  |
-|----------------|--------|----------------------------------------------|
-| heading        | string | Main hero headline                           |
-| subheading     | string | Supporting paragraph                         |
-| image          | string | Hero product image (right side)              |
-| button_text    | string | CTA button label                             |
-| button_url     | string | CTA button link                              |
-| position       | int    | sorting block                                |
+| Variable                | Type   | Description                          |
+|-------------------------|--------|--------------------------------------|
+| component               | object | merchant settings from twilight.json |
+| position                | int    | sorting block                        |
 #}
-{% set component_id = 'qissa-hero-' ~ position %}
-<section class="s-block qissa-hero" id="{{ component_id }}">
+<section class="s-block qissa-hero" id="qissa-hero-{{ position }}">
     <div class="container">
         <div class="qissa-hero__inner">
-            {# Text side #}
             <div class="qissa-hero__content">
-                {% if heading %}
-                    <h1 class="qissa-hero__title">{{ heading }}</h1>
-                {% endif %}
-                {% if subheading %}
-                    <p class="qissa-hero__subtitle">{{ subheading }}</p>
-                {% endif %}
-                {% if button_text %}
-                    <a href="{{ button_url|default('#') }}" class="qissa-hero__btn">
-                        <i class="sicon-shopping-cart"></i>
-                        <span>{{ button_text }}</span>
-                    </a>
+                <h1 class="qissa-hero__title">HARDCODED TEST HEADLINE</h1>
+                <h1 class="qissa-hero__title">{{ component.heading }}</h1>
+                <p class="qissa-hero__subtitle">{{ component.subheading }}</p>
+                <a href="{{ component.button_url }}" class="qissa-hero__btn">
+                    <i class="sicon-shopping-cart"></i>
+                    <span>{{ component.button_text }}</span>
+                </a>
+            </div>
+            <div class="qissa-hero__media">
+                {% if component.image %}
+                    <img src="{{ component.image }}" alt="" class="qissa-hero__img"/>
                 {% endif %}
             </div>
-
-            {# Image side #}
-            {% if image %}
-                <div class="qissa-hero__media">
-                    <img src="{{ image }}" alt="{{ heading }}" loading="eager" class="qissa-hero__img"/>
-                </div>
-            {% endif %}
         </div>
     </div>
 </section>
