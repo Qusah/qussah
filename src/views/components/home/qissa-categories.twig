@@ -1,0 +1,44 @@
+{#
+| Variable                  | Type     | Description                              |
+|---------------------------|----------|------------------------------------------|
+| component                 | object   | merchant settings from twilight.json     |
+| component.title           | string   | Heading first part (e.g. "تسوق حسب")     |
+| component.title_highlight | string   | Highlighted heading word (e.g. "الفئات") |
+| component.subtitle        | string   | Subheading paragraph                     |
+| component.cards           | object[] | category cards                           |
+| component.cards[].image   | string   | product image bursting out of the card   |
+| component.cards[].name    | string   | category name                            |
+| component.cards[].count   | string   | products count (e.g. "150")              |
+| component.cards[].url     | string   | category link                            |
+| position                  | int      | sorting block                            |
+#}
+<section class="s-block qcats" id="qcats-{{ position }}">
+    <div class="container">
+        {# heading #}
+        <div class="qcats__head">
+            <h2 class="qcats__title">
+                {{ component.title }}<span class="qcats__title-hl">{{ component.title_highlight }}</span>
+            </h2>
+            {% if component.subtitle %}
+                <p class="qcats__subtitle">{{ component.subtitle }}</p>
+            {% endif %}
+        </div>
+
+        {# circular cards #}
+        <div class="qcats__row">
+            {% for card in component.cards %}
+                <a href="{{ card.url|default('#') }}" class="qcats__card">
+                    {% if card.image %}
+                        <span class="qcats__card-img">
+                            <img src="{{ card.image }}" alt="{{ card.name }}" loading="lazy"/>
+                        </span>
+                    {% endif %}
+                    <span class="qcats__card-body">
+                        <b class="qcats__card-name">{{ card.name }}</b>
+                        <span class="qcats__card-count"><em>{{ card.count }}</em> منتج</span>
+                    </span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>

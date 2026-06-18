@@ -3009,6 +3009,11 @@ textarea.s-input{
   z-index: 60;
   margin-bottom: -90px;
 }
+@media (max-width: 768px) {
+  .qheader > .s-advertisement-content:last-of-type {
+    margin-bottom: -76px;
+  }
+}
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-advertisement-content ul{
         margin: 0px;
@@ -26731,30 +26736,60 @@ input[type=radio].sr-only:checked ~ div.radio-images__badge {
   -o-object-position: bottom left;
      object-position: bottom left;
 }
-@media (max-width: 1024px) {
+@media (max-width: 1024px) and (min-width: 769px) {
   .qissa-hero__inner {
-    flex-direction: column-reverse;
-    text-align: center;
+    gap: 2rem;
+    padding: 140px 40px 40px;
     min-height: auto;
-    padding: 2rem 1rem;
-    gap: 1.5rem;
+  }
+  .qissa-hero__title {
+    font-size: 44px;
+    line-height: 1.25;
+  }
+}
+@media (max-width: 768px) {
+  .qissa-hero__inner {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 20px;
+    min-height: 560px;
+    padding: 110px 24px 0;
   }
   .qissa-hero__content {
-    padding-left: 0;
-    text-align: center;
-    flex-basis: auto;
+    align-items: flex-end;
+    text-align: right;
+    gap: 20px;
+    flex: 0 0 auto;
+  }
+  .qissa-hero__title {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 40px;
+    letter-spacing: -0.15px;
+    width: 100%;
   }
   .qissa-hero__subtitle {
-    margin-left: auto;
-    margin-right: auto;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.16px;
+    color: #daeff7;
+    width: 100%;
   }
   .qissa-hero__btn {
-    margin-left: auto;
-    margin-right: auto;
+    align-self: flex-end;
+    width: auto;
+    min-width: 167px;
+    height: 55px;
+    margin-top: 0;
   }
   .qissa-hero__media {
+    flex: 0 0 auto;
     justify-content: center;
-    flex-basis: auto;
+    align-items: flex-end;
+  }
+  .qissa-hero__img {
+    max-height: 320px;
   }
 }
 body, main, #app {
@@ -26910,6 +26945,12 @@ body, main, #app {
 .qheader .qheader-menu a:hover {
   color: #daeff7;
 }
+.qheader .qheader-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  order: 1;
+}
 .qheader .qheader-logo {
   display: flex;
   align-items: center;
@@ -26920,6 +26961,21 @@ body, main, #app {
   -o-object-fit: contain;
      object-fit: contain;
   filter: brightness(0) invert(1);
+}
+.qheader .qheader-burger {
+  display: none;
+  width: 37px;
+  height: 37px;
+  border-radius: 50%;
+  background: rgba(48, 55, 142, 0.33);
+  color: #fff;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+}
+.qheader .qheader-burger i {
+  font-size: 21px;
 }
 .qheader > .container:last-of-type {
   position: relative;
@@ -26935,15 +26991,61 @@ body, main, #app {
   position: relative;
   z-index: 1;
 }
-.qissa-hero .qissa-hero__inner {
-  padding-top: 130px;
+@media (min-width: 769px) {
+  .qissa-hero .qissa-hero__inner {
+    padding-top: 130px;
+  }
 }
-@media (max-width: 1024px) {
-  .qheader .qheader-topbar, .qheader .qheader-menu, .qheader .qheader-act__txt {
+@media (max-width: 768px) {
+  .qissa-hero {
+    margin: 0 16px !important;
+    border-radius: 24px !important;
+  }
+  .qheader {
+    padding-top: 16px;
+  }
+  .qheader .qheader-topwrap {
     display: none;
+  }
+  .qheader .qheader-menu {
+    display: none;
+  }
+  .qheader .qheader-burger {
+    display: inline-flex;
   }
   .qheader .qheader-nav {
     height: 64px;
+    padding: 12px 16px;
+  }
+  .qheader .qheader-actions {
+    gap: 12px;
+  }
+  .qheader .qheader-act__txt b {
+    font-size: 11px;
+  }
+  .qheader .qheader-act__txt em {
+    font-size: 12px;
+  }
+  .qheader .qheader-act__ic {
+    width: 36px;
+    height: 36px;
+  }
+  .qheader .qheader-actions .qheader-act:last-child .qheader-act__txt {
+    display: none;
+  }
+  .qheader .qheader-logo img {
+    width: 76px;
+  }
+  .qheader > .container:last-of-type {
+    margin-bottom: -76px;
+  }
+}
+@media (max-width: 420px) {
+  .qheader .qheader-act__txt {
+    display: none;
+  }
+  .qheader .qheader-nav {
+    padding: 12px 12px;
   }
 }
 /* Top Nav */
@@ -29617,6 +29719,11 @@ model-viewer[style*=width]:before{
   position: relative;
   z-index: 60;
   margin-bottom: -90px;
+}
+@media (max-width: 768px) {
+  .qheader > .s-comments-product .s-comments-container:last-of-type {
+    margin-bottom: -76px;
+  }
 }
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-comments-product .s-comments-container ul{

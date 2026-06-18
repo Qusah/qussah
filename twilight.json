@@ -334,6 +334,115 @@
       ]
     },
     {
+      "key": "f445348a-d5a8-4d2b-8ae9-9fd99b5ac177",
+      "title": {
+        "en": "Qissa Categories",
+        "ar": "فئات قصة"
+      },
+      "icon": "sicon-layout-grid-rearrange",
+      "path": "home.qissa-categories",
+      "fields": [
+        {
+          "id": "title",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Title",
+            "ar": "العنوان"
+          },
+          "value": "تسوق حسب "
+        },
+        {
+          "id": "title_highlight",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Highlighted word",
+            "ar": "الكلمة المميزة"
+          },
+          "value": "الفئات"
+        },
+        {
+          "id": "subtitle",
+          "type": "string",
+          "format": "textarea",
+          "label": {
+            "en": "Subtitle",
+            "ar": "النص الفرعي"
+          },
+          "value": "أفضل منتجات النظافة المنزلية بجودة لا تنافس، وأسعار توفر عليك كل مرة تتسوق"
+        },
+        {
+          "id": "cards",
+          "type": "collection",
+          "format": "collection",
+          "required": true,
+          "minLength": 1,
+          "maxLength": 12,
+          "label": null,
+          "item_label": "فئة",
+          "value": [
+            {
+              "cards.image": null,
+              "cards.name": "معطرات قصة",
+              "cards.count": "150",
+              "cards.url": "/products"
+            },
+            {
+              "cards.image": null,
+              "cards.name": "مناشف قصة",
+              "cards.count": "150",
+              "cards.url": "/products"
+            }
+          ],
+          "fields": [
+            {
+              "type": "string",
+              "icon": "sicon-image",
+              "value": null,
+              "id": "cards.image",
+              "label": "صورة الفئة",
+              "format": "image",
+              "required": true,
+              "placeholder": null,
+              "description": "صورة المنتج التي تظهر خارج البطاقة الدائرية"
+            },
+            {
+              "type": "string",
+              "icon": "sicon-format-text-alt",
+              "label": "اسم الفئة",
+              "multilanguage": true,
+              "id": "cards.name",
+              "value": null,
+              "required": true,
+              "format": "text",
+              "placeholder": "اسم الفئة"
+            },
+            {
+              "type": "string",
+              "icon": "sicon-tag",
+              "label": "عدد المنتجات",
+              "id": "cards.count",
+              "value": null,
+              "required": false,
+              "format": "text",
+              "placeholder": "150"
+            },
+            {
+              "type": "string",
+              "icon": "sicon-link",
+              "label": "الرابط",
+              "id": "cards.url",
+              "value": "/products",
+              "required": false,
+              "format": "text",
+              "placeholder": "/products"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "key": "186b3f4f-25cf-4d3c-abca-cef7eed6f0ab",
       "title": {
         "en": "Enhances Animated Images",

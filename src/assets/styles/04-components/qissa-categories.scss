@@ -1,0 +1,109 @@
+// ====================================================================
+// Qissa Categories — "تسوق حسب الفئات"  (Figma node 100:141)
+// Circular pastel cards, product image bursting out the top, name + count.
+// Exact Figma values: card 196.08px, gap 32.85px, section pl-80 pr-29.
+// ====================================================================
+
+.qcats {
+  font-family: 'GE SS Two', sans-serif;
+  padding-block: 64px;
+
+  .container { max-width: none; padding-inline: 50px; }
+
+  // ---- heading (centered) ----
+  &__head {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 12px; text-align: center; margin-bottom: 32px;   // Figma 4xl gap
+  }
+  &__title {
+    font-size: 32px;                 // Figma H4
+    font-weight: 500;                // Medium
+    line-height: 38px;
+    letter-spacing: -0.2px;
+    color: #0a1f30;                  // chosen-blue
+    margin: 0;
+  }
+  &__title-hl { color: #30378e; }    // highlighted word "الفئات"
+  &__subtitle {
+    font-size: 16px;                 // Figma Body-2
+    font-weight: 300;                // Light
+    line-height: 24px;
+    color: #6c757d;                  // gray/600
+    width: 546px; max-width: 100%;
+    margin: 0;
+  }
+
+  // ---- cards row (RTL: starts from right) ----
+  &__row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 32.85px;                    // Figma gap
+    flex-wrap: wrap;
+    row-gap: 56px;
+  }
+
+  // ---- single circular card ----
+  &__card {
+    position: relative;
+    flex: 0 0 auto;
+    width: 196.08px; height: 196.08px;
+    border-radius: 50%;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 16.87px;         // Figma pb
+    overflow: visible;               // image bursts out the top
+    transition: transform .2s ease, box-shadow .2s ease;
+
+    &:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(23,41,81,.12); }
+  }
+
+  // pastel background cycle (Figma exact colors, in order)
+  &__card:nth-child(8n+1) { background: #dee8f0; }
+  &__card:nth-child(8n+2) { background: #dee8f0; }
+  &__card:nth-child(8n+3) { background: #fdf7d4; }
+  &__card:nth-child(8n+4) { background: #d5f8ff; }
+  &__card:nth-child(8n+5) { background: #fbecf5; }
+  &__card:nth-child(8n+6) { background: #f9f1df; }
+  &__card:nth-child(8n+7) { background: #daeff7; }
+  &__card:nth-child(8n+0) { background: #dee8f0; }
+
+  // product image — bursts out of the top of the circle
+  &__card-img {
+    position: absolute;
+    left: 50%; top: -34px;
+    transform: translateX(-50%);
+    width: 170px; height: 150px;
+    display: flex; align-items: flex-end; justify-content: center;
+    pointer-events: none;
+
+    img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  }
+
+  // text block (bottom of circle)
+  &__card-body {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; width: 100%;
+  }
+  &__card-name {
+    font-size: 16px; font-weight: 500; line-height: 24px;   // Body-2 Medium
+    color: #0a1f30;
+  }
+  &__card-count {
+    font-size: 13.5px; font-weight: 300;                    // Body Light
+    color: #6c757d;
+    em { font-family: 'Poppins', 'GE SS Two', sans-serif; font-weight: 600; font-style: normal; }
+  }
+
+  // ---- mobile ----
+  @media (max-width: 768px) {
+    padding-block: 40px;
+    .container { padding-inline: 16px; }
+    &__title { font-size: 22px; line-height: 30px; }
+    &__subtitle { font-size: 14px; line-height: 20px; width: 100%; }
+    &__row { justify-content: center; gap: 20px; row-gap: 48px; }
+    &__card { width: 150px; height: 150px; padding-bottom: 12px; }
+    &__card-img { width: 130px; height: 115px; top: -26px; }
+    &__card-name { font-size: 14px; }
+  }
+}
