@@ -1,0 +1,97 @@
+// ====================================================================
+// Qissa Hero  —  custom homepage hero (matches Figma)
+// Values marked //figma: are best estimates from the design export.
+// Replace with exact Figma values when available.
+// ====================================================================
+
+.qissa-hero {
+  position: relative;
+  overflow: hidden;
+  // figma: navy -> blue diagonal gradient
+  background: linear-gradient(135deg, #14245f 0%, #1d3a8a 45%, #2a57bf 100%);
+  border-radius: 28px;          // figma: large rounded corners
+  margin-top: 12px;
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    min-height: 560px;          // figma: hero height
+    padding: 2.5rem 1rem;
+  }
+
+  // ---- text side (right in RTL) ----
+  &__content {
+    flex: 1;
+    text-align: start;          // RTL-aware -> right
+    color: #ffffff;
+    max-width: 560px;
+    margin-inline-start: auto;  // push text to the right in RTL
+  }
+
+  &__title {
+    font-size: clamp(2.4rem, 4.2vw, 4rem);
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: 0.04em;     // figma: wide tracking on headline
+    margin-bottom: 1.25rem;
+    color: #ffffff;
+  }
+
+  &__subtitle {
+    font-size: clamp(0.95rem, 1.1vw, 1.1rem);
+    line-height: 2;
+    color: rgba(255, 255, 255, 0.82);
+    margin-bottom: 2rem;
+  }
+
+  // ---- CTA button ----
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: #9fe7e0;        // figma: mint/cyan pill
+    color: #14245f;            // navy text
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding: 0.95rem 2rem;
+    border-radius: 16px;
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+
+    &:hover {
+      background: #8adbd3;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(159, 231, 224, 0.35);
+    }
+
+    i { font-size: 1.2rem; }
+  }
+
+  // ---- image side (left in RTL) ----
+  &__media {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    align-self: stretch;
+  }
+
+  &__img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: bottom;
+  }
+
+  // ---- responsive ----
+  @media (max-width: 1024px) {
+    &__inner {
+      flex-direction: column-reverse;
+      text-align: center;
+      min-height: auto;
+      padding: 2rem 1rem;
+    }
+    &__content { margin-inline-start: 0; text-align: center; }
+    &__btn { margin-inline: auto; }
+  }
+}
