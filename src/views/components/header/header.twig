@@ -65,11 +65,16 @@
         <a href="{{ store.url }}">تواصل معنا</a>
       </nav>
 
-      {# logo (right) #}
-      <a class="qheader-logo" href="{{ store.url }}">
-        <img src="{{ store.logo|cdn(175) }}" alt="{{ store.name }}"/>
-        {% if is_page('index') %}<h1 class="sr-only">{{ store.name }}</h1>{% endif %}
-      </a>
+      {# logo (right) + hamburger (mobile only) #}
+      <div class="qheader-brand">
+        <button type="button" class="qheader-burger" aria-label="القائمة" onclick="salla.event.dispatch('menu::open')">
+          <i class="sicon-menu"></i>
+        </button>
+        <a class="qheader-logo" href="{{ store.url }}">
+          <img src="{{ store.logo|cdn(175) }}" alt="{{ store.name }}"/>
+          {% if is_page('index') %}<h1 class="sr-only">{{ store.name }}</h1>{% endif %}
+        </a>
+      </div>
 
     </div>
   </div>

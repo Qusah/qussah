@@ -89,8 +89,19 @@ body, main, #app { background: transparent; }
   }
 
   // logo
-  .qheader-logo { display: flex; align-items: center; }
+  .qheader-brand  { display: flex; align-items: center; gap: 12px; order: 1; }
+  .qheader-logo   { display: flex; align-items: center; }
   .qheader-logo img { width: 98px; height: auto; object-fit: contain; filter: brightness(0) invert(1); }
+
+  // hamburger — hidden on desktop, shown on mobile (Figma node 187:20038)
+  .qheader-burger {
+    display: none;
+    width: 37px; height: 37px; border-radius: 50%;
+    background: rgba(48,55,142,.33); color: #fff;
+    align-items: center; justify-content: center;
+    border: none; cursor: pointer;
+    i { font-size: 21px; }
+  }
 }
 
 // nav row sits ON TOP of the hero, overlapping it, so the hero's rounded
@@ -108,9 +119,47 @@ body, main, #app { background: transparent; }
   position: relative;
   z-index: 1;
 }
-.qissa-hero .qissa-hero__inner { padding-top: 130px; }   // clear the overlaid nav
+// desktop-only: clear the overlaid nav (mobile sets its own padding-top)
+@media (min-width: 769px) {
+  .qissa-hero .qissa-hero__inner { padding-top: 130px; }
+}
+// mobile: tighter side margins (Figma hero x≈15 in a 428 frame)
+@media (max-width: 768px) {
+  .qissa-hero { margin: 0 16px !important; border-radius: 24px !important; }
+}
 
-@media (max-width: 1024px) {
-  .qheader .qheader-topbar, .qheader .qheader-menu, .qheader .qheader-act__txt { display: none; }
-  .qheader .qheader-nav { height: 64px; }
+// ---- MOBILE — exact Figma "Home Mobile" header (node 187:19970) ----
+// No top bar. Pill menu collapses to a hamburger. Cart keeps price + badge,
+// profile collapses to a plain user icon. Layout: actions left, logo+burger right.
+@media (max-width: 768px) {
+  .qheader { padding-top: 16px; }
+
+  // remove desktop chrome
+  .qheader .qheader-topwrap { display: none; }   // no utility top bar on mobile
+  .qheader .qheader-menu    { display: none; }    // pill replaced by hamburger
+  .qheader .qheader-burger  { display: inline-flex; }
+
+  // nav: tighter, edges 16px (Figma menu x=16)
+  .qheader .qheader-nav { height: 64px; padding: 12px 16px; }
+
+  // compact cart: keep "سلة المشتريات" + price + badge (Figma 187:19971)
+  .qheader .qheader-actions { gap: 12px; }
+  .qheader .qheader-act__txt b  { font-size: 11px; }
+  .qheader .qheader-act__txt em { font-size: 12px; }
+  .qheader .qheader-act__ic { width: 36px; height: 36px; }
+
+  // profile collapses to icon only (hide greeting/login text)
+  .qheader .qheader-actions .qheader-act:last-child .qheader-act__txt { display: none; }
+
+  // smaller logo (Figma 75.9×39.8 → ~76px wide)
+  .qheader .qheader-logo img { width: 76px; }
+
+  // hero overlap is gentler on mobile so the rounded top shows
+  .qheader > .container:last-of-type { margin-bottom: -76px; }
+}
+
+// very small phones — drop the cart text too, keep icons only
+@media (max-width: 420px) {
+  .qheader .qheader-act__txt { display: none; }
+  .qheader .qheader-nav { padding: 12px 12px; }
 }
