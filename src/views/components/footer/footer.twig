@@ -111,20 +111,20 @@
         الحقوق محفوظة لمنصة سلة <span class="qissa-footer-bottom__year">{{ "now"|date("Y") }}</span>
       </p>
 
-      {# VAT number (dynamic) + ZATCA badge (local asset, Figma) #}
-      {% if store.settings.tax.number %}
-        <div class="qissa-footer-bottom__tax">
+      {# VAT badge (always) + number (dynamic when set) — Figma 6036:1419 #}
+      <div class="qissa-footer-bottom__tax">
+        {% if store.settings.tax.number %}
           <span class="qissa-footer-bottom__tax-num">الرقم الضريبي : <span dir="ltr">{{ store.settings.tax.number }}</span></span>
-          <img class="qissa-footer-bottom__tax-badge" src="{{ 'images/payments/zatca-badge.jpg'|cdn }}" alt="الرقم الضريبي" loading="lazy"/>
-        </div>
-      {% endif %}
+        {% endif %}
+        <img class="qissa-footer-bottom__tax-badge" src="{{ 'images/payments/zatca-badge.jpg' | asset }}" alt="ضريبة القيمة المضافة" loading="lazy"/>
+      </div>
 
       {# payment methods (LEFT on desktop / TOP on mobile) — Figma logos, local assets #}
       <div class="qissa-footer-bottom__payments">
-        <span class="qissa-footer-bottom__pay"><img src="{{ 'images/payments/mada.png'|cdn }}" alt="mada" loading="lazy"/></span>
-        <span class="qissa-footer-bottom__pay"><img src="{{ 'images/payments/paypal.png'|cdn }}" alt="PayPal" loading="lazy"/></span>
-        <span class="qissa-footer-bottom__pay"><img src="{{ 'images/payments/mastercard.png'|cdn }}" alt="Mastercard" loading="lazy"/></span>
-        <span class="qissa-footer-bottom__pay qissa-footer-bottom__pay--visa"><img src="{{ 'images/payments/visa.png'|cdn }}" alt="Visa" loading="lazy"/></span>
+        <span class="qissa-footer-bottom__pay"><img src="{{ 'images/payments/mada.png' | asset }}" alt="mada" loading="lazy"/></span>
+        <span class="qissa-footer-bottom__pay"><img src="{{ 'images/payments/paypal.png' | asset }}" alt="PayPal" loading="lazy"/></span>
+        <span class="qissa-footer-bottom__pay"><img src="{{ 'images/payments/mastercard.png' | asset }}" alt="Mastercard" loading="lazy"/></span>
+        <span class="qissa-footer-bottom__pay qissa-footer-bottom__pay--visa"><img src="{{ 'images/payments/visa.png' | asset }}" alt="Visa" loading="lazy"/></span>
       </div>
 
     </div>
