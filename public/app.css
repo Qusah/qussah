@@ -28930,14 +28930,18 @@ body, main, #app {
   overflow: hidden;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 24px;
-  padding: 24px 80px;
+  min-height: 418px;
+  max-width: 1336px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 24px 80px 24px calc(47% + 24px);
   background: #30378e;
   border-radius: 30px;
   direction: rtl;
 }
 .qfn__subscribe {
+  position: relative;
+  z-index: 1;
   flex: 1 1 auto;
   min-width: 0;
   max-width: 550px;
@@ -29049,9 +29053,12 @@ body, main, #app {
   background: #30378e;
 }
 .qfn__media {
-  flex: 0 0 45%;
-  max-width: 626px;
-  aspect-ratio: 626/418;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 0;
+  width: 47%;
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -29068,9 +29075,12 @@ body, main, #app {
   .qfn__card {
     background: #daeff7;
     padding: 32px 20px;
-    gap: 0;
+    min-height: 0;
   }
   .qfn__media {
+    display: none;
+  }
+  .qfn__badge {
     display: none;
   }
   .qfn__subscribe {

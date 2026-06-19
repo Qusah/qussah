@@ -15,15 +15,20 @@
 
   &__card {
     position: relative; overflow: hidden;
-    display: flex; align-items: center; justify-content: flex-end;
-    gap: 24px; padding: 24px 80px;
-    background: #30378e;                 // desktop royal-blue
+    display: flex; align-items: center;
+    min-height: 418px;                                   // Figma card height
+    max-width: 1336px; margin-inline: auto;              // cap to Figma width so the
+                                                         // image↔form spacing stays exact on wide screens
+    // T R B L — left padding reserves the full-bleed image area (47% + 24px gap)
+    padding: 24px 80px 24px calc(47% + 24px);
+    background: #30378e;                                 // desktop royal-blue
     border-radius: 30px;
     direction: rtl;
   }
 
   // ---- subscribe block (RIGHT in RTL) ----
   &__subscribe {
+    position: relative; z-index: 1;
     flex: 1 1 auto; min-width: 0; max-width: 550px;
     display: flex; flex-direction: column; align-items: flex-end;
     gap: 24px; text-align: right;
@@ -69,11 +74,11 @@
     &:hover { background: #30378e; }
   }
 
-  // ---- product image (LEFT in RTL) — desktop only ----
-  // box and source share a 626:418 (1.5:1) ratio → no cropping.
+  // ---- product image (LEFT in RTL) — desktop only, FULL-BLEED left half ----
+  // absolute so it fills edge-to-edge (top/bottom/left); card corners clip it.
   &__media {
-    flex: 0 0 45%; max-width: 626px;
-    aspect-ratio: 626 / 418;
+    position: absolute; left: 0; top: 0; bottom: 0; z-index: 0;
+    width: 47%;
     background-repeat: no-repeat; background-position: center; background-size: cover;
   }
 }
@@ -83,8 +88,9 @@
   .qfn { padding-block: 16px; }
   .qfn .container { padding-inline: 15px; }
 
-  .qfn__card { background: #daeff7; padding: 32px 20px; gap: 0; }
+  .qfn__card { background: #daeff7; padding: 32px 20px; min-height: 0; }
   .qfn__media { display: none; }       // not rendered → image not downloaded on mobile
+  .qfn__badge { display: none; }       // mobile node 6036:22104 has no badge pill
 
   .qfn__subscribe { max-width: none; gap: 23px; }
 
