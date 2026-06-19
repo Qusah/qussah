@@ -127,7 +127,9 @@
   .qhcards .container { padding-inline: 15px; }
   .qhcards__row { flex-direction: column-reverse; gap: 16px; }   // → shop · navy · cream
 
-  .qhcard { min-height: 0; }
+  // stacked column: size each card to its content (the base `flex: 1 1 0` is for the
+  // desktop horizontal row — left on, it makes cards fight over height and collapse).
+  .qhcard { flex: 0 0 auto; min-height: 0; }
 
   // A: cream
   .qhcard--stat { gap: 8px; padding: 20px 30px; }

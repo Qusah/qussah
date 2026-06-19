@@ -28310,6 +28310,7 @@ body, main, #app {
     gap: 16px;
   }
   .qhcard {
+    flex: 0 0 auto;
     min-height: 0;
   }
   .qhcard--stat {
