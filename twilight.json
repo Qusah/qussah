@@ -1147,12 +1147,12 @@
       ]
     },
     {
-      "key": "3b2ea398-eb8f-4679-a4f6-fa15044b976d",
+      "key": "f9076d33-9f3d-444a-bec4-bdd218439e55",
       "title": {
-        "en": "Qissa Newsletter",
-        "ar": "النشرة البريدية"
+        "en": "Qissa Footer Newsletter",
+        "ar": "نشرة قصة البريدية"
       },
-      "icon": "sicon-email",
+      "icon": "sicon-mail",
       "path": "home.qissa-footer-newsletter",
       "fields": [
         {
@@ -1166,22 +1166,22 @@
           "value": "كل ما تحتاجه للنظافة، في مكان واحد"
         },
         {
-          "id": "title_1",
+          "id": "heading",
           "type": "string",
           "format": "text",
           "label": {
-            "en": "Title part 1",
-            "ar": "العنوان - الجزء الأول"
+            "en": "Heading",
+            "ar": "العنوان"
           },
           "value": "الاشتراك فى"
         },
         {
-          "id": "title_2",
+          "id": "heading_highlight",
           "type": "string",
           "format": "text",
           "label": {
-            "en": "Title part 2",
-            "ar": "العنوان - الجزء الثاني"
+            "en": "Highlighted word",
+            "ar": "الكلمة المميزة"
           },
           "value": "النشرة البريدية"
         },
@@ -1200,18 +1200,18 @@
           "type": "string",
           "format": "text",
           "label": {
-            "en": "Note",
-            "ar": "ملاحظة"
+            "en": "Note text",
+            "ar": "نص الملاحظة"
           },
           "value": "يمكنك إلغاء الاشتراك في أي لحظة"
         },
         {
-          "id": "placeholder",
+          "id": "email_placeholder",
           "type": "string",
           "format": "text",
           "label": {
             "en": "Email placeholder",
-            "ar": "النص التوضيحي للبريد"
+            "ar": "النص البديل لحقل البريد"
           },
           "value": "ادخل البريد الالكترونى"
         },
@@ -1230,8 +1230,8 @@
           "type": "string",
           "format": "image",
           "label": {
-            "en": "Product image",
-            "ar": "صورة المنتجات"
+            "en": "Product image (desktop)",
+            "ar": "صورة المنتجات (سطح المكتب)"
           },
           "value": null
         }

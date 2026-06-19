@@ -1,51 +1,72 @@
 {#
-| Variable              | Type   | Description                                  |
-|-----------------------|--------|----------------------------------------------|
-| component             | object | merchant settings from twilight.json         |
-| component.badge       | string | small pill text (desktop)                    |
-| component.title_1     | string | heading part 1                               |
-| component.title_2     | string | heading part 2 (royal-blue on mobile)        |
-| component.subtitle    | string | supporting line                              |
-| component.note        | string | "cancel anytime" note                        |
-| component.placeholder | string | email input placeholder                      |
-| component.button_text | string | subscribe button label                       |
-| component.image       | string | product image (merchant upload, optional)    |
-| position              | int    | sorting block                                |
+| Variable                   | Type   | Description                                         |
+|----------------------------|--------|-----------------------------------------------------|
+| component                  | object | merchant settings from twilight.json                |
+| component.badge            | string | glass/pill badge text                               |
+| component.heading          | string | heading — first part                                |
+| component.heading_highlight| string | heading — highlighted part (royal-blue on mobile)   |
+| component.subtitle         | string | supporting line under the heading                   |
+| component.note             | string | small note above the email field                    |
+| component.email_placeholder| string | email input placeholder                             |
+| component.button_text      | string | subscribe button label                              |
+| component.image            | string | desktop product image (merchant upload)             |
+| position                   | int    | sorting block                                       |
 
-Figma: desktop 6036:1285 (royal-blue card, product image left, white text)
-       mobile  6036:22104 (light baby-blue card, no image/badge, dark text).
-Subscription is VISUAL-ONLY — no newsletter mechanism exists in this theme yet.
+Figma: desktop 6036:5326 (1440) — royal-blue card, product image LEFT, white text RIGHT.
+       mobile  6036:14322 (428) — baby-blue card, NO image, dark text, stacked.
+
+Newsletter behaviour: this theme has no Salla newsletter web-component or `salla.newsletter`
+API, so the form is intentionally VISUAL-ONLY and inert (submit is prevented). Subscription
+handling is PENDING a real, safe mechanism — no fake backend flow is wired here.
 #}
-{% set qfn_img = component.image ?: ('images/qissa-newsletter.png' | asset) %}
-<section class="s-block qfn" id="qfn-{{ position }}">
+<section class="s-block qfnews" id="qfnews-{{ position }}">
     <div class="container">
-        <div class="qfn__card">
-            <div class="qfn__subscribe">
-                {% if component.badge %}
-                    <span class="qfn__badge">{{ component.badge }}</span>
-                {% endif %}
-                <div class="qfn__text">
-                    <h2 class="qfn__title">
-                        <span class="qfn__title-1">{{ component.title_1 }}</span> <span class="qfn__title-2">{{ component.title_2 }}</span>
-                    </h2>
-                    {% if component.subtitle %}
-                        <p class="qfn__subtitle">{{ component.subtitle }}</p>
-                    {% endif %}
+        <div class="qfnews__card">
+
+            {# product image — desktop only (Figma hides it on mobile); merchant image field #}
+            {% if component.image %}
+                <div class="qfnews__media">
+                    <img src="{{ component.image }}" alt="{{ component.heading }}" loading="lazy"/>
                 </div>
-                <div class="qfn__email">
-                    {% if component.note %}
-                        <p class="qfn__note">{{ component.note }}</p>
-                    {% endif %}
-                    {# visual-only form — submission wiring pending (no Salla newsletter mechanism in theme) #}
-                    <form class="qfn__form" onsubmit="return false;">
-                        <input type="email" class="qfn__input" placeholder="{{ component.placeholder }}" aria-label="{{ component.placeholder }}" autocomplete="email"/>
-                        <button type="submit" class="qfn__btn">{{ component.button_text }}</button>
-                    </form>
-                </div>
-            </div>
-            {% if qfn_img %}
-                <img class="qfn__media" src="{{ qfn_img }}" alt="{{ component.title_1 }}" loading="lazy"/>
             {% endif %}
+
+            {# content (right in the layout) #}
+            <div class="qfnews__content">
+
+                {% if component.badge %}
+                    <span class="qfnews__badge">{{ component.badge }}</span>
+                {% endif %}
+
+                {% if component.heading or component.heading_highlight %}
+                    <div class="qfnews__head">
+                        <h2 class="qfnews__title">
+                            {%- if component.heading %}{{ component.heading }} {% endif -%}
+                            {%- if component.heading_highlight %}<span class="qfnews__title-em">{{ component.heading_highlight }}</span>{% endif -%}
+                        </h2>
+                        {% if component.subtitle %}
+                            <p class="qfnews__subtitle">{{ component.subtitle }}</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {# visual-only form — submission is prevented (see note above) #}
+                <form class="qfnews__form" onsubmit="return false;" novalidate>
+                    {% if component.note %}
+                        <p class="qfnews__note">{{ component.note }}</p>
+                    {% endif %}
+                    <div class="qfnews__field">
+                        <button type="submit" class="qfnews__btn">{{ component.button_text }}</button>
+                        <input
+                            type="email"
+                            class="qfnews__input"
+                            placeholder="{{ component.email_placeholder }}"
+                            aria-label="{{ component.email_placeholder }}"
+                            autocomplete="email"
+                        />
+                    </div>
+                </form>
+
+            </div>
         </div>
     </div>
 </section>

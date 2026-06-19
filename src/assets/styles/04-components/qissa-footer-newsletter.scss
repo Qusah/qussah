@@ -1,223 +1,146 @@
 // ====================================================================
-// Qissa Footer Newsletter — global banner above the footer (site-wide)
-// Figma: desktop 6036:1285 · mobile 6036:14322.
-//   Desktop: royal-blue card (#30378e), product image (left), white text.
-//   Mobile : light baby-blue card (#daeff7), NO image, dark text, stacked.
-// Image is loaded desktop-only (CSS bg on a div hidden on mobile) so the
-// large product image is never downloaded on phones.
+// Qissa Footer Newsletter — "الاشتراك فى النشرة البريدية"
+// Figma: desktop 6036:5326 (1440) · mobile 6036:14322 (428).
+// Standalone banner (NOT part of the global footer).
+//   Desktop: royal-blue card (#30378e), product image LEFT, white text RIGHT,
+//            flush pill badge, navy (#172951) subscribe button.
+//   Mobile : baby-blue card (#daeff7), NO image, stacked & right-aligned,
+//            dark/royal text, glass badge (white border), royal-blue button.
+// The outer card runs `direction: ltr` so Figma's image-left / content-right
+// order survives inside the RTL page; the content column resets to RTL.
+// Product visual = single merchant image field. Form is visual-only (inert).
 // ====================================================================
 
-.qfn {
-  font-family: "GE SS Two", sans-serif;
+.qfnews {
+  font-family: 'GE SS Two', sans-serif;
   padding-block: 24px;
 
   .container { max-width: none; padding-inline: 50px; }
 
-  // Figma 6036:1285 — image fills the LEFT (bleeds), 550px form fixed on the RIGHT
+  // ---- card (image LEFT, content RIGHT in RTL via direction:ltr) ----
   &__card {
-    overflow: hidden;
-    display: flex;
-    align-items: stretch;
-    gap: 24px; // Figma gap between image and form
-    min-height: 418px; // Figma card height
-    padding: 0 80px 0 0; // image bleeds to the left edge; form padded on the right (Figma px80)
-    background: #30378e; // desktop royal-blue
-    border-radius: 30px;
-    direction: rtl;
-  }
-
-  // ---- subscribe block (RIGHT in RTL) — Figma fixed 550px ----
-  &__subscribe {
-    flex: 0 0 550px;
-    min-width: 0;
-    max-width: 550px;
-    align-self: center; // vertically centered next to the image
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    display: flex; direction: ltr;
+    align-items: center; justify-content: flex-end;
     gap: 24px;
-    text-align: right;
-    padding-block: 24px;
+    padding: 24px 80px;
+    background: #30378e;                       // Figma base/royal blue
+    border-radius: 30px;
   }
 
+  // ---- product image (LEFT) ----
+  &__media {
+    flex: 1 1 0; min-width: 0;
+    height: 418px;
+    img { width: 100%; height: 100%; object-fit: contain; object-position: center; }
+  }
+
+  // ---- content column (RIGHT) ----
+  &__content {
+    flex: 0 1 550px; min-width: 0; max-width: 550px;   // shrinks in tablet range, no overflow
+    direction: rtl;
+    display: flex; flex-direction: column;
+    align-items: flex-start;                   // flex-start = RIGHT in RTL
+    gap: 24px; text-align: right;
+  }
+
+  // ---- badge — desktop: flush royal-blue pill, white text ----
   &__badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 5px 15px;
-    border-radius: 10px;
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 39px; padding: 5px 15px; border-radius: 10px;
     background: #30378e;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 20px;
-    letter-spacing: -0.16px;
-    white-space: nowrap;
+    color: #fff; font-weight: 500; font-size: 14px; line-height: 20px;
+    letter-spacing: -0.16px; white-space: nowrap;
   }
 
-  &__text {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 4px;
-    width: 100%;
+  // ---- heading + subtitle ----
+  &__head {
+    display: flex; flex-direction: column; align-items: flex-start;
+    gap: 4px; width: 100%;
   }
   &__title {
-    margin: 0;
-    color: #fff;
-    font-weight: 500;
-    font-size: 32px;
-    line-height: 38px;
-    letter-spacing: -0.2px;
+    margin: 0; width: 100%;
+    font-weight: 500; font-size: 32px; line-height: 38px;
+    letter-spacing: -0.2px; color: #fff;
   }
+  &__title-em { color: #fff; }                 // mobile re-colours this to royal-blue
   &__subtitle {
-    margin: 0;
-    color: #fff;
-    font-weight: 300;
-    font-size: 14px;
-    line-height: 1.5;
+    margin: 0; width: 100%;
+    font-weight: 300; font-size: 14px; line-height: 1.4; color: #fff;
   }
 
-  &__email {
-    width: 391px;
-    max-width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 16px;
+  // ---- email form (note + input row) ----
+  &__form {
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 16px; width: 391px; max-width: 100%;
   }
   &__note {
-    margin: 0;
-    width: 100%;
-    color: #fff;
-    font-weight: 300;
-    font-size: 14px;
-    text-align: right;
+    margin: 0; width: 100%;
+    font-weight: 300; font-size: 14px; line-height: 1.4; color: #fff; text-align: right;
   }
-
-  // form: input (right) + button (left)
-  &__form {
-    display: flex;
-    align-items: stretch;
-    gap: 8px;
-    width: 100%;
-    direction: rtl;
+  &__field {
+    display: flex; flex-direction: row; align-items: stretch;
+    gap: 8px; width: 100%;
   }
-  &__input {
-    flex: 1 1 auto;
-    min-width: 0;
-    height: 48px;
-    background: #fff;
-    border: 1px solid #eee;
-    border-radius: 100px;
-    padding: 0 16px;
-    font-family: inherit;
-    font-size: 14px;
-    color: #0a1f30;
-    text-align: right;
-    &::placeholder {
-      color: #a5a5a5;
-    }
-    &:focus {
-      outline: none;
-      border-color: #30378e;
-    }
-  }
+  // subscribe button (RIGHT in RTL) — desktop: stamp-pad-blue pill
   &__btn {
     flex: 0 0 90px;
-    width: 90px;
-    height: 48px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: #172951;
-    border: 1px solid #30378e;
-    border-radius: 100px;
-    color: #fff;
-    font-family: inherit;
-    font-weight: 500;
-    font-size: 14px;
-    cursor: pointer;
-    &:hover {
-      background: #30378e;
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 8px 16px; border-radius: 100px;
+    background: #172951; border: 1px solid #30378e;
+    color: #fff; font-weight: 500; font-size: 14px; line-height: 1;
+    cursor: pointer; appearance: none; -webkit-appearance: none;
+    white-space: nowrap;
+  }
+  // email input (fills the rest, LEFT in RTL)
+  &__input {
+    flex: 1 1 0; min-width: 0;
+    height: 48px; padding: 10px 16px; border-radius: 100px;
+    background: #fff; border: 1px solid #eee;
+    color: #0a1f30; font-family: inherit; font-weight: 300; font-size: 14px;
+    text-align: right; appearance: none; -webkit-appearance: none;
+    &::placeholder { color: #a5a5a5; opacity: 1; }
+    &:focus { outline: none; border-color: #30378e; }
+  }
+
+  // ================= mobile (Figma 6036:14322) =================
+  @media (max-width: 768px) {
+    padding-block: 8px;
+    .container { padding-inline: 15px; }
+
+    // baby-blue card, no image, single stacked column
+    &__card {
+      direction: rtl;
+      padding: 32px 20px;
+      background: #daeff7;                      // Figma base/smoothing baby blue
     }
-  }
+    &__media { display: none; }                 // image hidden on mobile per Figma
 
-  // ---- product image (LEFT in RTL) — real <img> filling the left, bleeds to edges ----
-  &__media {
-    flex: 1 1 auto; // image fills the remaining left side
-    min-width: 0; // min-width:0 stops the img's intrinsic size from overflowing
-    align-self: stretch;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-  }
-}
+    &__content {
+      flex: 1 1 auto; max-width: 100%; width: 100%;
+      align-items: flex-start;                  // RIGHT in RTL
+    }
 
-// ---- mobile (Figma 6036:14322): light card, no image, dark text ----
-@media (max-width: 768px) {
-  .qfn {
-    padding-block: 16px;
-  }
-  .qfn .container { padding-inline: 15px; }
+    // glass badge — gradient baby-blue → white, white border, royal-blue text
+    &__badge {
+      height: 32px; padding: 4px 12px; border-radius: 8px;
+      background: linear-gradient(to right, #daeff7, #fff);
+      border: 1px solid #fff;
+      color: #30378e; font-size: 11.5px; line-height: 16px; letter-spacing: -0.13px;
+    }
 
-  .qfn__card {
-    background: #daeff7;
-    padding: 32px 20px;
-    min-height: 0;
-  }
-  .qfn__media {
-    display: none;
-  } // not rendered → image not downloaded on mobile
-  .qfn__badge {
-    display: none;
-  } // mobile node 6036:22104 has no badge pill
+    &__head { gap: 10px; }
+    &__title { font-size: 25px; line-height: 31px; letter-spacing: -0.16px; color: #0a1f30; }
+    &__title-em { color: #30378e; }
+    &__subtitle { color: #666; }
 
-  .qfn__subscribe {
-    max-width: none;
-    gap: 23px;
-  }
-
-  .qfn__badge {
-    background: linear-gradient(to right, #daeff7, #ffffff);
-    border: 1px solid #fff;
-    color: #30378e;
-    padding: 4px 12px;
-    border-radius: 8px;
-    font-size: 11.5px;
-    line-height: 16px;
-  }
-  .qfn__title {
-    font-size: 25px;
-    line-height: 31px;
-    letter-spacing: -0.16px;
-  }
-  .qfn__title-1 {
-    color: #0a1f30;
-  }
-  .qfn__title-2 {
-    color: #30378e;
-  }
-  .qfn__subtitle {
-    color: #666;
-  }
-  .qfn__note {
-    color: #333;
-  }
-  .qfn__email {
-    width: 100%;
-    gap: 13px;
-  }
-
-  .qfn__input {
-    height: 39px;
-    font-size: 11.5px;
-  }
-  .qfn__btn {
-    flex-basis: 74px;
-    width: 74px;
-    height: 39px;
-    font-size: 11.5px;
-    background: #30378e;
+    &__form { width: 100%; gap: 13px; }
+    &__note { color: #333; }
+    &__field { gap: 6px; }
+    &__btn {
+      flex: 0 0 74px;
+      padding: 6.5px 13px; font-size: 11.5px;
+      background: #30378e; border-color: #30378e;   // royal-blue on mobile
+    }
+    &__input { height: 39px; padding: 8px 13px; font-size: 11.5px; }
   }
 }
