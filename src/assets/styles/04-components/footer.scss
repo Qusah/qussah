@@ -1,49 +1,121 @@
+// ====================================================================
+// Global Store Footer — Qussah
+// Figma: desktop 6036:1308 (1440) · mobile 6036:22124 (428).
+// White footer, 5 RTL columns (right → left):
+//   About · Account · Links · Contact · Social.
+//   Desktop: single row of 5 columns (About widest, on the right).
+//   Mobile : About full-width, then 2×2 grid (Account+Links, Contact+Social).
+// Dynamic data: store.logo/description, <salla-menu source="footer">,
+// store.contacts.*, <salla-social>, <salla-payments>, copyright hook.
+// The payments/copyright bar is preserved (not part of the selected Figma nodes).
+// ====================================================================
 
-.store-footer {
-  @apply relative bg-darker text-white mt-8 sm:mt-16;
+.qfooter {
+  font-family: 'GE SS Two', sans-serif;
+  background: #fff;
+  direction: rtl;
 
-  a{
-    @apply transition-opacity hover:opacity-75;
+  // ---- columns row (desktop: 5 across; RTL order = right→left) ----
+  &__cols {
+    display: flex; align-items: flex-start; gap: 24px;
+    padding-block: 48px;
   }
 
-  &__inner{
-    @apply bg-dark py-8 lg:py-16 border-b border-dashed border-b-white/10;
-  }  
-
-  h3{
-    @apply text-lg font-bold mb-3 lg:mb-5;
+  // each column is right-aligned (flex-start = RIGHT in RTL)
+  &__col {
+    display: flex; flex-direction: column; align-items: flex-start;
+    gap: 16px; min-width: 0;
   }
 
-  .social-link {
-    @apply border rounded-full w-8 h-8 justify-center flex items-center hover:opacity-75 transition duration-300 text-sm
+  // column widths from Figma
+  &__about    { flex: 1 1 0; }
+  &__links-col,
+  &__contact  { flex: 0 0 175px; }
+  &__social   { flex: 0 0 200px; }
+
+  // ---- column heading ----
+  &__title {
+    margin: 0; width: 100%;
+    font-weight: 500; font-size: 18px; line-height: 25px;
+    color: #30378e; text-align: right;
   }
 
-  .contact-social{
-    @apply mt-5 pt-5 border-t border-white/10;
-
-    ul {
-      @apply mb-0;
-    }
+  // ---- generic link list ----
+  &__list {
+    list-style: none; margin: 0; padding: 0; width: 100%;
+    display: flex; flex-direction: column; gap: 8px;
   }
 
-  .footer-is-light & {
-    @apply bg-gray-50 text-gray-700;
-
-    .store-footer__inner {
-      @apply bg-gray-100 border-b-gray-200;
-    }
-
-    .social-link {
-      @apply border-gray-300;
-    }
-
-    .contact-social{
-      @apply border-gray-100;
-    }
+  // ---- link / contact rows ----
+  &__link, &__contact-item {
+    display: flex; flex-direction: row; justify-content: flex-end;
+    gap: 4px; width: 100%;
+    color: #6c757d; font-weight: 300; font-size: 16px; line-height: 25px;
+    text-align: right;
+    &:hover { opacity: .75; }
   }
-}
+  &__link { align-items: center; }
+  &__contact-item { align-items: flex-start; }
+  &__link span { flex: 1 1 0; min-width: 0; }
+  &__link.is-active { color: #30378e; }
 
+  // « chevron — Figma uses a small double-angle mark, gray/400 (royal-blue when active)
+  &__arrow {
+    flex: 0 0 auto; font-style: normal; line-height: 25px; color: #ced4da;
+    &::before { content: '\00AB'; font-size: 12px; }
+  }
+  &__link.is-active &__arrow { color: #30378e; }
 
-.copyright-text p{
-  @apply text-gray-700;
+  // ---- About column ----
+  &__logo {
+    display: inline-flex;
+    img { height: 40px; width: auto; display: block; }
+  }
+  &__about-text {
+    margin: 0; max-width: 336px;
+    color: #6c757d; font-weight: 300; font-size: 16px; line-height: 25px;
+    text-align: right;
+  }
+
+  // ---- Contact column ----
+  &__contact-text { display: flex; flex-direction: column; flex: 1 1 0; min-width: 0; }
+  &__contact-label { color: #6c757d; font-size: 16px; line-height: 25px; }
+  &__contact-val {
+    font-family: 'Poppins', sans-serif; font-weight: 300;
+    color: #6c757d; font-size: 16px; line-height: 25px;
+  }
+
+  // ---- Social column (salla-social renders the store's links) ----
+  &__social salla-social { display: block; width: 100%; }
+  &__social .social-link {
+    width: 34px; height: 34px;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+
+  // ---- bottom bar (preserved payments + copyright) ----
+  &__bar { border-top: 1px solid #eee; }
+  &__bar-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding-block: 16px; flex-wrap: wrap;
+  }
+  &__copyright {
+    color: #6c757d; font-size: 14px; line-height: 1.6;
+    p { color: #6c757d; margin: 0; }
+  }
+
+  // ================= mobile (Figma 6036:22124) =================
+  @media (max-width: 768px) {
+    &__cols { flex-wrap: wrap; gap: 24px; padding-block: 32px; }
+
+    // About on its own row; the other four pair up 2-per-row
+    &__about { flex: 0 0 100%; }
+    &__about-text { max-width: 100%; }
+    &__links-col,
+    &__contact,
+    &__social { flex: 1 1 calc(50% - 12px); }
+
+    &__title { font-size: 16px; }
+
+    &__bar-inner { justify-content: center; gap: 12px; }
+  }
 }
