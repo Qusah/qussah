@@ -1,0 +1,149 @@
+// ====================================================================
+// Qissa Highlight Cards — 3-card strip (Figma desktop 6036:926 / mobile 6036:21915)
+//   A: cream stat card  (#f9f1df→#fff)  "152+ / منتج في قصة"
+//   B: navy product banner (#172951)    title + glass pill + product photo
+//   C: royal-blue shop CTA (#30378e)     logo + paragraph + cyan button
+// Desktop: 3 equal cards in a row (LTR order so it matches Figma inside the RTL page),
+//          left→right = cream · navy · shop. Each card resets RTL for its content.
+// Mobile : stacked & REVERSED via column-reverse  → shop · navy · cream (top→bottom).
+// Decorative glows recreated as CSS gradients (same approach as .qbanner); photos
+// come from merchant image fields.
+// ====================================================================
+
+.qhcards {
+  font-family: 'GE SS Two', sans-serif;
+  padding-block: 24px;
+
+  .container { max-width: none; padding-inline: 50px; }
+
+  // 3 equal cards in a row — direction ltr keeps Figma's left→right order in RTL page
+  &__row {
+    display: flex; flex-direction: row; direction: ltr;
+    align-items: stretch; gap: 30px;
+  }
+}
+
+.qhcard {
+  flex: 1 1 0; min-width: 0;
+  position: relative; overflow: hidden;
+  border-radius: 30px;
+  min-height: 372px;
+  direction: rtl;                       // reset content to RTL inside the LTR row
+  text-align: right;
+
+  // ---------- A: cream stat card ----------
+  &--stat {
+    display: flex; flex-direction: column; align-items: flex-start; // flex-start = RIGHT in RTL
+    gap: 37px; padding: 30px;
+    background: linear-gradient(180deg, #f9f1df 0%, #ffffff 100%);
+  }
+
+  &__stat {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 10px; width: 100%; color: #30378e;
+  }
+  &__stat-num {
+    font-family: 'Poppins', 'GE SS Two', sans-serif;
+    font-weight: 600; font-size: 100px; line-height: 1;
+  }
+  &__stat-label {
+    font-weight: 500; font-size: 25px; line-height: 35px;
+  }
+  &__stat-text {
+    font-weight: 500; font-size: 20px; line-height: 35px;
+    color: #0a1f30; width: 100%; margin: 0;
+  }
+
+  // ---------- B: navy product banner ----------
+  &--banner {
+    padding: 41px 30px 0;
+    // base navy + cyan glow at lower-centre (Figma Vector 3) recreated as CSS
+    background:
+      radial-gradient(60% 55% at 50% 78%, rgba(145,230,247,.35) 0%, rgba(145,230,247,0) 70%),
+      #172951;
+  }
+  &__banner-title {
+    position: relative; z-index: 2;
+    font-weight: 500; font-size: 30px; line-height: 35px;
+    color: #fff; max-width: 300px; margin: 0;
+  }
+  // glass pill — backdrop blur, white→transparent gradient (Figma 6036:935)
+  &__banner-badge {
+    position: absolute; top: 198px; left: 18px; z-index: 2;
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 39px; padding: 5px 15px; border-radius: 100px;
+    background: linear-gradient(to right, rgba(255,255,255,.31), rgba(255,255,255,0));
+    -webkit-backdrop-filter: blur(49.4px); backdrop-filter: blur(49.4px);
+    border: 1px solid rgba(255,255,255,0);
+    color: #fff; font-weight: 500; font-size: 14px; line-height: 20px;
+    letter-spacing: -0.16px; white-space: nowrap;
+  }
+  // product photo bleeds from the bottom (Figma img top 124, fills to bottom)
+  &__banner-media {
+    position: absolute; left: 0; right: 0; top: 124px; bottom: 0; z-index: 1;
+    display: flex; align-items: flex-end; justify-content: center;
+    img { width: 100%; height: 100%; object-fit: contain; object-position: bottom center; }
+  }
+
+  // ---------- C: royal-blue shop CTA ----------
+  &--shop {
+    display: flex; flex-direction: column; align-items: flex-start; // flex-start = RIGHT in RTL
+    justify-content: center; gap: 20px; padding: 30px;
+    // base royal-blue + soft light glow upper area (Figma Asset 1) recreated as CSS
+    background:
+      radial-gradient(85% 60% at 28% 8%, rgba(145,230,247,.18) 0%, rgba(145,230,247,0) 55%),
+      #30378e;
+  }
+  &__shop-logo {
+    display: flex; justify-content: flex-start; width: 100%;
+    img { width: 77px; height: auto; }
+  }
+  &__shop-body {
+    display: flex; flex-direction: column; align-items: flex-start;
+    gap: 25px; width: 366px; max-width: 100%;
+  }
+  &__shop-text {
+    font-weight: 500; font-size: 20px; line-height: 35px; margin: 0; width: 100%;
+    color: #fff;                                              // fallback
+    background: linear-gradient(199deg, #ffffff 14%, rgba(255,255,255,.41) 79%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  // CTA pill — cyan bg, royal-blue text (Figma 6036:957)
+  &__shop-btn {
+    display: inline-flex; flex-direction: row; direction: ltr;
+    align-items: center; justify-content: center; gap: 6px;
+    padding: 12px; border-radius: 12px;
+    background: #91e6f7; border: 1px solid #91e6f7;
+    color: #30378e; font-weight: 500; font-size: 16px; line-height: 18px;
+    i { font-size: 16px; }
+    &:hover { filter: brightness(0.96); }
+  }
+}
+
+// ---------- mobile (Figma 6036:21915): stacked & reversed ----------
+@media (max-width: 768px) {
+  .qhcards { padding-block: 8px; }
+  .qhcards .container { padding-inline: 15px; }
+  .qhcards__row { flex-direction: column-reverse; gap: 16px; }   // → shop · navy · cream
+
+  .qhcard { min-height: 0; }
+
+  // A: cream
+  .qhcard--stat { gap: 8px; padding: 20px 30px; }
+  .qhcard__stat-num { font-size: 50px; }
+  .qhcard__stat-label { font-size: 22px; }
+  .qhcard__stat-text { font-size: 18px; line-height: 25px; }
+
+  // B: navy
+  .qhcard--banner { min-height: 237px; padding: 20px 30px 0; }
+  .qhcard__banner-title { font-size: 25px; max-width: 268px; }
+  .qhcard__banner-badge { top: 124px; left: 9px; }
+  .qhcard__banner-media { top: 62px; }
+
+  // C: royal
+  .qhcard--shop { gap: 10px; padding: 20px 30px; }
+  .qhcard__shop-body { gap: 3px; }
+  .qhcard__shop-text { font-size: 16px; }
+  .qhcard__shop-btn { font-size: 14px; }
+}

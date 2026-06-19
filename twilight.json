@@ -740,6 +740,117 @@
       ]
     },
     {
+      "key": "d29a36cf-b402-450b-948f-41e60e742a94",
+      "title": {
+        "en": "Qissa Highlight Cards",
+        "ar": "بطاقات قصة المميزة"
+      },
+      "icon": "sicon-apps",
+      "path": "home.qissa-highlight-cards",
+      "fields": [
+        {
+          "id": "stat_number",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Stat number",
+            "ar": "الرقم"
+          },
+          "value": "152+"
+        },
+        {
+          "id": "stat_label",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Stat label",
+            "ar": "وصف الرقم"
+          },
+          "value": "منتج في قصة"
+        },
+        {
+          "id": "stat_text",
+          "type": "string",
+          "format": "textarea",
+          "label": {
+            "en": "Stat card text",
+            "ar": "نص بطاقة الإحصائية"
+          },
+          "value": "لأن بيتك يستاهل الأفضل  مناديل، صابون، معطـرات وأكثـــر"
+        },
+        {
+          "id": "banner_title",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Banner title",
+            "ar": "عنوان البانر"
+          },
+          "value": "لأن بيتك يستاهل الأفضل"
+        },
+        {
+          "id": "banner_badge",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Banner badge",
+            "ar": "وسم البانر"
+          },
+          "value": "كل ما تحتاجه للنظافة، في مكان واحد"
+        },
+        {
+          "id": "banner_image",
+          "type": "string",
+          "format": "image",
+          "label": {
+            "en": "Banner product image",
+            "ar": "صورة منتجات البانر"
+          },
+          "value": null
+        },
+        {
+          "id": "shop_text",
+          "type": "string",
+          "format": "textarea",
+          "label": {
+            "en": "Shop card text",
+            "ar": "نص بطاقة التسوق"
+          },
+          "value": "لأن بيتك يستاهل الأفضل  مناديل، صابون، معطـرات وأكثـــر، باختيـــار سهـــل وتوصيل سريــــع من المنــــاديل للمعطــــرات، كل ما تحتاجـــــــه لبيت نظيــف ومرتب — بجــودة عالية وأسعار مباشرة من المصنع"
+        },
+        {
+          "id": "shop_button_text",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Shop button text",
+            "ar": "نص زر التسوق"
+          },
+          "value": "تسوق مع قصة"
+        },
+        {
+          "id": "shop_button_url",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Shop button URL",
+            "ar": "رابط زر التسوق"
+          },
+          "value": "/products"
+        },
+        {
+          "id": "shop_logo",
+          "type": "string",
+          "format": "image",
+          "label": {
+            "en": "Shop card logo",
+            "ar": "شعار بطاقة التسوق"
+          },
+          "value": null
+        }
+      ]
+    },
+    {
       "key": "186b3f4f-25cf-4d3c-abca-cef7eed6f0ab",
       "title": {
         "en": "Enhances Animated Images",

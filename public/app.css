@@ -3058,6 +3058,17 @@ textarea.s-input{
     padding-right: 15px;
   }
 }
+.qhcards .s-advertisement-content {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+@media (max-width: 768px) {
+  .qhcards .s-advertisement-content {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
 .qbanner .s-advertisement-content {
   max-width: none;
   padding-left: 50px;
@@ -28108,6 +28119,242 @@ body, main, #app {
     color: #daeff7;
   }
 }
+.qhcards {
+  font-family: "GE SS Two", sans-serif;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+.qhcards .container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+.qhcards__row {
+  display: flex;
+  flex-direction: row;
+  direction: ltr;
+  align-items: stretch;
+  gap: 30px;
+}
+.qhcard {
+  flex: 1 1 0;
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
+  border-radius: 30px;
+  min-height: 372px;
+  direction: rtl;
+  text-align: right;
+}
+.qhcard--stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 37px;
+  padding: 30px;
+  background: linear-gradient(180deg, #f9f1df 0%, #ffffff 100%);
+}
+.qhcard__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  color: #30378e;
+}
+.qhcard__stat-num {
+  font-family: "Poppins", "GE SS Two", sans-serif;
+  font-weight: 600;
+  font-size: 100px;
+  line-height: 1;
+}
+.qhcard__stat-label {
+  font-weight: 500;
+  font-size: 25px;
+  line-height: 35px;
+}
+.qhcard__stat-text {
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 35px;
+  color: #0a1f30;
+  width: 100%;
+  margin: 0;
+}
+.qhcard--banner {
+  padding: 41px 30px 0;
+  background: radial-gradient(60% 55% at 50% 78%, rgba(145, 230, 247, 0.35) 0%, rgba(145, 230, 247, 0) 70%), #172951;
+}
+.qhcard__banner-title {
+  position: relative;
+  z-index: 2;
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 35px;
+  color: #fff;
+  max-width: 300px;
+  margin: 0;
+}
+.qhcard__banner-badge {
+  position: absolute;
+  top: 198px;
+  left: 18px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 39px;
+  padding: 5px 15px;
+  border-radius: 100px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.31), rgba(255, 255, 255, 0));
+  -webkit-backdrop-filter: blur(49.4px);
+  backdrop-filter: blur(49.4px);
+  border: 1px solid rgba(255, 255, 255, 0);
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.16px;
+  white-space: nowrap;
+}
+.qhcard__banner-media {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 124px;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.qhcard__banner-media img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+  -o-object-position: bottom center;
+     object-position: bottom center;
+}
+.qhcard--shop {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 20px;
+  padding: 30px;
+  background: radial-gradient(85% 60% at 28% 8%, rgba(145, 230, 247, 0.18) 0%, rgba(145, 230, 247, 0) 55%), #30378e;
+}
+.qhcard__shop-logo {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+.qhcard__shop-logo img {
+  width: 77px;
+  height: auto;
+}
+.qhcard__shop-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 25px;
+  width: 366px;
+  max-width: 100%;
+}
+.qhcard__shop-text {
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 35px;
+  margin: 0;
+  width: 100%;
+  color: #fff;
+  background: linear-gradient(199deg, #ffffff 14%, rgba(255, 255, 255, 0.41) 79%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.qhcard__shop-btn {
+  display: inline-flex;
+  flex-direction: row;
+  direction: ltr;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #91e6f7;
+  border: 1px solid #91e6f7;
+  color: #30378e;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 18px;
+}
+.qhcard__shop-btn i {
+  font-size: 16px;
+}
+.qhcard__shop-btn:hover {
+  filter: brightness(0.96);
+}
+@media (max-width: 768px) {
+  .qhcards {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .qhcards .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .qhcards__row {
+    flex-direction: column-reverse;
+    gap: 16px;
+  }
+  .qhcard {
+    min-height: 0;
+  }
+  .qhcard--stat {
+    gap: 8px;
+    padding: 20px 30px;
+  }
+  .qhcard__stat-num {
+    font-size: 50px;
+  }
+  .qhcard__stat-label {
+    font-size: 22px;
+  }
+  .qhcard__stat-text {
+    font-size: 18px;
+    line-height: 25px;
+  }
+  .qhcard--banner {
+    min-height: 237px;
+    padding: 20px 30px 0;
+  }
+  .qhcard__banner-title {
+    font-size: 25px;
+    max-width: 268px;
+  }
+  .qhcard__banner-badge {
+    top: 124px;
+    left: 9px;
+  }
+  .qhcard__banner-media {
+    top: 62px;
+  }
+  .qhcard--shop {
+    gap: 10px;
+    padding: 20px 30px;
+  }
+  .qhcard__shop-body {
+    gap: 3px;
+  }
+  .qhcard__shop-text {
+    font-size: 16px;
+  }
+  .qhcard__shop-btn {
+    font-size: 14px;
+  }
+}
 .qbanner {
   font-family: "GE SS Two", sans-serif;
   padding-top: 24px;
@@ -30965,6 +31212,17 @@ model-viewer[style*=width]:before{
 }
 @media (max-width: 768px) {
   .qallprods .s-comments-product .s-comments-container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+.qhcards .s-comments-product .s-comments-container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+@media (max-width: 768px) {
+  .qhcards .s-comments-product .s-comments-container {
     padding-left: 15px;
     padding-right: 15px;
   }
