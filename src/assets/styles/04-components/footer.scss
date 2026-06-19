@@ -51,20 +51,25 @@
     display: flex; flex-direction: row; justify-content: flex-end;
     gap: 4px; width: 100%;
     color: #6c757d; font-weight: 300; font-size: 16px; line-height: 25px;
-    text-align: right;
-    &:hover { opacity: .75; }
+    text-align: right; transition: color .2s ease;
+    &:hover { color: #30378e; }              // Figma hover state = royal-blue
   }
   &__link { align-items: center; }
   &__contact-item { align-items: flex-start; }
   &__link span { flex: 1 1 0; min-width: 0; }
-  &__link.is-active { color: #30378e; }
 
-  // « chevron — Figma uses a small double-angle mark, gray/400 (royal-blue when active)
+  // hover also recolours the chevron + contact label/value to royal-blue
+  &__link:hover &__arrow,
+  &__contact-item:hover &__arrow { color: #30378e; }
+  &__contact-item:hover &__contact-label,
+  &__contact-item:hover &__contact-val { color: #30378e; }
+
+  // « chevron — Figma uses a small double-angle mark, gray/400
   &__arrow {
     flex: 0 0 auto; font-style: normal; line-height: 25px; color: #ced4da;
+    transition: color .2s ease;
     &::before { content: '\00AB'; font-size: 12px; }
   }
-  &__link.is-active &__arrow { color: #30378e; }
 
   // ---- About column ----
   &__logo {
@@ -92,16 +97,7 @@
     display: inline-flex; align-items: center; justify-content: center;
   }
 
-  // ---- bottom bar (preserved payments + copyright) ----
-  &__bar { border-top: 1px solid #eee; }
-  &__bar-inner {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 16px; padding-block: 16px; flex-wrap: wrap;
-  }
-  &__copyright {
-    color: #6c757d; font-size: 14px; line-height: 1.6;
-    p { color: #6c757d; margin: 0; }
-  }
+  // ---- bottom bar lives in its own `.qissa-footer-bottom` block (below) ----
 
   // ================= mobile (Figma 6036:22124) =================
   @media (max-width: 768px) {
@@ -115,7 +111,67 @@
     &__social { flex: 1 1 calc(50% - 12px); }
 
     &__title { font-size: 16px; }
+  }
+}
 
-    &__bar-inner { justify-content: center; gap: 12px; }
+// ====================================================================
+// Footer bottom bar — Figma desktop 6036:1409 / mobile 6036:22227.
+// Royal-blue pill: payment icons (left) · VAT number+badge · copyright (right).
+//   Desktop: single row, radius 100px.
+//   Mobile : stacked column, radius 20px (payments top → copyright bottom).
+// Payment icons come from <salla-payments> (dynamic; no local assets exist and
+// Figma temp URLs are not used). VAT number/badge from store.settings.tax.*.
+// ====================================================================
+.qissa-footer-bottom {
+  font-family: 'GE SS Two', sans-serif;
+  direction: rtl;
+  display: flex; flex-direction: row; align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+  padding: 16px 80px;
+  background: #30378e; border-radius: 100px;
+
+  // copyright (RIGHT on desktop) — fills remaining space
+  &__copyright {
+    flex: 1 1 0; min-width: 0; margin: 0;
+    color: #fff; font-weight: 300; font-size: 14px; line-height: normal; text-align: right;
+  }
+  &__year { font-family: 'Poppins', sans-serif; font-weight: 300; }
+
+  // VAT number + badge
+  &__tax {
+    flex: 0 0 auto;
+    display: flex; flex-direction: row; align-items: center; gap: 8px;
+  }
+  &__tax-num {
+    color: #f8f8f8; font-weight: 300; font-size: 14px; line-height: normal; white-space: nowrap;
+  }
+  &__tax-badge {
+    flex: 0 0 auto; width: 22.5px; height: 30px;
+    border-radius: 2px; object-fit: cover;
+  }
+
+  // payment methods (LEFT on desktop) — salla-payments renders the store's icons
+  &__payments {
+    flex: 0 0 auto;
+    display: flex; flex-direction: row; align-items: center; gap: 8px;
+    salla-payments { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    // white rounded box per icon (Figma: h31, rounded 5, white)
+    img {
+      box-sizing: border-box;
+      height: 31px; width: auto; min-width: 60px;
+      padding: 6px 10px; background: #fff; border-radius: 5px;
+      object-fit: contain;
+    }
+  }
+
+  // ---- mobile (Figma 6036:22227): stacked, radius 20 ----
+  @media (max-width: 768px) {
+    flex-direction: column-reverse;      // payments top → copyright bottom
+    gap: 12px; padding: 16px; border-radius: 20px;
+
+    .qissa-footer-bottom__copyright { flex: 0 0 auto; width: 100%; text-align: center; }
+    .qissa-footer-bottom__tax { justify-content: center; }
+    .qissa-footer-bottom__payments { flex-wrap: wrap; justify-content: center; }
   }
 }

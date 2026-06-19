@@ -12,12 +12,12 @@
     - contact      : store.contacts.{whatsapp,mobile,email}
     - social       : <salla-social>                  (merchant social links)
     - payments     : <salla-payments>                (bottom bar)
-    - copyright    : {% hook copyright %}            (bottom bar)
+    - VAT number   : store.settings.tax.{number,certificate}  (bottom bar)
 
   Notes:
    * The newsletter banner is the separate `qissa-footer-newsletter` component — NOT here.
-   * The payment/copyright bar is not part of the selected Figma nodes; it is preserved
-     from the previous footer so Salla payment + copyright behaviour keeps working.
+   * Bottom bar `qissa-footer-bottom` follows Figma 6036:1409 (desktop) / 6036:22227 (mobile):
+     payment icons (salla-payments) + VAT number (store.settings.tax.*) + copyright.
    * Account links have no Salla data source → linked to the standard customer pages.
 #}
 <footer class="qfooter">
@@ -41,7 +41,7 @@
         <h3 class="qfooter__title">حسابى</h3>
         <ul class="qfooter__list">
           <li><a class="qfooter__link" href="{{ link('/profile') }}"><span>حسابى</span><i class="qfooter__arrow" aria-hidden="true"></i></a></li>
-          <li><a class="qfooter__link is-active" href="{{ link('/orders') }}"><span>طلباتى</span><i class="qfooter__arrow" aria-hidden="true"></i></a></li>
+          <li><a class="qfooter__link" href="{{ link('/orders') }}"><span>طلباتى</span><i class="qfooter__arrow" aria-hidden="true"></i></a></li>
           <li><a class="qfooter__link" href="{{ link('/cart') }}"><span>سلة المشتريات</span><i class="qfooter__arrow" aria-hidden="true"></i></a></li>
           <li><a class="qfooter__link" href="{{ link('/wishlist') }}"><span>المفضلة</span><i class="qfooter__arrow" aria-hidden="true"></i></a></li>
         </ul>
@@ -102,11 +102,30 @@
     </div>
   </div>
 
-  {# bottom bar — preserved Salla payments + copyright (not part of the Figma nodes) #}
-  <div class="qfooter__bar">
-    <div class="container qfooter__bar-inner">
-      <span class="qfooter__copyright">{% hook copyright %}</span>
-      <salla-payments></salla-payments>
+  {# bottom bar — Figma desktop 6036:1409 / mobile 6036:22227 #}
+  <div class="container">
+    <div class="qissa-footer-bottom">
+
+      {# copyright (RIGHT on desktop / BOTTOM on mobile) #}
+      <p class="qissa-footer-bottom__copyright">
+        الحقوق محفوظة لمنصة سلة <span class="qissa-footer-bottom__year">{{ "now"|date("Y") }}</span>
+      </p>
+
+      {# VAT number + tax badge (dynamic store tax data) #}
+      {% if store.settings.tax.number %}
+        <div class="qissa-footer-bottom__tax">
+          <span class="qissa-footer-bottom__tax-num">الرقم الضريبي : <span dir="ltr">{{ store.settings.tax.number }}</span></span>
+          {% if store.settings.tax.certificate %}
+            <img class="qissa-footer-bottom__tax-badge" src="{{ store.settings.tax.certificate }}" alt="الرقم الضريبي" loading="lazy"/>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {# payment methods (LEFT on desktop / TOP on mobile) — dynamic Salla payments #}
+      <div class="qissa-footer-bottom__payments">
+        <salla-payments></salla-payments>
+      </div>
+
     </div>
   </div>
 </footer>
