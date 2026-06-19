@@ -1,4 +1,34 @@
 <footer class="store-footer">
+	{#
+	  Qissa global newsletter banner — site-wide, above the footer columns.
+	  Figma: desktop 6036:1285 (royal-blue + product image + white text)
+	         mobile  6036:14322 (light baby-blue, no image, dark text).
+	  NOTE: copy is static (translated) for now — dashboard editability is PENDING.
+	        Subscription is VISUAL-ONLY — no newsletter backend exists in this theme yet.
+	#}
+	<div class="qfn">
+		<div class="container">
+			<div class="qfn__card">
+				<div class="qfn__subscribe">
+					<span class="qfn__badge">كل ما تحتاجه للنظافة، في مكان واحد</span>
+					<div class="qfn__text">
+						<h2 class="qfn__title"><span class="qfn__title-1">الاشتراك فى</span> <span class="qfn__title-2">النشرة البريدية</span></h2>
+						<p class="qfn__subtitle">انضم الآن واحصل على خصم 10٪ على مشترياتك التالية!</p>
+					</div>
+					<div class="qfn__email">
+						<p class="qfn__note">يمكنك إلغاء الاشتراك في أي لحظة</p>
+						{# visual-only form — submission wiring pending (no Salla newsletter mechanism in theme) #}
+						<form class="qfn__form" onsubmit="return false;">
+							<input type="email" class="qfn__input" placeholder="ادخل البريد الالكترونى" aria-label="البريد الالكتروني" autocomplete="email"/>
+							<button type="submit" class="qfn__btn">إشتراك</button>
+						</form>
+					</div>
+				</div>
+				<div class="qfn__media" style="background-image:url('{{ 'images/qissa-newsletter.png' | asset }}')" role="img" aria-label="منتجات قُصة"></div>
+			</div>
+		</div>
+	</div>
+
 	<div aria-label="footer" class="store-footer__inner">
 		<div class="container grid grid-col-1 lg:grid-cols-6 gap-8 lg:gap-6">
 			<div class="lg:col-span-2 rtl:lg:pl-20 ltr:lg:pr-20">
