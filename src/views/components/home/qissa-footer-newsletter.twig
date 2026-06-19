@@ -1,0 +1,51 @@
+{#
+| Variable              | Type   | Description                                  |
+|-----------------------|--------|----------------------------------------------|
+| component             | object | merchant settings from twilight.json         |
+| component.badge       | string | small pill text (desktop)                    |
+| component.title_1     | string | heading part 1                               |
+| component.title_2     | string | heading part 2 (royal-blue on mobile)        |
+| component.subtitle    | string | supporting line                              |
+| component.note        | string | "cancel anytime" note                        |
+| component.placeholder | string | email input placeholder                      |
+| component.button_text | string | subscribe button label                       |
+| component.image       | string | product image (merchant upload, optional)    |
+| position              | int    | sorting block                                |
+
+Figma: desktop 6036:1285 (royal-blue card, product image left, white text)
+       mobile  6036:22104 (light baby-blue card, no image/badge, dark text).
+Subscription is VISUAL-ONLY — no newsletter mechanism exists in this theme yet.
+#}
+{% set qfn_img = component.image ?: ('images/qissa-newsletter.png' | asset) %}
+<section class="s-block qfn" id="qfn-{{ position }}">
+    <div class="container">
+        <div class="qfn__card">
+            <div class="qfn__subscribe">
+                {% if component.badge %}
+                    <span class="qfn__badge">{{ component.badge }}</span>
+                {% endif %}
+                <div class="qfn__text">
+                    <h2 class="qfn__title">
+                        <span class="qfn__title-1">{{ component.title_1 }}</span> <span class="qfn__title-2">{{ component.title_2 }}</span>
+                    </h2>
+                    {% if component.subtitle %}
+                        <p class="qfn__subtitle">{{ component.subtitle }}</p>
+                    {% endif %}
+                </div>
+                <div class="qfn__email">
+                    {% if component.note %}
+                        <p class="qfn__note">{{ component.note }}</p>
+                    {% endif %}
+                    {# visual-only form — submission wiring pending (no Salla newsletter mechanism in theme) #}
+                    <form class="qfn__form" onsubmit="return false;">
+                        <input type="email" class="qfn__input" placeholder="{{ component.placeholder }}" aria-label="{{ component.placeholder }}" autocomplete="email"/>
+                        <button type="submit" class="qfn__btn">{{ component.button_text }}</button>
+                    </form>
+                </div>
+            </div>
+            {% if qfn_img %}
+                <img class="qfn__media" src="{{ qfn_img }}" alt="{{ component.title_1 }}" loading="lazy"/>
+            {% endif %}
+        </div>
+    </div>
+</section>

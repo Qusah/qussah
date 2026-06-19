@@ -1147,6 +1147,97 @@
       ]
     },
     {
+      "key": "3b2ea398-eb8f-4679-a4f6-fa15044b976d",
+      "title": {
+        "en": "Qissa Newsletter",
+        "ar": "النشرة البريدية"
+      },
+      "icon": "sicon-email",
+      "path": "home.qissa-footer-newsletter",
+      "fields": [
+        {
+          "id": "badge",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Badge text",
+            "ar": "نص الوسم"
+          },
+          "value": "كل ما تحتاجه للنظافة، في مكان واحد"
+        },
+        {
+          "id": "title_1",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Title part 1",
+            "ar": "العنوان - الجزء الأول"
+          },
+          "value": "الاشتراك فى"
+        },
+        {
+          "id": "title_2",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Title part 2",
+            "ar": "العنوان - الجزء الثاني"
+          },
+          "value": "النشرة البريدية"
+        },
+        {
+          "id": "subtitle",
+          "type": "string",
+          "format": "textarea",
+          "label": {
+            "en": "Subtitle",
+            "ar": "النص الفرعي"
+          },
+          "value": "انضم الآن واحصل على خصم 10٪ على مشترياتك التالية!"
+        },
+        {
+          "id": "note",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Note",
+            "ar": "ملاحظة"
+          },
+          "value": "يمكنك إلغاء الاشتراك في أي لحظة"
+        },
+        {
+          "id": "placeholder",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Email placeholder",
+            "ar": "النص التوضيحي للبريد"
+          },
+          "value": "ادخل البريد الالكترونى"
+        },
+        {
+          "id": "button_text",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Button text",
+            "ar": "نص الزر"
+          },
+          "value": "إشتراك"
+        },
+        {
+          "id": "image",
+          "type": "string",
+          "format": "image",
+          "label": {
+            "en": "Product image",
+            "ar": "صورة المنتجات"
+          },
+          "value": null
+        }
+      ]
+    },
+    {
       "key": "186b3f4f-25cf-4d3c-abca-cef7eed6f0ab",
       "title": {
         "en": "Enhances Animated Images",
