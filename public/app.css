@@ -3069,6 +3069,17 @@ textarea.s-input{
     padding-right: 15px;
   }
 }
+.qfbanner .s-advertisement-content {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+@media (max-width: 768px) {
+  .qfbanner .s-advertisement-content {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
 .qbanner .s-advertisement-content {
   max-width: none;
   padding-left: 50px;
@@ -28356,6 +28367,169 @@ body, main, #app {
     font-size: 14px;
   }
 }
+.qfbanner {
+  font-family: "GE SS Two", sans-serif;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+.qfbanner .container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+.qfbanner__box {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 484px;
+  padding: 90px 80px;
+  background: #172951;
+  border-radius: 30px;
+  direction: rtl;
+}
+.qfbanner__media {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 55%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.qfbanner__media img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+  -o-object-position: left center;
+     object-position: left center;
+}
+.qfbanner__play {
+  position: absolute;
+  z-index: 2;
+  left: 42.6%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(145, 230, 247, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+.qfbanner__play::before {
+  content: "";
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #91e6f7;
+}
+.qfbanner__play-tri {
+  position: relative;
+  z-index: 1;
+  width: 0;
+  height: 0;
+  margin-left: 4px;
+  border-style: solid;
+  border-width: 12px 0 12px 20px;
+  border-color: transparent transparent transparent #172951;
+}
+.qfbanner__text {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 592px;
+  max-width: 592px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 32px;
+  text-align: right;
+}
+.qfbanner__title {
+  font-weight: 700;
+  font-size: 48px;
+  line-height: 70px;
+  color: #fff;
+  margin: 0;
+  width: 100%;
+}
+.qfbanner__subtitle {
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 25px;
+  color: #fff;
+  margin: 0;
+  width: 100%;
+}
+.qfbanner__btn {
+  display: inline-flex;
+  flex-direction: row;
+  direction: ltr;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 16px;
+}
+.qfbanner__btn i {
+  font-size: 16px;
+}
+.qfbanner__btn:hover {
+  background: #fff;
+  color: #172951;
+}
+@media (max-width: 768px) {
+  .qfbanner {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .qfbanner .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .qfbanner__box {
+    min-height: 229px;
+    padding: 45px 18px 26px 80px;
+    border-radius: 30px;
+  }
+  .qfbanner__media {
+    width: 60%;
+  }
+  .qfbanner__title {
+    font-size: 30px;
+    line-height: 48px;
+  }
+  .qfbanner__subtitle, .qfbanner__btn {
+    display: none;
+  }
+  .qfbanner__play {
+    left: 51%;
+    top: 84%;
+    width: 74px;
+    height: 74px;
+  }
+  .qfbanner__play::before {
+    width: 51px;
+    height: 51px;
+  }
+  .qfbanner__play-tri {
+    margin-left: 3px;
+    border-width: 9px 0 9px 15px;
+  }
+}
 .qbanner {
   font-family: "GE SS Two", sans-serif;
   padding-top: 24px;
@@ -31224,6 +31398,17 @@ model-viewer[style*=width]:before{
 }
 @media (max-width: 768px) {
   .qhcards .s-comments-product .s-comments-container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+.qfbanner .s-comments-product .s-comments-container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+@media (max-width: 768px) {
+  .qfbanner .s-comments-product .s-comments-container {
     padding-left: 15px;
     padding-right: 15px;
   }

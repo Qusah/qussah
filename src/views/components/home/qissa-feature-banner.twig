@@ -1,0 +1,51 @@
+{#
+| Variable              | Type   | Description                                  |
+|-----------------------|--------|----------------------------------------------|
+| component             | object | merchant settings from twilight.json         |
+| component.title       | string | banner headline                              |
+| component.subtitle    | string | supporting paragraph (desktop only per Figma)|
+| component.button_text | string | CTA label (desktop only per Figma)           |
+| component.button_url  | string | CTA link                                     |
+| component.image       | string | product visual (merchant upload, optional)   |
+| position              | int    | sorting block                                |
+
+Figma: desktop 6036:1107 (1440) — navy banner, text+outlined CTA right, products + play button left.
+       mobile  6036:21955 (428) — title only; subtitle + CTA hidden by Figma.
+Single promo CTA banner. Play button is a CSS visual (no video source in the design).
+#}
+<section class="s-block qfbanner" id="qfbanner-{{ position }}">
+    <div class="container">
+        <div class="qfbanner__box">
+
+            {# product visual (left in RTL) #}
+            {% if component.image %}
+                <div class="qfbanner__media">
+                    <img src="{{ component.image }}" alt="{{ component.title }}" loading="lazy"/>
+                </div>
+            {% endif %}
+
+            {# play button graphic (Figma node 6036:1112) #}
+            <span class="qfbanner__play" aria-hidden="true">
+                <span class="qfbanner__play-tri"></span>
+            </span>
+
+            {# text (right in RTL) #}
+            <div class="qfbanner__text">
+                {% if component.title %}
+                    <h2 class="qfbanner__title">{{ component.title }}</h2>
+                {% endif %}
+                {% if component.subtitle %}
+                    <p class="qfbanner__subtitle">{{ component.subtitle }}</p>
+                {% endif %}
+                {% if component.button_text %}
+                    <a href="{{ component.button_url|default('/products') }}" class="qfbanner__btn">
+                        <i class="sicon-arrow-left"></i>
+                        <span>{{ component.button_text }}</span>
+                        <i class="sicon-shopping-bag"></i>
+                    </a>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</section>
