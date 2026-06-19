@@ -1069,6 +1069,84 @@
       ]
     },
     {
+      "key": "d35bcf84-d62a-443a-ba4b-04cf38c298dd",
+      "title": {
+        "en": "Qissa Trust Badges",
+        "ar": "شارات الثقة"
+      },
+      "icon": "sicon-shield",
+      "path": "home.qissa-trust-badges",
+      "fields": [
+        {
+          "id": "items",
+          "key": "1671aa8c-2269-49e4-977d-4a74e31651d4",
+          "type": "collection",
+          "format": "collection",
+          "label": "المميزات",
+          "description": null,
+          "labelHTML": null,
+          "item_label": "ميزة",
+          "icon": "sicon-list-add",
+          "value": [
+            {
+              "items.icon": "sicon-wallet",
+              "items.title": "مدفوعات آمنة",
+              "items.subtitle": "مدفوعات آمنة أقساط تصل إلى 12 شهرًا"
+            },
+            {
+              "items.icon": "sicon-rotate",
+              "items.title": "شحن مجاني",
+              "items.subtitle": "مدفوعات آمنة أقساط تصل إلى 12 شهرًا"
+            },
+            {
+              "items.icon": "sicon-shipping",
+              "items.title": "منتجات مضمونه",
+              "items.subtitle": "مدفوعات آمنة أقساط تصل إلى 12 شهرًا"
+            }
+          ],
+          "fields": [
+            {
+              "id": "items.icon",
+              "key": "d1196390-29f7-456f-b8b6-044ff63ac4b7",
+              "type": "string",
+              "format": "icon",
+              "label": "الأيقونة",
+              "description": null,
+              "class": "form--inline",
+              "value": "sicon-wallet",
+              "required": false
+            },
+            {
+              "id": "items.title",
+              "key": "351283ff-c60a-4541-9334-7cc6892e82df",
+              "type": "string",
+              "format": "text",
+              "label": "العنوان",
+              "description": null,
+              "icon": "sicon-format-text-alt",
+              "placeholder": "العنوان",
+              "value": null,
+              "multilanguage": true,
+              "required": false
+            },
+            {
+              "id": "items.subtitle",
+              "key": "31b936ee-6bef-400e-92e4-d82dfabebe86",
+              "type": "string",
+              "format": "textarea",
+              "label": "النص الفرعي",
+              "description": null,
+              "icon": "sicon-format-text-alt",
+              "placeholder": "النص الفرعي",
+              "value": null,
+              "multilanguage": true,
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    {
       "key": "186b3f4f-25cf-4d3c-abca-cef7eed6f0ab",
       "title": {
         "en": "Enhances Animated Images",

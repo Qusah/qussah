@@ -1,0 +1,32 @@
+{#
+| Variable           | Type         | Description                              |
+|--------------------|--------------|------------------------------------------|
+| component          | object       | merchant settings from twilight.json     |
+| component.items    | Collection[] | badges (icon, title, subtitle)           |
+| item.icon          | string       | SallaIcons class `sicon-*`               |
+| item.title         | string       | badge title                              |
+| item.subtitle      | string       | badge subtitle                           |
+| position           | int          | sorting block                            |
+
+Figma: desktop 6036:1238 (1440) — 3 features in a row, vertical dividers.
+       mobile  6036:22058 (428) — same features stacked, horizontal dividers.
+Each feature (RTL): icon on the right, title + subtitle right-aligned to its left.
+#}
+<section class="s-block qtb" id="qtb-{{ position }}">
+    <div class="container">
+        <div class="qtb__strip">
+            {% for i, item in component.items %}
+                {% if i > 0 %}<span class="qtb__divider" aria-hidden="true"></span>{% endif %}
+                <div class="qtb__feature">
+                    {% if item.icon %}
+                        <span class="qtb__icon"><i class="{{ item.icon }}"></i></span>
+                    {% endif %}
+                    <div class="qtb__content">
+                        {% if item.title %}<span class="qtb__title">{{ item.title }}</span>{% endif %}
+                        {% if item.subtitle %}<span class="qtb__subtitle">{{ item.subtitle }}</span>{% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

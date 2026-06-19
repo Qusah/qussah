@@ -88,9 +88,24 @@ Stars use the project ★/☆ glyph approach; quote uses the theme's inline quot
       var gap = parseInt(getComputedStyle(row).columnGap || getComputedStyle(row).gap || '20', 10) || 20;
       return card ? card.getBoundingClientRect().width + gap : row.clientWidth;
     }
-    // RTL: "prev" reveals content to the right, "next" to the left
-    prev.addEventListener('click', function(){ row.scrollBy({ left: step(), behavior: 'smooth' }); });
-    next.addEventListener('click', function(){ row.scrollBy({ left: -step(), behavior: 'smooth' }); });
+    // disable an arrow when there is no card left to reveal in that direction
+    function update(){
+      var cards = row.querySelectorAll('.qtcard');
+      if(!cards.length) return;
+      var r = row.getBoundingClientRect();
+      var first = cards[0].getBoundingClientRect();
+      var last = cards[cards.length - 1].getBoundingClientRect();
+      var leftEdge = Math.min(first.left, last.left);
+      var rightEdge = Math.max(first.right, last.right);
+      prev.disabled = leftEdge >= r.left - 1;     // arrow-left: nothing more to the left
+      next.disabled = rightEdge <= r.right + 1;   // arrow-right: nothing more to the right
+    }
+    // scroll in the direction each arrow points (left arrow → left, right arrow → right)
+    prev.addEventListener('click', function(){ row.scrollBy({ left: -step(), behavior: 'smooth' }); });
+    next.addEventListener('click', function(){ row.scrollBy({ left: step(), behavior: 'smooth' }); });
+    row.addEventListener('scroll', function(){ requestAnimationFrame(update); });
+    window.addEventListener('resize', update);
+    update();
   });
 })();
 </script>
