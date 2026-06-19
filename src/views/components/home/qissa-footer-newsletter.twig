@@ -55,7 +55,6 @@ handling is PENDING a real, safe mechanism — no fake backend flow is wired her
                         <p class="qfnews__note">{{ component.note }}</p>
                     {% endif %}
                     <div class="qfnews__field">
-                        <button type="submit" class="qfnews__btn">{{ component.button_text }}</button>
                         <input
                             type="email"
                             class="qfnews__input"
@@ -63,6 +62,8 @@ handling is PENDING a real, safe mechanism — no fake backend flow is wired her
                             aria-label="{{ component.email_placeholder }}"
                             autocomplete="email"
                         />
+                        <button type="submit" class="qfnews__btn">{{ component.button_text }}</button>
+
                     </div>
                 </form>
 
