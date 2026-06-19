@@ -6,28 +6,37 @@
 | component.subtitle    | string | supporting paragraph (desktop only per Figma)|
 | component.button_text | string | CTA label (desktop only per Figma)           |
 | component.button_url  | string | CTA link                                     |
-| component.image       | string | product visual (merchant upload, optional)   |
+| component.image       | string | video poster image (merchant upload)         |
+| component.video_url   | string | video source — direct file URL or YouTube    |
 | position              | int    | sorting block                                |
 
-Figma: desktop 6036:1107 (1440) — navy banner, text+outlined CTA right, products + play button left.
+Figma: desktop 6036:1107 (1440) — navy banner, text+outlined CTA right, video (poster + play button) left.
        mobile  6036:21955 (428) — title only; subtitle + CTA hidden by Figma.
-Single promo CTA banner. Play button is a CSS visual (no video source in the design).
+The play button plays the merchant video in place (direct file → <video>, YouTube → iframe).
 #}
 <section class="s-block qfbanner" id="qfbanner-{{ position }}">
     <div class="container">
-        <div class="qfbanner__box">
+        <div class="qfbanner__box" data-video="{{ component.video_url }}">
 
-            {# product visual (left in RTL) #}
-            {% if component.image %}
+            {# video poster (left in RTL) — replaced by the player on play #}
+            {% if component.image or component.video_url %}
                 <div class="qfbanner__media">
-                    <img src="{{ component.image }}" alt="{{ component.title }}" loading="lazy"/>
+                    {% if component.image %}
+                        <img class="qfbanner__poster" src="{{ component.image }}" alt="{{ component.title }}" loading="lazy"/>
+                    {% endif %}
                 </div>
             {% endif %}
 
-            {# play button graphic (Figma node 6036:1112) #}
-            <span class="qfbanner__play" aria-hidden="true">
-                <span class="qfbanner__play-tri"></span>
-            </span>
+            {# play button (Figma node 6036:1112) — functional when a video is set #}
+            {% if component.video_url %}
+                <button type="button" class="qfbanner__play" aria-label="تشغيل الفيديو">
+                    <span class="qfbanner__play-tri"></span>
+                </button>
+            {% elseif component.image %}
+                <span class="qfbanner__play" aria-hidden="true">
+                    <span class="qfbanner__play-tri"></span>
+                </span>
+            {% endif %}
 
             {# text (right in RTL) #}
             <div class="qfbanner__text">
@@ -49,3 +58,38 @@ Single promo CTA banner. Play button is a CSS visual (no video source in the des
         </div>
     </div>
 </section>
+
+<script>
+(function(){
+  function ytId(u){
+    if(!u) return null;
+    var m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/))([\w-]{11})/);
+    if(m) return m[1];
+    return /^[\w-]{11}$/.test(u) ? u : null;
+  }
+  document.querySelectorAll('.qfbanner__box[data-video]').forEach(function(box){
+    var url = (box.getAttribute('data-video') || '').trim();
+    var play = box.querySelector('button.qfbanner__play');
+    if(!url || !play) return;
+    play.addEventListener('click', function(){
+      var media = box.querySelector('.qfbanner__media');
+      if(!media){ media = document.createElement('div'); media.className = 'qfbanner__media'; box.insertBefore(media, box.firstChild); }
+      var id = ytId(url), el;
+      if(id){
+        el = document.createElement('iframe');
+        el.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0';
+        el.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+        el.setAttribute('allowfullscreen', '');
+        el.setAttribute('title', play.getAttribute('aria-label') || 'video');
+      } else {
+        el = document.createElement('video');
+        el.src = url; el.controls = true; el.autoplay = true; el.playsInline = true;
+      }
+      el.className = 'qfbanner__player';
+      media.innerHTML = '';
+      media.appendChild(el);
+      play.style.display = 'none';
+    });
+  });
+})();
+</script>

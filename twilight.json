@@ -904,8 +904,18 @@
           "type": "string",
           "format": "image",
           "label": {
-            "en": "Banner Image",
-            "ar": "صورة البانر"
+            "en": "Video poster image",
+            "ar": "صورة غلاف الفيديو"
+          },
+          "value": null
+        },
+        {
+          "id": "video_url",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Video URL (direct file or YouTube)",
+            "ar": "رابط الفيديو (ملف مباشر أو يوتيوب)"
           },
           "value": null
         }
