@@ -1,0 +1,128 @@
+// ====================================================================
+// Qissa Testimonials — "آراء العملاء في قصة"
+// Figma: desktop 6036:1129 (1440) · mobile 6036:21971 (428).
+//   Desktop: transparent section, right title, 3 static cards (no arrows).
+//   Mobile : gradient box, centered title, swipe carousel + prev/next arrows.
+// Stars use the project ★/☆ gold glyphs; quote uses the theme inline SVG.
+// ====================================================================
+
+.qtest {
+  font-family: 'GE SS Two', sans-serif;
+  padding-block: 24px;
+
+  .container { max-width: none; padding-inline: 80px; }
+
+  &__box {
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 32px;
+  }
+
+  // ---- title (right-aligned, RTL) ----
+  &__head {
+    direction: rtl; width: 100%;
+    display: flex; flex-direction: column; align-items: flex-start; // flex-start = RIGHT in RTL
+    gap: 12px; text-align: right;
+  }
+  &__title {
+    font-size: 32px; font-weight: 500; line-height: 38px; letter-spacing: -0.2px;  // H4 Medium
+    color: #0a1f30; margin: 0;
+  }
+  &__title-hl { color: #30378e; }
+  &__subtitle {
+    font-size: 16px; font-weight: 300; line-height: 24px; color: #6c757d; margin: 0;
+  }
+
+  // ---- cards: 3-col grid (desktop) ----
+  &__row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px; width: 100%; direction: rtl;
+  }
+
+  // ---- nav arrows (mobile carousel only) ----
+  &__nav { display: none; }
+}
+
+// ---- single testimonial card ----
+.qtcard {
+  display: flex; flex-direction: column; align-items: flex-start;  // right in RTL
+  gap: 16px; padding: 24px;
+  background: #fff; border: 1px solid #eee; border-radius: 12px;
+  direction: rtl; text-align: right; overflow: hidden;
+
+  // top: quote LEFT, rating RIGHT
+  &__top {
+    direction: ltr;
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; gap: 10px;
+  }
+  &__quote {
+    flex: 0 0 auto; line-height: 0;
+    svg { width: 32px; height: 32px; display: block; fill: #e6e9ee; }
+  }
+  // rating — RTL so filled stars sit on the right (Figma)
+  &__rating { direction: rtl; display: inline-flex; gap: 2px; }
+  &__star { font-size: 13px; line-height: 1; color: #f5b50a; }
+
+  // testimonial text
+  &__text {
+    font-size: 16px; font-weight: 300; line-height: 25px; color: #6c757d;
+    width: 100%; margin: 0; text-align: right;
+  }
+
+  // user — name block (right) + avatar (far right)
+  &__user {
+    direction: ltr;
+    display: flex; align-items: center; gap: 8px; width: 100%;
+  }
+  &__name {
+    flex: 1 1 auto; min-width: 0;
+    display: flex; flex-direction: column; align-items: flex-end; text-align: right;
+  }
+  &__name-main { font-size: 18px; font-weight: 500; line-height: 25px; color: #172951; width: 100%; }
+  &__name-role { font-size: 14px; font-weight: 300; line-height: normal; color: #30378e; width: 100%; }
+  &__avatar {
+    flex: 0 0 48px; width: 48px; height: 48px;
+    border-radius: 50%; overflow: hidden; background: #daeff7;
+    img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  }
+}
+
+// ====================================================================
+// Mobile (Figma 6036:21971): gradient box, centered title, swipe carousel
+// ====================================================================
+@media (max-width: 768px) {
+  .qtest { padding-block: 8px; }
+  .qtest .container { padding-inline: 15px; }
+
+  .qtest__box {
+    align-items: center; gap: 20px;
+    padding: 50px 10px 30px;
+    background: linear-gradient(180deg, #daeff7 0%, #ffffff 100%);
+    border-radius: 50px;
+  }
+
+  .qtest__head { align-items: center; text-align: center; }
+  .qtest__title { font-size: 24px; line-height: 30px; letter-spacing: -0.15px; }  // H5
+  .qtest__subtitle { font-size: 16px; line-height: 24px; }
+
+  // cards become a horizontal swipe carousel
+  .qtest__row {
+    display: flex; grid-template-columns: none;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    gap: 20px; padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .qtest__row::-webkit-scrollbar { display: none; }
+  .qtcard { flex: 0 0 85%; max-width: 85%; scroll-snap-align: center; }
+
+  // prev/next arrows
+  .qtest__nav { display: flex; gap: 8px; justify-content: center; }
+  .qtest__arrow {
+    width: 46px; height: 46px; border-radius: 30px; padding: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 1px solid transparent;
+    i { font-size: 16px; }
+  }
+  .qtest__arrow--prev { background: #30378e; border-color: #30378e; color: #fff; }
+  .qtest__arrow--next { background: #daeff7; border-color: #daeff7; color: #0a1f30; }
+}

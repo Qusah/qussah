@@ -922,6 +922,153 @@
       ]
     },
     {
+      "key": "cb0e1043-bed4-4ff8-9f20-49bd960803c3",
+      "title": {
+        "en": "Qissa Testimonials",
+        "ar": "آراء العملاء"
+      },
+      "icon": "sicon-chat-bubbles",
+      "path": "home.qissa-testimonials",
+      "fields": [
+        {
+          "id": "title_highlight",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Highlighted word",
+            "ar": "الكلمة المميزة"
+          },
+          "value": "آراء العملاء"
+        },
+        {
+          "id": "title",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Title",
+            "ar": "العنوان"
+          },
+          "value": " في قصة"
+        },
+        {
+          "id": "subtitle",
+          "type": "string",
+          "format": "textarea",
+          "label": {
+            "en": "Subtitle",
+            "ar": "النص الفرعي"
+          },
+          "value": "بيتم استعراض بعض آراء وتعليقات المستخدمين"
+        },
+        {
+          "id": "items",
+          "key": "2bb58935-a2b4-4d86-af9f-9531d6af008b",
+          "type": "collection",
+          "format": "collection",
+          "label": "التقييمات",
+          "description": null,
+          "labelHTML": null,
+          "item_label": "التقييم",
+          "icon": "sicon-list-add",
+          "value": [
+            {
+              "items.name": "محمد السيد",
+              "items.role": "مهندس إستشارى لدى شركة سلة",
+              "items.text": "استخدمنا سلة قبل أربع سنوات ثم غادرناها قبل أن يكون فيها خيارات ترقية مدفوعة، خسرنا مبالغ كبيرة جدا في عمل متجر وتعبنا جدا في التعامل مع المبرمجين",
+              "items.stars": 5,
+              "items.avatar": "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_male.png"
+            },
+            {
+              "items.name": "محمد السيد",
+              "items.role": "مهندس إستشارى لدى شركة سلة",
+              "items.text": "استخدمنا سلة قبل أربع سنوات ثم غادرناها قبل أن يكون فيها خيارات ترقية مدفوعة، خسرنا مبالغ كبيرة جدا في عمل متجر وتعبنا جدا في التعامل مع المبرمجين",
+              "items.stars": 5,
+              "items.avatar": "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_male.png"
+            },
+            {
+              "items.name": "محمد السيد",
+              "items.role": "مهندس إستشارى لدى شركة سلة",
+              "items.text": "استخدمنا سلة قبل أربع سنوات ثم غادرناها قبل أن يكون فيها خيارات ترقية مدفوعة، خسرنا مبالغ كبيرة جدا في عمل متجر وتعبنا جدا في التعامل مع المبرمجين",
+              "items.stars": 5,
+              "items.avatar": "https://cdn.assets.salla.network/prod/stores/themes/default/assets/images/avatar_male.png"
+            }
+          ],
+          "fields": [
+            {
+              "id": "items.name",
+              "key": "e71231c7-ea10-4e84-bfac-ba2130ee3bc6",
+              "type": "string",
+              "format": "text",
+              "label": "اسم العميل",
+              "description": null,
+              "labelHTML": null,
+              "placeholder": "اسم العميل",
+              "icon": "sicon-format-text-alt",
+              "value": null,
+              "multilanguage": false,
+              "required": false
+            },
+            {
+              "id": "items.role",
+              "key": "66423a29-7851-4af3-89aa-367a171b701c",
+              "type": "string",
+              "format": "text",
+              "label": "المسمى / المكان",
+              "description": null,
+              "labelHTML": null,
+              "placeholder": "المسمى الوظيفي أو المكان",
+              "icon": "sicon-format-text-alt",
+              "value": null,
+              "multilanguage": false,
+              "required": false
+            },
+            {
+              "id": "items.text",
+              "key": "51e3de71-13fc-43e1-a689-d2c6c0a5d849",
+              "type": "string",
+              "format": "textarea",
+              "label": "نص التقييم",
+              "description": null,
+              "labelHTML": null,
+              "placeholder": "نص التقييم",
+              "icon": "sicon-format-text-alt",
+              "value": null,
+              "multilanguage": true,
+              "required": false
+            },
+            {
+              "id": "items.stars",
+              "key": "f60a28f3-e0dc-4702-9f38-ebd6e987d6bf",
+              "type": "number",
+              "format": "integer",
+              "label": "عدد النجوم",
+              "description": null,
+              "labelHTML": "من 1 إلى 5",
+              "placeholder": "القيمة",
+              "icon": "sicon-pencil-ruler",
+              "value": 5,
+              "required": false,
+              "minimum": 1,
+              "maximum": 5
+            },
+            {
+              "id": "items.avatar",
+              "key": "a44e0ca6-5eaa-477a-8e5c-372689fd9583",
+              "type": "string",
+              "format": "image",
+              "label": "صورة العميل",
+              "description": "المقاس المناسب للصورة هو 48*48 بكسل",
+              "labelHTML": null,
+              "placeholder": "e.g. https://hostname.com/image.png",
+              "icon": "sicon-image",
+              "value": null,
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    {
       "key": "186b3f4f-25cf-4d3c-abca-cef7eed6f0ab",
       "title": {
         "en": "Enhances Animated Images",

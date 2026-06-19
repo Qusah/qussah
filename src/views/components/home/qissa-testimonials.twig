@@ -1,0 +1,96 @@
+{#
+| Variable                  | Type           | Description                              |
+|---------------------------|----------------|------------------------------------------|
+| component                 | object         | merchant settings from twilight.json     |
+| component.title_highlight | string         | highlighted heading word(s) (royal blue) |
+| component.title           | string         | heading rest                             |
+| component.subtitle        | string         | subheading                               |
+| component.items           | Collection[]   | testimonials (name, role, text, stars, avatar) |
+| position                  | int            | sorting block                            |
+
+Figma: desktop 6036:1129 (1440) — right title + 3 static cards (no arrows).
+       mobile  6036:21971 (428) — gradient box, centered title, swipe carousel + prev/next arrows.
+Stars use the project ★/☆ glyph approach; quote uses the theme's inline quote-open SVG.
+#}
+<section class="s-block qtest" id="qtest-{{ position }}">
+    <div class="container">
+        <div class="qtest__box">
+
+            {# title #}
+            <div class="qtest__head">
+                <h2 class="qtest__title">
+                    <span class="qtest__title-hl">{{ component.title_highlight }}</span> {{ component.title }}
+                </h2>
+                {% if component.subtitle %}
+                    <p class="qtest__subtitle">{{ component.subtitle }}</p>
+                {% endif %}
+            </div>
+
+            {# cards: 3-col grid (desktop) / swipe carousel (mobile) #}
+            <div class="qtest__row">
+                {% for index, item in component.items %}
+                    <article class="qtcard">
+                        {# quote (left) + rating (right) #}
+                        <div class="qtcard__top">
+                            <span class="qtcard__quote" aria-hidden="true">
+                                <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8 12v-5.333c0-0.737-0.596-1.333-1.333-1.333-3.676 0-6.667 2.991-6.667 6.667v8c0 3.676 2.991 6.667 6.667 6.667h1.333c3.676 0 6.667-2.991 6.667-6.667v-1.333c0-3.676-2.991-6.667-6.667-6.667zM12 20c0 2.205-1.795 4-4 4h-1.333c-2.205 0-4-1.795-4-4v-8c0-1.739 1.115-3.221 2.667-3.772v5.105c0 0.737 0.596 1.333 1.333 1.333h1.333c2.205 0 4 1.795 4 4zM25.333 12v-5.333c0-0.737-0.596-1.333-1.333-1.333-3.676 0-6.667 2.991-6.667 6.667v8c0 3.676 2.991 6.667 6.667 6.667h1.333c3.676 0 6.667-2.991 6.667-6.667v-1.333c0-3.676-2.991-6.667-6.667-6.667zM29.333 20c0 2.205-1.795 4-4 4h-1.333c-2.205 0-4-1.795-4-4v-8c0-1.739 1.115-3.221 2.667-3.772v5.105c0 0.737 0.596 1.333 1.333 1.333h1.333c2.205 0 4 1.795 4 4z"></path>
+                                </svg>
+                            </span>
+                            {% set stars = item.stars|default(5) %}
+                            <span class="qtcard__rating" aria-label="{{ stars }}/5">
+                                {% for i in 1..5 %}<span class="qtcard__star {{ i <= stars ? 'is-on' : 'is-off' }}">{{ i <= stars ? '★' : '☆' }}</span>{% endfor %}
+                            </span>
+                        </div>
+
+                        {# testimonial text #}
+                        {% if item.text %}<p class="qtcard__text">{{ item.text }}</p>{% endif %}
+
+                        {# user #}
+                        <div class="qtcard__user">
+                            <div class="qtcard__name">
+                                {% if item.name %}<span class="qtcard__name-main">{{ item.name }}</span>{% endif %}
+                                {% if item.role %}<span class="qtcard__name-role">{{ item.role }}</span>{% endif %}
+                            </div>
+                            {% if item.avatar %}
+                                <span class="qtcard__avatar">
+                                    <img src="{{ item.avatar }}" alt="{{ item.name|default('') }}" width="48" height="48" loading="lazy"/>
+                                </span>
+                            {% endif %}
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+
+            {# nav arrows (mobile carousel only) #}
+            <div class="qtest__nav">
+                <button type="button" class="qtest__arrow qtest__arrow--prev" aria-label="السابق">
+                    <i class="sicon-arrow-left"></i>
+                </button>
+                <button type="button" class="qtest__arrow qtest__arrow--next" aria-label="التالي">
+                    <i class="sicon-arrow-right"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script>
+(function(){
+  document.querySelectorAll('.qtest').forEach(function(sec){
+    var row = sec.querySelector('.qtest__row');
+    var prev = sec.querySelector('.qtest__arrow--prev');
+    var next = sec.querySelector('.qtest__arrow--next');
+    if(!row || !prev || !next) return;
+    function step(){
+      var card = row.querySelector('.qtcard');
+      var gap = parseInt(getComputedStyle(row).columnGap || getComputedStyle(row).gap || '20', 10) || 20;
+      return card ? card.getBoundingClientRect().width + gap : row.clientWidth;
+    }
+    // RTL: "prev" reveals content to the right, "next" to the left
+    prev.addEventListener('click', function(){ row.scrollBy({ left: step(), behavior: 'smooth' }); });
+    next.addEventListener('click', function(){ row.scrollBy({ left: -step(), behavior: 'smooth' }); });
+  });
+})();
+</script>
