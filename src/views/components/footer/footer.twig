@@ -11,13 +11,13 @@
     - footer links : <salla-menu source="footer">   (merchant footer pages)
     - contact      : store.contacts.{whatsapp,mobile,email}
     - social       : <salla-social>                  (merchant social links)
-    - payments     : <salla-payments>                (bottom bar)
-    - VAT number   : store.settings.tax.{number,certificate}  (bottom bar)
+    - VAT number   : store.settings.tax.number       (bottom bar)
 
   Notes:
    * The newsletter banner is the separate `qissa-footer-newsletter` component — NOT here.
    * Bottom bar `qissa-footer-bottom` follows Figma 6036:1409 (desktop) / 6036:22227 (mobile):
-     payment icons (salla-payments) + VAT number (store.settings.tax.*) + copyright.
+     payment logos (local assets in images/payments/, exported from Figma) +
+     VAT number (store.settings.tax.number) + ZATCA badge (local asset) + copyright.
    * Account links have no Salla data source → linked to the standard customer pages.
 #}
 <footer class="qfooter">
@@ -111,19 +111,20 @@
         الحقوق محفوظة لمنصة سلة <span class="qissa-footer-bottom__year">{{ "now"|date("Y") }}</span>
       </p>
 
-      {# VAT number + tax badge (dynamic store tax data) #}
+      {# VAT number (dynamic) + ZATCA badge (local asset, Figma) #}
       {% if store.settings.tax.number %}
         <div class="qissa-footer-bottom__tax">
           <span class="qissa-footer-bottom__tax-num">الرقم الضريبي : <span dir="ltr">{{ store.settings.tax.number }}</span></span>
-          {% if store.settings.tax.certificate %}
-            <img class="qissa-footer-bottom__tax-badge" src="{{ store.settings.tax.certificate }}" alt="الرقم الضريبي" loading="lazy"/>
-          {% endif %}
+          <img class="qissa-footer-bottom__tax-badge" src="{{ 'images/payments/zatca-badge.jpg'|cdn }}" alt="الرقم الضريبي" loading="lazy"/>
         </div>
       {% endif %}
 
-      {# payment methods (LEFT on desktop / TOP on mobile) — dynamic Salla payments #}
+      {# payment methods (LEFT on desktop / TOP on mobile) — Figma logos, local assets #}
       <div class="qissa-footer-bottom__payments">
-        <salla-payments></salla-payments>
+        <span class="qissa-footer-bottom__pay"><img src="{{ 'images/payments/mada.png'|cdn }}" alt="mada" loading="lazy"/></span>
+        <span class="qissa-footer-bottom__pay"><img src="{{ 'images/payments/paypal.png'|cdn }}" alt="PayPal" loading="lazy"/></span>
+        <span class="qissa-footer-bottom__pay"><img src="{{ 'images/payments/mastercard.png'|cdn }}" alt="Mastercard" loading="lazy"/></span>
+        <span class="qissa-footer-bottom__pay qissa-footer-bottom__pay--visa"><img src="{{ 'images/payments/visa.png'|cdn }}" alt="Visa" loading="lazy"/></span>
       </div>
 
     </div>
