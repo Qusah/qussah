@@ -52,6 +52,8 @@
   border-radius: 24px;                           // Figma 3xl
   padding: 15px;                                 // Figma
   direction: rtl;
+  min-width: 0;                                  // grid item: allow shrink below content
+                                                 // → no track expansion / horizontal overflow (RTL left-edge cut)
 
   // image area — cream bg, radius 15, height 228
   &__img {
@@ -103,12 +105,13 @@
   // (.qprod is direction:rtl → flex-start = visual RIGHT)
   &__chips {
     display: flex; justify-content: flex-start;
-    flex-wrap: wrap; gap: 10px; width: 100%; margin-top: 4px;
+    flex-wrap: wrap; gap: 10px; width: 100%; min-width: 0; margin-top: 4px;
   }
   &__chip {
     background: #e8fcff; color: #30378e;
     font-size: 14px; line-height: 1;
     padding: 6px 8px; border-radius: 4px; white-space: nowrap;
+    max-width: 100%; overflow: hidden; text-overflow: ellipsis;
   }
 
   // price row — right-aligned (flex-start in rtl = right), sale first then struck
@@ -162,21 +165,51 @@
   .qprods__grid { grid-template-columns: repeat(2, 1fr); }
 }
 
-// ---- mobile (Figma 187:20311): 2 cols, col-gap 8, row-gap 10, img 165x180 ----
+// ---- mobile (Figma node 6036:21611 @428): 2 cols, col-gap 8, row-gap 10 ----
 @media (max-width: 768px) {
   .qprods { padding-block: 8px; }
   .qprods .container { padding-inline: 15px; }
-  .qprods__box { padding: 20px 10px; border-radius: 30px; gap: 20px; }
-  .qprods__title { font-size: 20px; line-height: 28px; }
-  .qprods__subtitle { font-size: 13px; line-height: 20px; width: 100%; }
+  .qprods__box { padding: 30px 10px 20px; border-radius: 30px; gap: 20px; }
+  .qprods__title { font-size: 24px; line-height: 30px; }
+  .qprods__subtitle { font-size: 14px; line-height: 20px; width: 100%; }
   .qprods__grid { grid-template-columns: repeat(2, 1fr); column-gap: 8px; row-gap: 10px; }
 
-  .qprod { padding: 10px; border-radius: 18px; }
-  .qprod__img { height: 180px; }
+  .qprod { padding: 10px; border-radius: 20px; }
+  // Figma mobile image area = light blue (#f0fcff), not the cream desktop bg
+  .qprod__img { height: 180px; background: #f0fcff; }
   .qprod__img img { height: 178px; }
-  .qprod__name { font-size: 14px; }
-  .qprod__price-now { font-size: 15px; }
-  .qprod__price-old { font-size: 13px; }
-  .qprod__add { height: 40px; font-size: 14px; }
-  .qprod__like { flex-basis: 41px; width: 41px; height: 40px; }
+  .qprod__info { padding-block: 10px; gap: 6px; }
+  .qprod__cat { font-size: 12px; }
+  .qprod__name { font-size: 14px; line-height: 1.3; }
+
+  // compact chips so two fit a narrow card without overflow
+  .qprod__chips { gap: 4px; margin-top: 2px; }
+  .qprod__chip { font-size: 12px; padding: 4px 8px; }
+
+  .qprod__price { margin-top: 2px; }
+  .qprod__price-now { font-size: 14px; }
+  .qprod__price-old { font-size: 12px; }
+
+  // add-to-cart — Figma mobile button (node 6036:21712): navy #30378e, radius 8,
+  // text 14 + cart icon. Side padding trimmed so "أضف للسلة" stays on ONE line
+  // inside the narrow 2-col cards (16px would force it to wrap).
+  .qprod__add {
+    height: 41px; padding: 8px 8px;
+    font-size: 14px; gap: 6px; border-radius: 8px;
+    white-space: nowrap; overflow: hidden;
+    span { white-space: nowrap; }
+    i { flex: 0 0 auto; font-size: 15px; }
+  }
+  .qprod__like { flex-basis: 41px; width: 41px; height: 41px; border-radius: 12px; }
+  .qprod__badge { top: 12px; left: 12px; height: 26px; min-width: 52px; font-size: 11px; padding: 4px 8px; }
+}
+
+// smallest phones: shrink the add-to-cart text/gap so "أضف للسلة" + icon fits
+// the narrow 2-col card without clipping (390 / 375 / 360)
+@media (max-width: 400px) {
+  .qprod__add { font-size: 13px; gap: 4px; padding: 8px 6px; }
+  .qprod__add i { font-size: 14px; }
+}
+@media (max-width: 374px) {
+  .qprod__add { font-size: 12px; padding: 8px 4px; }
 }
