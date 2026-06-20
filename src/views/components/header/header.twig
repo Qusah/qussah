@@ -12,11 +12,11 @@
    <div class="container">
     <div class="qheader-topbar">
       <div class="qheader-topbar__links">
-        <a href="/contact-us">تواصل معنا</a>
+        <a href="{{ link('/contact-us') }}">تواصل معنا</a>
         <span class="qheader-sep"></span>
         <a href="{{ store.url }}">سياسة الإستبدال أو الاسترجاع</a>
         <span class="qheader-sep"></span>
-        <a href="/wishlist">المفضلة</a>
+        <a href="{{ link('/wishlist') }}">المفضلة</a>
         <span class="qheader-sep"></span>
         <span class="qheader-lang">العربية - رس</span>
       </div>
@@ -37,7 +37,7 @@
 
       {# cart + profile (left) #}
       <div class="qheader-actions">
-        <a href="/cart" class="qheader-act">
+        <a href="{{ link('/cart') }}" class="qheader-act">
           <span class="qheader-act__txt">
             <b>سلة المشتريات</b>
             <em>{{ cart.total|default('0 رس') }}</em>
@@ -47,7 +47,7 @@
             <span class="qheader-act__badge">{{ cart.items_count|default(0) }}</span>
           </span>
         </a>
-        <a href="/profile" class="qheader-act">
+        <a href="{{ link('/profile') }}" class="qheader-act">
           <span class="qheader-act__txt">
             <b>مرحبا بك</b>
             <em>تسجيل دخول</em>
@@ -58,11 +58,11 @@
 
       {# pill menu (center) — static links to match Figma exactly #}
       <nav class="qheader-menu" data-qmenu>
-        <a href="/" {{ is_page('index') ? 'class="is-active"' : '' }}>الرئيسية</a>
-        <a href="/categories">المنتجات</a>
-        <a href="/offers">العروض</a>
-        <a href="/about-us">عن قصة</a>
-        <a href="/contact-us">تواصل معنا</a>
+        <a href="{{ link('/') }}" {{ is_page('index') ? 'class="is-active"' : '' }}>الرئيسية</a>
+        <a href="{{ link('/categories') }}">المنتجات</a>
+        <a href="{{ link('/offers') }}">العروض</a>
+        <a href="{{ link('/about-us') }}">عن قصة</a>
+        <a href="{{ link('/contact-us') }}">تواصل معنا</a>
       </nav>
 
       {# logo (right) + hamburger (mobile only) #}
@@ -70,7 +70,7 @@
         <button type="button" class="qheader-burger" aria-label="القائمة" onclick="salla.event.dispatch('menu::open')">
           <i class="sicon-menu"></i>
         </button>
-        <a class="qheader-logo" href="/">
+        <a class="qheader-logo" href="{{ link('/') }}">
           <img src="{{ store.logo|cdn(175) }}" alt="{{ store.name }}"/>
           {% if is_page('index') %}<h1 class="sr-only">{{ store.name }}</h1>{% endif %}
         </a>
