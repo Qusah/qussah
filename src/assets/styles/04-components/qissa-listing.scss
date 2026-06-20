@@ -125,6 +125,27 @@
     pointer-events: none;
   }
 
+  // ===== functional listing page (real Salla components) =====
+  // sort dropdown styled to match the static sort text
+  &__sort-select {
+    background: none; border: none; cursor: pointer;
+    font-family: 'GE SS Two', sans-serif; font-size: 12px; font-weight: 500;
+    color: #333; padding: 0 4px; appearance: none;
+    &:focus { outline: none; }
+  }
+  // style Salla's native filters to match our card
+  &__filter {
+    display: block;
+    --salla-filters-bg: #fff;
+    background: #fff; border: 1px solid #e9ecef; border-radius: 12px;
+    padding: 17px;
+  }
+  // style Salla's native products list grid to 4 cols
+  &__products {
+    display: block;
+    &::part(products) { /* fallback if shadow parts exposed */ }
+  }
+
   // ===== responsive =====
   @media (max-width: 1024px) {
     &__layout { flex-direction: column; }
