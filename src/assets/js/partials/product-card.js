@@ -160,6 +160,12 @@ class ProductCard extends HTMLElement {
      *  Show quantity.
      */
     this.showQuantity = this.hasAttribute('showQuantity');
+
+    /**
+     *  Plain (default) vertical card — the reusable Figma card. Excludes the
+     *  special / minimal / full-image / horizontal variants.
+     */
+    this.isPlainVertical = !this.horizontal && !this.fullImage && !this.minimal && !this.isSpecial;
   }
 
   escapeHTML(str = '') {
@@ -187,6 +193,11 @@ class ProductCard extends HTMLElement {
     this.effectiveStatus = (this.product.is_out_of_stock && window.notify_when_available_in_card && !['donating', 'financial_support'].includes(this.product?.type))
       ? 'out-and-notify'
       : this.product.status;
+    // Info chips for the plain vertical card — derived from the product subtitle
+    // (Arabic-comma separated), mirroring the homepage card convention.
+    this.chips = (this.isPlainVertical && this.product?.subtitle)
+      ? String(this.product.subtitle).split('،').map(c => c.trim()).filter(Boolean)
+      : [];
       this.innerHTML = `
         <div class="${!this.fullImage ? 's-product-card-image' : 's-product-card-image-full'}">
           <a href="${this.product?.url}" aria-label="${this.escapeHTML(this.product?.image?.alt || this.product.name)}">
@@ -203,7 +214,7 @@ class ProductCard extends HTMLElement {
             ${!this.fullImage && !this.minimal ? this.getProductBadge() : ''}
           </a>
           ${this.fullImage ? `<a href="${this.product?.url}" aria-label=${this.product.name} class="s-product-card-overlay"></a>`:''}
-          ${!this.horizontal && !this.fullImage ?
+          ${(!this.horizontal && !this.fullImage && !this.isPlainVertical) || (this.isPlainVertical && this.hideAddBtn) ?
             `<salla-button
               shape="icon"
               fill="outline"
@@ -232,13 +243,20 @@ class ProductCard extends HTMLElement {
             : ``}
 
           <div class="s-product-card-content-main ${this.isSpecial ? 's-product-card-content-extra-padding' : ''}">
+            ${this.isPlainVertical && this.product?.brand?.name ?
+              `<p class="s-product-card-content-category">${this.escapeHTML(this.product.brand.name)}</p>`
+              : ``}
             <h3 class="s-product-card-content-title">
               <a href="${this.product?.url}">${this.product?.name}</a>
             </h3>
 
-            ${this.product?.subtitle && !this.minimal ?
-              `<p class="s-product-card-content-subtitle opacity-80">${this.product?.subtitle}</p>`
-              : ``}
+            ${this.isPlainVertical
+              ? (this.chips.length
+                  ? `<div class="s-product-card-chips">${this.chips.map(chip => `<span class="s-product-card-chip">${this.escapeHTML(chip)}</span>`).join('')}</div>`
+                  : ``)
+              : (this.product?.subtitle && !this.minimal
+                  ? `<p class="s-product-card-content-subtitle opacity-80">${this.product?.subtitle}</p>`
+                  : ``)}
           </div>
           ${this.product?.donation && !this.minimal && !this.fullImage ?
           `<salla-progress-bar donation=${JSON.stringify(this.product?.donation)}></salla-progress-bar>
@@ -286,11 +304,11 @@ class ProductCard extends HTMLElement {
                 <span>${this.product.add_to_cart_label ? this.product.add_to_cart_label : this.getAddButtonLabel() }</span>
               </salla-add-product-button>
 
-              ${this.horizontal || this.fullImage ?
-                `<salla-button 
-                  shape="icon" 
-                  fill="outline" 
-                  color="light" 
+              ${this.horizontal || this.fullImage || (this.isPlainVertical && !this.hideAddBtn) ?
+                `<salla-button
+                  shape="icon"
+                  fill="outline"
+                  color="light"
                   id="card-wishlist-btn-${this.product.id}-horizontal"
                   aria-label="Add or remove to wishlist"
                   class="s-product-card-wishlist-btn animated ${this.isInWishlist ? 's-product-card-wishlist-added pulse-anime' : 'not-added un-favorited'}"
