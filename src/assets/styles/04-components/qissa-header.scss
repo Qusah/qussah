@@ -81,10 +81,22 @@ body, main, #app { background: transparent; }
     border: 1px solid rgba(255,255,255,.06); border-radius: 100px; padding: 15px 25px;
 
     a {
+      position: relative;
       display: inline-block;
       margin: 0 12px;
-      color: #fff; font-size: 14px; font-weight: 500; line-height: 20px; white-space: nowrap;
-      &:hover { color: #daeff7; }
+      color: rgba(255,255,255,.7);       // inactive = dimmed white
+      font-size: 14px; font-weight: 500; line-height: 20px; white-space: nowrap;
+      transition: color .15s ease;
+      &:hover { color: #fff; }
+
+      // active page — full white + accent underline
+      &.is-active {
+        color: #fff; font-weight: 600;
+        &::after {
+          content: ''; position: absolute; left: 0; right: 0; bottom: -8px;
+          height: 2px; border-radius: 2px; background: #91e6f7;
+        }
+      }
     }
   }
 

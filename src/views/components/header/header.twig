@@ -57,8 +57,8 @@
       </div>
 
       {# pill menu (center) — static links to match Figma exactly #}
-      <nav class="qheader-menu">
-        <a href="{{ link('/') }}">الرئيسية</a>
+      <nav class="qheader-menu" data-qmenu>
+        <a href="{{ link('/') }}" {{ is_page('index') ? 'class="is-active"' : '' }}>الرئيسية</a>
         <a href="{{ link('/products') }}">المنتجات</a>
         <a href="{{ link('/offers') }}">العروض</a>
         <a href="{{ link('/about-us') }}">عن قصة</a>
@@ -79,3 +79,22 @@
     </div>
   </div>
 </header>
+
+<script>
+(function(){
+  // Highlight the nav link whose path matches the current URL (non-home pages).
+  var menu = document.querySelector('[data-qmenu]');
+  if (!menu) return;
+  if (menu.querySelector('.is-active')) return;        // home already set server-side
+  var here = location.pathname.replace(/\/+$/, '');     // strip trailing slash
+  var best = null, bestLen = -1;
+  menu.querySelectorAll('a').forEach(function(a){
+    var path = '';
+    try { path = new URL(a.href).pathname.replace(/\/+$/, ''); } catch(e){ return; }
+    if (path && path !== '/' && (here === path || here.indexOf(path + '/') === 0)) {
+      if (path.length > bestLen) { best = a; bestLen = path.length; }   // longest match wins
+    }
+  });
+  if (best) best.classList.add('is-active');
+})();
+</script>
