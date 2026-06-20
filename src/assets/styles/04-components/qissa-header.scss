@@ -167,39 +167,6 @@ body, main, #app { background: transparent; }
   .qheader .qheader-menu    { display: none; }    // pill replaced by hamburger
   .qheader .qheader-burger  { display: inline-flex; }
 
-  // burger → toggle the nav links into a dropdown panel under the bar
-  .qheader.is-menu-open .qheader-burger { background: rgba(145, 230, 247, .22); }
-  .qheader.is-menu-open .qheader-menu {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    position: absolute;
-    top: calc(100% - 6px);
-    inset-inline-start: 16px;
-    inset-inline-end: 16px;
-    left: auto;                 // cancel the desktop centering
-    transform: none;            // cancel the desktop centering
-    width: auto;
-    gap: 2px;
-    padding: 8px;
-    border: 1px solid rgba(255, 255, 255, .12);
-    border-radius: 16px;
-    background: linear-gradient(135deg, #172951 0%, #25307a 60%, #30378e 100%);
-    box-shadow: 0 16px 40px rgba(10, 20, 50, .45);
-    z-index: 70;
-
-    a {
-      margin: 0;
-      padding: 12px 14px;
-      border-radius: 10px;
-      color: #fff;
-      text-align: right;
-      &:hover { color: #fff; background: rgba(255, 255, 255, .06); }
-      &.is-active { color: #fff; background: rgba(145, 230, 247, .14); }
-      &.is-active::after { display: none; }   // no underline inside the panel
-    }
-  }
-
   // nav: tighter, edges 16px (Figma menu x=16)
   .qheader .qheader-nav { height: 64px; padding: 12px 16px; }
 
@@ -224,3 +191,163 @@ body, main, #app { background: transparent; }
   .qheader .qheader-act__txt { display: none; }
   .qheader .qheader-nav { padding: 12px 12px; }
 }
+
+// ====================================================================
+// Mobile sidebar / offcanvas (Figma node 6036:12721)
+// Opened by the burger on mobile. RTL drawer slides in from the RIGHT.
+// The closed header is untouched — this is a separate fixed overlay.
+// ====================================================================
+.qside {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: block;
+  overflow: hidden;                 // clip the off-screen panel → no horizontal scroll
+
+  &[hidden] { display: none; }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 20, 50, .55);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    transition: opacity .25s ease;
+  }
+  &.is-open &__overlay { opacity: 1; }
+
+  // panel pinned to the RIGHT (RTL drawer)
+  &__panel {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;            // right edge in RTL
+    width: min(86vw, 320px);
+    max-width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-top-left-radius: 24px;
+    border-bottom-left-radius: 24px;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, .25);
+    transform: translateX(100%);    // off-screen to the right when closed
+    transition: transform .28s ease;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    font-family: 'GE SS Two', sans-serif;
+  }
+  &.is-open &__panel { transform: translateX(0); }
+
+  // header: title (right) + close button (left)
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 16px;
+    border-bottom: 1px solid #eee;
+  }
+  &__title {
+    flex: 1;
+    text-align: right;
+    color: #30378e;                 // royal blue
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 40px;
+    letter-spacing: -0.15px;
+  }
+  &__close {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: #f55157;            // danger primary
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    i { font-size: 16px; line-height: 1; }
+  }
+
+  // primary links
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 20px;
+    padding: 15px 25px 0;
+    a {
+      color: #0a1f30;              // chosen-blue
+      font-size: 14px;
+      font-weight: 500;
+      text-align: right;
+      transition: color .15s ease;
+      &:hover, &.is-active { color: #30378e; }
+    }
+  }
+
+  // secondary links — pushed toward the bottom (Figma gap below the primary set)
+  &__links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 24px 15px 0;
+    margin-top: auto;
+    a {
+      color: #6c757d;             // gray-600
+      font-size: 14px;
+      font-weight: 300;
+      text-align: right;
+      transition: color .15s ease;
+      &:hover { color: #30378e; }
+    }
+  }
+
+  // language / location row
+  &__locale {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    &-box {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: #f8f8f8;
+      border-radius: 4px;
+      color: #333;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    &-sep { width: 1px; height: 16px; background: #d0d0d0; }
+  }
+
+  // contact area (icon at the right edge, text to its left)
+  &__contact {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    padding: 16px 20px 30px;
+    &-row {
+      display: inline-flex;
+      flex-direction: row-reverse;  // text first, icon ends at the right
+      align-items: center;
+      gap: 8px;
+      color: #0a1f30;
+      font-size: 13px;
+      transition: color .15s ease;
+      i { font-size: 16px; }
+      &:hover { color: #30378e; }
+    }
+  }
+}
+
+// lock body scroll while the sidebar is open
+body.qside-open { overflow: hidden; }

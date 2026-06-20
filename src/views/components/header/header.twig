@@ -77,26 +77,86 @@
 
     </div>
   </div>
+
+  {# ---- mobile sidebar / offcanvas (Figma node 6036:12721) ---- #}
+  <div class="qside" data-qside hidden>
+    <div class="qside__overlay" data-qside-close></div>
+    <aside class="qside__panel" role="dialog" aria-modal="true" aria-label="القائمة">
+
+      <div class="qside__head">
+        <span class="qside__title">القائمة</span>
+        <button type="button" class="qside__close" aria-label="إغلاق القائمة" data-qside-close>
+          <i class="sicon-cancel"></i>
+        </button>
+      </div>
+
+      {# primary links — same destinations as the desktop nav #}
+      <nav class="qside__nav">
+        <a href="{{ store.url }}" {{ is_page('index') ? 'class="is-active"' : '' }}>الرئيسية</a>
+        <a href="{{ store.url }}/كل-المنتجات/c1390845573">المنتجات</a>
+        <a href="{{ store.url }}/about-us">عن قصة</a>
+        <a href="{{ store.url }}" data-route="contact-us">تواصل معنا</a>
+      </nav>
+
+      {# secondary links — reuse the existing top-bar links #}
+      <nav class="qside__links">
+        <a href="{{ store.url }}">سياسة الإستبدال أو الاسترجاع</a>
+        <a href="{{ store.url }}" data-route="wishlist">المفضلة</a>
+      </nav>
+
+      {# language / location row #}
+      <div class="qside__locale">
+        <span class="qside__locale-box">الرياض</span>
+        <span class="qside__locale-box qside__locale-lang">
+          <span>ر.س</span>
+          <span class="qside__locale-sep"></span>
+          <span>العربية</span>
+        </span>
+      </div>
+
+      {# contact — dynamic store email/phone #}
+      <div class="qside__contact">
+        <a class="qside__contact-row" href="mailto:{{ store.email|default('Support@salla.sa') }}">
+          <span>{{ store.email|default('Support@salla.sa') }}</span>
+          <i class="sicon-mail"></i>
+        </a>
+        <a class="qside__contact-row" href="tel:{{ store.mobile|default('+966556754472') }}">
+          <span dir="ltr">{{ store.mobile|default('+966556754472') }}</span>
+          <i class="sicon-phone"></i>
+        </a>
+      </div>
+
+    </aside>
+  </div>
 </header>
 
 <script>
 (function(){
-  // mobile burger → toggle the nav links as a dropdown panel
+  // mobile burger → open the offcanvas sidebar (Figma 6036:12721)
   var burger = document.querySelector('[data-qburger]');
-  var header = document.querySelector('.qheader');
-  if (burger && header) {
-    var closeMenu = function(){ header.classList.remove('is-menu-open'); burger.setAttribute('aria-expanded', 'false'); };
-    burger.addEventListener('click', function(e){
-      e.stopPropagation();
-      var open = header.classList.toggle('is-menu-open');
-      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  var side   = document.querySelector('[data-qside]');
+  if (burger && side) {
+    var openSide = function(){
+      side.hidden = false;
+      // next frame so the panel/overlay transitions run from the closed state
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){
+        side.classList.add('is-open');
+      }); });
+      document.body.classList.add('qside-open');
+      burger.setAttribute('aria-expanded', 'true');
+    };
+    var closeSide = function(){
+      side.classList.remove('is-open');
+      document.body.classList.remove('qside-open');
+      burger.setAttribute('aria-expanded', 'false');
+      setTimeout(function(){ if (!side.classList.contains('is-open')) side.hidden = true; }, 320);
+    };
+    burger.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); openSide(); });
+    side.querySelectorAll('[data-qside-close]').forEach(function(el){ el.addEventListener('click', closeSide); });
+    side.querySelectorAll('.qside__nav a, .qside__links a').forEach(function(a){ a.addEventListener('click', closeSide); });
+    document.addEventListener('keydown', function(e){
+      if ((e.key === 'Escape' || e.key === 'Esc') && side.classList.contains('is-open')) closeSide();
     });
-    // close when tapping outside the open menu, or when a link is chosen
-    document.addEventListener('click', function(e){
-      if (header.classList.contains('is-menu-open') && !e.target.closest('.qheader-menu') && !e.target.closest('[data-qburger]')) closeMenu();
-    });
-    var qmenuEl = document.querySelector('[data-qmenu]');
-    if (qmenuEl) qmenuEl.addEventListener('click', function(e){ if (e.target.closest('a')) closeMenu(); });
   }
 
   var menu = document.querySelector('[data-qmenu]');
