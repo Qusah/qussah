@@ -109,14 +109,13 @@
   &__banner-body {
     position: relative; z-index: 2;
     padding: 24px; display: flex; flex-direction: column; align-items: flex-end;
-    text-align: right; gap: 12px;
+    text-align: right; gap: 12px; direction: rtl;
   }
-  &__banner-eyebrow { font-size: 14px; color: #91e6f7; }
-  &__banner-title { font-size: 18px; font-weight: 700; line-height: 1.4; margin: 0; }
+  &__banner-eyebrow { font-size: 14px; color: #91e6f7; width: 100%; text-align: right; }
+  &__banner-title { font-size: 18px; font-weight: 700; line-height: 1.4; margin: 0; width: 100%; text-align: right; }
   &__banner-btn {
     margin-top: 4px; color: #fff; font-size: 14px; font-weight: 500;
-    display: inline-flex; align-items: center; gap: 6px;
-    &::before { content: '‹'; }
+    width: 100%; text-align: right;
     &:hover { color: #91e6f7; }
   }
   &__banner-img {
