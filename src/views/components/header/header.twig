@@ -60,6 +60,7 @@
       <nav class="qheader-menu" data-qmenu>
         <a href="{{ store.url }}" {{ is_page('index') ? 'class="is-active"' : '' }}>الرئيسية</a>
         <a href="{{ store.url }}/كل-المنتجات/c1390845573">المنتجات</a>
+        <a href="{{ store.url }}">العروض</a>
         <a href="{{ store.url }}/about-us">عن قصة</a>
         <a href="{{ store.url }}/contact-us">تواصل معنا</a>
       </nav>
@@ -77,26 +78,82 @@
 
     </div>
   </div>
+
+  {# ---- mobile slide-in drawer (Figma node 6036:12721) — shown via burger ---- #}
+  <div class="qdrawer" data-qdrawer hidden>
+    <div class="qdrawer__overlay" data-qdrawer-close></div>
+    <aside class="qdrawer__panel" role="dialog" aria-modal="true" aria-label="القائمة">
+      <div class="qdrawer__head">
+        <button type="button" class="qdrawer__close" aria-label="إغلاق" data-qdrawer-close>
+          <i class="sicon-cancel"></i>
+        </button>
+        <span class="qdrawer__title">القائمة</span>
+      </div>
+
+      {# primary nav — mirrors the pill links #}
+      <nav class="qdrawer__nav">
+        <a href="{{ store.url }}">الرئيسية</a>
+        <a href="{{ store.url }}/كل-المنتجات/c1390845573">المنتجات</a>
+        <a href="{{ store.url }}">العروض</a>
+        <a href="{{ store.url }}" data-route="contact-us">تواصل معنا</a>
+        <a href="{{ store.url }}/about-us">عن قصة</a>
+      </nav>
+
+      {# secondary links (utility) #}
+      <nav class="qdrawer__links">
+        <a href="{{ store.url }}">سياسة الاسترجاع و الضمان</a>
+        <a href="{{ store.url }}">توضيحات</a>
+        <a href="{{ store.url }}">عروض متجر قصة</a>
+        <a href="{{ store.url }}" data-route="blog">المدونة</a>
+        <a href="{{ store.url }}" data-route="loyalty">نظام الولاء</a>
+        <a href="{{ store.url }}">اطلب من المصنع</a>
+      </nav>
+
+      {# language / location chips #}
+      <div class="qdrawer__locale">
+        <span class="qdrawer__chip">الرياض</span>
+        <span class="qdrawer__chip qdrawer__chip--lang"><span dir="ltr">ر.س</span><span class="qdrawer__sep"></span>العربية</span>
+      </div>
+
+      {# contact #}
+      <div class="qdrawer__contact">
+        <a href="mailto:{{ store.email|default('Support@salla.sa') }}">
+          <span>{{ store.email|default('Support@salla.sa') }}</span>
+          <i class="sicon-mail"></i>
+        </a>
+        <a href="tel:{{ store.mobile|default('+966556754472') }}">
+          <span dir="ltr">{{ store.mobile|default('+966556754472') }}</span>
+          <i class="sicon-phone"></i>
+        </a>
+      </div>
+    </aside>
+  </div>
 </header>
 
 <script>
 (function(){
-  // mobile burger → toggle the nav links as a dropdown panel
-  var burger = document.querySelector('[data-qburger]');
-  var header = document.querySelector('.qheader');
-  if (burger && header) {
-    var closeMenu = function(){ header.classList.remove('is-menu-open'); burger.setAttribute('aria-expanded', 'false'); };
-    burger.addEventListener('click', function(e){
-      e.stopPropagation();
-      var open = header.classList.toggle('is-menu-open');
-      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  // mobile burger → open the slide-in drawer
+  var burger  = document.querySelector('[data-qburger]');
+  var drawer  = document.querySelector('[data-qdrawer]');
+  if (burger && drawer) {
+    var openDrawer = function(){
+      drawer.hidden = false;
+      // next frame so the transition runs from the off-screen state
+      requestAnimationFrame(function(){ drawer.classList.add('is-open'); });
+      document.body.classList.add('qdrawer-open');
+      burger.setAttribute('aria-expanded', 'true');
+    };
+    var closeDrawer = function(){
+      drawer.classList.remove('is-open');
+      document.body.classList.remove('qdrawer-open');
+      burger.setAttribute('aria-expanded', 'false');
+      setTimeout(function(){ if (!drawer.classList.contains('is-open')) drawer.hidden = true; }, 300);
+    };
+    burger.addEventListener('click', openDrawer);
+    drawer.addEventListener('click', function(e){
+      if (e.target.closest('[data-qdrawer-close]') || e.target.closest('.qdrawer__nav a, .qdrawer__links a')) closeDrawer();
     });
-    // close when tapping outside the open menu, or when a link is chosen
-    document.addEventListener('click', function(e){
-      if (header.classList.contains('is-menu-open') && !e.target.closest('.qheader-menu') && !e.target.closest('[data-qburger]')) closeMenu();
-    });
-    var qmenuEl = document.querySelector('[data-qmenu]');
-    if (qmenuEl) qmenuEl.addEventListener('click', function(e){ if (e.target.closest('a')) closeMenu(); });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeDrawer(); });
   }
 
   var menu = document.querySelector('[data-qmenu]');

@@ -167,39 +167,6 @@ body, main, #app { background: transparent; }
   .qheader .qheader-menu    { display: none; }    // pill replaced by hamburger
   .qheader .qheader-burger  { display: inline-flex; }
 
-  // burger → toggle the nav links into a dropdown panel under the bar
-  .qheader.is-menu-open .qheader-burger { background: rgba(145, 230, 247, .22); }
-  .qheader.is-menu-open .qheader-menu {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    position: absolute;
-    top: calc(100% - 6px);
-    inset-inline-start: 16px;
-    inset-inline-end: 16px;
-    left: auto;                 // cancel the desktop centering
-    transform: none;            // cancel the desktop centering
-    width: auto;
-    gap: 2px;
-    padding: 8px;
-    border: 1px solid rgba(255, 255, 255, .12);
-    border-radius: 16px;
-    background: linear-gradient(135deg, #172951 0%, #25307a 60%, #30378e 100%);
-    box-shadow: 0 16px 40px rgba(10, 20, 50, .45);
-    z-index: 70;
-
-    a {
-      margin: 0;
-      padding: 12px 14px;
-      border-radius: 10px;
-      color: #fff;
-      text-align: right;
-      &:hover { color: #fff; background: rgba(255, 255, 255, .06); }
-      &.is-active { color: #fff; background: rgba(145, 230, 247, .14); }
-      &.is-active::after { display: none; }   // no underline inside the panel
-    }
-  }
-
   // nav: tighter, edges 16px (Figma menu x=16)
   .qheader .qheader-nav { height: 64px; padding: 12px 16px; }
 
@@ -223,4 +190,161 @@ body, main, #app { background: transparent; }
 @media (max-width: 420px) {
   .qheader .qheader-act__txt { display: none; }
   .qheader .qheader-nav { padding: 12px 12px; }
+}
+
+// ====================================================================
+// Mobile slide-in drawer — exact Figma "menu" (node 6036:12721)
+// White panel from the right (RTL), red close, two link tiers,
+// language/location chips and contact. Opened by the burger.
+// ====================================================================
+.qdrawer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  font-family: 'GE SS Two', sans-serif;
+
+  &[hidden] { display: none; }
+
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 16, 40, .45);
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+  &.is-open &__overlay { opacity: 1; }
+
+  // panel pinned to the right edge (RTL), slides in from off-screen right
+  &__panel {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: min(86vw, 300px);
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    background: #ffffff;
+    box-shadow: -16px 0 48px rgba(10, 20, 50, .25);
+    transform: translateX(100%);
+    transition: transform .3s ease;
+    overflow-y: auto;
+    direction: rtl;
+  }
+  &.is-open &__panel { transform: translateX(0); }
+
+  // header row: close (left) · title (right)
+  &__head {
+    display: flex;
+    flex-direction: row-reverse;     // close ends up on the left, title on the right
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #eeeeee;
+  }
+  &__title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.15px;
+    color: #30378e;                  // base/royal blue
+  }
+  &__close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: #f55157;             // danger primary
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    i { font-size: 15px; line-height: 1; }
+  }
+
+  // primary nav — bold navy, right-aligned, ~40px rows
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    padding-top: 12px;
+    a {
+      display: block;
+      width: 100%;
+      padding: 10px 4px;
+      text-align: right;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 20px;
+      color: #172951;
+      &:hover { color: #30378e; }
+    }
+  }
+
+  // secondary links — gray, smaller, pushed toward the bottom
+  &__links {
+    display: flex;
+    flex-direction: column;
+    margin-top: auto;
+    padding-top: 24px;
+    a {
+      display: block;
+      width: 100%;
+      padding: 4px;
+      text-align: right;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 20px;
+      color: #9aa1ab;
+      &:hover { color: #6c757d; }
+    }
+  }
+
+  // language / location chips ("الرياض" left · "العربية ر.س" right)
+  &__locale {
+    display: flex;
+    flex-direction: row-reverse;     // الرياض on the left, language on the right
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: #f8f8f8;
+    font-size: 14px;
+    color: #333333;
+  }
+  &__sep {
+    width: 1px;
+    height: 14px;
+    background: #d9dde3;
+  }
+
+  // contact — right-aligned, text then icon
+  &__contact {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;   // RTL → right
+      gap: 8px;
+      font-size: 14px;
+      color: #333333;
+      i { font-size: 15px; color: #30378e; }
+    }
+  }
+}
+
+// lock the page behind the open drawer
+body.qdrawer-open { overflow: hidden; }
+
+// safety: never show the drawer on desktop (burger is hidden there anyway)
+@media (min-width: 769px) {
+  .qdrawer { display: none !important; }
 }

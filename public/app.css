@@ -27431,46 +27431,6 @@ body, main, #app {
   .qheader .qheader-burger {
     display: inline-flex;
   }
-  .qheader.is-menu-open .qheader-burger {
-    background: rgba(145, 230, 247, 0.22);
-  }
-  .qheader.is-menu-open .qheader-menu {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    position: absolute;
-    top: calc(100% - 6px);
-    left: 16px;
-    right: 16px;
-    left: auto;
-    transform: none;
-    width: auto;
-    gap: 2px;
-    padding: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 16px;
-    background: linear-gradient(135deg, #172951 0%, #25307a 60%, #30378e 100%);
-    box-shadow: 0 16px 40px rgba(10, 20, 50, 0.45);
-    z-index: 70;
-  }
-  .qheader.is-menu-open .qheader-menu a {
-    margin: 0;
-    padding: 12px 14px;
-    border-radius: 10px;
-    color: #fff;
-    text-align: right;
-  }
-  .qheader.is-menu-open .qheader-menu a:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.06);
-  }
-  .qheader.is-menu-open .qheader-menu a.is-active {
-    color: #fff;
-    background: rgba(145, 230, 247, 0.14);
-  }
-  .qheader.is-menu-open .qheader-menu a.is-active::after {
-    display: none;
-  }
   .qheader .qheader-nav {
     height: 64px;
     padding: 12px 16px;
@@ -27504,6 +27464,165 @@ body, main, #app {
   }
   .qheader .qheader-nav {
     padding: 12px 12px;
+  }
+}
+.qdrawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  font-family: "GE SS Two", sans-serif;
+}
+.qdrawer[hidden] {
+  display: none;
+}
+.qdrawer__overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(10, 16, 40, 0.45);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.qdrawer.is-open .qdrawer__overlay {
+  opacity: 1;
+}
+.qdrawer__panel {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: min(86vw, 300px);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  background: #ffffff;
+  box-shadow: -16px 0 48px rgba(10, 20, 50, 0.25);
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+  direction: rtl;
+}
+.qdrawer.is-open .qdrawer__panel {
+  transform: translateX(0);
+}
+.qdrawer__head {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eeeeee;
+}
+.qdrawer__title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.15px;
+  color: #30378e;
+}
+.qdrawer__close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: #f55157;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.qdrawer__close i {
+  font-size: 15px;
+  line-height: 1;
+}
+.qdrawer__nav {
+  display: flex;
+  flex-direction: column;
+  padding-top: 12px;
+}
+.qdrawer__nav a {
+  display: block;
+  width: 100%;
+  padding: 10px 4px;
+  text-align: right;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 20px;
+  color: #172951;
+}
+.qdrawer__nav a:hover {
+  color: #30378e;
+}
+.qdrawer__links {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+  padding-top: 24px;
+}
+.qdrawer__links a {
+  display: block;
+  width: 100%;
+  padding: 4px;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: #9aa1ab;
+}
+.qdrawer__links a:hover {
+  color: #6c757d;
+}
+.qdrawer__locale {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+}
+.qdrawer__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: #f8f8f8;
+  font-size: 14px;
+  color: #333333;
+}
+.qdrawer__sep {
+  width: 1px;
+  height: 14px;
+  background: #d9dde3;
+}
+.qdrawer__contact {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+.qdrawer__contact a {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  color: #333333;
+}
+.qdrawer__contact a i {
+  font-size: 15px;
+  color: #30378e;
+}
+body.qdrawer-open {
+  overflow: hidden;
+}
+@media (min-width: 769px) {
+  .qdrawer {
+    display: none !important;
   }
 }
 .qcats {
