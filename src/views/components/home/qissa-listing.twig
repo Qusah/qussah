@@ -18,7 +18,7 @@
             {# ===== GRID (left in RTL) ===== #}
             <div class="qlist__main">
 
-                {# sort / filter top bar (Figma node 214:1227) #}
+                {# sort top bar (Figma node 160:2603) — sort text right, view toggles left #}
                 <div class="qlist__top">
                     <button type="button" class="qlist__sort">
                         <i class="sicon-arrow-down qlist__sort-arrow"></i>
@@ -26,14 +26,11 @@
                         <span class="qlist__sort-value">{{ component.sort_label|default('من الاعلى الى الاقل') }}</span>
                     </button>
                     <div class="qlist__tools">
-                        <button type="button" class="qlist__tool qlist__tool--view is-active" aria-label="عرض شبكي">
-                            <i class="sicon-grid"></i>
-                        </button>
                         <button type="button" class="qlist__tool qlist__tool--view" aria-label="عرض قائمة">
                             <i class="sicon-list"></i>
                         </button>
-                        <button type="button" class="qlist__tool qlist__filter-toggle" aria-label="تصفية">
-                            <i class="sicon-filter"></i>
+                        <button type="button" class="qlist__tool qlist__tool--view is-active" aria-label="عرض شبكي">
+                            <i class="sicon-grid"></i>
                         </button>
                     </div>
                 </div>
