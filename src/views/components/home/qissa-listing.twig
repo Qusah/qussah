@@ -36,6 +36,7 @@
                 </div>
 
                 {# product grid — same exact card as the homepage products section #}
+                {% if component.products|length %}
                 <div class="qlist__grid">
                     {% for product in component.products %}
                         <article class="qprod">
@@ -79,6 +80,14 @@
                         </article>
                     {% endfor %}
                 </div>
+                {% else %}
+                {# empty state (Figma node 172:5500) #}
+                <div class="qlist__empty">
+                    <span class="qlist__empty-icon"><i class="sicon-shopping-bag"></i></span>
+                    <h3 class="qlist__empty-title">لا توجد منتجات حتى الآن</h3>
+                    <p class="qlist__empty-sub">بحثك لم يطابق أي منتجات</p>
+                </div>
+                {% endif %}
             </div>
 
             {# ===== FILTER SIDEBAR + BANNER (right in RTL) ===== #}
