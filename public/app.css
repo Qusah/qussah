@@ -28208,6 +28208,44 @@ body.qside-open {
 .qoffers__all:hover {
   color: #daeff7;
 }
+.qoffers__nav {
+  display: none;
+  direction: ltr;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+.qoffers__nav-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 30px;
+  background: #daeff7;
+  border: 1px solid #daeff7;
+  color: #30378e;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  -moz-appearance: none;
+       appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+}
+.qoffers__nav-btn i {
+  font-size: 16px;
+}
+.qoffers__nav-btn.is-primary {
+  background: #30378e;
+  border-color: #30378e;
+  color: #fff;
+}
+.qoffers__nav-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
 .qoffer {
   flex: 1 1 0;
   min-width: 1px;
@@ -28355,13 +28393,16 @@ body.qside-open {
   border-radius: 12px;
   color: #0a1f30;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 .qoffer__like i {
   font-size: 18px;
 }
-.qoffer__like:hover {
-  color: #f55157;
-  border-color: #f55157;
+@media (hover: hover) {
+  .qoffer__like:hover {
+    color: #f55157;
+    border-color: #f55157;
+  }
 }
 .qoffer__add {
   background: #30378e !important;
@@ -28381,14 +28422,17 @@ body.qside-open {
   font-weight: 500;
   border-radius: 12px;
   --salla-button-primary-background-color: #30378e;
+  -webkit-tap-highlight-color: transparent;
 }
 .qoffer__add i {
   font-size: 16px;
 }
-.qoffer__add:hover {
-  background: #91e6f7 !important;
-  border-color: #91e6f7 !important;
-  color: #30378e !important;
+@media (hover: hover) {
+  .qoffer__add:hover {
+    background: #91e6f7 !important;
+    border-color: #91e6f7 !important;
+    color: #30378e !important;
+  }
 }
 .qoffer__img {
   position: relative;
@@ -28444,45 +28488,114 @@ body.qside-open {
     padding-right: 15px;
   }
   .qoffers__box {
-    padding: 24px 16px 16px;
-    border-radius: 24px;
-    gap: 24px;
+    padding: 30px 10px 20px;
+    border-radius: 30px;
+    gap: 20px;
+  }
+  .qoffers__top {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    max-width: 100%;
+  }
+  .qoffers__all {
+    display: none;
+  }
+  .qoffers__head {
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    max-width: 320px;
   }
   .qoffers__title {
-    font-size: 20px;
-    line-height: 28px;
+    font-size: 24px;
+    line-height: 30px;
   }
   .qoffers__subtitle {
-    font-size: 13px;
+    font-size: 14px;
+    line-height: 20px;
   }
   .qoffers__row {
-    flex-direction: column;
-    gap: 16px;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 12px;
+    max-width: 100%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .qoffers__row::-webkit-scrollbar {
+    display: none;
   }
   .qoffer {
+    flex: 0 0 100%;
     width: 100%;
+    scroll-snap-align: center;
   }
   .qoffer__info {
     width: auto;
     flex: 1 1 auto;
-    padding-left: 12px;
+    padding-left: 10px;
+    gap: 12px;
+    min-width: 1px;
   }
-  .qoffer__img {
-    flex-basis: 140px;
-    height: 240px;
+  .qoffer__cat, .qoffer__sub, .qoffer__star {
+    display: none;
   }
-  .qoffer__img img {
-    width: 120px;
-    height: 210px;
+  .qoffer__name {
+    font-size: 14px;
+    line-height: 1.3;
   }
-  .qoffer__cell b {
-    font-size: 16px;
+  .qoffer__price-now {
+    font-size: 15px;
   }
-  .qoffer__cell span {
+  .qoffer__price-old {
     font-size: 12px;
   }
+  .qoffer__time {
+    gap: 6px;
+  }
   .qoffer__cell {
-    padding: 4px 6px 6px;
+    padding: 3px 6px 6px;
+    border-radius: 8px;
+  }
+  .qoffer__cell b {
+    font-size: 14px;
+    line-height: 19px;
+  }
+  .qoffer__cell span {
+    font-size: 11px;
+  }
+  .qoffer__btns {
+    gap: 6px;
+  }
+  .qoffer__like {
+    width: 41px;
+    border-radius: 10px;
+  }
+  .qoffer__add {
+    height: 41px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+  .qoffer__img {
+    flex: 0 0 118px;
+    height: auto;
+  }
+  .qoffer__img img {
+    width: 106px;
+    height: 150px;
+  }
+  .qoffer__badge {
+    top: 16px;
+    height: 22px;
+    min-width: 48px;
+    font-size: 10px;
+    padding: 4px 7px;
+  }
+  .qoffers__nav {
+    display: flex;
   }
 }
 .qallprods {

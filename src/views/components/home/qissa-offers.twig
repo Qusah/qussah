@@ -93,6 +93,17 @@
                 {% endfor %}
             </div>
 
+            {# mobile carousel nav (Figma node 6036:21602) — hidden on desktop.
+               RTL: products flow right→left, so the LEFT (primary) arrow advances. #}
+            <div class="qoffers__nav" data-qoffers-nav>
+                <button type="button" class="qoffers__nav-btn is-primary" data-qoffers-fwd aria-label="التالي">
+                    <i class="sicon-arrow-left"></i>
+                </button>
+                <button type="button" class="qoffers__nav-btn" data-qoffers-back aria-label="السابق">
+                    <i class="sicon-arrow-right"></i>
+                </button>
+            </div>
+
         </div>
     </div>
 </section>
@@ -125,5 +136,47 @@
     });
   }
   tick(); setInterval(tick, 1000);
+
+  // mobile carousel: arrows move between offer cards (RTL-safe, index based).
+  // Uses getBoundingClientRect (physical coords) so it ignores RTL scrollLeft quirks.
+  document.querySelectorAll('.qoffers').forEach(function(sec){
+    var row  = sec.querySelector('.qoffers__row');
+    var nav  = sec.querySelector('[data-qoffers-nav]');
+    var fwd  = sec.querySelector('[data-qoffers-fwd]');   // left/primary → next product
+    var back = sec.querySelector('[data-qoffers-back]');  // right → previous product
+    if(!row) return;
+    var cards = Array.prototype.slice.call(row.querySelectorAll('.qoffer'));
+    if(cards.length <= 1){ if(nav) nav.style.display = 'none'; return; }  // single offer → no arrows
+
+    // which card is currently centered in the viewport
+    function current(){
+      var r = row.getBoundingClientRect(), mid = r.left + r.width / 2;
+      var best = 0, bestDist = Infinity;
+      cards.forEach(function(c, i){
+        var cr = c.getBoundingClientRect(), cc = cr.left + cr.width / 2, d = Math.abs(cc - mid);
+        if(d < bestDist){ bestDist = d; best = i; }
+      });
+      return best;
+    }
+    function go(i){
+      i = Math.max(0, Math.min(cards.length - 1, i));
+      cards[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      sync(i);
+    }
+    function sync(i){
+      if(i == null) i = current();
+      if(fwd)  fwd.disabled  = (i >= cards.length - 1);
+      if(back) back.disabled = (i <= 0);
+    }
+    if(fwd)  fwd.addEventListener('click', function(){ go(current() + 1); });
+    if(back) back.addEventListener('click', function(){ go(current() - 1); });
+
+    var raf;
+    row.addEventListener('scroll', function(){
+      if(raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(function(){ sync(); });
+    }, { passive: true });
+    sync(0);
+  });
 })();
 </script>
