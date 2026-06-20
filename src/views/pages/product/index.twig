@@ -35,80 +35,43 @@
   #}
 	<div class="s-blocks-wrapper s-before-products-list !mt-0">{% hook 'product.index.before_products_group_with_filter' %}</div>
 
-	{# ===== Qissa listing — Figma design wrapping Salla's FUNCTIONAL components ===== #}
-	{# SYNC-MARKER-V2 — if you see this comment in page source, the new file synced #}
-	<section class="s-block qlist qlist--page" data-qlist-version="v2">
-		<div class="container">
-			<div class="qlist__layout">
+	<div class="container container--products-list flex items-start flex-col md:flex-row">
+		{% if filters %}
+			<button class="btn--close-sm close-filters sicon-cancel hidden"></button>
+			<salla-filters class="md:w-72 lg:sticky lg:top-20 flex-none" id="filters-menu"></salla-filters>
+		{% endif %}
 
-				{# ===== GRID (left in RTL) ===== #}
-				<div class="qlist__main">
-
-					{# sort top bar (Figma 160:2603) — real Salla sort dropdown #}
-					<div class="qlist__top">
-						{% if sort_options|length %}
-							<div class="qlist__sort">
-								<i class="sicon-arrow-down qlist__sort-arrow"></i>
-								<span class="qlist__sort-label">{{ trans('pages.categories.sorting') }} :</span>
-								{# functional sort select (product.js listens to #product-filter) #}
-								<select id="product-filter" class="qlist__sort-select">
-									{% for sort in sort_options %}
-										<option value="{{ sort.id }}" {{ sort.is_selected?'selected':'' }}>{{ sort.name }}</option>
-									{% endfor %}
-								</select>
-							</div>
-						{% endif %}
-						<div class="qlist__tools">
-							{% if filters %}
-								<a href="#filters-menu" class="qlist__tool qlist__filter-toggle filters-trigger lg:hidden" aria-label="تصفية">
-									<i class="sicon-filter"></i>
-								</a>
-							{% endif %}
-							<button type="button" class="qlist__tool qlist__tool--view" aria-label="عرض قائمة"><i class="sicon-list"></i></button>
-							<button type="button" class="qlist__tool qlist__tool--view is-active" aria-label="عرض شبكي"><i class="sicon-grid"></i></button>
-						</div>
-					</div>
-
-					<h1 class="sr-only" id="page-main-title">{{ page.title|raw }}</h1>
-
-					{% hook 'product:index.items.start' %}
-
-					{# functional product grid — Salla fetches + sorts + filters live #}
-					<salla-products-list
-						class="qlist__products"
-						source="{{ page.slug }}"
-						source-value="{{ page.id }}"
-						{{ filters ? 'filters-Results' : '' }}>
-					</salla-products-list>
-
-					{% hook 'product:index.items.end' %}
-				</div>
-
-				{# ===== FILTER SIDEBAR + BANNER (right in RTL) — only when the category has filters ===== #}
-				{% if filters %}
-				<aside class="qlist__side">
-					<button class="btn--close-sm close-filters sicon-cancel hidden"></button>
-					{# functional Salla filters — auto-renders categories/price and filters the grid #}
-					<salla-filters class="qlist__filter" id="filters-menu"></salla-filters>
-
-					{# side banner (theme-level, optional) #}
-					{% set lb_img = theme.settings.get('listing_banner_image') %}
-					{% if lb_img %}
-						<a href="{{ theme.settings.get('listing_banner_url', '#') }}" class="qlist__banner">
-							<div class="qlist__banner-body">
-								<span class="qlist__banner-eyebrow">{{ theme.settings.get('listing_banner_eyebrow', 'منتجات قصة') }}</span>
-								<h3 class="qlist__banner-title">{{ theme.settings.get('listing_banner_title', '') }}</h3>
-								<span class="qlist__banner-btn">{{ theme.settings.get('listing_banner_btn', 'تسوق الآن') }}</span>
-							</div>
-							<img class="qlist__banner-img" src="{{ lb_img }}" alt="" loading="lazy"/>
+		<div class="main-content flex-1 w-full {{ filters ? 'ltr:lg:ml-8 rtl:lg:mr-8' : '' }}">
+			<div class="mb-4 sm:mb-6 flex justify-between items-center">
+				<h1 class="font-bold text-xl rtl:pl-3 ltr:pr-3" id="page-main-title">{{ page.title|raw }}</h1>
+				<div class="flex items-center space-x-2 rtl:space-x-reverse">
+					{% if filters %}
+						<a href="#filters-menu" class="filters-trigger bg-border-color text-primary lg:hidden mt-2">
+							<i class="sicon-filter text-gray-text text-2xl me-2.5"></i>
 						</a>
 					{% endif %}
-				</aside>
-				{% endif %}
-
+					{% if sort_options|length %}
+						<div class="flex items-center">
+							<label class="hidden sm:block rtl:ml-3 ltr:mr-3 whitespace-nowrap" for="product-filter">{{ trans('pages.categories.sorting') }}</label>
+							<select id="product-filter" class="form-input pt-0 pb-1 rtl:md:pl-10 ltr:md:pr-10">
+								{% for sort in sort_options %}
+									<option value="{{ sort.id }}" {{ sort.is_selected?'selected':'' }}>{{ sort.name }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					{% endif %}
+				</div>
 			</div>
+
+			{% hook 'product:index.items.start' %}
+
+			<div class="flex">
+				<salla-products-list class="flex-1 min-w-0 overflow-auto " source="{{ page.slug }}" source-value="{{ page.id }}" {{ filters ?'filters-Results':'' }}></salla-products-list>
+			</div>
+
+			{% hook 'product:index.items.end' %}
 		</div>
-	</section>
+	</div>
 
 	{#
     Hook: product.index.after_products_group_with_filter
