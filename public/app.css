@@ -2983,6 +2983,10 @@ textarea.s-input{
 }
 .qheader > .s-advertisement-content:last-of-type {
   position: relative;
+  z-index: 50;
+}
+.qheader--home > .s-advertisement-content:last-of-type {
+  position: relative;
   z-index: 60;
   margin-bottom: -90px;
 }
@@ -27072,10 +27076,26 @@ body, main, #app {
 .qheader .qheader-burger i {
   font-size: 21px;
 }
-.qheader > .container:last-of-type {
+.qheader--home > .container:last-of-type {
   position: relative;
   z-index: 60;
   margin-bottom: -90px;
+}
+.qheader--solid {
+  padding-top: 0;
+}
+.qheader--solid .qheader-topwrap {
+  padding: 24px 0 12px;
+}
+.qheader--solid .qheader-nav {
+  background: linear-gradient(120deg, #172951 0%, #25307a 55%, #30378e 100%);
+  border-radius: 100px;
+  margin-bottom: 24px;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+.qheader--solid .qheader-menu {
+  background: rgba(255, 255, 255, 0.06);
 }
 .qissa-hero {
   margin: 0 50px !important;
@@ -32075,6 +32095,10 @@ model-viewer[style*=width]:before{
   padding-right: 50px;
 }
 .qheader > .s-comments-product .s-comments-container:last-of-type {
+  position: relative;
+  z-index: 50;
+}
+.qheader--home > .s-comments-product .s-comments-container:last-of-type {
   position: relative;
   z-index: 60;
   margin-bottom: -90px;

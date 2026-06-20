@@ -5,7 +5,7 @@
 | cart.items_count | int     |                                 |
 | cart.total       | string  |                                 |
 #}
-<header class="store-header qheader">
+<header class="store-header qheader {{ is_page('index') ? 'qheader--home' : 'qheader--solid' }}">
 
   {# top bar — sits ABOVE hero (not overlaid) #}
   <div class="qheader-topwrap">

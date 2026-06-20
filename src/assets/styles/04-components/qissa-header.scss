@@ -104,12 +104,28 @@ body, main, #app { background: transparent; }
   }
 }
 
-// nav row sits ON TOP of the hero, overlapping it, so the hero's rounded
-// top corners stay fully visible (nav is shorter than the corner radius zone)
-.qheader > .container:last-of-type {
+// HOMEPAGE ONLY: nav row sits ON TOP of the hero, overlapping it, so the
+// hero's rounded top corners stay fully visible.
+.qheader--home > .container:last-of-type {
   position: relative;
   z-index: 60;
   margin-bottom: -90px;     // nav overlaps the hero below it
+}
+
+// ---- SOLID variant (all non-homepage pages) ----
+// Navy rounded nav bar, no hero to overlap. Matches the master header.
+.qheader--solid {
+  padding-top: 0;
+  .qheader-topwrap { padding: 24px 0 12px; }   // breathing room above the top bar
+  // the nav becomes a solid navy rounded bar
+  .qheader-nav {
+    background: linear-gradient(120deg, #172951 0%, #25307a 55%, #30378e 100%);
+    border-radius: 100px;
+    margin-bottom: 24px;
+    padding-inline: 50px;
+  }
+  // pill menu loses its faint gradient so it blends into the solid bar
+  .qheader-menu { background: rgba(255,255,255,.06); }
 }
 // hero starts right after the nav, top bar stays fully above on white
 .qissa-hero {
