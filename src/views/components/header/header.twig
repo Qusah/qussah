@@ -77,58 +77,59 @@
 
     </div>
   </div>
-
-  {# ---- mobile sidebar / offcanvas (Figma node 6036:12721) ---- #}
-  <div class="qside" data-qside hidden>
-    <div class="qside__overlay" data-qside-close></div>
-    <aside class="qside__panel" role="dialog" aria-modal="true" aria-label="القائمة">
-
-      <div class="qside__head">
-        <span class="qside__title">القائمة</span>
-        <button type="button" class="qside__close" aria-label="إغلاق القائمة" data-qside-close>
-          <i class="sicon-cancel"></i>
-        </button>
-      </div>
-
-      {# primary links — same destinations as the desktop nav #}
-      <nav class="qside__nav">
-        <a href="{{ store.url }}" {{ is_page('index') ? 'class="is-active"' : '' }}>الرئيسية</a>
-        <a href="{{ store.url }}/كل-المنتجات/c1390845573">المنتجات</a>
-        <a href="{{ store.url }}/about-us">عن قصة</a>
-        <a href="{{ store.url }}" data-route="contact-us">تواصل معنا</a>
-      </nav>
-
-      {# secondary links — reuse the existing top-bar links #}
-      <nav class="qside__links">
-        <a href="{{ store.url }}">سياسة الإستبدال أو الاسترجاع</a>
-        <a href="{{ store.url }}" data-route="wishlist">المفضلة</a>
-      </nav>
-
-      {# language / location row #}
-      <div class="qside__locale">
-        <span class="qside__locale-box">الرياض</span>
-        <span class="qside__locale-box qside__locale-lang">
-          <span>ر.س</span>
-          <span class="qside__locale-sep"></span>
-          <span>العربية</span>
-        </span>
-      </div>
-
-      {# contact — dynamic store email/phone #}
-      <div class="qside__contact">
-        <a class="qside__contact-row" href="mailto:{{ store.email|default('Support@salla.sa') }}">
-          <span>{{ store.email|default('Support@salla.sa') }}</span>
-          <i class="sicon-mail"></i>
-        </a>
-        <a class="qside__contact-row" href="tel:{{ store.mobile|default('+966556754472') }}">
-          <span dir="ltr">{{ store.mobile|default('+966556754472') }}</span>
-          <i class="sicon-phone"></i>
-        </a>
-      </div>
-
-    </aside>
-  </div>
 </header>
+
+{# ---- mobile sidebar / offcanvas (Figma node 6036:12721) ----
+   Kept OUTSIDE <header> so it is fully independent of the navbar/header. #}
+<div class="qside" data-qside hidden>
+  <div class="qside__overlay" data-qside-close></div>
+  <aside class="qside__panel" role="dialog" aria-modal="true" aria-label="القائمة">
+
+    <div class="qside__header">
+      <span class="qside__title">القائمة</span>
+      <button type="button" class="qside__close" aria-label="إغلاق القائمة" data-qside-close>
+        <i class="sicon-cancel"></i>
+      </button>
+    </div>
+
+    {# primary links — same destinations as the desktop nav #}
+    <nav class="qside__nav">
+      <a class="qside__link" href="{{ store.url }}" {{ is_page('index') ? 'aria-current="page"' : '' }}>الرئيسية</a>
+      <a class="qside__link" href="{{ store.url }}/كل-المنتجات/c1390845573">المنتجات</a>
+      <a class="qside__link" href="{{ store.url }}/about-us">عن قصة</a>
+      <a class="qside__link" href="{{ store.url }}" data-route="contact-us">تواصل معنا</a>
+    </nav>
+
+    {# secondary links — reuse the existing top-bar links #}
+    <nav class="qside__secondary">
+      <a href="{{ store.url }}">سياسة الإستبدال أو الاسترجاع</a>
+      <a href="{{ store.url }}" data-route="wishlist">المفضلة</a>
+    </nav>
+
+    {# language / currency / location row #}
+    <div class="qside__meta">
+      <span class="qside__meta-box">الرياض</span>
+      <span class="qside__meta-box qside__meta-lang">
+        <span>ر.س</span>
+        <span class="qside__meta-sep"></span>
+        <span>العربية</span>
+      </span>
+    </div>
+
+    {# contact — dynamic store email/phone #}
+    <div class="qside__contact">
+      <a class="qside__contact-row" href="mailto:{{ store.email|default('Support@salla.sa') }}">
+        <span>{{ store.email|default('Support@salla.sa') }}</span>
+        <i class="sicon-mail"></i>
+      </a>
+      <a class="qside__contact-row" href="tel:{{ store.mobile|default('+966556754472') }}">
+        <span dir="ltr">{{ store.mobile|default('+966556754472') }}</span>
+        <i class="sicon-phone"></i>
+      </a>
+    </div>
+
+  </aside>
+</div>
 
 <script>
 (function(){
@@ -153,7 +154,7 @@
     };
     burger.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); openSide(); });
     side.querySelectorAll('[data-qside-close]').forEach(function(el){ el.addEventListener('click', closeSide); });
-    side.querySelectorAll('.qside__nav a, .qside__links a').forEach(function(a){ a.addEventListener('click', closeSide); });
+    side.querySelectorAll('.qside__nav a, .qside__secondary a').forEach(function(a){ a.addEventListener('click', closeSide); });
     document.addEventListener('keydown', function(e){
       if ((e.key === 'Escape' || e.key === 'Esc') && side.classList.contains('is-open')) closeSide();
     });
@@ -165,7 +166,7 @@
   // Build correct in-store URLs via salla.url.get() (official helper).
   function wireRoutes(){
     if (!(window.salla && salla.url && salla.url.get)) return false;
-    document.querySelectorAll('.qheader a[data-route]').forEach(function(a){
+    document.querySelectorAll('.qheader a[data-route], .qside a[data-route]').forEach(function(a){
       a.href = salla.url.get(a.getAttribute('data-route'));
     });
     return true;

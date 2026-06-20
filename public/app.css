@@ -27517,7 +27517,7 @@ body, main, #app {
 .qside.is-open .qside__panel {
   transform: translateX(0);
 }
-.qside__head {
+.qside__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -27558,17 +27558,17 @@ body, main, #app {
   gap: 20px;
   padding: 15px 25px 0;
 }
-.qside__nav a {
+.qside__link {
   color: #0a1f30;
   font-size: 14px;
   font-weight: 500;
   text-align: right;
   transition: color 0.15s ease;
 }
-.qside__nav a:hover, .qside__nav a.is-active {
+.qside__link:hover, .qside__link[aria-current] {
   color: #30378e;
 }
-.qside__links {
+.qside__secondary {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -27576,22 +27576,22 @@ body, main, #app {
   padding: 24px 15px 0;
   margin-top: auto;
 }
-.qside__links a {
+.qside__secondary a {
   color: #6c757d;
   font-size: 14px;
   font-weight: 300;
   text-align: right;
   transition: color 0.15s ease;
 }
-.qside__links a:hover {
+.qside__secondary a:hover {
   color: #30378e;
 }
-.qside__locale {
+.qside__meta {
   display: flex;
   gap: 16px;
   padding: 16px;
 }
-.qside__locale-box {
+.qside__meta-box {
   flex: 1;
   display: inline-flex;
   align-items: center;
@@ -27604,7 +27604,7 @@ body, main, #app {
   font-size: 14px;
   white-space: nowrap;
 }
-.qside__locale-sep {
+.qside__meta-sep {
   width: 1px;
   height: 16px;
   background: #d0d0d0;
