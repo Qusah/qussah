@@ -56,13 +56,9 @@
         </a>
       </div>
 
-      {# pill menu (center) — static links, exact Figma pill #}
+      {# pill menu (center) — dynamic header menu (قائمة رأس الصفحة العامة) #}
       <nav class="qheader-menu" data-qmenu>
-        <a href="{{ store.url }}" {{ is_page('index') ? 'class="is-active"' : '' }}>الرئيسية</a>
-        <a href="{{ store.url }}/c1390845573">المنتجات</a>
-        <a href="{{ store.url }}/offers">العروض</a>
-        <a href="{{ store.url }}/about-us">عن قصة</a>
-        <a href="{{ store.url }}/contact-us">تواصل معنا</a>
+        <custom-main-menu class="qheader-navmenu"></custom-main-menu>
       </nav>
 
       {# logo (right) + hamburger (mobile only) #}
