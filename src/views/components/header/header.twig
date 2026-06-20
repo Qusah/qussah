@@ -56,13 +56,9 @@
         </a>
       </div>
 
-      {# pill menu (center) — static links to match Figma exactly #}
+      {# pill menu (center) — dynamic store menu (real URLs from dashboard) #}
       <nav class="qheader-menu" data-qmenu>
-        <a href="{{ store.url }}" data-route="" {{ is_page('index') ? 'class="is-active"' : '' }}>الرئيسية</a>
-        <a href="{{ store.url }}" data-route="categories">المنتجات</a>
-        <a href="{{ store.url }}" data-route="offers">العروض</a>
-        <a href="{{ store.url }}" data-route="about-us">عن قصة</a>
-        <a href="{{ store.url }}" data-route="contact-us">تواصل معنا</a>
+        <salla-navigation-menu class="qheader-navmenu"></salla-navigation-menu>
       </nav>
 
       {# logo (right) + hamburger (mobile only) #}
