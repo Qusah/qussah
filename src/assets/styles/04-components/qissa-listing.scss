@@ -160,12 +160,10 @@
     text-align: center; padding: 56px 20px; min-height: 323px;
   }
   &__empty-icon {
-    width: 135px; height: 135px; border-radius: 50%;
-    display: inline-flex; align-items: center; justify-content: center;
-    background: #f1f3f7; color: #c4c9d4; margin-bottom: 16px;
-    i { font-size: 56px; }
+    display: inline-flex; margin-bottom: 24px;
+    svg { width: 135px; height: 135px; }
   }
-  &__empty-title { font-size: 24px; font-weight: 600; color: #0a1f30; margin: 0 0 8px; }
+  &__empty-title { font-size: 30px; font-weight: 600; color: #0a1f30; margin: 0 0 8px; }
   &__empty-sub { font-size: 16px; font-weight: 300; color: #6c757d; margin: 0; }
 
   // ---- filter card ----
