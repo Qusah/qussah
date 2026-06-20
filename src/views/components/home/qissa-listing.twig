@@ -1,0 +1,110 @@
+{#
+| Variable                  | Type      | Description                                       |
+|---------------------------|-----------|---------------------------------------------------|
+| component                 | object    | merchant settings from twilight.json              |
+| component.sort_label      | string    | current sort text                                 |
+| component.products        | Product[] | products to show (preview); live = category       |
+| component.banner_image    | string    | uploadable side-banner image                      |
+| component.banner_eyebrow  | string    | side-banner small label                           |
+| component.banner_title    | string    | side-banner heading                               |
+| component.banner_btn      | string    | side-banner button text                           |
+| component.banner_url      | string    | side-banner button link                           |
+| position                  | int       | sorting block                                     |
+#}
+<section class="s-block qlist" id="qlist-{{ position }}">
+    <div class="container">
+        <div class="qlist__layout">
+
+            {# ===== GRID (left in RTL) ===== #}
+            <div class="qlist__main">
+
+                {# sort top bar (Figma node 160:2603) — sort text right, view toggles left #}
+                <div class="qlist__top">
+                    <button type="button" class="qlist__sort">
+                        <i class="sicon-arrow-down qlist__sort-arrow"></i>
+                        <span class="qlist__sort-label">ترتيب حسب :</span>
+                        <span class="qlist__sort-value">{{ component.sort_label|default('من الاعلى الى الاقل') }}</span>
+                    </button>
+                    <div class="qlist__tools">
+                        <button type="button" class="qlist__tool qlist__tool--view" aria-label="عرض قائمة">
+                            <i class="sicon-list"></i>
+                        </button>
+                        <button type="button" class="qlist__tool qlist__tool--view is-active" aria-label="عرض شبكي">
+                            <i class="sicon-grid"></i>
+                        </button>
+                    </div>
+                </div>
+
+                {# product grid — same exact card as the homepage products section #}
+                <div class="qlist__grid">
+                    {% for product in component.products %}
+                        <article class="qprod">
+                            <a href="{{ product.url }}" class="qprod__img">
+                                {% if product.is_on_sale and product.promotion_title %}
+                                    <span class="qprod__badge">{{ product.promotion_title }}</span>
+                                {% elseif product.is_on_sale %}
+                                    <span class="qprod__badge">خصم</span>
+                                {% endif %}
+                                <img src="{{ product.image.url|default(product.images[0].url) }}" alt="{{ product.name }}" loading="lazy"/>
+                            </a>
+                            <div class="qprod__info">
+                                {% if product.brand.name %}<span class="qprod__cat">{{ product.brand.name }}</span>{% endif %}
+                                <a href="{{ product.url }}" class="qprod__name">{{ product.name }}</a>
+                                {% if product.subtitle %}
+                                    <div class="qprod__chips">
+                                        {% for chip in product.subtitle|split('،') %}
+                                            {% if chip|trim %}<span class="qprod__chip">{{ chip|trim }}</span>{% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                                <div class="qprod__price">
+                                    {% if product.is_on_sale %}
+                                        <b class="qprod__price-now">{{ product.sale_price|money }}</b>
+                                        <s class="qprod__price-old">{{ product.regular_price|money }}</s>
+                                    {% else %}
+                                        <b class="qprod__price-now">{{ product.price|money }}</b>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="qprod__btns">
+                                <button class="qprod__like" onclick="salla.wishlist.toggle({{ product.id }})" aria-label="المفضلة">
+                                    <i class="sicon-heart"></i>
+                                </button>
+                                <button class="qprod__add" type="button"
+                                    onclick="salla.cart.addItem({ id: {{ product.id }}, quantity: 1 })">
+                                    <span>أضف للسلة</span>
+                                    <i class="sicon-shopping-bag"></i>
+                                </button>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {# ===== FILTER SIDEBAR + BANNER (right in RTL) ===== #}
+            <aside class="qlist__side">
+
+                {# dynamic store filters (only render on a page where Salla provides them) #}
+                {% if filters %}
+                    <salla-filters class="qlist__filter" id="filters-menu-cmp"></salla-filters>
+                {% endif %}
+
+                {# side banner (uploadable image) #}
+                {% if component.banner_image or component.banner_title %}
+                <div class="qlist__banner">
+                    <div class="qlist__banner-body">
+                        {% if component.banner_eyebrow %}<span class="qlist__banner-eyebrow">{{ component.banner_eyebrow }}</span>{% endif %}
+                        {% if component.banner_title %}<h3 class="qlist__banner-title">{{ component.banner_title }}</h3>{% endif %}
+                        {% if component.banner_btn %}<a href="{{ component.banner_url|default('#') }}" class="qlist__banner-btn">{{ component.banner_btn }}</a>{% endif %}
+                    </div>
+                    {% if component.banner_image %}
+                        <img class="qlist__banner-img" src="{{ component.banner_image }}" alt="{{ component.banner_title }}" loading="lazy"/>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+            </aside>
+
+        </div>
+    </div>
+</section>

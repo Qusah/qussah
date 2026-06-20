@@ -740,6 +740,76 @@
       ]
     },
     {
+      "key": "7f3eaa70-81cd-4165-8e07-8233720dc626",
+      "title": {
+        "en": "Qissa Listing",
+        "ar": "قائمة المنتجات"
+      },
+      "icon": "sicon-layout-grid",
+      "path": "home.qissa-listing",
+      "fields": [
+        {
+          "id": "sort_label",
+          "type": "string",
+          "format": "text",
+          "label": { "en": "Sort label", "ar": "نص الترتيب" },
+          "value": "من الاعلى الى الاقل"
+        },
+        {
+          "id": "products",
+          "type": "items",
+          "icon": "sicon-keyboard_arrow_down",
+          "label": "المنتجات",
+          "format": "dropdown-list",
+          "description": null,
+          "selected": [],
+          "options": [],
+          "required": true,
+          "multichoice": true,
+          "source": "products",
+          "searchable": true,
+          "maxLength": 12,
+          "minLength": 1,
+          "value": []
+        },
+        {
+          "id": "banner_image",
+          "type": "string",
+          "format": "image",
+          "label": { "en": "Side banner image", "ar": "صورة البانر الجانبي" },
+          "value": null
+        },
+        {
+          "id": "banner_eyebrow",
+          "type": "string",
+          "format": "text",
+          "label": { "en": "Banner eyebrow", "ar": "نص علوي للبانر" },
+          "value": "منتجات قصة"
+        },
+        {
+          "id": "banner_title",
+          "type": "string",
+          "format": "textarea",
+          "label": { "en": "Banner title", "ar": "عنوان البانر" },
+          "value": "افضل منتجات المناديل و نظافة المنزل"
+        },
+        {
+          "id": "banner_btn",
+          "type": "string",
+          "format": "text",
+          "label": { "en": "Banner button", "ar": "نص زر البانر" },
+          "value": "تسوق الآن"
+        },
+        {
+          "id": "banner_url",
+          "type": "string",
+          "format": "text",
+          "label": { "en": "Banner button URL", "ar": "رابط زر البانر" },
+          "value": "/products"
+        }
+      ]
+    },
+    {
       "key": "d29a36cf-b402-450b-948f-41e60e742a94",
       "title": {
         "en": "Qissa Highlight Cards",
