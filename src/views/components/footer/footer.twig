@@ -114,7 +114,7 @@
       {# VAT badge (always) + number (dynamic when set) — Figma 6036:1419 #}
       <div class="qissa-footer-bottom__tax">
         {% if store.settings.tax.number %}
-          <span class="qissa-footer-bottom__tax-num">الرقم الضريبي : <span dir="ltr">{{ store.settings.tax.number }}</span></span>
+          <span class="qissa-footer-bottom__tax-num">الرقم الضريبي : {{ store.settings.tax.number }}</span>
         {% endif %}
         <img class="qissa-footer-bottom__tax-badge" src="{{ 'images/payments/zatca-badge.jpg' | asset }}" alt="ضريبة القيمة المضافة" loading="lazy"/>
       </div>
