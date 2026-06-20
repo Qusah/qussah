@@ -29328,10 +29328,12 @@ body, main, #app {
 .qlist__main {
   flex: 1 1 0;
   min-width: 0;
+  order: 2;
 }
 .qlist__side {
   flex: 0 0 282px;
   width: 282px;
+  order: 1;
 }
 .qlist__top {
   display: flex;

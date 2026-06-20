@@ -107,26 +107,6 @@
                         <a href="#" class="qlist__more">عرض المزيد</a>
                     </div>
 
-                    <span class="qlist__divider"></span>
-
-                    {# rating group #}
-                    <div class="qlist__fgroup">
-                        <div class="qlist__fhead">
-                            <i class="sicon-arrow-down"></i>
-                            <span>التقييم</span>
-                        </div>
-                        <ul class="qlist__frows">
-                            <li class="qlist__frow is-active"><span class="qlist__fcount">(80)</span><span class="qlist__fname">الكل</span><span class="qlist__radio is-on"></span></li>
-                            {% for s in [5,4,3,2] %}
-                            <li class="qlist__frow">
-                                <span class="qlist__fcount">({{ [32,36,21,2][loop.index0] }})</span>
-                                <span class="qlist__stars">{% for i in 1..5 %}<span class="{{ i <= s ? 'on' : 'off' }}">★</span>{% endfor %}</span>
-                                <span class="qlist__radio"></span>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-
                     <button type="button" class="qlist__reset">إعادة ضبط</button>
                 </div>
 

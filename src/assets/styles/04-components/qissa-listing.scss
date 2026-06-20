@@ -10,13 +10,13 @@
 
   .container { max-width: none; padding-inline: 50px; }
 
-  // two columns, RTL → grid first (left), sidebar second (right)
+  // two columns: sidebar on the RIGHT, grid on the LEFT (Figma)
   &__layout {
     display: flex; gap: 30px; align-items: flex-start;
     direction: rtl;
   }
-  &__main { flex: 1 1 0; min-width: 0; }
-  &__side { flex: 0 0 282px; width: 282px; }
+  &__main { flex: 1 1 0; min-width: 0; order: 2; }   // grid → left
+  &__side { flex: 0 0 282px; width: 282px; order: 1; }  // sidebar → right
 
   // ---- sort / filter top bar ----
   &__top {
