@@ -59,11 +59,9 @@
 							</div>
 						{% endif %}
 						<div class="qlist__tools">
-							{% if filters %}
 								<a href="#filters-menu" class="qlist__tool qlist__filter-toggle filters-trigger" aria-label="تصفية">
 									<i class="sicon-filter"></i>
 								</a>
-							{% endif %}
 							<button type="button" class="qlist__tool qlist__tool--view" aria-label="عرض قائمة"><i class="sicon-list"></i></button>
 							<button type="button" class="qlist__tool qlist__tool--view is-active" aria-label="عرض شبكي"><i class="sicon-grid"></i></button>
 						</div>
@@ -78,14 +76,13 @@
 						class="qlist__products"
 						source="{{ page.slug }}"
 						source-value="{{ page.id }}"
-						{{ filters ? 'filters-Results' : '' }}>
+						filters-Results>
 					</salla-products-list>
 
 					{% hook 'product:index.items.end' %}
 				</div>
 
-				{# ===== FILTER SIDEBAR + BANNER (right in RTL) ===== #}
-				{% if filters %}
+				{# ===== FILTER SIDEBAR + BANNER (right in RTL) — always render ===== #}
 				<aside class="qlist__side">
 					<button class="btn--close-sm close-filters sicon-cancel hidden"></button>
 					{# functional Salla filters — auto-renders categories/price and filters the grid #}
@@ -104,7 +101,6 @@
 						</a>
 					{% endif %}
 				</aside>
-				{% endif %}
 
 			</div>
 		</div>
