@@ -740,6 +740,44 @@
       ]
     },
     {
+      "key": "7f3eaa70-81cd-4165-8e07-8233720dc626",
+      "title": {
+        "en": "Qissa Listing",
+        "ar": "قائمة المنتجات"
+      },
+      "icon": "sicon-layout-grid",
+      "path": "home.qissa-listing",
+      "fields": [
+        {
+          "id": "sort_label",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Sort label",
+            "ar": "نص الترتيب"
+          },
+          "value": "من الاعلى الى الاقل"
+        },
+        {
+          "id": "products",
+          "type": "items",
+          "icon": "sicon-keyboard_arrow_down",
+          "label": "المنتجات",
+          "format": "dropdown-list",
+          "description": null,
+          "selected": [],
+          "options": [],
+          "required": true,
+          "multichoice": true,
+          "source": "products",
+          "searchable": true,
+          "maxLength": 12,
+          "minLength": 1,
+          "value": []
+        }
+      ]
+    },
+    {
       "key": "d29a36cf-b402-450b-948f-41e60e742a94",
       "title": {
         "en": "Qissa Highlight Cards",

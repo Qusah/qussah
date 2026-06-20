@@ -3105,6 +3105,17 @@ textarea.s-input{
     padding-right: 15px;
   }
 }
+.qlist .s-advertisement-content {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+@media (max-width: 768px) {
+  .qlist .s-advertisement-content {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-advertisement-content ul{
         margin: 0px;
@@ -29298,6 +29309,93 @@ body, main, #app {
     justify-content: center;
   }
 }
+.qlist {
+  font-family: "GE SS Two", sans-serif;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+.qlist .container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+.qlist__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 10px;
+  border: 1px solid #ebf6fb;
+  border-radius: 15px;
+  background: linear-gradient(90deg, #ffffff 0%, #f3fafd 100%);
+  margin-bottom: 24px;
+  direction: rtl;
+}
+.qlist__sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+}
+.qlist__sort-arrow {
+  font-size: 12px;
+  color: #333;
+}
+.qlist__sort-label {
+  color: #a5a5a5;
+}
+.qlist__sort-value {
+  color: #333;
+  font-weight: 500;
+}
+.qlist__tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.qlist__tool {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid #f8f9fa;
+  border-radius: 5px;
+  color: #30378e;
+  cursor: pointer;
+}
+.qlist__tool i {
+  font-size: 16px;
+}
+.qlist__tool:hover {
+  border-color: #30378e;
+}
+.qlist__tool--view.is-active {
+  background: #30378e;
+  border-color: #30378e;
+  color: #fff;
+}
+.qlist__grid {
+  direction: rtl;
+}
+@media (max-width: 768px) {
+  .qlist {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+  .qlist .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .qlist__top {
+    padding: 14px 10px;
+    margin-bottom: 16px;
+  }
+}
 /* Top Nav */
 .top-navbar{
     display: flex;
@@ -32230,6 +32328,17 @@ model-viewer[style*=width]:before{
 }
 @media (max-width: 768px) {
   .qbanner .s-comments-product .s-comments-container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+.qlist .s-comments-product .s-comments-container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
+@media (max-width: 768px) {
+  .qlist .s-comments-product .s-comments-container {
     padding-left: 15px;
     padding-right: 15px;
   }

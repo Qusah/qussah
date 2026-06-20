@@ -1,0 +1,57 @@
+// ====================================================================
+// Qissa Listing — sort/filter bar + product grid (Figma node 214:325)
+// Sort bar (214:1227): border #ebf6fb, radius 15, pad 20/10, space-between.
+// Grid reuses the homepage product card (.qprod / .qprods__grid).
+// ====================================================================
+
+.qlist {
+  font-family: 'GE SS Two', sans-serif;
+  padding-block: 24px;
+
+  .container { max-width: none; padding-inline: 50px; }
+
+  // ---- sort / filter top bar ----
+  &__top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 10px;
+    border: 1px solid #ebf6fb; border-radius: 15px;
+    background: linear-gradient(90deg, #ffffff 0%, #f3fafd 100%);
+    margin-bottom: 24px;
+    direction: rtl;
+  }
+
+  // sort (right)
+  &__sort {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: none; border: none; cursor: pointer;
+    font-size: 12px; line-height: 1;
+    &-arrow { font-size: 12px; color: #333; }
+    &-label { color: #a5a5a5; }
+    &-value { color: #333; font-weight: 500; }
+  }
+
+  // filter + view toggles (left)
+  &__tools { display: inline-flex; align-items: center; gap: 8px; }
+  &__tool {
+    width: 34px; height: 34px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: #fff; border: 1px solid #f8f9fa; border-radius: 5px;
+    color: #30378e; cursor: pointer;
+    i { font-size: 16px; }
+    &:hover { border-color: #30378e; }
+
+    // active view toggle = navy filled
+    &--view.is-active {
+      background: #30378e; border-color: #30378e; color: #fff;
+    }
+  }
+
+  // ---- grid (inherits .qprods__grid: 4 cols desktop / 2 mobile) ----
+  &__grid { direction: rtl; }
+
+  @media (max-width: 768px) {
+    padding-block: 8px;
+    .container { padding-inline: 15px; }
+    &__top { padding: 14px 10px; margin-bottom: 16px; }
+  }
+}
