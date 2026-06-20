@@ -29532,28 +29532,29 @@ body, main, #app {
   align-items: flex-end;
   text-align: right;
   gap: 12px;
+  direction: rtl;
 }
 .qlist__banner-eyebrow {
   font-size: 14px;
   color: #91e6f7;
+  width: 100%;
+  text-align: right;
 }
 .qlist__banner-title {
   font-size: 18px;
   font-weight: 700;
   line-height: 1.4;
   margin: 0;
+  width: 100%;
+  text-align: right;
 }
 .qlist__banner-btn {
   margin-top: 4px;
   color: #fff;
   font-size: 14px;
   font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.qlist__banner-btn::before {
-  content: "‹";
+  width: 100%;
+  text-align: right;
 }
 .qlist__banner-btn:hover {
   color: #91e6f7;
