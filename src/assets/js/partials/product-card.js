@@ -56,9 +56,28 @@ class ProductCard extends HTMLElement {
     return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
   } 
 
+  // Discount percentage for the sale badge — prefers Salla's discount_percentage
+  // field, falls back to computing it from regular vs sale price. Digits localized.
+  getDiscountPercent() {
+    let pct = parseFloat(this.product?.discount_percentage);
+    if ((!pct || isNaN(pct)) && this.product?.regular_price > 0 && this.product?.sale_price >= 0) {
+      pct = (this.product.regular_price - this.product.sale_price) / this.product.regular_price * 100;
+    }
+    pct = Math.round(pct);
+    return pct > 0 ? salla.helpers.number(pct) : 0;
+  }
+
   getProductBadge() {
     if (this.product?.preorder?.label) {
       return `<div class="s-product-card-promotion-title">${this.product.preorder.label}</div>`
+    }
+
+    // Plain vertical (reusable Figma) card: show the discount percentage on sale.
+    if (this.isPlainVertical && this.product?.is_on_sale) {
+      const pct = this.getDiscountPercent();
+      if (pct) {
+        return `<div class="s-product-card-promotion-title">خصم ${pct}%</div>`
+      }
     }
 
     if (this.product.promotion_title) {

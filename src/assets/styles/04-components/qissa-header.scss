@@ -167,6 +167,39 @@ body, main, #app { background: transparent; }
   .qheader .qheader-menu    { display: none; }    // pill replaced by hamburger
   .qheader .qheader-burger  { display: inline-flex; }
 
+  // burger → toggle the nav links into a dropdown panel under the bar
+  .qheader.is-menu-open .qheader-burger { background: rgba(145, 230, 247, .22); }
+  .qheader.is-menu-open .qheader-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    position: absolute;
+    top: calc(100% - 6px);
+    inset-inline-start: 16px;
+    inset-inline-end: 16px;
+    left: auto;                 // cancel the desktop centering
+    transform: none;            // cancel the desktop centering
+    width: auto;
+    gap: 2px;
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 16px;
+    background: linear-gradient(135deg, #172951 0%, #25307a 60%, #30378e 100%);
+    box-shadow: 0 16px 40px rgba(10, 20, 50, .45);
+    z-index: 70;
+
+    a {
+      margin: 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      color: #fff;
+      text-align: right;
+      &:hover { color: #fff; background: rgba(255, 255, 255, .06); }
+      &.is-active { color: #fff; background: rgba(145, 230, 247, .14); }
+      &.is-active::after { display: none; }   // no underline inside the panel
+    }
+  }
+
   // nav: tighter, edges 16px (Figma menu x=16)
   .qheader .qheader-nav { height: 64px; padding: 12px 16px; }
 

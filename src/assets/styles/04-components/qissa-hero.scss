@@ -117,49 +117,77 @@
     &__title { font-size: 44px; line-height: 1.25; }
   }
 
-  // MOBILE — exact Figma "Home Mobile" hero (node 200:325 / content 200:1041)
-  // Layout: text block on TOP, product image BELOW, all right-aligned (RTL).
+  // MOBILE — exact Figma "Home Mobile" hero (node 6036:21488 / content 6036:21545)
+  // Layout: small tagline (baby-blue) on TOP, big headline below — both
+  // right-aligned (RTL) — and the product photo full-bleed across the BOTTOM.
   @media (max-width: 768px) {
     &__inner {
-      flex-direction: column;          // text first, then image (Figma stacks copy above photo)
+      flex-direction: column;
       align-items: stretch;
       justify-content: flex-start;
       gap: 20px;                        // Figma content gap
-      min-height: 560px;
-      padding: 110px 24px 0;           // Figma: copy starts ~y100, x24
+      min-height: 600px;                // room for copy (top) + product photo (bottom)
+      padding: 100px 24px 0;            // top clears the overlaid header; copy starts ~y100, x24
     }
     &__content {
       align-items: flex-end;            // right-aligned column (items-end)
       text-align: right;
       gap: 20px;
       flex: 0 0 auto;
+      width: 100%;
     }
+
+    // Figma stacks the tagline ABOVE the headline on mobile (desktop keeps the
+    // headline first), so reorder the copy via flex order — no markup change.
+    &__subtitle { order: 1; }
+    &__title    { order: 2; }
+    &__btn      { order: 3; }
+
     &__title {
-      font-size: 30px;                  // Figma h5 mobile
+      font-size: 30px;                  // Figma heading/h5 mobile
       font-weight: 700;                 // Bold
       line-height: 40px;
       letter-spacing: -0.15px;
       width: 100%;
     }
     &__subtitle {
-      font-size: 14px;                  // Figma label-2
+      display: none;                    // hero description hidden on mobile (per request)
+      font-size: 14px;                  // Figma label/label-2
+      font-weight: 300;
       line-height: 20px;
       letter-spacing: -0.16px;
       color: #daeff7;                   // baby-blue on mobile
       width: 100%;
     }
     &__btn {
-      align-self: flex-end;             // button on the right
+      align-self: flex-end;             // button on the right (RTL) — kept if dashboard sets one
       width: auto;                      // Figma ~167px from content+padding
       min-width: 167px;
       height: 55px;
-      margin-top: 0;
+      margin-top: 4px;
     }
+
+    // product photo — full-bleed across the bottom of the hero card,
+    // bottom-aligned (overrides the desktop 56% bottom-left absolute box).
     &__media {
-      flex: 0 0 auto;
-      justify-content: center;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 48%;
+      display: flex;
       align-items: flex-end;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 1;
     }
-    &__img { max-height: 320px; }       // Figma product image ~320 tall
+    &__img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: bottom center;
+      max-height: none;
+    }
   }
 }

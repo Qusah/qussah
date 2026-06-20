@@ -66,7 +66,7 @@
 
       {# logo (right) + hamburger (mobile only) #}
       <div class="qheader-brand">
-        <button type="button" class="qheader-burger" aria-label="القائمة" onclick="salla.event.dispatch('menu::open')">
+        <button type="button" class="qheader-burger" aria-label="القائمة" aria-expanded="false" data-qburger>
           <i class="sicon-menu"></i>
         </button>
         <a class="qheader-logo" href="{{ store.url }}">
@@ -81,6 +81,24 @@
 
 <script>
 (function(){
+  // mobile burger → toggle the nav links as a dropdown panel
+  var burger = document.querySelector('[data-qburger]');
+  var header = document.querySelector('.qheader');
+  if (burger && header) {
+    var closeMenu = function(){ header.classList.remove('is-menu-open'); burger.setAttribute('aria-expanded', 'false'); };
+    burger.addEventListener('click', function(e){
+      e.stopPropagation();
+      var open = header.classList.toggle('is-menu-open');
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    // close when tapping outside the open menu, or when a link is chosen
+    document.addEventListener('click', function(e){
+      if (header.classList.contains('is-menu-open') && !e.target.closest('.qheader-menu') && !e.target.closest('[data-qburger]')) closeMenu();
+    });
+    var qmenuEl = document.querySelector('[data-qmenu]');
+    if (qmenuEl) qmenuEl.addEventListener('click', function(e){ if (e.target.closest('a')) closeMenu(); });
+  }
+
   var menu = document.querySelector('[data-qmenu]');
   if (!menu) return;
 
