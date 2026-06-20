@@ -58,6 +58,8 @@
     width: 534px;                  // Figma width
     max-width: 100%;
   }
+  // desktop shows the long description; the short mobile tagline is hidden here
+  &__subtitle--mobile { display: none; }
 
   // ---- CTA button ----
   &__btn {
@@ -150,9 +152,11 @@
       letter-spacing: -0.15px;
       width: 100%;
     }
+    // swap copies: hide the long desktop description, show the short tagline
+    &__subtitle--desktop { display: none; }
+    &__subtitle--mobile  { display: block; }
     &__subtitle {
-      display: none;                    // hero description hidden on mobile (per request)
-      font-size: 14px;                  // Figma label/label-2
+      font-size: 14px;                  // Figma label/label-2 — tagline above the title
       font-weight: 300;
       line-height: 20px;
       letter-spacing: -0.16px;
@@ -160,11 +164,7 @@
       width: 100%;
     }
     &__btn {
-      align-self: flex-end;             // button on the right (RTL) — kept if dashboard sets one
-      width: auto;                      // Figma ~167px from content+padding
-      min-width: 167px;
-      height: 55px;
-      margin-top: 4px;
+      display: none;                    // Figma mobile hero shows no CTA button
     }
 
     // product photo — full-bleed across the bottom of the hero card,

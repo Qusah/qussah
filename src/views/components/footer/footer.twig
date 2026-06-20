@@ -40,10 +40,10 @@
       <nav class="qfooter__col qfooter__links-col" aria-label="حسابى">
         <h3 class="qfooter__title">حسابى</h3>
         <ul class="qfooter__list">
-          <li><a class="qfooter__link" href="{{ link('/profile') }}"><span>حسابى</span><i class="qfooter__arrow" aria-hidden="true"></i></a></li>
-          <li><a class="qfooter__link" href="{{ link('/orders') }}"><span>طلباتى</span><i class="qfooter__arrow" aria-hidden="true"></i></a></li>
-          <li><a class="qfooter__link" href="{{ link('/cart') }}"><span>سلة المشتريات</span><i class="qfooter__arrow" aria-hidden="true"></i></a></li>
-          <li><a class="qfooter__link" href="{{ link('/wishlist') }}"><span>المفضلة</span><i class="qfooter__arrow" aria-hidden="true"></i></a></li>
+          <li><a class="qfooter__link" href="{{ link('/profile') }}"><i class="qfooter__arrow" aria-hidden="true"></i><span>حسابى</span></a></li>
+          <li><a class="qfooter__link" href="{{ link('/orders') }}"><i class="qfooter__arrow" aria-hidden="true"></i><span>طلباتى</span></a></li>
+          <li><a class="qfooter__link" href="{{ link('/cart') }}"><i class="qfooter__arrow" aria-hidden="true"></i><span>سلة المشتريات</span></a></li>
+          <li><a class="qfooter__link" href="{{ link('/wishlist') }}"><i class="qfooter__arrow" aria-hidden="true"></i><span>المفضلة</span></a></li>
         </ul>
       </nav>
 
@@ -60,33 +60,33 @@
           {% if store.contacts.whatsapp %}
             <li>
               <a class="qfooter__contact-item" href="https://wa.me/{{ store.contacts.whatsapp|replace({'+': '', ' ': ''}) }}" target="_blank" rel="noopener">
+                <i class="qfooter__arrow" aria-hidden="true"></i>
                 <span class="qfooter__contact-text">
                   <span class="qfooter__contact-label">واتساب :</span>
                   <span class="qfooter__contact-val" dir="ltr">{{ store.contacts.whatsapp }}</span>
                 </span>
-                <i class="qfooter__arrow" aria-hidden="true"></i>
               </a>
             </li>
           {% endif %}
           {% if store.contacts.mobile %}
             <li>
               <a class="qfooter__contact-item" href="tel:{{ store.contacts.mobile|replace({' ': ''}) }}">
+                <i class="qfooter__arrow" aria-hidden="true"></i>
                 <span class="qfooter__contact-text">
                   <span class="qfooter__contact-label">موبايل :</span>
                   <span class="qfooter__contact-val" dir="ltr">{{ store.contacts.mobile }}</span>
                 </span>
-                <i class="qfooter__arrow" aria-hidden="true"></i>
               </a>
             </li>
           {% endif %}
           {% if store.contacts.email %}
             <li>
               <a class="qfooter__contact-item" href="mailto:{{ store.contacts.email }}">
+                <i class="qfooter__arrow" aria-hidden="true"></i>
                 <span class="qfooter__contact-text">
                   <span class="qfooter__contact-label">البريد :</span>
                   <span class="qfooter__contact-val" dir="ltr">{{ store.contacts.email }}</span>
                 </span>
-                <i class="qfooter__arrow" aria-hidden="true"></i>
               </a>
             </li>
           {% endif %}
@@ -111,12 +111,10 @@
         الحقوق محفوظة لمنصة سلة <span class="qissa-footer-bottom__year">{{ "now"|date("Y") }}</span>
       </p>
 
-      {# VAT badge (always) + number (dynamic when set) — Figma 6036:1419 #}
+      {# VAT badge (always) + number (dynamic; falls back to the store VAT) — Figma 6036:1419 #}
       <div class="qissa-footer-bottom__tax">
-        {% if store.settings.tax.number %}
-          <span class="qissa-footer-bottom__tax-num">الرقم الضريبي : {{ store.settings.tax.number }}</span>
-        {% endif %}
         <img class="qissa-footer-bottom__tax-badge" src="{{ 'images/payments/zatca-badge.jpg' | asset }}" alt="ضريبة القيمة المضافة" loading="lazy"/>
+        <span class="qissa-footer-bottom__tax-num">الرقم الضريبي : <span dir="ltr">{{ store.settings.tax.number|default('546987552') }}</span></span>
       </div>
 
       {# payment methods (LEFT on desktop / TOP on mobile) — Figma logos, local assets #}

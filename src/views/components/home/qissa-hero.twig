@@ -17,9 +17,10 @@
                 {% if component.heading %}
                     <h1 class="qissa-hero__title">{{ component.heading }}</h1>
                 {% endif %}
-                {% if component.subheading %}
-                    <p class="qissa-hero__subtitle">{{ component.subheading }}</p>
-                {% endif %}
+                {# desktop description — merchant subheading (falls back to the brand description) #}
+                <p class="qissa-hero__subtitle qissa-hero__subtitle--desktop">{{ component.subheading|default('متجر قُصة وجهتك الأولى لمستلزمات النظافة المنزلية — مناديل، صابون، معطرات وأكثر، باختيار سهل وتوصيل سريع من المنــاديل للمعطـــرات، كل ما تحتاجـــــه لبيت نظيف ومرتب — بجودة عالية وأسعار مباشرة من المصنع') }}</p>
+                {# mobile tagline — fixed short line per Figma 6036:21489 #}
+                <p class="qissa-hero__subtitle qissa-hero__subtitle--mobile">كل ما تحتاجه للنظافة، في مكان واحد</p>
                 {% if component.button_text %}
                     {# Figma node 100:127 — order: arrow_left (left) · text · cart (right) #}
                     <a href="{{ component.button_url|default('#') }}" class="qissa-hero__btn">

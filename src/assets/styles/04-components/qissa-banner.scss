@@ -70,17 +70,49 @@
     }
   }
 
-  // ---- mobile ----
+  // ---- mobile (Figma node 6036:21752 @428): title + button at top-right,
+  //      product image bleeds full-width across the bottom (behind the copy) ----
   @media (max-width: 768px) {
     padding-block: 8px;
     .container { padding-inline: 15px; }
     &__box {
-      flex-direction: column; gap: 24px;
-      padding: 32px 20px; border-radius: 24px;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: 16px;
+      padding: 32px 18px 0;            // bottom space comes from min-height + the image
+      min-height: 300px;
+      border-radius: 24px;
     }
-    &__text { flex-basis: auto; max-width: 100%; align-items: center; text-align: center; gap: 20px; }
-    &__title { font-size: 26px; line-height: 38px; }
-    &__subtitle { font-size: 14px; line-height: 22px; }
-    &__media { justify-content: center; }
+    // bottom navy fade sits over the image, under the copy
+    &__box::after { left: 0; right: 0; height: 150px; }
+
+    &__text {
+      flex-basis: auto; max-width: 100%; width: 100%;
+      align-items: flex-start;          // RTL → visual right
+      text-align: right;
+      gap: 16px;
+    }
+    &__title { font-size: 26px; line-height: 38px; width: 100%; }
+    &__subtitle { display: none; }      // Figma mobile shows the title only
+
+    &__btn {
+      align-self: flex-start;           // RTL → right side
+      background: linear-gradient(to right, #172951, #30378e);
+      i.sicon-shopping-bag { display: none; }   // Figma mobile: arrow + text only
+    }
+
+    // product image — full-bleed bottom, bottom-aligned, behind the copy
+    &__media {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      width: 100%; height: 55%;
+      margin: 0;
+      align-items: flex-end; justify-content: center;
+      z-index: 1;
+      img {
+        width: 100%; height: 100%; max-height: none;
+        object-fit: contain; object-position: bottom center;
+      }
+    }
   }
 }
