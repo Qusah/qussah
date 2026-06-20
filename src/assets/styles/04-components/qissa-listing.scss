@@ -1,163 +1,100 @@
 // ====================================================================
-// Qissa Listing — full product-listing page (Figma node 160:2500)
-// RTL: grid LEFT (1028, 4 cols), filter sidebar RIGHT (282) + banner under.
-// Gap 30, page gutter 50. Reuses .qprod product card.
+// Qissa Listing — product-listing page styling (Figma node 160:2500)
+// SCOPED to .container--products-list (the real product/index.twig) ONLY,
+// so the homepage/offers product grids are NOT affected.
+// CSS-ONLY — does not touch the working Salla components' markup.
+// RTL: grid LEFT (4 cols), filter sidebar RIGHT (282) + banner under.
 // ====================================================================
 
-.qlist {
+.container--products-list {
   font-family: 'GE SS Two', sans-serif;
-  padding-block: 24px;
+  max-width: none;
+  padding-inline: 50px;
+  gap: 30px;
+  align-items: flex-start;
 
-  .container { max-width: none; padding-inline: 50px; }
+  // ----- main content (grid side) -----
+  .main-content { min-width: 0; }
 
-  // two columns: sidebar on the RIGHT, grid on the LEFT (Figma)
-  &__layout {
-    display: flex; gap: 30px; align-items: flex-start;
-    direction: rtl;
-  }
-  &__main { flex: 1 1 0; min-width: 0; order: 2; }   // grid → left
-  &__side { flex: 0 0 282px; width: 282px; order: 1; }  // sidebar → right
-
-  // ---- sort / filter top bar ----
-  &__top {
-    display: flex; align-items: center; justify-content: space-between;
+  // ----- sort bar (the row with #product-filter) -----
+  .main-content > .mb-4,
+  .main-content > .sm\:mb-6 {
     padding: 16px;
-    border: 1px solid #ebf6fb; border-radius: 15px;
+    border: 1px solid #ebf6fb;
+    border-radius: 15px;
     background: linear-gradient(90deg, #ffffff 0%, #f3fafd 100%);
     margin-bottom: 24px;
   }
-  &__sort {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: none; border: none; cursor: pointer; font-size: 12px; line-height: 1;
-    &-arrow { font-size: 12px; color: #333; }
-    &-label { color: #a5a5a5; }
-    &-value { color: #333; font-weight: 500; }
-  }
-  &__tools { display: inline-flex; align-items: center; gap: 8px; }
-  &__tool {
-    width: 34px; height: 34px;
-    display: inline-flex; align-items: center; justify-content: center;
-    background: #fff; border: 1px solid #f8f9fa; border-radius: 5px;
-    color: #30378e; cursor: pointer;
-    i { font-size: 16px; }
-    &:hover { border-color: #30378e; }
-    &--view.is-active { background: #30378e; border-color: #30378e; color: #fff; }
-  }
-  &__filter-toggle { display: none; }   // mobile only
+  // hide the default bold page title in the sort row (breadcrumb already shows it)
+  #page-main-title { display: none; }
 
-  // ---- grid: 4 cols, col-gap 16, row-gap 32 ----
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    column-gap: 16px; row-gap: 32px;
+  // sort label + select → Figma pill text
+  .main-content label[for="product-filter"] {
+    color: #a5a5a5; font-size: 12px; font-weight: 500;
+    margin: 0 0 0 6px;
   }
-
-  // ---- filter card ----
-  &__filter {
-    background: #fff; border: 1px solid #e9ecef; border-radius: 12px;
-    padding: 17px;
-  }
-  &__fgroup { & + & { margin-top: 16px; } }
-  &__fhead {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 20px; font-weight: 600; line-height: 24px; color: #172951;
-    margin-bottom: 8px;
-    i { font-size: 16px; color: #172951; }
-  }
-  &__frows { list-style: none; margin: 0; padding: 0; }
-  &__frow {
-    display: flex; align-items: center; gap: 8px;
-    height: 37px;
-    .qlist__fcount { font-size: 13px; color: #30378e; min-width: 38px; }
-    .qlist__fname  { flex: 1; font-size: 17px; color: #6c757d; }
-    &.is-active .qlist__fname { color: #172951; font-weight: 500; }
-  }
-  // radio
-  &__radio {
-    flex: 0 0 18px; width: 18px; height: 18px; border-radius: 50%;
-    border: 1.5px solid #ced4da; position: relative;
-    &.is-on {
-      border-color: #30378e;
-      &::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: #30378e; }
-    }
-  }
-  // rating stars in filter
-  &__stars {
-    flex: 1; display: inline-flex; gap: 2px;
-    span { font-size: 13px; &.on { color: #fd7e14; } &.off { color: #d9dce3; } }
-  }
-  &__more {
-    display: block; text-align: right; font-size: 17px; color: #30378e;
-    margin-top: 6px; padding-block: 6px;
-    &:hover { text-decoration: underline; }
-  }
-  &__divider { display: block; height: 1px; background: #dee2e6; margin: 16px 0; }
-  &__reset {
-    width: 100%; height: 38px; margin-top: 16px;
-    background: #daeff7; color: #30378e; border: none; border-radius: 8px;
-    font-size: 15px; font-weight: 500; cursor: pointer;
-    &:hover { background: #c5e6f2; }
-  }
-
-  // ---- side banner (under the filter; uploadable image) ----
-  &__banner {
-    position: relative; margin-top: 16px;
-    height: 420px; border-radius: 16px; overflow: hidden;
-    background: linear-gradient(160deg, #172951 0%, #25307a 60%, #30378e 100%);
-    color: #fff;
-  }
-  &__banner-body {
-    position: relative; z-index: 2;
-    padding: 24px; display: flex; flex-direction: column; align-items: flex-end;
-    text-align: right; gap: 12px; direction: rtl;
-  }
-  &__banner-eyebrow { font-size: 14px; color: #91e6f7; width: 100%; text-align: right; }
-  &__banner-title { font-size: 18px; font-weight: 700; line-height: 1.4; margin: 0; width: 100%; text-align: right; }
-  &__banner-btn {
-    margin-top: 4px; color: #fff; font-size: 14px; font-weight: 500;
-    width: 100%; text-align: right;
-    &:hover { color: #91e6f7; }
-  }
-  &__banner-img {
-    position: absolute; left: 0; right: 0; bottom: 0; z-index: 1;
-    width: 100%; max-height: 280px; object-fit: contain; object-position: bottom center;
-    pointer-events: none;
-  }
-
-  // ===== functional listing page (real Salla components) =====
-  // sort dropdown styled to match the static sort text
-  &__sort-select {
-    background: none; border: none; cursor: pointer;
-    font-family: 'GE SS Two', sans-serif; font-size: 12px; font-weight: 500;
-    color: #333; padding: 0 4px; appearance: none;
+  #product-filter {
+    appearance: none; -webkit-appearance: none;
+    background: none; border: none; box-shadow: none;
+    color: #333; font-size: 12px; font-weight: 500;
+    padding: 0 18px 0 4px; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23333' stroke-width='2'%3E%3Cpath d='M3 5l3 3 3-3'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: left center;
     &:focus { outline: none; }
   }
-  // style Salla's native filters to match our card
-  &__filter {
-    display: block;
-    --salla-filters-bg: #fff;
-    background: #fff; border: 1px solid #e9ecef; border-radius: 12px;
-    padding: 17px;
+
+  // ----- product grid: 4 columns on desktop -----
+  salla-products-list::part(base),
+  .s-products-list-wrapper {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px 16px;
   }
-  // style Salla's native products list grid to 4 cols
-  &__products {
-    display: block;
-    &::part(products) { /* fallback if shadow parts exposed */ }
+  // fallback: if products render in a flex/wrap container
+  salla-products-list {
+    .s-products-list-wrapper { grid-template-columns: repeat(4, 1fr); }
   }
 
-  // ===== responsive =====
+  // ----- filter sidebar (salla-filters) → Figma look -----
+  #filters-menu {
+    width: 282px; flex: 0 0 282px;
+    background: #fff; border: 1px solid #e9ecef; border-radius: 12px;
+    padding: 17px;
+    --salla-filter-title-color: #172951;
+    --salla-filter-text-color: #6c757d;
+    --salla-filter-active-color: #30378e;
+  }
+
+  // ----- side banner (added in twig, optional) -----
+  .qlist-banner {
+    position: relative; display: block;
+    margin-top: 16px; height: 420px; border-radius: 16px; overflow: hidden;
+    background: linear-gradient(160deg, #172951 0%, #25307a 60%, #30378e 100%);
+    color: #fff;
+    &__body {
+      position: relative; z-index: 2; padding: 24px;
+      display: flex; flex-direction: column; align-items: flex-end;
+      text-align: right; gap: 12px; direction: rtl;
+    }
+    &__eyebrow { font-size: 14px; color: #91e6f7; width: 100%; text-align: right; }
+    &__title { font-size: 18px; font-weight: 700; line-height: 1.4; margin: 0; width: 100%; text-align: right; }
+    &__btn { font-size: 14px; font-weight: 500; width: 100%; text-align: right; &:hover { color: #91e6f7; } }
+    &__img {
+      position: absolute; left: 0; right: 0; bottom: 0; z-index: 1;
+      width: 100%; max-height: 280px; object-fit: contain; object-position: bottom center;
+      pointer-events: none;
+    }
+  }
+
+  // ----- responsive -----
+  @media (max-width: 1280px) {
+    salla-products-list .s-products-list-wrapper { grid-template-columns: repeat(3, 1fr); }
+  }
   @media (max-width: 1024px) {
-    &__layout { flex-direction: column; }
-    &__side { width: 100%; flex-basis: auto; }
-    &__filter { display: none; }            // collapsed behind the filter toggle on tablet/mobile
-    &__filter-toggle { display: inline-flex; }
-    &__grid { grid-template-columns: repeat(3, 1fr); }
-    &__banner { max-width: 420px; margin-inline: auto; }
+    padding-inline: 16px;
+    #filters-menu { width: 100%; flex-basis: auto; }
   }
   @media (max-width: 768px) {
-    padding-block: 8px;
-    .container { padding-inline: 15px; }
-    &__top { padding: 14px 10px; margin-bottom: 16px; }
-    &__grid { grid-template-columns: repeat(2, 1fr); column-gap: 8px; row-gap: 10px; }
+    salla-products-list .s-products-list-wrapper { grid-template-columns: repeat(2, 1fr); gap: 8px 8px; }
   }
 }
