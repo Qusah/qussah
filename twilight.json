@@ -764,12 +764,12 @@
           "description": null,
           "selected": [],
           "options": [],
-          "required": true,
+          "required": false,
           "multichoice": true,
           "source": "products",
           "searchable": true,
           "maxLength": 12,
-          "minLength": 1,
+          "minLength": 0,
           "value": []
         },
         {
