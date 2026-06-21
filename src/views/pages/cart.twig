@@ -140,8 +140,9 @@
                                         </salla-button>
                                     </span>
                                 </div>
-
-                                {% include 'pages.partials.product.options' with {product:item} %}
+                                {# Cart Figma shows no per-item option/select fields → not rendered here.
+                                   (Product-detail page options are untouched.) Hidden id/quantity inputs
+                                   above keep Salla's cart.updateItem behaviour intact. #}
                         </section>
                     </form>
                 {% else %}
@@ -153,18 +154,10 @@
                     </div>
                 {% endfor %}
 
-                {% if cart.options|length %}
-                  <div class="cart-options">
-                    {% for product_option in cart.options %}
-                      <form class="first:pt-5 relative" onchange="salla.form.onChange('cart.updateItem', event)" id="item-{{ product_option.id }}">
-                        <input type="hidden" name="id" value="{{ product_option.id }}">
-                        <input type="hidden" name="quantity" value="{{ product_option.quantity }}">
-                        {% include 'pages.partials.product.options' with { product: product_option } %}
-                      </form>                   
-                    {% endfor %}
-                  </div>
-                {% endif %}
-                    
+                {# cart.options (order-level option/select fields) are not part of the
+                   Figma cart design → not rendered. Their totals still surface in the
+                   summary's order-options line if any exist. #}
+
                 <salla-offer></salla-offer>
                 
                 {% hook 'cart:items.end' %}
