@@ -280,28 +280,43 @@
     &::part(input) { color: #30378e; font-weight: 500; font-size: 19px; }
   }
 
-  // two action buttons (quick-buy + add-to-cart) side by side
+  // two action buttons: الشراء السريع (solid, left) + أضف للسلة (outline, right)
   &__actions {
-    salla-add-product-button {
-      display: block;
+    display: flex;
+    gap: 16px;
+    margin-top: 0;
+  }
+  &__btn {
+    flex: 1 0 0;
+    display: block;
+    // salla-add-product-button renders a light-DOM <button.s-button-element>
+    .s-button-element,
+    button {
       width: 100%;
-      // when quick-buy is active it renders two buttons — lay them in a row
-      &::part(base) { display: flex; gap: 16px; }
-      &::part(button) {
-        flex: 1 0 0;
-        height: 56px;
-        border-radius: 12px;
-        font-size: 16px;
-        font-weight: 500;
-        font-family: 'GE SS Two', sans-serif;
-      }
-    }
-    // primary (add to cart) = solid navy ; quick-buy = outline navy
-    .sticky-product-bar__btn::part(button) {
-      background: #30378e;
+      height: 56px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 12px;
+      font-family: 'GE SS Two', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
       border: 1px solid #30378e;
-      color: #fff;
     }
+    i { font-size: 16px; }
+  }
+  // الشراء السريع — solid navy
+  &__btn--buy .s-button-element,
+  &__btn--buy button {
+    background: #30378e !important;
+    color: #fff !important;
+  }
+  // أضف للسلة — outline navy
+  &__btn--cart .s-button-element,
+  &__btn--cart button {
+    background: #fff !important;
+    color: #30378e !important;
   }
 }
 

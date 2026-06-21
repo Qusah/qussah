@@ -233,14 +233,14 @@
                         {% if product.sold_quantity %}
                             <span class="qpd__stock-item">
                                 <i class="sicon-fire"></i>
-                                {{ trans('pages.products.sold')|default('تم شراءه') }} <b>{{ product.sold_quantity }}</b> {{ trans('pages.products.times')|default('مرة') }}
+                                تم شراءه <b>{{ product.sold_quantity }}</b> مرة
                             </span>
                         {% endif %}
                         {% if product.sold_quantity and product.can_show_remained_quantity %}<span class="qpd__stock-sep"></span>{% endif %}
                         {% if product.can_show_remained_quantity %}
                             <span class="qpd__stock-item">
                                 <i class="sicon-box-bankers"></i>
-                                {{ trans('pages.products.remained')|default('المتبقى') }} <b>{{ product.quantity }}</b> {{ trans('pages.products.unit')|default('وحدة') }}
+                                المتبقى <b>{{ product.quantity }}</b> وحدة
                             </span>
                         {% endif %}
                     </div>
@@ -299,7 +299,7 @@
                 {% if product.weight %}
                     <div class="qpd__weight">
                         <i class="sicon-box-bankers qpd__weight-icon"></i>
-                        <span class="qpd__weight-label">{{ trans('pages.products.weight')|default('وزن المنتج') }}</span>
+                        <span class="qpd__weight-label">وزن المنتج</span>
                         <span class="qpd__weight-value">{{ product.weight }}</span>
                     </div>
                 {% endif %}
@@ -319,12 +319,12 @@
                     <div class="qpd__gift">
                         <i class="sicon-gift qpd__gift-icon"></i>
                         <div class="qpd__gift-body">
-                            <p class="qpd__gift-title">{{ trans('pages.products.gift_title')|default('أهدي من تحب') }}</p>
-                            <p class="qpd__gift-sub">{{ trans('pages.products.gift_subtitle')|default('يمكنك الآن إرسال الهدايا لمن تحب عن طريق منصتنا وفي الوقت الذي تحبه!') }}</p>
+                            <p class="qpd__gift-title">أهدي من تحب</p>
+                            <p class="qpd__gift-sub">يمكن الان ارسال الهدايا لمن تحب عن طريق منصتنا وفي الوقت الذي تحبه!</p>
                         </div>
                         <button type="button" class="qpd__gift-btn"
                                 onclick="document.querySelector('#product-{{ product.id }} salla-gifting')?.scrollIntoView({behavior:'smooth',block:'center'})">
-                            {{ trans('pages.products.send_as_gift')|default('أرسل كهدية') }}
+                            أرسل كهدية
                         </button>
                     </div>
                 {% endif %}
@@ -406,30 +406,45 @@
                                 </div>
                             {% endif %}
                         </div>
-                        {# Add to cart — quick-buy renders both quick-buy + add-to-cart buttons (Figma two-button row) #}
+                        {# Figma two buttons: أضف للسلة (outline, right) + الشراء السريع (solid, left) #}
                         <div class="qpd__actions">
+                            {# الشراء السريع — solid (left in RTL) #}
                             <salla-add-product-button
-                                    {{product.can_quick_buy ? 'quick-buy' : ''}}
-                                    {{theme.settings.get('sticky_add_to_cart') ? ' support-sticky-bar' : ''}}
+                                    quick-buy
                                     {{product.is_require_shipping ? 'required-shipping' : ''}}
                                     {{product.has_preorder_campaign ? 'has-pre-order' : ''}}
                                     amount="{{ product.base_currency_price }}"
-                                    class="w-full sticky-product-bar__btn"
+                                    class="qpd__btn qpd__btn--buy"
                                     product-status="{{ product.status }}"
                                     product-type="{{ product.type }}"
                                     product-id="{{ product.id }}"
-                                    loader-position="end"
+                                    loader-position="center"
+                                    type="submit"
+                                    width="wide">
+                                <i class="sicon-shopping-bag"></i>
+                                الشراء السريع
+                            </salla-add-product-button>
+
+                            {# أضف للسلة — outline (right in RTL) #}
+                            <salla-add-product-button
+                                    {{product.is_require_shipping ? 'required-shipping' : ''}}
+                                    {{product.has_preorder_campaign ? 'has-pre-order' : ''}}
+                                    amount="{{ product.base_currency_price }}"
+                                    class="qpd__btn qpd__btn--cart sticky-product-bar__btn"
+                                    product-status="{{ product.status }}"
+                                    product-type="{{ product.type }}"
+                                    product-id="{{ product.id }}"
+                                    loader-position="center"
                                     type="submit"
                                     width="wide"
-                                    {# Notify availability props#}
                                     {% if product.notify_availability %}
                                         {{ product.notify_availability.subscribed ? 'is-subscribed' : '' }}
                                         channels="{{ product.notify_availability.channels|join(',') }}"
                                         subscribed-options="{{ product.notify_availability.subscribed_options|json_encode }}"
                                         {{ product.notify_availability.options ? 'notify-options-availability' : '' }}
                                     {% endif %}>
-
-                                {{ product.add_to_cart_label }}
+                                <i class="sicon-shopping-bag"></i>
+                                أضف للسلة
                             </salla-add-product-button>
                         </div>
                     </section>
@@ -449,13 +464,11 @@
     <div class="container qpd-tabs" id="qpd-tabs">
         <div class="qpd-tabs__nav" role="tablist">
             <button type="button" class="qpd-tabs__tab is-active" data-qpd-tab="details" role="tab" aria-selected="true">
-                {{ trans('pages.products.product_details')|default('تفاصيل المنتج') }}
+                تفاصيل المنتج
             </button>
-            {% if store.settings.rating.show_on_product %}
-                <button type="button" class="qpd-tabs__tab" data-qpd-tab="reviews" role="tab" aria-selected="false">
-                    {{ trans('pages.products.product_reviews')|default('تقييمات المنتج') }}
-                </button>
-            {% endif %}
+            <button type="button" class="qpd-tabs__tab" data-qpd-tab="reviews" role="tab" aria-selected="false">
+                تقييمات المنتج
+            </button>
         </div>
 
         {# Tab: details #}
@@ -466,12 +479,10 @@
         </div>
 
         {# Tab: reviews #}
-        {% if store.settings.rating.show_on_product %}
-            <div class="qpd-tabs__panel" data-qpd-panel="reviews" role="tabpanel">
-                {% hook 'product.single.before_customer_reviews' %}
-                <salla-comments item-id="{{product.id}}" type="product"></salla-comments>
-            </div>
-        {% endif %}
+        <div class="qpd-tabs__panel" data-qpd-panel="reviews" role="tabpanel">
+            {% hook 'product.single.before_customer_reviews' %}
+            <salla-comments item-id="{{product.id}}" type="product"></salla-comments>
+        </div>
     </div>
 
     <script>
