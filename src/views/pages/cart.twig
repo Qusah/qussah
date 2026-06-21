@@ -274,33 +274,6 @@
         </div>
     </div>
     </div>
-
-    {# ---- Pre-footer composition (full Cart Figma 6036:6846 / 6036:15126) ----
-       Renders the trust/service strip + newsletter that the full page shows
-       between the cart body and the global footer. Reuses the shared partials
-       (.qtb / .qfnews designs) with STATIC fallback data (twilight.json defaults
-       / approved Figma labels) — the newsletter image is omitted because no
-       stable local asset exists. This lives on the cart page only (NOT a global
-       render), so the homepage's own blocks are not duplicated. #}
-    <div class="qcart-prefooter">
-        {% set trust_items = [
-            { icon: 'sicon-wallet',   title: 'مدفوعات آمنة',  subtitle: 'مدفوعات آمنة أقساط تصل إلى 12 شهرًا' },
-            { icon: 'sicon-rotate',   title: 'شحن مجاني',     subtitle: 'مدفوعات آمنة أقساط تصل إلى 12 شهرًا' },
-            { icon: 'sicon-shipping', title: 'منتجات مضمونه', subtitle: 'مدفوعات آمنة أقساط تصل إلى 12 شهرًا' }
-        ] %}
-        {% include 'partials.qissa-trust-strip' with { items: trust_items } only %}
-
-        {% include 'partials.qissa-newsletter' with {
-            badge: 'كل ما تحتاجه للنظافة، في مكان واحد',
-            heading: 'الاشتراك فى',
-            heading_highlight: 'النشرة البريدية',
-            subtitle: 'انضم الآن واحصل على خصم 10٪ على مشترياتك التالية!',
-            note: 'يمكنك إلغاء الاشتراك في أي لحظة',
-            email_placeholder: 'ادخل البريد الالكترونى',
-            button_text: 'إشتراك',
-            extra_class: 'qfnews--no-image'
-        } only %}
-    </div>
 {% endblock %}
 
 {% block scripts %}

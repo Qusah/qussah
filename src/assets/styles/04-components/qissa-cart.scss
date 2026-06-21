@@ -32,24 +32,37 @@
   .container { max-width: none; padding-inline: 50px; }
 
   // ----------------------------------------------------------------
-  // Two-column page layout
+  // Two-column page layout — SCSS OWNS IT (resilient to stale / purged
+  // Tailwind utilities). RTL: items column RIGHT, summary column LEFT.
   // ----------------------------------------------------------------
   .qcart__layout {
+    display: flex;
+    flex-direction: column;       // mobile/tablet: items stacked above summary
+    align-items: flex-start;      // top-align both columns (summary never drops)
     gap: 24px;
   }
 
+  // items column = a plain VERTICAL stack of item cards (never a row)
+  .qcart__items {
+    width: 100%;
+    min-width: 0;
+    > form { display: block; width: 100%; }   // each cart item is a full-width block
+  }
+
   @media (min-width: 1024px) {
-    // items column (right) takes the remaining width
+    .qcart__layout { flex-direction: row; }    // desktop: two columns
+    // items column (right) takes the remaining width (~845px)
     .qcart__items {
       width: auto;
       flex: 1 1 0;
       min-width: 0;
     }
-    // order-summary column (left) — Figma fixed 470px
+    // order-summary column (left) — Figma 478px, top-aligned with the items
     .qcart__summary {
-      flex: 0 0 470px;
-      width: 470px;
-      margin-inline: 0;          // gap handles spacing (drop the inline mr/ml-8)
+      flex: 0 0 478px;
+      width: 478px;
+      align-self: flex-start;
+      margin-inline: 0;
     }
   }
 
@@ -308,22 +321,5 @@
     .qcart__item-row  { column-gap: 8px; }
     .qcart__item-price { flex-wrap: wrap; }   // long sale price stacks, never overflows
     salla-quantity-input { width: 128px; }
-  }
-}
-
-// ====================================================================
-// Cart pre-footer — trust/service strip + newsletter rendered between the
-// cart body and the global footer (full Cart Figma 6036:6846 / 6036:15126).
-// Reuses the existing .qtb + .qfnews designs verbatim; only the cart-specific
-// no-image newsletter case is handled here (no global styles are changed).
-// ====================================================================
-.qcart-prefooter {
-  // No stable newsletter image asset exists, so the cart renders it text-only.
-  // On desktop let the royal-blue card's content fill the width (instead of
-  // hugging the right where the image would have been) so it stays balanced.
-  .qfnews--no-image {
-    @media (min-width: 769px) {
-      .qfnews__content { flex: 1 1 auto; max-width: 100%; }
-    }
   }
 }
