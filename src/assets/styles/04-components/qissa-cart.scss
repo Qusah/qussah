@@ -1,0 +1,329 @@
+// ====================================================================
+// Qissa Cart — cart page (سلة المشتريات)
+// Desktop Figma node 6036:6846 (1440px) · Mobile node 6036:15126 (428px)
+// CSS-first restyle of the working starter cart.twig. Scoped to .qcart.
+// Keeps every Salla cart component + behavior (quantity input, coupons,
+// item-total updates, delete, offers, checkout) — only the layout/chrome
+// is restyled to Figma.
+//
+// Layout relationship (RTL):
+//   Desktop ≥1024px → items list RIGHT (flex) + order-summary LEFT (470).
+//   Tablet / mobile  → single column, items first then the summary card.
+//
+// Tokens: royal-blue #30378e, chosen-blue #0a1f30, baby-blue line #daeff7,
+//         summary gradient #fff→#daeff7, sale red #d50d1e, accent #e04956,
+//         gray-600 #6c757d, gray-500 #adb5bd, gray-400 #ced4da.
+// Phase 1 = structure foundation only; per-section pixel polish comes later.
+// ====================================================================
+
+.qcart {
+  $navy:  #30378e;
+  $ink:   #0a1f30;
+  $line:  #daeff7;
+  $red:   #d50d1e;
+  $accent:#e04956;
+  $g600:  #6c757d;
+  $g500:  #adb5bd;
+  $g400:  #ced4da;
+
+  font-family: 'GE SS Two', sans-serif;
+
+  // page container → full width with the Figma 50px gutters
+  .container { max-width: none; padding-inline: 50px; }
+
+  // ----------------------------------------------------------------
+  // Two-column page layout
+  // ----------------------------------------------------------------
+  .qcart__layout {
+    gap: 24px;
+  }
+
+  @media (min-width: 1024px) {
+    // items column (right) takes the remaining width
+    .qcart__items {
+      width: auto;
+      flex: 1 1 0;
+      min-width: 0;
+    }
+    // order-summary column (left) — Figma fixed 470px
+    .qcart__summary {
+      flex: 0 0 470px;
+      width: 470px;
+      margin-inline: 0;          // gap handles spacing (drop the inline mr/ml-8)
+    }
+  }
+
+  // ================================================================
+  // CART ITEM CARD  (desktop 6036:6976 · mobile 6036:15175)
+  // 5 flat children placed with CSS-grid areas:
+  //   mobile  → row1: image · name · ×   |  row2: qty · — · price
+  //   desktop → image (right) · name over qty · gap · price · × (left)
+  // ================================================================
+  .qcart__item {
+    background: #fff;
+    border: 1px solid $line;
+    border-radius: 12px;
+    box-shadow: none;
+    padding: 16px;
+  }
+
+  // ---- grid row ----
+  .qcart__item-row {
+    display: grid;
+    align-items: center;
+    // mobile (Figma node 6036:15175)
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      "thumb name remove"
+      "qty   .    price";
+    gap: 10px 12px;
+  }
+  // options/variant fields render below the row → separate them when present
+  .qcart__item-row:not(:last-child) { margin-bottom: 16px; }
+
+  .qcart__item-thumb  { grid-area: thumb;  justify-self: start; }   // right (RTL)
+  .qcart__item-info   { grid-area: name;   min-width: 0; }
+  .qcart__item-qty    { grid-area: qty;    justify-self: start; }   // right
+  .qcart__item-price  { grid-area: price;  justify-self: end; }     // left
+  .qcart__item-remove { grid-area: remove; justify-self: end; }     // left
+
+  // ---- thumbnail (Figma: 111×87, navy backplate, radius 8) ----
+  .qcart__item-thumb {
+    display: block;
+    img {
+      width: 111px;
+      height: 87px;
+      border-radius: 8px;
+      border: 1px solid $line;
+      background: $navy;
+      object-fit: cover;
+    }
+  }
+
+  // ---- name + price spans ----
+  .qcart__item-info {
+    h1 { margin: 0; }
+    h1 a,
+    h1 {
+      color: $ink;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 22px;
+      letter-spacing: -0.18px;
+      word-break: break-word;
+    }
+    .item-weight-row,
+    .old-offers { font-size: 13px; color: $g600; }
+  }
+
+  // ---- price block: live line total (primary) + old strikethrough ----
+  // .item-total stays the Salla-updated node; unit .item-price kept in the
+  // DOM (for Salla JS) but hidden to match the Figma single-price look.
+  .qcart__item-price {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+
+    .item-total {
+      color: $ink;
+      font-size: 18px;
+      font-weight: 600;
+      font-family: 'Poppins', 'GE SS Two', sans-serif;
+      &.is-sale { color: $red; }
+    }
+    .item-original-price,
+    .item-regular-price { color: $g500; font-size: 14px; }
+    .item-price { display: none; }
+  }
+
+  // ---- quantity stepper (Figma: white pill, baby-blue border + dividers) ----
+  salla-quantity-input {
+    --salla-quantity-input-border-color: #{$line};
+    width: 139px;
+    height: 40px;
+    border: 1px solid $line;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    overflow: hidden;
+    background: #fff;
+
+    &::part(base)   { border: none; height: 100%; width: 100%; }
+    &::part(button) { color: $ink; }
+    &::part(input)  { color: $ink; font-weight: 500; }
+
+    .s-quantity-input-container { border: none; height: 100%; width: 100%; }
+    .s-quantity-input-input {
+      color: $ink;
+      font-family: 'Poppins', 'GE SS Two', sans-serif;
+      border-inline: 1px solid $line;          // the Figma dividers
+    }
+  }
+
+  // ---- remove × (Figma: small neutral glyph; mobile = light-grey circle) ----
+  .qcart__item-remove {
+    line-height: 0;
+    .btn--delete::part(base) {
+      background: transparent;
+      border: none;
+      color: $ink;
+      width: 28px;
+      height: 28px;
+      border-radius: 50px;
+    }
+    i { color: $ink; font-size: 12px; }
+  }
+  @media (max-width: 767px) {
+    .qcart__item-remove .btn--delete::part(base) { background: #f8f9fa; }
+  }
+
+  // ---- desktop (≥768px): single row, qty stacked under the name ----
+  @media (min-width: 768px) {
+    .qcart__item-row {
+      grid-template-columns: auto auto 1fr auto auto;
+      grid-template-areas:
+        "thumb name  spacer price remove"
+        "thumb qty   spacer price remove";
+      column-gap: 16px;
+      row-gap: 10px;
+    }
+    .qcart__item-info {
+      justify-self: start;          // hug the image (right, RTL)
+      text-align: right;
+      h1 a,
+      h1 { font-size: 20px; line-height: 24px; letter-spacing: 0; }
+    }
+    .qcart__item-qty   { justify-self: start; }   // right, under the name
+    .qcart__item-price { justify-self: end; }      // left, next to ×
+
+    salla-quantity-input { width: 161px; height: 43px; }
+  }
+
+  // ================================================================
+  // ORDER SUMMARY CARD (totals + coupon + checkout)
+  // ================================================================
+  .qcart__totals {
+    background-image: linear-gradient(-89deg, #fff 1.5%, $line 94%);
+    border: 1px solid $line;
+    border-radius: 16px;
+    box-shadow: none;
+    padding: 16px;                 // Figma summary padding (was p-5 / xs:p-7)
+
+    // title "ملخص الطلب"
+    > h2 {
+      color: $ink;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 24px;
+      margin-bottom: 20px;
+    }
+
+    // summary rows: label (right) ←→ value (left) — Figma 16px
+    .text-gray-500 { color: $g600; font-size: 16px; }
+    b {
+      color: $ink;
+      font-size: 16px;
+      font-family: 'Poppins', 'GE SS Two', sans-serif;
+    }
+
+    // discount row → red; neutralise the starter 40px (h-10) label
+    #total-discount {
+      margin-bottom: 20px;
+      .text-gray-500 { color: $red; height: auto; }
+      b { color: $red; }
+    }
+
+    // final total → navy + the Figma divider ("Line 133") sitting above it
+    .text-lg {
+      border-top: 1px solid #d7e6ee;
+      margin-top: 4px;
+      padding-top: 24px;
+      margin-bottom: 4px;
+      span { color: $ink; font-size: 16px; }
+      b {
+        color: $navy;
+        font-size: 25px;
+        font-weight: 600;
+      }
+    }
+
+    // tax-inclusive note under the total (Figma "الاسعار شاملة للضريبة *")
+    &-taxnote {
+      margin: 0;
+      font-size: 14px;
+      color: $g600;
+      text-align: right;
+    }
+
+    // checkout button "إتمام الطلب"
+    .cart-submit-wrap { margin-top: 24px; }
+    #cart-submit {
+      &::part(base),
+      .s-button-element {
+        background: $navy;
+        border: 1px solid $navy;
+        color: #fff;
+        border-radius: 12px;
+        height: 56px;
+        font-family: 'GE SS Two', sans-serif;
+        font-size: 16px;
+        font-weight: 500;
+        width: 100%;
+      }
+    }
+  }
+
+  // ---- coupon (salla-cart-coupons) — light Phase 1 styling ----
+  salla-cart-coupons {
+    .s-cart-coupons-coupon-label { color: $ink; font-size: 14px; }
+    .s-cart-coupons-coupon-input-container {
+      background: #fff;
+      border: 1px solid $line;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .s-cart-coupons-coupon-button-apply {
+      color: $navy;
+      border: 1px solid $navy;
+      border-radius: 8px;
+    }
+  }
+
+  // ----------------------------------------------------------------
+  // Empty cart state — keep the starter placeholder, just center it
+  // ----------------------------------------------------------------
+  .no-content-placeholder { width: 100%; }
+
+  // ----------------------------------------------------------------
+  // Responsive
+  // ----------------------------------------------------------------
+  @media (max-width: 768px) {
+    .container { padding-inline: 15px; }
+  }
+
+  // Mobile 428px keeps the exact Figma sizes (image 111×87, qty 139, pad 16).
+  // Only guard truly narrow phones (≤400 → 390 / 375 / 360) against overflow.
+  @media (max-width: 400px) {
+    .qcart__item-row  { column-gap: 8px; }
+    .qcart__item-price { flex-wrap: wrap; }   // long sale price stacks, never overflows
+    salla-quantity-input { width: 128px; }
+  }
+}
+
+// ====================================================================
+// Cart pre-footer — trust/service strip + newsletter rendered between the
+// cart body and the global footer (full Cart Figma 6036:6846 / 6036:15126).
+// Reuses the existing .qtb + .qfnews designs verbatim; only the cart-specific
+// no-image newsletter case is handled here (no global styles are changed).
+// ====================================================================
+.qcart-prefooter {
+  // No stable newsletter image asset exists, so the cart renders it text-only.
+  // On desktop let the royal-blue card's content fill the width (instead of
+  // hugging the right where the image would have been) so it stays balanced.
+  .qfnews--no-image {
+    @media (min-width: 769px) {
+      .qfnews__content { flex: 1 1 auto; max-width: 100%; }
+    }
+  }
+}

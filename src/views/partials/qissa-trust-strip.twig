@@ -1,0 +1,32 @@
+{#
+  Reusable trust / service strip — renders the `.qtb` design.
+  Figma desktop 6036:1238 (1440) · mobile 6036:22058 (428).
+  Styling lives in 04-components/qissa-trust-badges.scss (class root `.qtb`).
+
+  This partial is markup-only and data-agnostic so it can be reused by:
+    - the homepage block component `home/qissa-trust-badges.twig` (component.items), and
+    - the cart pre-footer (static fallback items).
+
+  Expects:
+    items = list of { icon, title, subtitle }
+#}
+{% if items|length %}
+    <section class="qtb">
+        <div class="container">
+            <div class="qtb__strip">
+                {% for i, item in items %}
+                    {% if i > 0 %}<span class="qtb__divider" aria-hidden="true"></span>{% endif %}
+                    <div class="qtb__feature">
+                        {% if item.icon %}
+                            <span class="qtb__icon"><i class="{{ item.icon }}"></i></span>
+                        {% endif %}
+                        <div class="qtb__content">
+                            {% if item.title %}<span class="qtb__title">{{ item.title }}</span>{% endif %}
+                            {% if item.subtitle %}<span class="qtb__subtitle">{{ item.subtitle }}</span>{% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endif %}

@@ -49,6 +49,7 @@
 
 {% extends "layouts.master" %}
 {% block content %}
+    <div class="qcart">
     <div class="container">
         {# add breadcumbs container in pages to make a space in case breadcrumbs is off #}
         <nav class="breadcrumbs w-full py-5">
@@ -56,18 +57,17 @@
         </nav>
         <h1 class="sr-only">{{ trans('blocks.header.cart') }}</h1>
         <salla-conditional-offer></salla-conditional-offer>
-        <div class="pt-5 flex flex-col items-start lg:flex-row pb-6 lg:pb-20">
-            <div class="main-content w-full lg:w-[calc(100%-384px)]">
+        <div class="qcart__layout pt-5 flex flex-col items-start lg:flex-row pb-6 lg:pb-20">
+            <div class="main-content qcart__items w-full">
                 {% hook 'cart:items.start' %}
 
                 {% for item in cart.items %}
                     <form onchange="salla.form.onChange('cart.updateItem', event)" id="item-{{ item.id }}">
-                        <section class="cart-item bg-white p-5 xs:p-7 rounded-md mb-5 relative">
+                        <section class="cart-item qcart__item mb-5 relative">
                             <input type="hidden" name="id" value="{{ item.id }}">
                                 <!-- product -->
-                                <div class="md:flex rtl:space-x-reverse md:space-x-12 items-start justify-between mb-8 last:mb-0">
-                                    <div class="flex flex-1 rtl:space-x-reverse space-x-4">
-                                        <a href="{{ item.url }}" class="relative overflow-hidden shrink-0">
+                                <div class="qcart__item-row last:mb-0">
+                                    <a href="{{ item.url }}" class="qcart__item-thumb relative overflow-hidden shrink-0">
                                             {% if loop.first %}
 												<img src="{{ item.product_image }}"
 													alt="{{ item.product_name }}"
@@ -87,15 +87,11 @@
                                             <!-- end free product ribbon -->
                                             
                                         </a>
-                                        <div class="space-y-1">
+                                        <div class="qcart__item-info space-y-1">
                                             <h1 class="text-gray-900 leading-6 text-lg">
                                                 <a href="{{ item.url }}" class="text-base">{{ item.product_name }}</a>
                                             </h1>
 
-                                            <span class="text-sm text-gray-500 line-through item-regular-price {{ item.offer ? '' : 'hidden' }}" >{{ item.product_price|money }}</span>
-                                            <span class="inline-flex gap-1 leading-4 text-sm text-gray-500 line-through item-original-price {{ item.is_on_sale ? '' : 'hidden' }}" id="original_price">{{ item.original_price|money }}</span>
-                                            <span class="inline-flex gap-1 leading-4 item-price {{ item.has_discount ?  'text-red-800' : 'text-sm text-gray-500' }}" id="has_discount">{{ item.price|money }}</span>
-                                            
                                             <p class="text-sm text-gray-500 item-weight-row {{ item.weight_label ? '' : 'hidden' }}"> {{ trans('pages.products.weight') }}
                                              <span class="item-weight">{{ item.weight_label }}</span>
                                             </p>
@@ -114,7 +110,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="border-t border-b border-gray-200 py-3 md:p-0 md:border-none mt-5 md:mt-0 flex gap-8 justify-between items-center md:items-start">
+                                    <div class="qcart__item-qty">
                                         {% if item.type == 'donating' %}
                                             <span></span>
                                         {% elseif item.is_hidden_quantity %}
@@ -127,21 +123,25 @@
                                                 value="{{ item.quantity }}" name="quantity">
                                             </salla-quantity-input>
                                         {% endif %}
-                                        {% set item_total = item.detailed_offers|length > 0 ? item.total_special_price|money : item.total|money%}
-                                        <p class="text-primary flex-none font-bold text-sm rtl:md:pl-12 ltr:md:pr-12">
-                                            <span>{{ trans('pages.cart.total') }}:</span>
-                                            <span class="inline-block item-total">{{ item.is_available?item_total: trans('pages.cart.out_of_stock') }}</span>
-                                        </p>
                                     </div>
+
+                                    <div class="qcart__item-price">
+                                        {% set item_total = item.detailed_offers|length > 0 ? item.total_special_price|money : item.total|money %}
+                                        <span class="item-total {{ item.has_discount ? 'is-sale' : '' }}">{{ item.is_available ? item_total : trans('pages.cart.out_of_stock') }}</span>
+                                        <span class="text-sm text-gray-500 line-through item-regular-price {{ item.offer ? '' : 'hidden' }}">{{ item.product_price|money }}</span>
+                                        <span class="inline-flex gap-1 leading-4 text-sm text-gray-500 line-through item-original-price {{ item.is_on_sale ? '' : 'hidden' }}" id="original_price">{{ item.original_price|money }}</span>
+                                        <span class="inline-flex gap-1 leading-4 item-price {{ item.has_discount ?  'text-red-800' : 'text-sm text-gray-500' }}" id="has_discount">{{ item.price|money }}</span>
+                                    </div>
+
+                                    <span class="qcart__item-remove">
+                                        <salla-button type="button" shape="icon" size="small" color="danger" class="btn--delete" aria-label="Remove from the cart"
+                                                onclick="salla.cart.deleteItem('{{ item.id }}').then(() => document.querySelector('#item-{{ item.id }}').remove())">
+                                            <i class="sicon-cancel"></i>
+                                        </salla-button>
+                                    </span>
                                 </div>
 
                                 {% include 'pages.partials.product.options' with {product:item} %}
-                            <span class="absolute top-1.5 rtl:left-1.5 ltr:right-1.5 rtl:xs:left-5 ltr:xs:right-5 xs:top-5">
-                                <salla-button type="button" shape="icon" size="small" color="danger" class="btn--delete" aria-label="Remove from the cart"
-                                        onclick="salla.cart.deleteItem('{{ item.id }}').then(() => document.querySelector('#item-{{ item.id }}').remove())">
-                                    <i class="sicon-cancel"></i>
-                                </salla-button>
-                            </span>
                         </section>
                     </form>
                 {% else %}
@@ -174,7 +174,7 @@
 
             <!-- sidebar -->
             {% if cart.items|length %}
-                <div class="sticky top-24 w-full lg:w-96 rtl:lg:mr-8 ltr:lg:ml-8">
+                <div class="qcart__summary sticky top-24 w-full">
                     <div class="shadow-default bg-white p-5 xs:p-7 rounded-md mb-5 relative {{ cart.free_shipping_bar ? '' : 'hidden' }}" id="free-shipping">
                         <div class="flex rtl:space-x-reverse space-x-3 items-center">
                             <i class="bg-primary text-white rounded-icon sicon-shipping-fast {{ theme.is_rtl ? 'flip-x':'' }}"></i>
@@ -208,8 +208,14 @@
                         <salla-gifting id="salla-gifting" class="mt-5" widget-title="{{ trans("pages.cart.gift_widget_title") }}"  widget-subtitle="{{ gift.text }}" class="mt-5" {{gift.type}}-products  vertical></salla-gifting>
                     </div>
 
-                    <div class="shadow-default bg-white p-5 xs:p-7 rounded-md mb-5 relative transition-height duration-1000">
+                    <div class="qcart__totals p-5 xs:p-7 mb-5 relative transition-height duration-1000">
                         <h2 class="font-bold text-sm mb-5">{{ trans('pages.cart.summary') }}</h2>
+
+                        {% if store.settings.cart.apply_coupon_enabled %}
+                            <div class="qcart__coupon mb-5">
+                                <salla-cart-coupons></salla-cart-coupons>
+                            </div>
+                        {% endif %}
 
                         <div class="flex justify-between text-sm mb-5">
                             <span class="text-gray-500"> {{ trans(cart.tax_amount ? "pages.cart.items_total_without_tax" : "pages.cart.items_total") }} </span>
@@ -229,12 +235,6 @@
                             <b>{{ cart.real_shipping_cost|money }}</b>
                         </div>
 
-                        {% if store.settings.cart.apply_coupon_enabled %}
-                            <div class="py-5 mb-5">
-                                <salla-cart-coupons></salla-cart-coupons>
-                            </div>
-                        {% endif %}
-
                         <!-- coupon discount -->
                         <div id="total-discount" class="flex justify-between text-sm {{ cart.total_discount ? '' : 'hidden' }}">
                             <span class="text-gray-500 block  h-10">{{ trans('pages.cart.discount') }}</span>
@@ -253,6 +253,10 @@
                             <b data-cart-total>{{ cart.total|money }}</b>
                         </div>
 
+                        {% if store.settings.tax.taxable_prices_enabled %}
+                            <p class="qcart__totals-taxnote">{{ trans('pages.products.tax_included') }}</p>
+                        {% endif %}
+
                         <div class="cart-submit-wrap">
                             {% hook 'cart:submit.start' %}
                             <salla-button id="cart-submit" loader-position="center" width="wide">
@@ -268,6 +272,34 @@
                 </div>
             {% endif %}
         </div>
+    </div>
+    </div>
+
+    {# ---- Pre-footer composition (full Cart Figma 6036:6846 / 6036:15126) ----
+       Renders the trust/service strip + newsletter that the full page shows
+       between the cart body and the global footer. Reuses the shared partials
+       (.qtb / .qfnews designs) with STATIC fallback data (twilight.json defaults
+       / approved Figma labels) — the newsletter image is omitted because no
+       stable local asset exists. This lives on the cart page only (NOT a global
+       render), so the homepage's own blocks are not duplicated. #}
+    <div class="qcart-prefooter">
+        {% set trust_items = [
+            { icon: 'sicon-wallet',   title: 'مدفوعات آمنة',  subtitle: 'مدفوعات آمنة أقساط تصل إلى 12 شهرًا' },
+            { icon: 'sicon-rotate',   title: 'شحن مجاني',     subtitle: 'مدفوعات آمنة أقساط تصل إلى 12 شهرًا' },
+            { icon: 'sicon-shipping', title: 'منتجات مضمونه', subtitle: 'مدفوعات آمنة أقساط تصل إلى 12 شهرًا' }
+        ] %}
+        {% include 'partials.qissa-trust-strip' with { items: trust_items } only %}
+
+        {% include 'partials.qissa-newsletter' with {
+            badge: 'كل ما تحتاجه للنظافة، في مكان واحد',
+            heading: 'الاشتراك فى',
+            heading_highlight: 'النشرة البريدية',
+            subtitle: 'انضم الآن واحصل على خصم 10٪ على مشترياتك التالية!',
+            note: 'يمكنك إلغاء الاشتراك في أي لحظة',
+            email_placeholder: 'ادخل البريد الالكترونى',
+            button_text: 'إشتراك',
+            extra_class: 'qfnews--no-image'
+        } only %}
     </div>
 {% endblock %}
 

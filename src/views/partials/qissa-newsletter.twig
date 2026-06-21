@@ -1,0 +1,65 @@
+{#
+  Reusable newsletter banner — renders the `.qfnews` design.
+  Figma desktop 6036:5326 (1440) · mobile 6036:14322 (428).
+  Styling lives in 04-components/qissa-footer-newsletter.scss (class root `.qfnews`).
+  The form is VISUAL-ONLY / inert (this theme has no salla newsletter component) —
+  identical behaviour to the homepage block.
+
+  Markup-only and data-agnostic so it can be reused by:
+    - the homepage block component `home/qissa-footer-newsletter.twig` (component.*), and
+    - the cart pre-footer (static fallback text; image omitted when none is configured).
+
+  Expects (all optional):
+    badge, heading, heading_highlight, subtitle, note,
+    email_placeholder, button_text, image, extra_class
+#}
+<section class="qfnews {{ extra_class|default('') }}">
+    <div class="container">
+        <div class="qfnews__card">
+
+            {# product image — only when a real asset is provided (Figma hides it on mobile) #}
+            {% if image is defined and image %}
+                <div class="qfnews__media">
+                    <img src="{{ image }}" alt="{{ heading }}" loading="lazy"/>
+                </div>
+            {% endif %}
+
+            <div class="qfnews__content">
+
+                {% if badge %}
+                    <span class="qfnews__badge">{{ badge }}</span>
+                {% endif %}
+
+                {% if heading or heading_highlight %}
+                    <div class="qfnews__head">
+                        <h2 class="qfnews__title">
+                            {%- if heading %}{{ heading }} {% endif -%}
+                            {%- if heading_highlight %}<span class="qfnews__title-em">{{ heading_highlight }}</span>{% endif -%}
+                        </h2>
+                        {% if subtitle %}
+                            <p class="qfnews__subtitle">{{ subtitle }}</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+                {# visual-only form — submission is prevented #}
+                <form class="qfnews__form" onsubmit="return false;" novalidate>
+                    {% if note %}
+                        <p class="qfnews__note">{{ note }}</p>
+                    {% endif %}
+                    <div class="qfnews__field">
+                        <input
+                            type="email"
+                            class="qfnews__input"
+                            placeholder="{{ email_placeholder }}"
+                            aria-label="{{ email_placeholder }}"
+                            autocomplete="email"
+                        />
+                        <button type="submit" class="qfnews__btn">{{ button_text }}</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</section>
