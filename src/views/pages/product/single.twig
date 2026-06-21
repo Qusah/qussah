@@ -311,8 +311,24 @@
                 {% endif %}
                 {% hook 'product:single.description' %}
 
-                {# Installment Methods (tamara / tabby) — styled to Figma gradient cards via CSS #}
+                {# Installment Methods (tamara / tabby) — styled to Figma gradient cards via CSS.
+                   Shows real amounts/logos on the live store once installments are enabled. #}
                 <salla-installment class="qpd__installment" price="{{ product.price }}"></salla-installment>
+
+                {# DEMO ONLY — static tamara/tabby cards for preview. REMOVE before live
+                   (the salla-installment above renders the real ones). #}
+                <div class="qpd__paydemo">
+                    <div class="qpd__pay qpd__pay--tamara">
+                        <img class="qpd__pay-logo" src="{{ 'images/payments/tamara.png' | asset }}" alt="tamara">
+                        <p class="qpd__pay-text">ادفع 586 ر.س فقط علي 3 دفعات بدون رسوم</p>
+                        <a class="qpd__pay-more" href="#!">أعرف أكثر</a>
+                    </div>
+                    <div class="qpd__pay qpd__pay--tabby">
+                        <img class="qpd__pay-logo qpd__pay-logo--tabby" src="{{ 'images/payments/tabby.svg' | asset }}" alt="tabby">
+                        <p class="qpd__pay-text">ادفع ربع القيمة 11.77 SAR .قسطه على 3 أشهر. بدون رسوم</p>
+                        <a class="qpd__pay-more" href="#!">أعرف أكثر</a>
+                    </div>
+                </div>
 
                 {# Figma gift box #}
                 {% if product.is_giftable %}

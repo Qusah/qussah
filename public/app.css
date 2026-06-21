@@ -30761,6 +30761,61 @@ body.qside-open {
   font-size: 14px;
   color: #0a1f30;
 }
+.qpd__paydemo {
+  display: flex;
+  gap: 16px;
+  align-items: stretch;
+  margin-bottom: 16px;
+}
+.qpd__pay {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  text-align: right;
+}
+.qpd__pay--tamara {
+  background: linear-gradient(-88.7deg, #ffffff 1.5%, rgba(255, 215, 110, 0) 47.8%, rgba(248, 143, 155, 0.33) 94%);
+}
+.qpd__pay--tabby {
+  background: linear-gradient(-88.7deg, #ffffff 1.5%, #dafff4 94%);
+}
+.qpd__pay-logo {
+  width: 135px;
+  height: 49px;
+  -o-object-fit: contain;
+     object-fit: contain;
+  -o-object-position: right center;
+     object-position: right center;
+  border-radius: 10px;
+}
+.qpd__pay-logo--tabby {
+  width: 90px;
+  height: 50px;
+  border-radius: 0;
+}
+.qpd__pay-text {
+  width: 100%;
+  margin: 0;
+  font-size: 14px;
+  color: #0a1f30;
+  line-height: 1.5;
+}
+.qpd__pay-more {
+  width: 100%;
+  font-size: 13px;
+  color: #30378e;
+}
+.qpd__pay-more:hover {
+  -webkit-text-decoration: underline;
+  text-decoration: underline;
+}
 .qpd__gift {
   display: flex;
   align-items: center;

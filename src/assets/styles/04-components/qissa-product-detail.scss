@@ -282,6 +282,50 @@
     [class*="installment"] p { font-size: 14px; color: #0a1f30; }
   }
 
+  // ----- DEMO tamara/tabby cards (Figma node 6036:4962). Remove before live. -----
+  &__paydemo {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+    margin-bottom: 16px;
+  }
+  &__pay {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;     // content to the RIGHT (RTL)
+    justify-content: center;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    text-align: right;
+    &--tamara { background: linear-gradient(-88.7deg, #ffffff 1.5%, rgba(255,215,110,0) 47.8%, rgba(248,143,155,0.33) 94%); }
+    &--tabby  { background: linear-gradient(-88.7deg, #ffffff 1.5%, #dafff4 94%); }
+  }
+  &__pay-logo {
+    width: 135px;
+    height: 49px;
+    object-fit: contain;
+    object-position: right center;
+    border-radius: 10px;
+    &--tabby { width: 90px; height: 50px; border-radius: 0; }
+  }
+  &__pay-text {
+    width: 100%;
+    margin: 0;
+    font-size: 14px;
+    color: #0a1f30;
+    line-height: 1.5;
+  }
+  &__pay-more {
+    width: 100%;
+    font-size: 13px;
+    color: #30378e;
+    &:hover { text-decoration: underline; }
+  }
+
   // ----- gift box -----
   &__gift {
     display: flex;
