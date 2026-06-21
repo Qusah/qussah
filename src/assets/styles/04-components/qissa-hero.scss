@@ -164,7 +164,7 @@
       width: 100%;
     }
     &__btn {
-      display: none;                    // Figma mobile hero shows no CTA button
+      display: inline-flex;             // show the CTA button on mobile
     }
 
     // product photo — full-bleed across the bottom of the hero card,
