@@ -45,8 +45,9 @@
     }
 
     // ----- main image (radius 25, takes remaining width) -----
+    // Figma: main image at x=0 (LEFT of block), thumbs at x=524 (RIGHT)
     .s-slider-container {
-      order: 2;                     // visual RIGHT of the thumb column (RTL)
+      order: 1;                     // LEFT
       flex: 1 1 0;
       min-width: 0;
       border-radius: 25px;
@@ -64,24 +65,37 @@
       }
     }
 
-    // ----- thumb column: vertical, 148 wide, 4 frames -----
+    // ----- thumb column: VERTICAL, 148 wide, 4 frames stacked -----
     .s-slider-thumbs {
-      order: 1;                     // far LEFT in RTL
+      order: 2;                     // RIGHT of the main image (Figma x=524)
       flex: 0 0 148px;
       width: 148px;
       height: 637px;
     }
     .s-slider-thumbs-container {
-      height: 100%;
+      height: 100% !important;
+      width: 100% !important;
+    }
+    // force the Swiper thumbs wrapper to stack vertically and ignore its
+    // horizontal transform (Salla initializes thumbs as a horizontal swiper)
+    .s-slider-thumbs-container .swiper-wrapper {
+      flex-direction: column !important;
+      height: 100% !important;
+      transform: none !important;
+      gap: 16px;
+      justify-content: flex-start;
     }
     // each thumb = bordered frame, radius 25, pad 10, inner image radius 20
     .slide--one-fourth {
+      width: 148px !important;
+      height: 147px !important;
+      margin: 0 !important;
+      flex: 0 0 147px;
       border: 1px solid #dee2e6;
       border-radius: 25px;
       padding: 10px;
       background: #fff;
       box-sizing: border-box;
-      height: auto;
       img {
         width: 100%;
         height: 100%;

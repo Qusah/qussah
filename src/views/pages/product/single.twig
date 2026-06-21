@@ -303,12 +303,6 @@
                         <span class="qpd__weight-value">{{ product.weight }}</span>
                     </div>
                 {% endif %}
-                {% if product.sku %}
-                    <div class="qpd__sku">
-                        <span><i class="sicon-barcode"></i> {{ trans('pages.products.sku') }}</span>
-                        <span class="text-unicode product-sku">{{ product.sku }}</span>
-                    </div>
-                {% endif %}
                 {% hook 'product:single.description' %}
 
                 {# Installment Methods (tamara / tabby) — styled to Figma gradient cards via CSS.
