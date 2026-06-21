@@ -13,19 +13,21 @@
   max-width: none;
   padding-inline: 50px;
 
-  // ----- two columns: info LEFT, gallery RIGHT (RTL) -----
+  // ----- two columns: info on the LEFT, gallery on the RIGHT -----
+  // Force LTR on the flex row so order is unambiguous: order 1 = LEFT, 2 = RIGHT.
   &__row {
     gap: 32px;
     align-items: flex-start;
-  }
-  // gallery is first in DOM (slider needs it) → push to the RIGHT in RTL
-  &__gallery {
-    order: 2;
-    margin: 0 !important;
+    direction: ltr;
   }
   &__info {
-    order: 1;
+    order: 1;                 // LEFT
     width: 100%;
+    direction: rtl;           // text stays RTL inside
+  }
+  &__gallery {
+    order: 2;                 // RIGHT
+    margin: 0 !important;
   }
   @media (min-width: 768px) {
     &__gallery { width: 50%; flex: 0 0 50%; }
@@ -40,13 +42,15 @@
     .details-slider {
       display: flex !important;
       flex-direction: row;          // main + thumbs in a row
+      direction: ltr;               // pin visual order regardless of RTL flip
       gap: 24px;
       align-items: stretch;
     }
 
     // ----- main image (radius 25, takes remaining width) -----
+    // main image RIGHT, thumb column LEFT
     .s-slider-container {
-      order: 2;                     // visual RIGHT of the thumb column (RTL)
+      order: 1;                     // main image LEFT within gallery (Figma)
       flex: 1 1 0;
       min-width: 0;
       border-radius: 25px;
@@ -64,24 +68,37 @@
       }
     }
 
-    // ----- thumb column: vertical, 148 wide, 4 frames -----
+    // ----- thumb column: VERTICAL, 148 wide, 4 frames stacked -----
     .s-slider-thumbs {
-      order: 1;                     // far LEFT in RTL
+      order: 2;                     // thumb column RIGHT within gallery (Figma)
       flex: 0 0 148px;
       width: 148px;
       height: 637px;
     }
     .s-slider-thumbs-container {
-      height: 100%;
+      height: 100% !important;
+      width: 100% !important;
+    }
+    // force the Swiper thumbs wrapper to stack vertically and ignore its
+    // horizontal transform (Salla initializes thumbs as a horizontal swiper)
+    .s-slider-thumbs-container .swiper-wrapper {
+      flex-direction: column !important;
+      height: 100% !important;
+      transform: none !important;
+      gap: 16px;
+      justify-content: flex-start;
     }
     // each thumb = bordered frame, radius 25, pad 10, inner image radius 20
     .slide--one-fourth {
+      width: 148px !important;
+      height: 147px !important;
+      margin: 0 !important;
+      flex: 0 0 147px;
       border: 1px solid #dee2e6;
       border-radius: 25px;
       padding: 10px;
       background: #fff;
       box-sizing: border-box;
-      height: auto;
       img {
         width: 100%;
         height: 100%;
@@ -310,7 +327,8 @@
     object-fit: contain;
     object-position: right center;
     border-radius: 10px;
-    &--tabby { width: 90px; height: 50px; border-radius: 0; }
+    // tabby SVG viewBox is 100x40 (2.5:1) — keep that ratio, don't stretch
+    &--tabby { width: 90px; height: 36px; border-radius: 0; object-fit: contain; }
   }
   &__pay-text {
     width: 100%;
@@ -423,36 +441,67 @@
     gap: 16px;
     margin-top: 0;
   }
-  &__btn {
-    flex: 1 0 0;
-    display: block;
-    // salla-add-product-button renders a light-DOM <button.s-button-element>
-    .s-button-element,
-    button {
-      width: 100%;
-      height: 56px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border-radius: 12px;
-      font-family: 'GE SS Two', sans-serif;
-      font-size: 16px;
-      font-weight: 500;
-      border: 1px solid #30378e;
-    }
+  // Each button column takes half the row.
+  &__btn { flex: 1 0 0; width: 100%; }
+  // inline Figma cart icon (16x16, inherits button color via currentColor)
+  &__cart-icon {
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px;
+    flex: 0 0 16px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  // inside salla button the icon sits in .s-button-text — keep it 16x16
+  &__btn--cart .s-button-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    .qpd__cart-icon { width: 16px !important; height: 16px !important; flex: 0 0 16px; }
+  }
+
+  // The actual visible button: the plain <button> (buy) OR the inner
+  // .s-button-element (cart). The salla host itself stays borderless.
+  &__btn--buy,
+  &__btn--cart .s-button-element {
+    width: 100% !important;
+    height: 56px;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 12px;
+    font-family: 'GE SS Two', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    border: 1px solid #30378e !important;
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
     i { font-size: 16px; }
   }
-  // الشراء السريع — solid navy
-  &__btn--buy .s-button-element,
-  &__btn--buy button {
+
+  // salla host = transparent flex shell, NO border/height of its own
+  &__btn--cart {
+    border: none !important;
+    height: auto !important;
+    background: none !important;
+    > div { width: 100%; }
+  }
+
+  // الشراء السريع — solid navy → hover cyan
+  &__btn--buy {
     background: #30378e !important;
     color: #fff !important;
+    &:hover { background: #91e6f7 !important; border-color: #91e6f7 !important; color: #30378e !important; }
   }
-  // أضف للسلة — outline navy
-  &__btn--cart .s-button-element,
-  &__btn--cart button {
+  // أضف للسلة — outline navy → hover cyan fill
+  &__btn--cart .s-button-element {
     background: #fff !important;
+    color: #30378e !important;
+  }
+  &__btn--cart:hover .s-button-element {
+    background: #91e6f7 !important;
+    border-color: #91e6f7 !important;
     color: #30378e !important;
   }
 }
@@ -469,7 +518,7 @@
 
   &__nav {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;   // RTL: flex-start = RIGHT (Figma)
     gap: 0;
   }
   &__tab {
@@ -594,5 +643,111 @@
     &__priceqty { flex-wrap: wrap; }
     &__gift { flex-direction: column; align-items: stretch; text-align: center; }
     &__gift-btn { width: 100%; }
+  }
+}
+
+// ====================================================================
+// Recently-viewed products — Figma node 6036:5118
+// Header band: eyebrow + title + subtitle (RIGHT) + view-all btn (LEFT).
+// Cards use the global qissa-product-card styling.
+// ====================================================================
+.qpd-viewed {
+  font-family: 'GE SS Two', sans-serif;
+  padding-block: 40px;
+  // soft blue gradient band behind the whole section (Figma)
+  background: linear-gradient(180deg, #e8fcff 0%, #f4fdff 55%, #ffffff 100%);
+
+  .container { max-width: none; padding-inline: 50px; }
+
+  // header row: button LEFT, intro RIGHT. LTR makes order unambiguous.
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    margin-bottom: 24px;
+    direction: ltr;
+  }
+  &__intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;   // LTR column → flex-end = RIGHT
+    gap: 12px;
+    text-align: right;
+    direction: ltr;          // keep flex-end = visual RIGHT, unambiguous
+    order: 2;                // RIGHT
+  }
+  &__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    height: 39px;
+    padding: 5px 15px;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    background: linear-gradient(to left, #daeff7, #fff);
+    color: #30378e;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.16px;
+    direction: rtl;          // Arabic text RTL inside the pill
+  }
+  &__title {
+    margin: 0;
+    width: 100%;
+    text-align: right;
+    direction: rtl;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 38px;
+    letter-spacing: -0.2px;
+    color: #0a1f30;
+  }
+  &__title-hl { color: #30378e; }
+  &__subtitle {
+    margin: 0;
+    width: 100%;
+    text-align: right;
+    direction: rtl;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 24px;
+    color: #6c757d;
+  }
+
+  // view-all button (cyan, radius 16, h55): arrow → text → cart (LTR order)
+  &__all {
+    order: 1;                // LEFT
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    direction: ltr;
+    gap: 8px;
+    height: 55px;
+    padding: 16px;
+    border: 1px solid #91e6f7;
+    border-radius: 16px;
+    background: #91e6f7;
+    color: #0a1f30;
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background .15s, border-color .15s;
+    i { font-size: 16px; }
+    .qpd__cart-icon { width: 23px; height: 23px; flex: 0 0 23px; }
+    &:hover { background: #7fdcef; border-color: #7fdcef; }
+  }
+
+  // slider cards keep the global qissa-product-card look
+  &__slider { display: block; }
+
+  @media (max-width: 768px) {
+    padding-block: 24px;
+    .container { padding-inline: 15px; }
+    &__head { flex-direction: column; align-items: stretch; gap: 16px; }
+    &__intro { align-items: flex-end; order: 1; }
+    &__all { order: 2; width: 100%; }
+    &__title { font-size: 24px; line-height: 30px; }
   }
 }
