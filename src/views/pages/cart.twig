@@ -80,35 +80,13 @@
 													class="flex-none w-24 h-20 border border-gray-200 bg-gray-100 rounded-md object-center object-cover">
 											{% endif %}
 
-                                            <!-- free product ribbon -->
-                                            <div class="free-ribbon absolute top-[11px] right-[-38px] w-32 bg-red-600 text-white text-xs font-bold text-center py-1 rotate-45 shadow-md {{ (item.price.getMoney().amount == 0 and item.has_discount) ? '' : 'hidden' }}">
-                                                {{ trans('pages.loyalty_program.free_product') }}
-                                            </div>
-                                            <!-- end free product ribbon -->
-                                            
                                         </a>
                                         <div class="qcart__item-info space-y-1">
                                             <h1 class="text-gray-900 leading-6 text-lg">
                                                 <a href="{{ item.url }}" class="text-base">{{ item.product_name }}</a>
                                             </h1>
 
-                                            <p class="text-sm text-gray-500 item-weight-row {{ item.weight_label ? '' : 'hidden' }}"> {{ trans('pages.products.weight') }}
-                                             <span class="item-weight">{{ item.weight_label }}</span>
-                                            </p>
-                                            <span class="old-offers flex items-center gap-1 mx-1.5  {{ item.detailed_offers ? 'hidden' : '' }}">
-                                                <i class="sicon-discount-calculator text-gray-500 offer-icon {{ item.offer?'':'hidden' }}"></i>
-                                                <span class="text-sm text-gray-500 offer-name {{ item.offer ?  '' : 'hidden' }}">{{ item.offer.names }}</span>
-                                            </span>
-                                            {# Cart Item Offers #}
-                                            <salla-cart-item-offers
-                                                quantity="{{ item.quantity }}"
-                                                item-id="{{ item.id }}"
-                                                product-price="{{ item.product_price }}"
-                                                offers="{{ item.detailed_offers|json_encode }}"></salla-cart-item-offers>
-                                            {# End Cart Item offers #}
-
                                         </div>
-                                    </div>
 
                                     <div class="qcart__item-qty">
                                         {% if item.type == 'donating' %}
@@ -140,7 +118,7 @@
                                         </salla-button>
                                     </span>
                                 </div>
-                                {# Cart Figma shows no per-item option/select fields → not rendered here.
+                                {# Cart Figma shows no per-item option/select fields -> not rendered here.
                                    (Product-detail page options are untouched.) Hidden id/quantity inputs
                                    above keep Salla's cart.updateItem behaviour intact. #}
                         </section>
@@ -155,7 +133,7 @@
                 {% endfor %}
 
                 {# cart.options (order-level option/select fields) are not part of the
-                   Figma cart design → not rendered. Their totals still surface in the
+                   Figma cart design -> not rendered. Their totals still surface in the
                    summary's order-options line if any exist. #}
 
                 <salla-offer></salla-offer>
@@ -201,55 +179,59 @@
                         <salla-gifting id="salla-gifting" class="mt-5" widget-title="{{ trans("pages.cart.gift_widget_title") }}"  widget-subtitle="{{ gift.text }}" class="mt-5" {{gift.type}}-products  vertical></salla-gifting>
                     </div>
 
-                    <div class="qcart__totals p-5 xs:p-7 mb-5 relative transition-height duration-1000">
-                        <h2 class="font-bold text-sm mb-5">{{ trans('pages.cart.summary') }}</h2>
+                    <div class="qcart__totals relative transition-height duration-1000">
+                        <h2 class="qcart__summary-title">ملخص الطلب</h2>
 
                         {% if store.settings.cart.apply_coupon_enabled %}
-                            <div class="qcart__coupon mb-5">
+                            <div class="qcart__coupon">
                                 <salla-cart-coupons></salla-cart-coupons>
                             </div>
                         {% endif %}
 
-                        <div class="flex justify-between text-sm mb-5">
-                            <span class="text-gray-500"> {{ trans(cart.tax_amount ? "pages.cart.items_total_without_tax" : "pages.cart.items_total") }} </span>
-                            <b id="sub-total">{{ cart.sub_total|money }}</b>
+                        <div class="qcart__summary-row qcart__summary-row--subtotal">
+                            <span class="qcart__summary-label">المجموع</span>
+                            <b id="sub-total" class="qcart__summary-value">{{ cart.sub_total|money }}</b>
                         </div>
 
                         {% if cart.options|length %}
-                          <div class="flex justify-between text-sm mb-5">
-                            <span class="text-gray-500">{{ trans('pages.cart.order_options_total') }}</span>
-                            <b id="cart-options-total">{{ cart.options_total|money }}</b>
+                          <div class="qcart__summary-row qcart__summary-row--aux hidden" aria-hidden="true">
+                            <span class="qcart__summary-label">{{ trans('pages.cart.order_options_total') }}</span>
+                            <b id="cart-options-total" class="qcart__summary-value">{{ cart.options_total|money }}</b>
                           </div>
                         {% endif %}
 
                         <div id="shipping-cost"
-                             class="flex justify-between text-sm mb-5 {{ cart.has_shipping ? '' : 'hidden' }}">
-                            <span class="text-gray-500">{{ trans('pages.cart.shipping_cost') }}</span>
-                            <b>{{ cart.real_shipping_cost|money }}</b>
+                             class="qcart__summary-row qcart__summary-row--aux {{ cart.has_shipping ? '' : 'hidden' }}"
+                             aria-hidden="true">
+                            <span class="qcart__summary-label">{{ trans('pages.cart.shipping_cost') }}</span>
+                            <b class="qcart__summary-value">{{ cart.real_shipping_cost|money }}</b>
                         </div>
 
                         <!-- coupon discount -->
-                        <div id="total-discount" class="flex justify-between text-sm {{ cart.total_discount ? '' : 'hidden' }}">
-                            <span class="text-gray-500 block  h-10">{{ trans('pages.cart.discount') }}</span>
-                            <b>- {{ cart.total_discount|money }}</b>
+                        <div id="total-discount" class="qcart__summary-row qcart__summary-row--discount {{ cart.total_discount ? '' : 'hidden' }}">
+                            <span class="qcart__summary-label">قيمة الخصم</span>
+                            <b class="qcart__summary-value">- {{ cart.total_discount|money }}</b>
                         </div>
 
                         {% if cart.tax_amount %}
-                            <div class="flex justify-between text-sm mb-5">
-                                <span class="text-gray-500">{{ trans('pages.cart.VAT_tax_amount') }}</span>
-                                <b id="tax-amount">{{ cart.tax_amount|money }}</b>
+                            <div class="qcart__summary-row qcart__summary-row--aux hidden" aria-hidden="true">
+                                <span class="qcart__summary-label">{{ trans('pages.cart.VAT_tax_amount') }}</span>
+                                <b id="tax-amount" class="qcart__summary-value">{{ cart.tax_amount|money }}</b>
                             </div>
                         {% endif %}
 
-                        <div class="flex justify-between text-lg mb-5">
-                            <span class="text-gray-500">{{ trans('pages.cart.final_total') }}</span>
-                            <b data-cart-total>{{ cart.total|money }}</b>
+                        <div class="qcart__summary-divider" aria-hidden="true"></div>
+
+                        <div class="qcart__summary-total">
+                            <div class="qcart__summary-total-row">
+                                <span class="qcart__summary-total-label">الإجمالى</span>
+                                <b class="qcart__summary-total-value" data-cart-total>{{ cart.total|money }}</b>
+                            </div>
+
+                            {% if store.settings.tax.taxable_prices_enabled %}
+                                <p class="qcart__totals-taxnote">الاسعار شاملة للضريبة 15٪ <span>*</span></p>
+                            {% endif %}
                         </div>
-
-                        {% if store.settings.tax.taxable_prices_enabled %}
-                            <p class="qcart__totals-taxnote">{{ trans('pages.products.tax_included') }}</p>
-                        {% endif %}
-
                         <div class="cart-submit-wrap">
                             {% hook 'cart:submit.start' %}
                             <salla-button id="cart-submit" loader-position="center" width="wide">

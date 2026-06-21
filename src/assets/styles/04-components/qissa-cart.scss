@@ -1,17 +1,17 @@
 // ====================================================================
-// Qissa Cart — cart page (سلة المشتريات)
-// Desktop Figma node 6036:6846 (1440px) · Mobile node 6036:15126 (428px)
+// Qissa Cart - cart page
+// Desktop Figma node 6036:6846 (1440px) / Mobile node 6036:15126 (428px)
 // CSS-first restyle of the working starter cart.twig. Scoped to .qcart.
 // Keeps every Salla cart component + behavior (quantity input, coupons,
-// item-total updates, delete, offers, checkout) — only the layout/chrome
+// item-total updates, delete, offers, checkout - only the layout/chrome
 // is restyled to Figma.
 //
 // Layout relationship (RTL):
-//   Desktop ≥1024px → items list RIGHT (flex) + order-summary LEFT (470).
-//   Tablet / mobile  → single column, items first then the summary card.
+//   Desktop >=1024px -> items list RIGHT (flex) + order-summary LEFT (470).
+//   Tablet / mobile -> single column, items first then the summary card.
 //
 // Tokens: royal-blue #30378e, chosen-blue #0a1f30, baby-blue line #daeff7,
-//         summary gradient #fff→#daeff7, sale red #d50d1e, accent #e04956,
+//         summary gradient #fff -> #daeff7, sale red #d50d1e, accent #e04956,
 //         gray-600 #6c757d, gray-500 #adb5bd, gray-400 #ced4da.
 // Phase 1 = structure foundation only; per-section pixel polish comes later.
 // ====================================================================
@@ -28,11 +28,16 @@
 
   font-family: 'GE SS Two', sans-serif;
 
-  // page container → full width with the Figma 50px gutters
-  .container { max-width: none; padding-inline: 50px; }
+  // page container: match the Figma 1440px frame instead of stretching forever.
+  .container {
+    max-width: 1440px;
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: 50px;
+  }
 
   // ----------------------------------------------------------------
-  // Two-column page layout — FULLY OWNED BY SCSS (no Tailwind layout
+  // Two-column page layout - fully owned by SCSS (no Tailwind layout
   // utilities left in the markup, so nothing can fight it). RTL: items
   // column RIGHT, summary column LEFT on desktop; single stacked column
   // below 1024px. Fallback if CSS ever lags: plain block stack (safe).
@@ -43,8 +48,6 @@
     gap: 24px;
   }
 
-  // The items column is ITSELF a vertical flex → cart cards always stack
-  // vertically and can NEVER sit side by side, whatever else is on them.
   .qcart__items {
     display: flex;
     flex-direction: column;
@@ -55,16 +58,31 @@
   .qcart__summary { width: 100%; }
 
   @media (min-width: 1024px) {
-    .qcart__layout { flex-direction: row; align-items: flex-start; }  // two columns, top-aligned
-    .qcart__items  { flex: 1 1 auto; width: auto; }                   // right column (~845px)
-    .qcart__summary { flex: 0 0 478px; width: 478px; }                // left column (Figma 478)
+    .qcart__layout {
+      display: grid;
+      grid-template-columns: 478px minmax(0, 1fr);
+      grid-template-areas: "summary items";
+      align-items: start;
+      direction: ltr;
+    }
+    .qcart__items {
+      grid-area: items;
+      width: 100%;
+      direction: rtl;
+    }
+    .qcart__summary {
+      grid-area: summary;
+      width: 100%;
+      min-width: 0;
+      direction: rtl;
+    }
   }
 
   // ================================================================
-  // CART ITEM CARD  (desktop 6036:6976 · mobile 6036:15175)
+  // CART ITEM CARD (desktop 6036:6976 / mobile 6036:15175)
   // 5 flat children placed with CSS-grid areas:
-  //   mobile  → row1: image · name · ×   |  row2: qty · — · price
-  //   desktop → image (right) · name over qty · gap · price · × (left)
+  //   mobile  -> row1: image / name / x | row2: qty / spacer / price
+  //   desktop -> image (right) / name over qty / gap / price / x (left)
   // ================================================================
   .qcart__item {
     background: #fff;
@@ -85,7 +103,7 @@
       "qty   .    price";
     gap: 10px 12px;
   }
-  // options/variant fields render below the row → separate them when present
+  // options/variant fields render below the row -> separate them when present
   .qcart__item-row:not(:last-child) { margin-bottom: 16px; }
 
   .qcart__item-thumb  { grid-area: thumb;  justify-self: start; }   // right (RTL)
@@ -94,7 +112,7 @@
   .qcart__item-price  { grid-area: price;  justify-self: end; }     // left
   .qcart__item-remove { grid-area: remove; justify-self: end; }     // left
 
-  // ---- thumbnail (Figma: 111×87, navy backplate, radius 8) ----
+  // ---- thumbnail (Figma: 111x87, navy backplate, radius 8) ----
   .qcart__item-thumb {
     display: block;
     img {
@@ -168,7 +186,7 @@
     }
   }
 
-  // ---- remove × (Figma: small neutral glyph; mobile = light-grey circle) ----
+  // ---- remove x (Figma: small neutral glyph; mobile = light-grey circle) ----
   .qcart__item-remove {
     line-height: 0;
     .btn--delete::part(base) {
@@ -185,24 +203,22 @@
     .qcart__item-remove .btn--delete::part(base) { background: #f8f9fa; }
   }
 
-  // ---- desktop (≥768px): single row, qty stacked under the name ----
+  // ---- desktop/tablet: one compact row with no detached controls ----
   @media (min-width: 768px) {
     .qcart__item-row {
-      grid-template-columns: auto auto 1fr auto auto;
-      grid-template-areas:
-        "thumb name  spacer price remove"
-        "thumb qty   spacer price remove";
+      grid-template-columns: 111px minmax(180px, 1fr) auto auto 28px;
+      grid-template-areas: "thumb name qty price remove";
       column-gap: 16px;
-      row-gap: 10px;
+      row-gap: 0;
     }
     .qcart__item-info {
-      justify-self: start;          // hug the image (right, RTL)
+      justify-self: start;
       text-align: right;
       h1 a,
       h1 { font-size: 20px; line-height: 24px; letter-spacing: 0; }
     }
-    .qcart__item-qty   { justify-self: start; }   // right, under the name
-    .qcart__item-price { justify-self: end; }      // left, next to ×
+    .qcart__item-qty { justify-self: center; }
+    .qcart__item-price { justify-self: end; }
 
     salla-quantity-input { width: 161px; height: 43px; }
   }
@@ -211,94 +227,258 @@
   // ORDER SUMMARY CARD (totals + coupon + checkout)
   // ================================================================
   .qcart__totals {
-    background-image: linear-gradient(-89deg, #fff 1.5%, $line 94%);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 16px;
+    width: 100%;
+    background-image: linear-gradient(-89.35deg, #fff 1.5%, $line 94.1%);
     border: 1px solid $line;
     border-radius: 16px;
     box-shadow: none;
-    padding: 16px;                 // Figma summary padding (was p-5 / xs:p-7)
-
-    // title "ملخص الطلب"
-    > h2 {
-      color: $ink;
-      font-size: 20px;
-      font-weight: 700;
-      line-height: 24px;
-      margin-bottom: 20px;
-    }
-
-    // summary rows: label (right) ←→ value (left) — Figma 16px
-    .text-gray-500 { color: $g600; font-size: 16px; }
-    b {
-      color: $ink;
-      font-size: 16px;
-      font-family: 'Poppins', 'GE SS Two', sans-serif;
-    }
-
-    // discount row → red; neutralise the starter 40px (h-10) label
-    #total-discount {
-      margin-bottom: 20px;
-      .text-gray-500 { color: $red; height: auto; }
-      b { color: $red; }
-    }
-
-    // final total → navy + the Figma divider ("Line 133") sitting above it
-    .text-lg {
-      border-top: 1px solid #d7e6ee;
-      margin-top: 4px;
-      padding-top: 24px;
-      margin-bottom: 4px;
-      span { color: $ink; font-size: 16px; }
-      b {
-        color: $navy;
-        font-size: 25px;
-        font-weight: 600;
-      }
-    }
-
-    // tax-inclusive note under the total (Figma "الاسعار شاملة للضريبة *")
-    &-taxnote {
-      margin: 0;
-      font-size: 14px;
-      color: $g600;
-      text-align: right;
-    }
-
-    // checkout button "إتمام الطلب"
-    .cart-submit-wrap { margin-top: 24px; }
-    #cart-submit {
-      &::part(base),
-      .s-button-element {
-        background: $navy;
-        border: 1px solid $navy;
-        color: #fff;
-        border-radius: 12px;
-        height: 56px;
-        font-family: 'GE SS Two', sans-serif;
-        font-size: 16px;
-        font-weight: 500;
-        width: 100%;
-      }
-    }
+    color: $ink;
+    padding: 16px;
+    text-align: right;
   }
 
-  // ---- coupon (salla-cart-coupons) — light Phase 1 styling ----
+  .qcart__summary-title {
+    color: $ink;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 28px;
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .qcart__coupon {
+    width: 100%;
+    margin: 0;
+  }
+
   salla-cart-coupons {
-    .s-cart-coupons-coupon-label { color: $ink; font-size: 14px; }
+    display: block;
+    width: 100%;
+
+    .s-cart-coupons-wrapper {
+      border: 0;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+    }
+
+    .s-cart-coupons-input-section {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      margin: 0;
+      width: 100%;
+    }
+
+    .s-cart-coupons-coupon-label {
+      color: $ink;
+      display: block;
+      font-family: 'GE SS Two', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+      margin: 0;
+      text-align: right;
+      width: 100%;
+    }
+
     .s-cart-coupons-coupon-input-container {
+      align-items: center;
       background: #fff;
       border: 1px solid $line;
       border-radius: 10px;
+      display: flex;
+      gap: 10px;
+      height: 54px;
+      min-width: 0;
       overflow: hidden;
+      padding: 0 12px;
+      width: 100%;
     }
-    .s-cart-coupons-coupon-button-apply {
-      color: $navy;
+
+    .s-cart-coupons-coupon-input-container .form-input,
+    .s-cart-coupons-coupon-input-container .s-input {
+      background: transparent;
+      border: 0 !important;
+      box-shadow: none;
+      color: $ink;
+      flex: 1 1 auto;
+      font-family: 'GE SS Two', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      height: 100%;
+      line-height: 20px;
+      min-width: 0;
+      padding: 0;
+      text-align: right;
+    }
+
+    .s-cart-coupons-coupon-input-container .form-input::placeholder,
+    .s-cart-coupons-coupon-input-container .s-input::placeholder {
+      color: $g400;
+      opacity: 1;
+    }
+
+    .s-cart-coupons-coupon-button,
+    .s-cart-coupons-coupon-button-apply,
+    .s-cart-coupons-coupon-button-remove {
+      align-items: center;
+      background: #fff;
       border: 1px solid $navy;
-      border-radius: 8px;
+      border-radius: 8px !important;
+      color: $navy;
+      display: inline-flex;
+      flex: 0 0 auto;
+      font-family: 'GE SS Two', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      justify-content: center;
+      line-height: 20px;
+      min-height: 34px;
+      padding: 10px 16px 11px;
+      white-space: nowrap;
+    }
+
+    .s-cart-coupons-coupon-error {
+      color: $red;
+      display: block;
+      font-size: 12px;
+      line-height: 16px;
+      margin-top: 4px;
+      text-align: right;
+      width: 100%;
+    }
+
+    .s-cart-coupons-slider { display: none; }
+  }
+
+  .qcart__summary-row {
+    align-items: flex-start;
+    display: flex;
+    gap: 24px;
+    width: 100%;
+  }
+
+  .qcart__summary-label {
+    color: $g600;
+    flex: 1 1 auto;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 25px;
+    min-width: 0;
+    text-align: right;
+  }
+
+  .qcart__summary-value {
+    color: $ink;
+    flex: 0 0 auto;
+    font-family: 'Poppins', 'GE SS Two', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 25px;
+    white-space: nowrap;
+  }
+
+  .qcart__summary-row--discount {
+    .qcart__summary-label,
+    .qcart__summary-value { color: $red; }
+  }
+
+  .qcart__summary-row--aux { display: none !important; }
+
+  .qcart__summary-divider {
+    border-top: 1px solid #d7e6ee;
+    height: 0;
+    width: 100%;
+  }
+
+  .qcart__summary-total {
+    align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .qcart__summary-total-row {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    min-height: 28px;
+    width: 100%;
+  }
+
+  .qcart__summary-total-label {
+    color: $ink;
+    flex: 1 1 auto;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 25px;
+    min-width: 0;
+    text-align: right;
+  }
+
+  .qcart__summary-total-value {
+    color: $navy;
+    flex: 0 0 auto;
+    font-family: 'Poppins', 'GE SS Two', sans-serif;
+    font-size: 25px;
+    font-weight: 600;
+    line-height: 28px;
+    white-space: nowrap;
+  }
+
+  .qcart__totals-taxnote {
+    color: $g600;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    margin: 0;
+    text-align: right;
+    width: 100%;
+
+    span { color: $accent; }
+  }
+
+  .cart-submit-wrap {
+    margin: 0;
+    width: 100%;
+  }
+
+  #cart-submit {
+    width: 100%;
+
+    &::part(base),
+    .s-button-element {
+      background: $navy;
+      border: 1px solid $navy;
+      border-radius: 12px;
+      color: #fff;
+      font-family: 'GE SS Two', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      height: 56px;
+      line-height: 24px;
+      padding: 16px;
+      width: 100%;
     }
   }
 
+  @media (min-width: 768px) {
+    .qcart__totals { gap: 20px; }
+    .qcart__summary-title {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 24px;
+    }
+  }
   // ----------------------------------------------------------------
-  // Empty cart state — keep the starter placeholder, just center it
+  // Empty cart state - keep the starter placeholder, just center it
   // ----------------------------------------------------------------
   .no-content-placeholder { width: 100%; }
 
@@ -309,8 +489,8 @@
     .container { padding-inline: 15px; }
   }
 
-  // Mobile 428px keeps the exact Figma sizes (image 111×87, qty 139, pad 16).
-  // Only guard truly narrow phones (≤400 → 390 / 375 / 360) against overflow.
+  // Mobile 428px keeps the exact Figma sizes (image 111x87, qty 139, pad 16).
+  // Only guard truly narrow phones (<=400 -> 390 / 375 / 360) against overflow.
   @media (max-width: 400px) {
     .qcart__item-row  { column-gap: 8px; }
     .qcart__item-price { flex-wrap: wrap; }   // long sale price stacks, never overflows
