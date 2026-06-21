@@ -30472,16 +30472,18 @@ body.qside-open {
 .qpd__row {
   gap: 32px;
   align-items: flex-start;
+  direction: ltr;
+}
+.qpd__info {
+  order: 1;
+  width: 100%;
+  direction: rtl;
 }
 .qpd__gallery {
   margin: 0 !important;
 }
 .qpd__gallery {
   order: 2;
-}
-.qpd__info {
-  order: 1;
-  width: 100%;
 }
 @media (min-width: 768px) {
   .qpd__gallery {
@@ -30503,7 +30505,7 @@ body.qside-open {
   align-items: stretch;
 }
 .qpd__gallery .s-slider-container {
-  order: 2;
+  order: 1;
   flex: 1 1 0;
   min-width: 0;
   border-radius: 25px;
@@ -30522,7 +30524,7 @@ body.qside-open {
   border-radius: 25px;
 }
 .qpd__gallery .s-slider-thumbs {
-  order: 1;
+  order: 2;
   flex: 0 0 148px;
   width: 148px;
   height: 637px;
@@ -30986,12 +30988,17 @@ body.qside-open {
   flex: 1 0 0;
   width: 100%;
 }
-.qpd__btn .s-button-element,
-.qpd__btn button {
-  width: 100%;
-}
 .qpd__btn i {
   font-size: 16px;
+}
+.qpd__btn.sticky-product-bar__btn {
+  --salla-button-primary-background-color: #fff;
+}
+.qpd__btn.sticky-product-bar__btn .s-button-element {
+  width: 100% !important;
+}
+.qpd__btn.sticky-product-bar__btn .s-button-element {
+  min-height: 56px;
 }
 .qpd__btn--buy, .qpd__btn--buy .s-button-element, .qpd__btn--buy button {
   background: #30378e !important;

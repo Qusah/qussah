@@ -13,19 +13,21 @@
   max-width: none;
   padding-inline: 50px;
 
-  // ----- two columns: info LEFT, gallery RIGHT (RTL) -----
+  // ----- two columns: info on the LEFT, gallery on the RIGHT -----
+  // Force LTR on the flex row so order is unambiguous: order 1 = LEFT, 2 = RIGHT.
   &__row {
     gap: 32px;
     align-items: flex-start;
-  }
-  // gallery is first in DOM (slider needs it) → push to the RIGHT in RTL
-  &__gallery {
-    order: 2;
-    margin: 0 !important;
+    direction: ltr;
   }
   &__info {
-    order: 1;
+    order: 1;                 // LEFT
     width: 100%;
+    direction: rtl;           // text stays RTL inside
+  }
+  &__gallery {
+    order: 2;                 // RIGHT
+    margin: 0 !important;
   }
   @media (min-width: 768px) {
     &__gallery { width: 50%; flex: 0 0 50%; }
@@ -48,7 +50,7 @@
     // ----- main image (radius 25, takes remaining width) -----
     // main image RIGHT, thumb column LEFT
     .s-slider-container {
-      order: 2;                     // RIGHT
+      order: 1;                     // main image LEFT within gallery (Figma)
       flex: 1 1 0;
       min-width: 0;
       border-radius: 25px;
@@ -68,7 +70,7 @@
 
     // ----- thumb column: VERTICAL, 148 wide, 4 frames stacked -----
     .s-slider-thumbs {
-      order: 1;                     // LEFT of the main image
+      order: 2;                     // thumb column RIGHT within gallery (Figma)
       flex: 0 0 148px;
       width: 148px;
       height: 637px;
@@ -459,9 +461,15 @@
   &__btn {
     flex: 1 0 0;
     width: 100%;
-    .s-button-element,
-    button { width: 100%; }
     i { font-size: 16px; }
+  }
+  // salla-add-product-button (أضف للسلة): force its inner button full width + reset
+  &__btn.sticky-product-bar__btn {
+    --salla-button-primary-background-color: #fff;
+    .s-button-element {
+      width: 100% !important;
+      min-height: 56px;
+    }
   }
   // الشراء السريع — solid navy → hover cyan (matches homepage buttons)
   &__btn--buy,
