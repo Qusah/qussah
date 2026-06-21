@@ -1,174 +1,208 @@
+// ====================================================================
+// Add-to-cart mini-cart modal  (Figma node 6036:6374 — السلة popup)
+// The JS renders the cart items + order summary with the SAME markup/classes
+// as the cart page, wrapped in `.qcart`, so qissa-cart.scss does the heavy
+// lifting. This file owns only the modal shell (backdrop, white card, close X,
+// title) and the few single-column overrides needed inside the popup.
+// qissa-cart.scss is imported earlier in app.scss, so these overrides win.
+// ====================================================================
+
 .s-add-product-toast {
-  @apply fixed z-[9999] flex flex-col gap-4 bg-white shadow-default overflow-hidden w-screen p-5;
-  top: 0;
-  left: 0;
-  right: 0;
+  $navy: #30378e;
+  $ink: #0a1f30;
+  $line: #daeff7;
+  $accent: #e04956;
+  $redhov: #d50d1e;
+
+  @apply fixed inset-0 z-[9999] flex items-center justify-center p-4;
+  background: rgba(10, 31, 48, 0.45);
   opacity: 0;
-  transform: translateY(-100%);
-  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
 
   &.s-add-product-toast--visible {
     opacity: 1;
-    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
   }
 
-  @media (min-width: 768px) {
-    @apply w-[400px] rounded-lg;
-    top: 1rem;
-    left: auto;
-    right: auto;
+  // ---- white card ------------------------------------------------
+  &__dialog {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: min(720px, calc(100vw - 32px));
+    max-height: 90vh;
+    padding: 30px;
+    background: #fff;
+    border-radius: 30px;
+    box-shadow: 0 20px 60px rgba(10, 31, 48, 0.18);
+    overflow-y: auto; // whole modal scrolls so the summary/checkout never clip
+    transform: translateY(16px) scale(0.98);
+    transition: transform 0.3s ease;
 
-    [dir="rtl"] & {
-      left: 1rem;
-      transform: translateX(-100%);
-
-      &.s-add-product-toast--visible {
-        transform: translateX(0);
-      }
+    .s-add-product-toast--visible & {
+      transform: none;
     }
 
-    [dir="ltr"] & {
-      right: 1rem;
-      transform: translateX(100%);
+    // ---- custom scrollbar: just a floating navy thumb, transparent track
+    //      so it reads as part of the white modal, not a separate strip ----
+    scrollbar-width: thin; // Firefox
+    scrollbar-color: $navy transparent; // thumb / track
 
-      &.s-add-product-toast--visible {
-        transform: translateX(0);
+    &::-webkit-scrollbar {
+      width: 14px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: $navy;
+      border-radius: 999px;
+      border: 5px solid transparent; // keeps the thumb a slim pill inside the gutter
+      background-clip: padding-box;
+
+      &:hover {
+        background: #262c75;
+        background-clip: padding-box;
       }
     }
   }
 
-  &__progress {
-    @apply h-2 w-full bg-gray-100;
-  }
-
-  &__progress-bar {
-    @apply h-full bg-green-500;
-    transition: width 50ms linear;
-  }
-
-  &__header {
-    @apply flex items-center justify-between gap-2;
-  }
-
-  &__header-content {
-    @apply flex items-center gap-2.5;
-  }
-
-  &__icon {
-    @apply flex-shrink-0;
+  // ---- header (title right in RTL) ----
+  &__head {
+    display: flex;
+    align-items: center;
+    width: 100%;
   }
 
   &__title {
-    @apply text-sm font-bold text-gray-800;
+    width: 100%;
+    margin: 0;
+    color: $ink;
+    font-family: "GE SS Two", sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24px;
+    text-align: right;
   }
 
+  // ---- close X (Figma: red circle, top-left) ----
   &__close {
-    @apply flex-shrink-0 w-6 h-6 flex items-center justify-center cursor-pointer border-0 bg-transparent p-0;
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: $accent;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s ease;
 
     i {
-      @apply text-lg text-gray-400 transition-colors;
+      font-size: 13px;
+      line-height: 1;
     }
-
-    &:hover i {
-      @apply text-gray-600;
-    }
-  }
-
-  &__divider {
-    @apply h-px bg-gray-200;
-  }
-
-  &__body {
-    @apply flex gap-3 items-start;
-  }
-
-  &__image {
-    @apply flex-shrink-0 w-20 h-20 rounded-lg object-contain overflow-hidden bg-gray-50 border border-gray-100;
-
-    img {
-      @apply w-full h-full object-contain;
-    }
-
-    @media (min-width: 768px) {
-      @apply w-[88px] h-[88px];
-    }
-  }
-
-  &__details {
-    @apply flex-1 min-w-0 flex flex-col gap-1;
-  }
-
-  &__name {
-    @apply text-sm font-semibold text-gray-800 leading-snug no-underline block transition-colors;
-
     &:hover {
-      @apply text-primary;
+      background: $redhov;
     }
   }
 
-  &__options {
-    @apply flex flex-col gap-0.5 mt-1;
+  // ---- items column (scrolls with the whole modal, not on its own) ----
+  &__items {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
 
-    span {
-      @apply text-xs text-gray-500 leading-relaxed;
-
-      @media (min-width: 768px) {
-        @apply text-sm;
-      }
+    > form {
+      width: 100%;
     }
   }
 
-  &__show-more {
-    @apply text-xs text-primary font-medium underline mt-0.5;
+  // ================================================================
+  // Overrides for the reused .qcart styles inside the modal.
+  // Scoped `.s-add-product-toast .qcart …` -> higher specificity than
+  // qissa-cart.scss, so the page's two-column / desktop-row layout is
+  // forced into a single modal column.
+  // ================================================================
+  .qcart {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 
-    &:hover {
-      @apply no-underline;
+    // each item is a self-contained card; no page margins
+    .qcart__item {
+      margin-bottom: 0;
+      padding: 16px;
     }
 
-    @media (min-width: 768px) {
-      @apply text-sm;
+    // modal item layout: image (right) | name over qty | price | remove (left)
+    .qcart__item-row {
+      grid-template-columns: auto minmax(0, 1fr) auto auto;
+      grid-template-areas:
+        "thumb name  price remove"
+        "thumb qty   price remove";
+      align-items: center;
+      column-gap: 16px;
+      row-gap: 8px;
+    }
+
+    .qcart__item-thumb img {
+      width: 88px;
+      height: 70px;
+    }
+
+    .qcart__item-info h1 a,
+    .qcart__item-info h1 {
+      font-size: 18px;
+      line-height: 24px;
+      letter-spacing: 0;
+    }
+
+    salla-quantity-input {
+      width: 150px;
+      height: 40px;
+    }
+
+    // summary card fills the modal width (no sticky / fixed sidebar width)
+    .qcart__totals {
+      width: 100%;
     }
   }
 
-  &__price {
-    @apply flex-shrink-0 flex flex-col items-end gap-1 text-sm font-bold text-gray-800;
+  // ---- narrow phones ----
+  @media (max-width: 480px) {
+    @apply p-0 items-end;
 
-    @media (min-width: 768px) {
-      @apply text-base;
+    &__dialog {
+      width: 100%;
+      max-height: 92vh;
+      border-radius: 20px 20px 0 0;
+      padding: 20px;
     }
-  }
 
-  &__price-sale {
-    @apply text-red-800;
-  }
-
-  &__price-original {
-    @apply text-xs text-gray-500 line-through font-normal;
-
-    @media (min-width: 768px) {
-      @apply text-sm;
+    .qcart .qcart__item-row {
+      column-gap: 10px;
     }
-  }
-
-  &__actions {
-    @apply flex gap-3;
-
-    salla-button {
-      @apply flex-1;
-
-      svg {
-        @apply inline-flex flex-shrink-0;
-
-        path {
-          fill: none;
-        }
-      }
-      .s-button-btn {
-        @apply rounded-none;
-        &.s-button-gray-outline {
-          @apply border-gray-200 text-gray-800;
-        }
-      }
+    .qcart .qcart__item-thumb img {
+      width: 72px;
+      height: 58px;
+    }
+    .qcart salla-quantity-input {
+      width: 128px;
     }
   }
 }
