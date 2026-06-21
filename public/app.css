@@ -30493,6 +30493,71 @@ body.qside-open {
     flex: 0 0 50%;
   }
 }
+.qpd__gallery .details-slider {
+  display: flex !important;
+}
+.qpd__gallery .details-slider {
+  flex-direction: row;
+  gap: 24px;
+  align-items: stretch;
+}
+.qpd__gallery .s-slider-container {
+  order: 2;
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: 25px;
+  overflow: hidden;
+  height: 637px;
+}
+.qpd__gallery .homeslider__slide {
+  border-radius: 25px;
+  overflow: hidden;
+}
+.qpd__gallery .homeslider__slide img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 25px;
+}
+.qpd__gallery .s-slider-thumbs {
+  order: 1;
+  flex: 0 0 148px;
+  width: 148px;
+  height: 637px;
+}
+.qpd__gallery .s-slider-thumbs-container {
+  height: 100%;
+}
+.qpd__gallery .slide--one-fourth {
+  border: 1px solid #dee2e6;
+  border-radius: 25px;
+  padding: 10px;
+  background: #fff;
+  box-sizing: border-box;
+  height: auto;
+}
+.qpd__gallery .slide--one-fourth img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 20px;
+  background: transparent;
+}
+.qpd__gallery .slide--one-fourth.swiper-slide-thumb-active {
+  border-color: #30378e;
+}
+.qpd__gallery .magnify-wrapper::after,
+.qpd__gallery .s-slider-container {
+  position: relative;
+}
+.qpd__gallery .btn--wishlist {
+  z-index: 3;
+}
+.qpd__gallery .promotion-title {
+  z-index: 3;
+}
 .qpd__titlerow {
   display: flex;
   align-items: center;
@@ -30661,12 +30726,40 @@ body.qside-open {
 }
 .qpd__installment {
   display: block;
+}
+.qpd__installment:empty {
+  margin: 0;
+}
+.qpd__installment:not(:empty) {
   margin-bottom: 16px;
 }
-.qpd__installment::part(base),
-.qpd__installment .s-installment-list,
-.qpd__installment [class*=installment] {
+.qpd__installment .s-installment-app-tabby-content,
+.qpd__installment .s-installment-app-tamara-content,
+.qpd__installment [class*=installment-app],
+.qpd__installment [class*=installment-list] {
+  display: flex;
+  flex-wrap: wrap;
   gap: 16px;
+}
+.qpd__installment [class*=installment-app] > *,
+.qpd__installment [class*=installment-method],
+.qpd__installment .s-installment-item {
+  flex: 1 1 0;
+  min-width: 0;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: right;
+  direction: rtl;
+}
+.qpd__installment [class*=installment] a,
+.qpd__installment [class*=installment] [class*=learn] {
+  color: #30378e;
+  font-size: 13px;
+}
+.qpd__installment [class*=installment] p {
+  font-size: 14px;
+  color: #0a1f30;
 }
 .qpd__gift {
   display: flex;
