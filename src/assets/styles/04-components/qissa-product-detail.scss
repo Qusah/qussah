@@ -645,3 +645,97 @@
     &__gift-btn { width: 100%; }
   }
 }
+
+// ====================================================================
+// Recently-viewed products — Figma node 6036:5118
+// Header band: eyebrow + title + subtitle (RIGHT) + view-all btn (LEFT).
+// Cards use the global qissa-product-card styling.
+// ====================================================================
+.qpd-viewed {
+  font-family: 'GE SS Two', sans-serif;
+  padding-block: 40px;
+
+  .container { max-width: none; padding-inline: 50px; }
+
+  // header row: button LEFT, intro RIGHT (RTL → use flex-start to pin right)
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    margin-bottom: 24px;
+  }
+  &__intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;   // content to the RIGHT
+    gap: 12px;
+    text-align: right;
+    order: 2;                // RIGHT
+  }
+  &__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    height: 39px;
+    padding: 5px 15px;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    background: linear-gradient(to right, #daeff7, #fff);
+    color: #30378e;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.16px;
+  }
+  &__title {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 38px;
+    letter-spacing: -0.2px;
+    color: #0a1f30;
+  }
+  &__title-hl { color: #30378e; }
+  &__subtitle {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 24px;
+    color: #6c757d;
+  }
+
+  // view-all button (cyan, radius 16, h55)
+  &__all {
+    order: 1;                // LEFT
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 55px;
+    padding: 16px;
+    border: 1px solid #91e6f7;
+    border-radius: 16px;
+    background: #91e6f7;
+    color: #0a1f30;
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: background .15s, border-color .15s;
+    i { font-size: 16px; }
+    .qpd__cart-icon { width: 23px; height: 23px; flex: 0 0 23px; }
+    &:hover { background: #7fdcef; border-color: #7fdcef; }
+  }
+
+  // slider cards keep the global qissa-product-card look
+  &__slider { display: block; }
+
+  @media (max-width: 768px) {
+    padding-block: 24px;
+    .container { padding-inline: 15px; }
+    &__head { flex-direction: column; align-items: stretch; gap: 16px; }
+    &__intro { align-items: flex-end; order: 1; }
+    &__all { order: 2; width: 100%; }
+    &__title { font-size: 24px; line-height: 30px; }
+  }
+}
