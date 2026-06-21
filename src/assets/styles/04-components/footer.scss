@@ -120,6 +120,7 @@
 
   // ================= mobile (Figma 6036:22124) =================
   @media (max-width: 768px) {
+    .container { padding-inline: 15px; }
     &__cols { flex-wrap: wrap; gap: 24px; padding-block: 32px; }
 
     // About on its own row; the other four pair up 2-per-row
@@ -185,13 +186,44 @@
     &--visa { width: 64px; }
   }
 
-  // ---- mobile (Figma 6036:22227): stacked, radius 20 ----
+  // ---- mobile (Figma 6036:15433): stacked, radius 20 ----
   @media (max-width: 768px) {
-    flex-direction: column-reverse;      // payments top → copyright bottom
-    gap: 12px; padding: 16px; border-radius: 20px;
+    box-sizing: border-box;
+    width: 100%;
+    flex-direction: column-reverse;      // payments top, copyright bottom
+    gap: 12px;
+    margin: 0 0 24px;
+    padding: 16px clamp(24px, 12vw, 64px);
+    border-radius: 20px;
 
-    .qissa-footer-bottom__copyright { flex: 0 0 auto; width: 100%; text-align: center; }
+    .qissa-footer-bottom__copyright {
+      flex: 0 0 auto;
+      width: 100%;
+      text-align: center;
+      white-space: nowrap;
+    }
     .qissa-footer-bottom__tax { justify-content: center; }
-    .qissa-footer-bottom__payments { flex-wrap: wrap; justify-content: center; }
+    .qissa-footer-bottom__tax-num { white-space: nowrap; }
+    .qissa-footer-bottom__payments {
+      width: 100%;
+      flex-wrap: nowrap;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 390px) {
+    padding-inline: 32px;
+
+    .qissa-footer-bottom__pay { width: 52px; padding-inline: 6px; }
+    .qissa-footer-bottom__pay--visa { width: 56px; }
+    .qissa-footer-bottom__copyright,
+    .qissa-footer-bottom__tax-num { font-size: 13px; }
+  }
+
+  @media (max-width: 360px) {
+    padding-inline: 24px;
+
+    .qissa-footer-bottom__pay { width: 50px; }
+    .qissa-footer-bottom__pay--visa { width: 54px; }
   }
 }

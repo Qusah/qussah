@@ -160,36 +160,59 @@ body, main, #app { background: transparent; }
 // No top bar. Pill menu collapses to a hamburger. Cart keeps price + badge,
 // profile collapses to a plain user icon. Layout: actions left, logo+burger right.
 @media (max-width: 768px) {
-  .qheader { padding-top: 16px; }
+  .qheader { padding-top: 15px; }
+  .qheader .container { padding-inline: 15px; }
 
   // remove desktop chrome
   .qheader .qheader-topwrap { display: none; }   // no utility top bar on mobile
   .qheader .qheader-menu    { display: none; }    // pill replaced by hamburger
   .qheader .qheader-burger  { display: inline-flex; }
 
-  // nav: tighter, edges 16px (Figma menu x=16)
-  .qheader .qheader-nav { height: 64px; padding: 12px 16px; }
+  // nav: Figma mobile header is a 398px banner in a 428px frame.
+  .qheader .qheader-nav {
+    direction: ltr;
+    height: 70px;
+    min-height: 70px;
+    padding: 15px;
+    border-radius: 15px;
+    overflow: hidden;
+  }
+  .qheader--solid .qheader-nav { margin-bottom: 24px; }
 
-  // compact cart: keep "سلة المشتريات" + price + badge (Figma 187:19971)
-  .qheader .qheader-actions { gap: 12px; }
-  .qheader .qheader-act__txt b  { font-size: 11px; }
-  .qheader .qheader-act__txt em { font-size: 12px; }
+  // compact mobile controls: icons only, matching node 6036:15129.
+  .qheader .qheader-actions { order: 1; gap: 20px; direction: rtl; }
+  .qheader .qheader-act { gap: 0; }
+  .qheader .qheader-act__txt { display: none; }
   .qheader .qheader-act__ic { width: 36px; height: 36px; }
 
-  // profile collapses to icon only (hide greeting/login text)
-  .qheader .qheader-actions .qheader-act:last-child .qheader-act__txt { display: none; }
+  .qheader .qheader-brand { order: 3; direction: rtl; }
+  .qheader .qheader-logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 1;
+    transform: translate(-50%, -50%);
+  }
 
-  // smaller logo (Figma 75.9×39.8 → ~76px wide)
-  .qheader .qheader-logo img { width: 76px; }
+  // smaller logo (Figma target is about 76px wide).
+  .qheader .qheader-logo img {
+    display: block;
+    width: 76px;
+    max-height: 40px;
+    object-fit: contain;
+  }
 
-  // hero overlap is gentler on mobile so the rounded top shows
-  .qheader > .container:last-of-type { margin-bottom: -76px; }
+  // Only the homepage header overlaps the hero on mobile.
+  .qheader--home > .container:last-of-type { margin-bottom: -76px; }
+  .qheader--solid > .container:last-of-type { margin-bottom: 0; }
 }
 
-// very small phones — drop the cart text too, keep icons only
+// very small phones - keep the controls compact without changing layout.
 @media (max-width: 420px) {
-  .qheader .qheader-act__txt { display: none; }
-  .qheader .qheader-nav { padding: 12px 12px; }
+  .qheader .container { padding-inline: 15px; }
+  .qheader .qheader-nav { padding: 15px; }
+  .qheader .qheader-actions { gap: 12px; }
+  .qheader .qheader-logo img { width: 68px; }
 }
 
 // ====================================================================
