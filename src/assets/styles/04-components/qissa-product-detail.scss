@@ -327,7 +327,8 @@
     object-fit: contain;
     object-position: right center;
     border-radius: 10px;
-    &--tabby { width: 90px; height: 50px; border-radius: 0; }
+    // tabby SVG viewBox is 100x40 (2.5:1) — keep that ratio, don't stretch
+    &--tabby { width: 90px; height: 36px; border-radius: 0; object-fit: contain; }
   }
   &__pay-text {
     width: 100%;
