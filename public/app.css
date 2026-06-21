@@ -31054,7 +31054,7 @@ body.qside-open {
 }
 .qpd-tabs__nav {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 0;
 }
 .qpd-tabs__tab {
