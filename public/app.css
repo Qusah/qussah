@@ -30970,9 +30970,17 @@ body.qside-open {
   gap: 16px;
   margin-top: 0;
 }
-.qpd__btn, .qpd__btn .s-button-element, .qpd__btn button {
+.qpd__btn {
+  flex: 1 0 0;
+  width: 100%;
+}
+.qpd__btn--buy, .qpd__btn--cart .s-button-element {
+  width: 100% !important;
+  display: inline-flex !important;
+  border: 1px solid #30378e !important;
+}
+.qpd__btn--buy, .qpd__btn--cart .s-button-element {
   height: 56px;
-  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
@@ -30980,40 +30988,34 @@ body.qside-open {
   font-family: "GE SS Two", sans-serif;
   font-size: 16px;
   font-weight: 500;
-  border: 1px solid #30378e;
   cursor: pointer;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
-.qpd__btn {
-  flex: 1 0 0;
-  width: 100%;
-}
-.qpd__btn i {
+.qpd__btn--buy i, .qpd__btn--cart .s-button-element i {
   font-size: 16px;
 }
-.qpd__btn.sticky-product-bar__btn {
-  --salla-button-primary-background-color: #fff;
+.qpd__btn--cart {
+  border: none !important;
+  height: auto !important;
+  background: none !important;
 }
-.qpd__btn.sticky-product-bar__btn .s-button-element {
-  width: 100% !important;
+.qpd__btn--cart > div {
+  width: 100%;
 }
-.qpd__btn.sticky-product-bar__btn .s-button-element {
-  min-height: 56px;
-}
-.qpd__btn--buy, .qpd__btn--buy .s-button-element, .qpd__btn--buy button {
+.qpd__btn--buy {
   background: #30378e !important;
   color: #fff !important;
 }
-.qpd__btn--buy:hover, .qpd__btn--buy:hover .s-button-element, .qpd__btn--buy:hover button {
+.qpd__btn--buy:hover {
   background: #91e6f7 !important;
   border-color: #91e6f7 !important;
   color: #30378e !important;
 }
-.qpd__btn--cart .s-button-element, .qpd__btn--cart button {
+.qpd__btn--cart .s-button-element {
   background: #fff !important;
   color: #30378e !important;
 }
-.qpd__btn--cart:hover .s-button-element, .qpd__btn--cart:hover button {
+.qpd__btn--cart:hover .s-button-element {
   background: #91e6f7 !important;
   border-color: #91e6f7 !important;
   color: #30378e !important;

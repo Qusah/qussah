@@ -440,13 +440,16 @@
     gap: 16px;
     margin-top: 0;
   }
-  // shared button look. الشراء السريع IS a plain <button> (style self);
-  // أضف للسلة is salla-add-product-button (style its inner <button>).
-  &__btn,
-  &__btn .s-button-element,
-  &__btn button {
+  // Each button column takes half the row.
+  &__btn { flex: 1 0 0; width: 100%; }
+
+  // The actual visible button: the plain <button> (buy) OR the inner
+  // .s-button-element (cart). The salla host itself stays borderless.
+  &__btn--buy,
+  &__btn--cart .s-button-element {
+    width: 100% !important;
     height: 56px;
-    display: inline-flex;
+    display: inline-flex !important;
     align-items: center;
     justify-content: center;
     gap: 8px;
@@ -454,45 +457,32 @@
     font-family: 'GE SS Two', sans-serif;
     font-size: 16px;
     font-weight: 500;
-    border: 1px solid #30378e;
+    border: 1px solid #30378e !important;
     cursor: pointer;
     transition: background .15s, color .15s, border-color .15s;
-  }
-  &__btn {
-    flex: 1 0 0;
-    width: 100%;
     i { font-size: 16px; }
   }
-  // salla-add-product-button (أضف للسلة): force its inner button full width + reset
-  &__btn.sticky-product-bar__btn {
-    --salla-button-primary-background-color: #fff;
-    .s-button-element {
-      width: 100% !important;
-      min-height: 56px;
-    }
+
+  // salla host = transparent flex shell, NO border/height of its own
+  &__btn--cart {
+    border: none !important;
+    height: auto !important;
+    background: none !important;
+    > div { width: 100%; }
   }
-  // الشراء السريع — solid navy → hover cyan (matches homepage buttons)
-  &__btn--buy,
-  &__btn--buy .s-button-element,
-  &__btn--buy button {
+
+  // الشراء السريع — solid navy → hover cyan
+  &__btn--buy {
     background: #30378e !important;
     color: #fff !important;
-  }
-  &__btn--buy:hover,
-  &__btn--buy:hover .s-button-element,
-  &__btn--buy:hover button {
-    background: #91e6f7 !important;
-    border-color: #91e6f7 !important;
-    color: #30378e !important;
+    &:hover { background: #91e6f7 !important; border-color: #91e6f7 !important; color: #30378e !important; }
   }
   // أضف للسلة — outline navy → hover cyan fill
-  &__btn--cart .s-button-element,
-  &__btn--cart button {
+  &__btn--cart .s-button-element {
     background: #fff !important;
     color: #30378e !important;
   }
-  &__btn--cart:hover .s-button-element,
-  &__btn--cart:hover button {
+  &__btn--cart:hover .s-button-element {
     background: #91e6f7 !important;
     border-color: #91e6f7 !important;
     color: #30378e !important;
