@@ -2367,10 +2367,15 @@ textarea.s-input{
     height: 6rem;
 }
 .qcart salla-cart-coupons .s-cart-coupons-coupon-input-container .s-input {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
   background: transparent;
   border: 0;
   box-shadow: none;
+  caret-color: #30378e;
   color: #0a1f30;
+  direction: rtl;
   flex: 1 1 auto;
   font-family: "GE SS Two", sans-serif;
   font-size: 14px;
@@ -2378,8 +2383,11 @@ textarea.s-input{
   height: 100%;
   line-height: 20px;
   min-width: 0;
+  outline: 0;
   padding: 0;
+  position: static;
   text-align: right;
+  z-index: auto;
 }
 .qcart salla-cart-coupons .s-cart-coupons-coupon-input-container .s-input::-moz-placeholder {
   color: #ced4da;
@@ -31629,16 +31637,24 @@ body.qside-open {
 }
 .qcart .qcart__coupon {
   width: 100%;
+  min-width: 0;
   margin: 0;
+  overflow: visible;
 }
 .qcart salla-cart-coupons {
   display: block;
   width: 100%;
+  min-width: 0;
+  opacity: 1;
+  visibility: visible;
 }
 .qcart salla-cart-coupons .s-cart-coupons-wrapper {
   border: 0;
+  display: block;
   margin: 0;
+  opacity: 1;
   padding: 0;
+  visibility: visible;
   width: 100%;
 }
 .qcart salla-cart-coupons .s-cart-coupons-input-section {
@@ -31676,12 +31692,18 @@ body.qside-open {
 .qcart salla-cart-coupons .s-cart-coupons-coupon-input-container .form-input,
 .qcart salla-cart-coupons .s-cart-coupons-coupon-input-container .s-input {
   border: 0 !important;
+  outline: 0 !important;
 }
 .qcart salla-cart-coupons .s-cart-coupons-coupon-input-container .form-input,
 .qcart salla-cart-coupons .s-cart-coupons-coupon-input-container .s-input {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
   background: transparent;
   box-shadow: none;
+  caret-color: #30378e;
   color: #0a1f30;
+  direction: rtl;
   flex: 1 1 auto;
   font-family: "GE SS Two", sans-serif;
   font-size: 14px;
@@ -31690,7 +31712,9 @@ body.qside-open {
   line-height: 20px;
   min-width: 0;
   padding: 0;
+  position: static;
   text-align: right;
+  z-index: auto;
 }
 .qcart salla-cart-coupons .s-cart-coupons-coupon-input-container .form-input::-moz-placeholder, .qcart salla-cart-coupons .s-cart-coupons-coupon-input-container .s-input::-moz-placeholder {
   color: #ced4da;
@@ -31712,17 +31736,46 @@ body.qside-open {
   align-items: center;
   background: #fff;
   border: 1px solid #30378e;
+  box-shadow: none;
   color: #30378e;
   display: inline-flex;
   flex: 0 0 auto;
   font-family: "GE SS Two", sans-serif;
   font-size: 14px;
   font-weight: 500;
+  height: 41px;
   justify-content: center;
   line-height: 20px;
-  min-height: 34px;
-  padding: 10px 16px 11px;
+  margin: 0;
+  min-height: 41px;
+  outline: 0;
+  overflow: hidden;
+  padding: 0 16px;
   white-space: nowrap;
+}
+.qcart salla-cart-coupons .s-cart-coupons-coupon-button::part(base),
+.qcart salla-cart-coupons .s-cart-coupons-coupon-button-apply::part(base),
+.qcart salla-cart-coupons .s-cart-coupons-coupon-button-remove::part(base),
+.qcart salla-cart-coupons .s-cart-coupons-coupon-button .s-button-element,
+.qcart salla-cart-coupons .s-cart-coupons-coupon-button-apply .s-button-element,
+.qcart salla-cart-coupons .s-cart-coupons-coupon-button-remove .s-button-element,
+.qcart salla-cart-coupons .s-cart-coupons-coupon-button button,
+.qcart salla-cart-coupons .s-cart-coupons-coupon-button-apply button,
+.qcart salla-cart-coupons .s-cart-coupons-coupon-button-remove button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  box-shadow: none;
+  color: inherit;
+  display: flex;
+  font: inherit;
+  height: 100%;
+  justify-content: center;
+  line-height: inherit;
+  min-height: 0;
+  outline: 0;
+  padding: 0;
 }
 .qcart salla-cart-coupons .s-cart-coupons-coupon-error {
   color: #d50d1e;
@@ -31734,7 +31787,10 @@ body.qside-open {
   width: 100%;
 }
 .qcart salla-cart-coupons .s-cart-coupons-slider {
-  display: none;
+  margin-top: 8px;
+  overflow: hidden;
+  padding: 0;
+  width: 100%;
 }
 .qcart .qcart__summary-row {
   align-items: flex-start;

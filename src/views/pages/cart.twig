@@ -182,11 +182,9 @@
                     <div class="qcart__totals relative transition-height duration-1000">
                         <h2 class="qcart__summary-title">ملخص الطلب</h2>
 
-                        {% if store.settings.cart.apply_coupon_enabled %}
-                            <div class="qcart__coupon">
-                                <salla-cart-coupons></salla-cart-coupons>
-                            </div>
-                        {% endif %}
+                        <div class="qcart__coupon">
+                            <salla-cart-coupons></salla-cart-coupons>
+                        </div>
 
                         <div class="qcart__summary-row qcart__summary-row--subtotal">
                             <span class="qcart__summary-label">المجموع</span>

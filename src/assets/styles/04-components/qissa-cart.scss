@@ -252,17 +252,25 @@
 
   .qcart__coupon {
     width: 100%;
+    min-width: 0;
     margin: 0;
+    overflow: visible;
   }
 
   salla-cart-coupons {
     display: block;
     width: 100%;
+    min-width: 0;
+    opacity: 1;
+    visibility: visible;
 
     .s-cart-coupons-wrapper {
       border: 0;
+      display: block;
       margin: 0;
+      opacity: 1;
       padding: 0;
+      visibility: visible;
       width: 100%;
     }
 
@@ -303,10 +311,13 @@
 
     .s-cart-coupons-coupon-input-container .form-input,
     .s-cart-coupons-coupon-input-container .s-input {
+      appearance: none;
       background: transparent;
       border: 0 !important;
       box-shadow: none;
+      caret-color: $navy;
       color: $ink;
+      direction: rtl;
       flex: 1 1 auto;
       font-family: 'GE SS Two', sans-serif;
       font-size: 14px;
@@ -314,10 +325,12 @@
       height: 100%;
       line-height: 20px;
       min-width: 0;
+      outline: 0 !important;
       padding: 0;
+      position: static;
       text-align: right;
+      z-index: auto;
     }
-
     .s-cart-coupons-coupon-input-container .form-input::placeholder,
     .s-cart-coupons-coupon-input-container .s-input::placeholder {
       color: $g400;
@@ -331,19 +344,48 @@
       background: #fff;
       border: 1px solid $navy;
       border-radius: 8px !important;
+      box-shadow: none;
       color: $navy;
       display: inline-flex;
       flex: 0 0 auto;
       font-family: 'GE SS Two', sans-serif;
       font-size: 14px;
       font-weight: 500;
+      height: 41px;
       justify-content: center;
       line-height: 20px;
-      min-height: 34px;
-      padding: 10px 16px 11px;
+      margin: 0;
+      min-height: 41px;
+      outline: 0;
+      overflow: hidden;
+      padding: 0 16px;
       white-space: nowrap;
     }
 
+    .s-cart-coupons-coupon-button::part(base),
+    .s-cart-coupons-coupon-button-apply::part(base),
+    .s-cart-coupons-coupon-button-remove::part(base),
+    .s-cart-coupons-coupon-button .s-button-element,
+    .s-cart-coupons-coupon-button-apply .s-button-element,
+    .s-cart-coupons-coupon-button-remove .s-button-element,
+    .s-cart-coupons-coupon-button button,
+    .s-cart-coupons-coupon-button-apply button,
+    .s-cart-coupons-coupon-button-remove button {
+      align-items: center;
+      background: transparent;
+      border: 0;
+      border-radius: 7px;
+      box-shadow: none;
+      color: inherit;
+      display: flex;
+      font: inherit;
+      height: 100%;
+      justify-content: center;
+      line-height: inherit;
+      min-height: 0;
+      outline: 0;
+      padding: 0;
+    }
     .s-cart-coupons-coupon-error {
       color: $red;
       display: block;
@@ -354,7 +396,12 @@
       width: 100%;
     }
 
-    .s-cart-coupons-slider { display: none; }
+    .s-cart-coupons-slider {
+      margin-top: 8px;
+      overflow: hidden;
+      padding: 0;
+      width: 100%;
+    }
   }
 
   .qcart__summary-row {
