@@ -32578,32 +32578,32 @@ body.qside-open {
 .qcart .qcart__layout {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   gap: 24px;
 }
 .qcart .qcart__items {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   min-width: 0;
 }
 .qcart .qcart__items > form {
-  display: block;
+  width: 100%;
+}
+.qcart .qcart__summary {
   width: 100%;
 }
 @media (min-width: 1024px) {
   .qcart .qcart__layout {
     flex-direction: row;
+    align-items: flex-start;
   }
   .qcart .qcart__items {
+    flex: 1 1 auto;
     width: auto;
-    flex: 1 1 0;
-    min-width: 0;
   }
   .qcart .qcart__summary {
     flex: 0 0 478px;
     width: 478px;
-    align-self: flex-start;
-    margin-left: 0;
-    margin-right: 0;
   }
 }
 .qcart .qcart__item {

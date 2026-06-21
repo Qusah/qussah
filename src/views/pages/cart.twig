@@ -57,8 +57,8 @@
         </nav>
         <h1 class="sr-only">{{ trans('blocks.header.cart') }}</h1>
         <salla-conditional-offer></salla-conditional-offer>
-        <div class="qcart__layout pt-5 flex flex-col items-start lg:flex-row pb-6 lg:pb-20">
-            <div class="main-content qcart__items w-full">
+        <div class="qcart__layout pt-5 pb-6 lg:pb-20">
+            <div class="main-content qcart__items">
                 {% hook 'cart:items.start' %}
 
                 {% for item in cart.items %}
@@ -167,7 +167,7 @@
 
             <!-- sidebar -->
             {% if cart.items|length %}
-                <div class="qcart__summary sticky top-24 w-full">
+                <div class="qcart__summary sticky top-24">
                     <div class="shadow-default bg-white p-5 xs:p-7 rounded-md mb-5 relative {{ cart.free_shipping_bar ? '' : 'hidden' }}" id="free-shipping">
                         <div class="flex rtl:space-x-reverse space-x-3 items-center">
                             <i class="bg-primary text-white rounded-icon sicon-shipping-fast {{ theme.is_rtl ? 'flip-x':'' }}"></i>

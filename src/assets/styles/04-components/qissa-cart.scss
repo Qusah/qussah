@@ -32,38 +32,32 @@
   .container { max-width: none; padding-inline: 50px; }
 
   // ----------------------------------------------------------------
-  // Two-column page layout — SCSS OWNS IT (resilient to stale / purged
-  // Tailwind utilities). RTL: items column RIGHT, summary column LEFT.
+  // Two-column page layout — FULLY OWNED BY SCSS (no Tailwind layout
+  // utilities left in the markup, so nothing can fight it). RTL: items
+  // column RIGHT, summary column LEFT on desktop; single stacked column
+  // below 1024px. Fallback if CSS ever lags: plain block stack (safe).
   // ----------------------------------------------------------------
   .qcart__layout {
     display: flex;
-    flex-direction: column;       // mobile/tablet: items stacked above summary
-    align-items: flex-start;      // top-align both columns (summary never drops)
+    flex-direction: column;
     gap: 24px;
   }
 
-  // items column = a plain VERTICAL stack of item cards (never a row)
+  // The items column is ITSELF a vertical flex → cart cards always stack
+  // vertically and can NEVER sit side by side, whatever else is on them.
   .qcart__items {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     min-width: 0;
-    > form { display: block; width: 100%; }   // each cart item is a full-width block
+    > form { width: 100%; }
   }
+  .qcart__summary { width: 100%; }
 
   @media (min-width: 1024px) {
-    .qcart__layout { flex-direction: row; }    // desktop: two columns
-    // items column (right) takes the remaining width (~845px)
-    .qcart__items {
-      width: auto;
-      flex: 1 1 0;
-      min-width: 0;
-    }
-    // order-summary column (left) — Figma 478px, top-aligned with the items
-    .qcart__summary {
-      flex: 0 0 478px;
-      width: 478px;
-      align-self: flex-start;
-      margin-inline: 0;
-    }
+    .qcart__layout { flex-direction: row; align-items: flex-start; }  // two columns, top-aligned
+    .qcart__items  { flex: 1 1 auto; width: auto; }                   // right column (~845px)
+    .qcart__summary { flex: 0 0 478px; width: 478px; }                // left column (Figma 478)
   }
 
   // ================================================================
