@@ -99,9 +99,9 @@
     #}
     <div class="s-blocks-wrapper s-before-product-info !mt-0">{% hook 'product.single.before_product_info' %}</div>
 
-    <div class="container container--product-details">
-        <div class="flex flex-col items-start md:flex-row" id="product-{{ product.id }}">
-            <div class="sidebar md:sticky top-24 w-full md:!w-2/4 rtl:ml-8 ltr:mr-8 mb-5 md:mb-0 overflow-hidden shrink-0">
+    <div class="container container--product-details qpd">
+        <div class="qpd__row flex flex-col items-start md:flex-row" id="product-{{ product.id }}">
+            <div class="sidebar qpd__gallery md:sticky top-24 w-full md:!w-2/4 rtl:ml-8 ltr:mr-8 mb-5 md:mb-0 overflow-hidden shrink-0">
                 {% set has_many_images = product.images|length > 1 %}
                 <salla-slider
                         id="details-slider-{{ product.id }}"
@@ -192,7 +192,7 @@
                 </salla-slider>
             </div>
 
-            <div class="main-content md:sticky md:overflow-hidden top-24 w-full md:w-2/4">
+            <div class="main-content qpd__info md:sticky md:overflow-hidden top-24 w-full md:w-2/4">
                 {% hook 'product:single.description.start' %}
 
                 {% if product.brand.name %}
@@ -206,7 +206,20 @@
                     </div>
                 {% endif %}
 
-                <h1 class="text-xl md:text-2xl leading-10 font-bold mb-6 text-gray-800">{{ product.name }}</h1>
+                {# Title row: title (right) + wishlist/share icon buttons (left) #}
+                <div class="qpd__titlerow">
+                    <div class="qpd__iconbtns">
+                        <salla-button
+                                class="qpd__iconbtn btn--wishlist animated sws"
+                                data-id="{{ product.id }}"
+                                onclick="salla.wishlist.toggle('{{ product.id }}')"
+                                shape="icon" fill="outline" color="light" aria-label="add to wishlist">
+                            <i class="sicon-heart"></i>
+                        </salla-button>
+                        <salla-social-share class="qpd__iconbtn qpd__share" aria-label="social share"></salla-social-share>
+                    </div>
+                    <h1 class="qpd__title">{{ product.name }}</h1>
+                </div>
 
                 {% if product.subtitle %}
                     <h2 class="product-entry__sub-title text-sm text-gray-500 leading-6 mb-2.5">
@@ -214,29 +227,37 @@
                     </h2>
                 {% endif %}
 
+                {# Stock row: sold + remaining (Figma) #}
+                {% if product.sold_quantity or product.can_show_remained_quantity %}
+                    <div class="qpd__stock">
+                        {% if product.sold_quantity %}
+                            <span class="qpd__stock-item">
+                                <i class="sicon-fire"></i>
+                                {{ trans('pages.products.sold')|default('تم شراءه') }} <b>{{ product.sold_quantity }}</b> {{ trans('pages.products.times')|default('مرة') }}
+                            </span>
+                        {% endif %}
+                        {% if product.sold_quantity and product.can_show_remained_quantity %}<span class="qpd__stock-sep"></span>{% endif %}
+                        {% if product.can_show_remained_quantity %}
+                            <span class="qpd__stock-item">
+                                <i class="sicon-box-bankers"></i>
+                                {{ trans('pages.products.remained')|default('المتبقى') }} <b>{{ product.quantity }}</b> {{ trans('pages.products.unit')|default('وحدة') }}
+                            </span>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
                 {% if product.rating %}
-                    <salla-rating-stars value="{{ product.rating.stars }}"
-                                        reviews="{{ product.rating.count }}"></salla-rating-stars>
+                    <div class="qpd__rating">
+                        <salla-rating-stars value="{{ product.rating.stars }}"
+                                            reviews="{{ product.rating.count }}"></salla-rating-stars>
+                    </div>
                 {% endif %}
 
                 {% if product.is_taxable %}
                     <small class="color-grey">{{ trans('pages.products.tax_included') }}</small>
                 {% endif %}
-                {# Price #}
-                <div class="flex whitespace-nowrap gap-4 items-center">
-                  <div class="{{ product.is_on_sale ? '' : 'hidden' }} space-x-2 rtl:space-x-reverse whitespace-nowrap">
-                      <p class="text-red-800 font-bold text-xl inline-block">{{product.sale_price|money}}</p>
-                      <span class="text-gray-500 line-through">{{product.regular_price|money}}</span>
-                  </div>
-                  <div class="gap-4 {{ product.is_on_sale ? 'hidden' : 'flex' }}">
-                      {% if product.starting_price %} 
-                          <span class="">{{ trans('pages.products.starting_price') }}</span>
-                      {% endif %} 
-                          <p class=" font-bold text-xl inline-block"> {{product.starting_price ? product.starting_price|money : product.price|money }}</p>
-                  </div>
-                </div>
 
-                <div class="product__description p-2 px-5 sm:p-1 leading-7 mb-3">
+                <div class="product__description qpd__desc p-2 px-5 sm:p-1 leading-7 mb-3">
                     {% set product_desc = product.description|replace({"&nbsp;":"\n"}) %}
                     {% if product.has_read_more %}
                         <article class="article article--main relative leading-8 overflow-hidden transition-all max-h-0 duration-300 py-4"
@@ -265,51 +286,48 @@
                     </div>
                 {% endif %}
 
-                <div class="flex rtl:space-x-reverse space-x-3">
-                    <salla-social-share class="inline-flex mb-5" aria-label="social share"></salla-social-share>
+                {# Figma chips: packs / sheets-per-box. Driven by product tags so it's data-real. #}
+                {% if product.tags|length and theme.settings.get('show_tags', true) %}
+                    <div class="qpd__chips">
+                        {% for tag in product.tags %}
+                            <a href="{{ tag.url }}" class="qpd__chip">{{ tag.name }}</a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
 
-                    <salla-button
-                            class="btn--wishlist animated hidden sm:inline-flex"
-                            data-id="{{ product.id }}"
-                            onclick="salla.wishlist.toggle('{{ product.id }}')"
-                            shape="icon"
-                            fill="outline"
-                            color="light"
-							aria-label="add to wishlist">
-                        <i class="sicon-heart"></i>
-                    </salla-button>
-                </div>
-
-                {% if product.sold_quantity or product.can_show_remained_quantity %}
-                    <div class="bg-white py-2.5 mb-5 rounded-md inline-flex text-sm">
-                        {% if product.sold_quantity %}
-                            <div class="px-4 !text-red-800">
-                                <i class="sicon-fire rtl:ml-1.5 ltr:mr-1.5"></i> {{ trans('pages.products.sold') }}
-                                <span>{{ pluralize('pages.products.sold_times', product.sold_quantity)|raw }}</span>
-                            </div>
-                        {% endif %}
-                        {% if product.can_show_remained_quantity %}
-                            <div class="px-4 rtl:even:border-r ltr:even:border-l even:border-gray-200">
-                                <i class="!text-red-800 sicon-box-bankers rtl:ml-1.5 ltr:mr-1.5"></i>
-                                {{ trans('pages.products.remained') }}
-                                <span>{{ product.quantity }}</span>
-                            </div>
-                        {% endif %}
+                {# Figma weight box #}
+                {% if product.weight %}
+                    <div class="qpd__weight">
+                        <i class="sicon-box-bankers qpd__weight-icon"></i>
+                        <span class="qpd__weight-label">{{ trans('pages.products.weight')|default('وزن المنتج') }}</span>
+                        <span class="qpd__weight-value">{{ product.weight }}</span>
                     </div>
                 {% endif %}
                 {% if product.sku %}
-                    <div class="mb-4 flex justify-between sm:grid sm:grid-cols-3 bg-white rounded-md px-4 py-2">
-                        <div class="flex items-center">
-                            <i class="sicon-barcode mx-1"></i>
-                            {{ trans('pages.products.sku') }}
-                        </div>
-                        <div class="text-unicode product-sku">{{ product.sku }}</div>
+                    <div class="qpd__sku">
+                        <span><i class="sicon-barcode"></i> {{ trans('pages.products.sku') }}</span>
+                        <span class="text-unicode product-sku">{{ product.sku }}</span>
                     </div>
                 {% endif %}
                 {% hook 'product:single.description' %}
 
-                {# Installment Methods #}
-                <salla-installment price="{{ product.price }}"></salla-installment>
+                {# Installment Methods (tamara / tabby) — styled to Figma gradient cards via CSS #}
+                <salla-installment class="qpd__installment" price="{{ product.price }}"></salla-installment>
+
+                {# Figma gift box #}
+                {% if product.is_giftable %}
+                    <div class="qpd__gift">
+                        <i class="sicon-gift qpd__gift-icon"></i>
+                        <div class="qpd__gift-body">
+                            <p class="qpd__gift-title">{{ trans('pages.products.gift_title')|default('أهدي من تحب') }}</p>
+                            <p class="qpd__gift-sub">{{ trans('pages.products.gift_subtitle')|default('يمكنك الآن إرسال الهدايا لمن تحب عن طريق منصتنا وفي الوقت الذي تحبه!') }}</p>
+                        </div>
+                        <button type="button" class="qpd__gift-btn"
+                                onclick="document.querySelector('#product-{{ product.id }} salla-gifting')?.scrollIntoView({behavior:'smooth',block:'center'})">
+                            {{ trans('pages.products.send_as_gift')|default('أرسل كهدية') }}
+                        </button>
+                    </div>
+                {% endif %}
                 {% if product.has_metadata %}
                 <salla-metadata></salla-metadata>
                 {% endif %}
@@ -353,30 +371,6 @@
 
                     {% hook 'product:single.form.end' %}
 
-                    <section class="flex bg-white p-5 sm:pb-0 rounded-md rounded-b-none">
-                        <div class="center-between w-full">
-                            <label class="form-label">
-                                <b class="block">
-                                    {{ trans('pages.products.price') }}
-                                </b>
-                            </label>
-
-                            <div class="flex whitespace-nowrap price-wrapper gap-4 items-center">
-                              <div class="{{ product.is_on_sale ? '' : 'hidden' }} price_is_on_sale space-x-2 rtl:space-x-reverse whitespace-nowrap">
-                                <h2 class="total-price text-red-800 font-bold text-xl inline-block">{{product.sale_price|money}}</h2>
-                                <span class="before-price text-gray-500 line-through">{{product.regular_price|money}}</span>
-                              </div>
-                              <div class="starting-or-normal-price gap-4 {{ product.is_on_sale ? 'hidden' : 'flex' }}">
-                                {% if product.starting_price %} 
-                                  <span class="starting-price-title">{{ trans('pages.products.starting_price') }}</span>
-                                {% endif %} 
-                                <h2 class="total-price font-bold text-xl inline-block"> {{product.starting_price ? product.starting_price|money : product.price|money }}</h2>
-                              </div>
-                            </div>
-
-                            <div class="out-of-stock min-h-7 leading-7 hidden text-base text-red-600 !opacity-50 font-bold">{{ trans('pages.products.out_of_stock')}}</div>
-                        </div>
-                    </section>
                     {# Pre-order Campaign #}
                     {% if product.has_preorder_campaign %}
                         <section class="mt-5 p-5">
@@ -384,43 +378,60 @@
                         </section>
                     {% endif %}
 
-                    <section class="sticky-product-bar bg-white p-5 rounded-md rounded-b-none">
-                        {# Quantity #}
-                        {% if product.is_hidden_quantity or product.type == 'booking' %}
-                            <input type="hidden" value="1" name="quantity" aria-label="Quantity"/>
-                        {% else %}
-                            <div class="sticky-product-bar__quantity center-between mb-5">
-                                <label class="form-label font-bold">
-                                    {{ trans('pages.products.quantity') }}
-                                </label>
-                                <salla-quantity-input max="{{ product.max_quantity }}" value="1" name="quantity" aria-label="Quantity"
-                                  class="border-gray-200 flex justify-end"></salla-quantity-input>
+                    {# Figma price + quantity row #}
+                    <section class="sticky-product-bar qpd__buybar">
+                        <div class="qpd__priceqty">
+                            <div class="qpd__price price-wrapper">
+                                <div class="{{ product.is_on_sale ? '' : 'hidden' }} price_is_on_sale qpd__price-sale">
+                                    <span class="total-price qpd__price-now">{{product.sale_price|money}}</span>
+                                    <span class="before-price qpd__price-old">{{product.regular_price|money}}</span>
+                                </div>
+                                <div class="starting-or-normal-price {{ product.is_on_sale ? 'hidden' : '' }}">
+                                    {% if product.starting_price %}
+                                        <span class="starting-price-title qpd__price-from">{{ trans('pages.products.starting_price') }}</span>
+                                    {% endif %}
+                                    <span class="total-price qpd__price-now">{{product.starting_price ? product.starting_price|money : product.price|money }}</span>
+                                </div>
+                                <div class="out-of-stock hidden qpd__oos">{{ trans('pages.products.out_of_stock')}}</div>
                             </div>
-                        {% endif %}
-                        {# Add to cart #}
-                        <salla-add-product-button
-                                {{product.can_quick_buy ? 'quick-buy' : ''}}
-                                {{theme.settings.get('sticky_add_to_cart') ? ' support-sticky-bar' : ''}}
-                                {{product.is_require_shipping ? 'required-shipping' : ''}}
-                                {{product.has_preorder_campaign ? 'has-pre-order' : ''}}
-                                amount="{{ product.base_currency_price }}"
-                                class="mt-5 w-full sticky-product-bar__btn"
-                                product-status="{{ product.status }}"
-                                product-type="{{ product.type }}"
-                                product-id="{{ product.id }}"
-                                loader-position="end"
-                                type="submit"
-                                width="wide"
-                                {# Notify availability props#}
-                                {% if product.notify_availability %}
-                                    {{ product.notify_availability.subscribed ? 'is-subscribed' : '' }}
-                                    channels="{{ product.notify_availability.channels|join(',') }}"
-                                    subscribed-options="{{ product.notify_availability.subscribed_options|json_encode }}"
-                                    {{ product.notify_availability.options ? 'notify-options-availability' : '' }}
-                                {% endif %}>
 
-                            {{ product.add_to_cart_label }}
-                        </salla-add-product-button>
+                            {# Quantity #}
+                            {% if product.is_hidden_quantity or product.type == 'booking' %}
+                                <input type="hidden" value="1" name="quantity" aria-label="Quantity"/>
+                            {% else %}
+                                <div class="qpd__qty">
+                                    <salla-quantity-input max="{{ product.max_quantity }}" value="1" name="quantity" aria-label="Quantity"
+                                      class="border-gray-200"></salla-quantity-input>
+                                    <label class="qpd__qty-label">{{ trans('pages.products.quantity') }}</label>
+                                </div>
+                            {% endif %}
+                        </div>
+                        {# Add to cart — quick-buy renders both quick-buy + add-to-cart buttons (Figma two-button row) #}
+                        <div class="qpd__actions">
+                            <salla-add-product-button
+                                    {{product.can_quick_buy ? 'quick-buy' : ''}}
+                                    {{theme.settings.get('sticky_add_to_cart') ? ' support-sticky-bar' : ''}}
+                                    {{product.is_require_shipping ? 'required-shipping' : ''}}
+                                    {{product.has_preorder_campaign ? 'has-pre-order' : ''}}
+                                    amount="{{ product.base_currency_price }}"
+                                    class="w-full sticky-product-bar__btn"
+                                    product-status="{{ product.status }}"
+                                    product-type="{{ product.type }}"
+                                    product-id="{{ product.id }}"
+                                    loader-position="end"
+                                    type="submit"
+                                    width="wide"
+                                    {# Notify availability props#}
+                                    {% if product.notify_availability %}
+                                        {{ product.notify_availability.subscribed ? 'is-subscribed' : '' }}
+                                        channels="{{ product.notify_availability.channels|join(',') }}"
+                                        subscribed-options="{{ product.notify_availability.subscribed_options|json_encode }}"
+                                        {{ product.notify_availability.options ? 'notify-options-availability' : '' }}
+                                    {% endif %}>
+
+                                {{ product.add_to_cart_label }}
+                            </salla-add-product-button>
+                        </div>
                     </section>
                     {% if product.is_giftable %}
                         <salla-gifting class="mt-5" widget-subtitle="{{ gifting_intro }}" product-id="{{ product.id }}" {{ product.is_require_shipping ? 'physical-products' : ''  }}></salla-gifting>
@@ -434,17 +445,54 @@
         <salla-offer></salla-offer>
     </div>
 
-    {#
-        Hook: product.single.before_customer_reviews
-        Fires before the customer reviews/comments section.
-        Use this hook to inject content between the product info and the reviews block.
-    #}
-    <div class="s-blocks-wrapper s-before-reviews">{% hook 'product.single.before_customer_reviews' %}</div>
+    {# ===== Figma tabs: تفاصيل المنتج / تقييمات المنتج ===== #}
+    <div class="container qpd-tabs" id="qpd-tabs">
+        <div class="qpd-tabs__nav" role="tablist">
+            <button type="button" class="qpd-tabs__tab is-active" data-qpd-tab="details" role="tab" aria-selected="true">
+                {{ trans('pages.products.product_details')|default('تفاصيل المنتج') }}
+            </button>
+            {% if store.settings.rating.show_on_product %}
+                <button type="button" class="qpd-tabs__tab" data-qpd-tab="reviews" role="tab" aria-selected="false">
+                    {{ trans('pages.products.product_reviews')|default('تقييمات المنتج') }}
+                </button>
+            {% endif %}
+        </div>
 
-    {# Comments Area #}
-    {% if store.settings.rating.show_on_product %}
-        <salla-comments item-id="{{product.id}}" type="product"></salla-comments>
-    {% endif %}
+        {# Tab: details #}
+        <div class="qpd-tabs__panel is-active" data-qpd-panel="details" role="tabpanel">
+            <article class="qpd-tabs__desc">
+                {{ product.description|raw }}
+            </article>
+        </div>
+
+        {# Tab: reviews #}
+        {% if store.settings.rating.show_on_product %}
+            <div class="qpd-tabs__panel" data-qpd-panel="reviews" role="tabpanel">
+                {% hook 'product.single.before_customer_reviews' %}
+                <salla-comments item-id="{{product.id}}" type="product"></salla-comments>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        (function () {
+            var root = document.getElementById('qpd-tabs');
+            if (!root) return;
+            root.querySelectorAll('.qpd-tabs__tab').forEach(function (tab) {
+                tab.addEventListener('click', function () {
+                    var key = tab.getAttribute('data-qpd-tab');
+                    root.querySelectorAll('.qpd-tabs__tab').forEach(function (t) {
+                        var on = t === tab;
+                        t.classList.toggle('is-active', on);
+                        t.setAttribute('aria-selected', on ? 'true' : 'false');
+                    });
+                    root.querySelectorAll('.qpd-tabs__panel').forEach(function (p) {
+                        p.classList.toggle('is-active', p.getAttribute('data-qpd-panel') === key);
+                    });
+                });
+            });
+        })();
+    </script>
 
     {#
         Hook: product.single.before_product_recommendations

@@ -1,0 +1,446 @@
+// ====================================================================
+// Qissa Product Detail — single product page (Figma node 6036:4788)
+// Scoped to .qpd (buy box) and .qpd-tabs (details/reviews) ONLY.
+// Restyles the working starter single.twig — CSS-first, keeps all
+// functional Salla components (slider, add-to-cart, comments, gifting).
+// RTL: gallery RIGHT, info LEFT.
+// Tokens: royal-blue #30378e, chosen-blue #0a1f30, gray-600 #6c757d,
+//         gray-200 #e9ecef, blue-50 #e8fcff, baby-blue #daeff7.
+// ====================================================================
+
+.qpd {
+  font-family: 'GE SS Two', sans-serif;
+  max-width: none;
+  padding-inline: 50px;
+
+  // ----- two columns: info LEFT, gallery RIGHT (RTL) -----
+  &__row {
+    gap: 32px;
+    align-items: flex-start;
+  }
+  // gallery is first in DOM (slider needs it) → push to the RIGHT in RTL
+  &__gallery {
+    order: 2;
+    margin: 0 !important;
+  }
+  &__info {
+    order: 1;
+    width: 100%;
+  }
+  @media (min-width: 768px) {
+    &__gallery { width: 50%; flex: 0 0 50%; }
+    &__info    { width: 50%; flex: 0 0 50%; }
+  }
+
+  // ===== INFO COLUMN =====
+  // ----- title row: title (right) + like/share icon buttons (left) -----
+  &__titlerow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 16px;
+  }
+  &__title {
+    flex: 1;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 38px;
+    letter-spacing: -0.2px;
+    color: #0a1f30;
+    text-align: right;
+    margin: 0;
+  }
+  &__iconbtns {
+    display: inline-flex;
+    gap: 15px;
+    flex-shrink: 0;
+  }
+  &__iconbtn {
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    color: #0a1f30;
+    background: #fff;
+    cursor: pointer;
+    i { font-size: 18px; }
+    &:hover { border-color: #30378e; color: #30378e; }
+    // salla-button / salla-social-share host overrides
+    &::part(base) { border: none; background: none; width: 100%; height: 100%; }
+  }
+  // social-share renders its own trigger — neutralize its default chrome
+  &__share {
+    &::part(base) { padding: 0; }
+  }
+
+  // ----- stock row: sold + remaining -----
+  &__stock {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+    flex-direction: row-reverse;
+    margin-bottom: 16px;
+    font-size: 16px;
+    line-height: 25px;
+    color: #0a1f30;
+  }
+  &__stock-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    i { font-size: 16px; color: #30378e; }
+    b { color: #30378e; font-weight: 500; font-family: 'Poppins', 'GE SS Two', sans-serif; }
+  }
+  &__stock-sep {
+    width: 1px;
+    height: 13px;
+    background: #dee2e6;
+  }
+
+  // ----- rating (salla-rating-stars) -----
+  &__rating {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+    --salla-rating-star-color: #fd7e14;
+    salla-rating-stars { direction: rtl; }
+  }
+
+  // ----- short description + read more -----
+  &__desc {
+    padding: 0 !important;
+    margin-bottom: 16px;
+    font-size: 16px;
+    line-height: 25px;
+    color: #6c757d;
+    text-align: right;
+    .link--primary, #btn-show-more { color: #30378e; font-weight: 500; }
+  }
+
+  // ----- chips (tags): packs / sheets-per-box -----
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+  }
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    background: #e8fcff;
+    color: #30378e;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 4px;
+    padding: 2px 8px;
+    text-decoration: none;
+    &:hover { background: #d6f6fc; }
+  }
+
+  // ----- weight box -----
+  &__weight {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-direction: row-reverse;
+    height: 60px;
+    padding: 16px;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    background: #fff;
+    margin-bottom: 16px;
+    color: #0a1f30;
+    font-size: 16px;
+  }
+  &__weight-icon { font-size: 22px; color: #30378e; }
+  &__weight-label { flex: 1; text-align: right; }
+  &__weight-value { white-space: nowrap; }
+
+  // ----- sku (compact) -----
+  &__sku {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    background: #fff;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #6c757d;
+    i { color: #30378e; margin-inline-end: 4px; }
+  }
+
+  // ----- installment cards (tamara / tabby) → Figma gradient cards -----
+  &__installment {
+    display: block;
+    margin-bottom: 16px;
+    // salla-installment renders a horizontal list of method cards
+    &::part(base),
+    .s-installment-list,
+    [class*="installment"] {
+      gap: 16px;
+    }
+  }
+
+  // ----- gift box -----
+  &__gift {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    background: linear-gradient(-86deg, #ffffff 1.5%, #daeff7 94%);
+  }
+  &__gift-icon { font-size: 24px; color: #30378e; order: 0; }
+  &__gift-body { flex: 1; text-align: right; order: 1; }
+  &__gift-title { font-size: 16px; color: #0a1f30; margin: 0 0 6px; }
+  &__gift-sub { font-size: 14px; font-weight: 300; color: #adb5bd; margin: 0; line-height: 1.5; }
+  &__gift-btn {
+    order: 2;
+    flex-shrink: 0;
+    padding: 10px 16px 11px;
+    border: 1px solid #30378e;
+    border-radius: 8px;
+    background: transparent;
+    color: #30378e;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    &:hover { background: #30378e; color: #fff; }
+  }
+
+  // ===== BUY BAR: price + qty + buttons =====
+  &__buybar {
+    background: none !important;
+    padding: 0 !important;
+    border: none;
+  }
+  &__priceqty {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  &__price { order: 0; }
+  &__price-now {
+    font-size: 24px;
+    font-weight: 600;
+    color: #30378e;
+    font-family: 'Poppins', 'GE SS Two', sans-serif;
+    white-space: nowrap;
+  }
+  &__price-old {
+    font-size: 16px;
+    color: #adb5bd;
+    text-decoration: line-through;
+    margin-inline-start: 8px;
+  }
+  &__price-from { font-size: 14px; color: #6c757d; margin-inline-end: 6px; }
+  &__price-sale { display: inline-flex; align-items: baseline; gap: 8px; }
+  &__oos { color: #e04956; font-weight: 700; }
+
+  // qty stepper + "حدد الكمية" label
+  &__qty {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-direction: row;
+  }
+  &__qty-label {
+    font-size: 16px;
+    line-height: 24px;
+    color: #30378e;
+    white-space: nowrap;
+    margin: 0;
+    order: 2;
+  }
+  salla-quantity-input {
+    order: 1;
+    --salla-quantity-input-border-color: #e9ecef;
+    height: 50px;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    overflow: hidden;
+    &::part(base) { border: none; height: 100%; }
+    &::part(button) { color: #0a1f30; }
+    &::part(input) { color: #30378e; font-weight: 500; font-size: 19px; }
+  }
+
+  // two action buttons (quick-buy + add-to-cart) side by side
+  &__actions {
+    salla-add-product-button {
+      display: block;
+      width: 100%;
+      // when quick-buy is active it renders two buttons — lay them in a row
+      &::part(base) { display: flex; gap: 16px; }
+      &::part(button) {
+        flex: 1 0 0;
+        height: 56px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 500;
+        font-family: 'GE SS Two', sans-serif;
+      }
+    }
+    // primary (add to cart) = solid navy ; quick-buy = outline navy
+    .sticky-product-bar__btn::part(button) {
+      background: #30378e;
+      border: 1px solid #30378e;
+      color: #fff;
+    }
+  }
+}
+
+// ====================================================================
+// TABS: تفاصيل المنتج / تقييمات المنتج
+// ====================================================================
+.qpd-tabs {
+  font-family: 'GE SS Two', sans-serif;
+  max-width: none;
+  padding-inline: 50px;
+  margin-top: 32px;
+  margin-bottom: 40px;
+
+  &__nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0;
+  }
+  &__tab {
+    min-width: 165px;
+    padding: 16px;
+    border: none;
+    border-radius: 10px 10px 0 0;
+    background: #f3fafd;
+    color: #6c757d;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+    &.is-active { background: #30378e; color: #fff; }
+  }
+
+  &__panel {
+    display: none;
+    border: 1px solid #eee;
+    border-radius: 0 15px 15px 15px;
+    padding: 16px;
+    background: #fff;
+    &.is-active { display: block; }
+  }
+
+  // details tab text
+  &__desc {
+    text-align: right;
+    color: #666;
+    font-size: 16px;
+    line-height: 25px;
+    p { margin: 0 0 0; }
+    h1, h2, h3, h4, strong, b { color: #0a1f30; font-weight: 700; }
+    h2, h3 { font-size: 25px; margin: 16px 0 8px; }
+  }
+
+  // ===== reviews tab: restyle salla-comments to Figma =====
+  // remove the component's default grey full-width band → inline panel
+  salla-comments .s-comments-product {
+    @apply bg-transparent py-0;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+  salla-comments .s-comments-container { padding: 0 !important; max-width: none !important; }
+
+  // layout: comment list (left/flex) + summary+add card (right 380)
+  .s-comments {
+    direction: rtl;
+    &-list-wrapper,
+    &-body { gap: 24px; }
+  }
+
+  // rating summary / add-comment card → bordered Figma card
+  .s-comments-rating,
+  .s-comments-add {
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 16px;
+    background: #fff;
+  }
+  .s-comments-rating-average { font-size: 20px; color: #0a1f30; font-weight: 500; }
+  .s-comments-rating-count { font-size: 14px; color: #6c757d; }
+
+  // single comment row
+  .s-comments-item {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 16px;
+    &-user-info-name { font-size: 16px; color: #0a1f30; font-weight: 500; }
+    &-date { font-size: 13px; color: #6c757d; }
+    &-content,
+    &-text { font-size: 14px; color: #6c757d; line-height: 20px; }
+    &-user-avatar img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+  }
+
+  // textarea + publish button
+  .s-comments-add textarea,
+  .s-comments-form textarea {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 14px 16px;
+    min-height: 110px;
+    font-size: 12px;
+    color: #6c757d;
+  }
+  .s-comments-add button,
+  .s-comments-form button[type="submit"] {
+    background: #30378e;
+    color: #fff;
+    border-radius: 12px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: 500;
+    width: 100%;
+  }
+
+  // "عرض المزيد" load-more
+  .s-comments-load-more {
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 16px;
+    color: #0a1f30;
+    width: 100%;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    padding-inline: 15px;
+    &__tab { min-width: 0; flex: 1; }
+  }
+}
+
+// ====================================================================
+// Responsive — buy box
+// ====================================================================
+@media (max-width: 1024px) {
+  .qpd { padding-inline: 24px; }
+}
+@media (max-width: 768px) {
+  .qpd {
+    padding-inline: 15px;
+    &__title { font-size: 24px; line-height: 30px; }
+    &__priceqty { flex-wrap: wrap; }
+    &__gift { flex-direction: column; align-items: stretch; text-align: center; }
+    &__gift-btn { width: 100%; }
+  }
+}
