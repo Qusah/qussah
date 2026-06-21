@@ -30968,13 +30968,7 @@ body.qside-open {
   gap: 16px;
   margin-top: 0;
 }
-.qpd__btn {
-  flex: 1 0 0;
-  display: block;
-}
-.qpd__btn .s-button-element,
-.qpd__btn button {
-  width: 100%;
+.qpd__btn, .qpd__btn .s-button-element, .qpd__btn button {
   height: 56px;
   display: inline-flex;
   align-items: center;
@@ -30985,16 +30979,36 @@ body.qside-open {
   font-size: 16px;
   font-weight: 500;
   border: 1px solid #30378e;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.qpd__btn {
+  flex: 1 0 0;
+  width: 100%;
+}
+.qpd__btn .s-button-element,
+.qpd__btn button {
+  width: 100%;
 }
 .qpd__btn i {
   font-size: 16px;
 }
-.qpd__btn--buy .s-button-element, .qpd__btn--buy button {
+.qpd__btn--buy, .qpd__btn--buy .s-button-element, .qpd__btn--buy button {
   background: #30378e !important;
   color: #fff !important;
 }
+.qpd__btn--buy:hover, .qpd__btn--buy:hover .s-button-element, .qpd__btn--buy:hover button {
+  background: #91e6f7 !important;
+  border-color: #91e6f7 !important;
+  color: #30378e !important;
+}
 .qpd__btn--cart .s-button-element, .qpd__btn--cart button {
   background: #fff !important;
+  color: #30378e !important;
+}
+.qpd__btn--cart:hover .s-button-element, .qpd__btn--cart:hover button {
+  background: #91e6f7 !important;
+  border-color: #91e6f7 !important;
   color: #30378e !important;
 }
 .qpd-tabs {

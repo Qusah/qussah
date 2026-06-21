@@ -438,36 +438,55 @@
     gap: 16px;
     margin-top: 0;
   }
+  // shared button look. الشراء السريع IS a plain <button> (style self);
+  // أضف للسلة is salla-add-product-button (style its inner <button>).
+  &__btn,
+  &__btn .s-button-element,
+  &__btn button {
+    height: 56px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 12px;
+    font-family: 'GE SS Two', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    border: 1px solid #30378e;
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+  }
   &__btn {
     flex: 1 0 0;
-    display: block;
-    // salla-add-product-button renders a light-DOM <button.s-button-element>
+    width: 100%;
     .s-button-element,
-    button {
-      width: 100%;
-      height: 56px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      border-radius: 12px;
-      font-family: 'GE SS Two', sans-serif;
-      font-size: 16px;
-      font-weight: 500;
-      border: 1px solid #30378e;
-    }
+    button { width: 100%; }
     i { font-size: 16px; }
   }
-  // الشراء السريع — solid navy
+  // الشراء السريع — solid navy → hover cyan (matches homepage buttons)
+  &__btn--buy,
   &__btn--buy .s-button-element,
   &__btn--buy button {
     background: #30378e !important;
     color: #fff !important;
   }
-  // أضف للسلة — outline navy
+  &__btn--buy:hover,
+  &__btn--buy:hover .s-button-element,
+  &__btn--buy:hover button {
+    background: #91e6f7 !important;
+    border-color: #91e6f7 !important;
+    color: #30378e !important;
+  }
+  // أضف للسلة — outline navy → hover cyan fill
   &__btn--cart .s-button-element,
   &__btn--cart button {
     background: #fff !important;
+    color: #30378e !important;
+  }
+  &__btn--cart:hover .s-button-element,
+  &__btn--cart:hover button {
+    background: #91e6f7 !important;
+    border-color: #91e6f7 !important;
     color: #30378e !important;
   }
 }

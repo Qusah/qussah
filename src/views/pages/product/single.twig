@@ -421,7 +421,7 @@
                             {# الشراء السريع — solid (left in RTL). Plain button → quick checkout. #}
                             <button type="button" class="qpd__btn qpd__btn--buy"
                                     onclick="salla.cart.addItem({ id: {{ product.id }}, quantity: parseInt(this.closest('form').querySelector('[name=quantity]')?.value || 1) }).then(() => salla.cart.submit())">
-                                <i class="sicon-shopping-bag"></i>
+                                <i class="sicon-shopping-cart"></i>
                                 الشراء السريع
                             </button>
 
@@ -443,7 +443,7 @@
                                         subscribed-options="{{ product.notify_availability.subscribed_options|json_encode }}"
                                         {{ product.notify_availability.options ? 'notify-options-availability' : '' }}
                                     {% endif %}>
-                                <i class="sicon-shopping-bag"></i>
+                                <i class="sicon-shopping-cart"></i>
                                 أضف للسلة
                             </salla-add-product-button>
                         </div>
