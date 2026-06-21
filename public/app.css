@@ -30503,7 +30503,7 @@ body.qside-open {
   align-items: stretch;
 }
 .qpd__gallery .s-slider-container {
-  order: 1;
+  order: 2;
   flex: 1 1 0;
   min-width: 0;
   border-radius: 25px;
@@ -30522,7 +30522,7 @@ body.qside-open {
   border-radius: 25px;
 }
 .qpd__gallery .s-slider-thumbs {
-  order: 2;
+  order: 1;
   flex: 0 0 148px;
   width: 148px;
   height: 637px;

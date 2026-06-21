@@ -46,9 +46,9 @@
     }
 
     // ----- main image (radius 25, takes remaining width) -----
-    // Figma: main image at x=0 (LEFT of block), thumbs at x=524 (RIGHT)
+    // main image RIGHT, thumb column LEFT
     .s-slider-container {
-      order: 1;                     // LEFT
+      order: 2;                     // RIGHT
       flex: 1 1 0;
       min-width: 0;
       border-radius: 25px;
@@ -68,7 +68,7 @@
 
     // ----- thumb column: VERTICAL, 148 wide, 4 frames stacked -----
     .s-slider-thumbs {
-      order: 2;                     // RIGHT of the main image (Figma x=524)
+      order: 1;                     // LEFT of the main image
       flex: 0 0 148px;
       width: 148px;
       height: 637px;

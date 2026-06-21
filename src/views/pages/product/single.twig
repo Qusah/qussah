@@ -418,22 +418,12 @@
                         </div>
                         {# Figma two buttons: أضف للسلة (outline, right) + الشراء السريع (solid, left) #}
                         <div class="qpd__actions">
-                            {# الشراء السريع — solid (left in RTL) #}
-                            <salla-add-product-button
-                                    quick-buy
-                                    {{product.is_require_shipping ? 'required-shipping' : ''}}
-                                    {{product.has_preorder_campaign ? 'has-pre-order' : ''}}
-                                    amount="{{ product.base_currency_price }}"
-                                    class="qpd__btn qpd__btn--buy"
-                                    product-status="{{ product.status }}"
-                                    product-type="{{ product.type }}"
-                                    product-id="{{ product.id }}"
-                                    loader-position="center"
-                                    type="submit"
-                                    width="wide">
+                            {# الشراء السريع — solid (left in RTL). Plain button → quick checkout. #}
+                            <button type="button" class="qpd__btn qpd__btn--buy"
+                                    onclick="salla.cart.addItem({ id: {{ product.id }}, quantity: parseInt(this.closest('form').querySelector('[name=quantity]')?.value || 1) }).then(() => salla.cart.submit())">
                                 <i class="sicon-shopping-bag"></i>
                                 الشراء السريع
-                            </salla-add-product-button>
+                            </button>
 
                             {# أضف للسلة — outline (right in RTL) #}
                             <salla-add-product-button
