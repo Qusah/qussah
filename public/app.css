@@ -31260,7 +31260,7 @@ body.qside-open {
   align-items: flex-end;
   gap: 12px;
   text-align: right;
-  direction: rtl;
+  direction: ltr;
   order: 2;
 }
 .qpd-viewed__eyebrow {
@@ -31270,14 +31270,18 @@ body.qside-open {
   padding: 5px 15px;
   border: 1px solid #fff;
   border-radius: 10px;
-  background: linear-gradient(to right, #daeff7, #fff);
+  background: linear-gradient(to left, #daeff7, #fff);
   color: #30378e;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: -0.16px;
+  direction: rtl;
 }
 .qpd-viewed__title {
   margin: 0;
+  width: 100%;
+  text-align: right;
+  direction: rtl;
   font-size: 32px;
   font-weight: 500;
   line-height: 38px;
@@ -31289,6 +31293,9 @@ body.qside-open {
 }
 .qpd-viewed__subtitle {
   margin: 0;
+  width: 100%;
+  text-align: right;
+  direction: rtl;
   font-size: 16px;
   font-weight: 300;
   line-height: 24px;
