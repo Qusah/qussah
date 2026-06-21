@@ -442,6 +442,22 @@
   }
   // Each button column takes half the row.
   &__btn { flex: 1 0 0; width: 100%; }
+  // inline Figma cart icon (16x16, inherits button color via currentColor)
+  &__cart-icon {
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px;
+    flex: 0 0 16px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+  // inside salla button the icon sits in .s-button-text — keep it 16x16
+  &__btn--cart .s-button-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    .qpd__cart-icon { width: 16px !important; height: 16px !important; flex: 0 0 16px; }
+  }
 
   // The actual visible button: the plain <button> (buy) OR the inner
   // .s-button-element (cart). The salla host itself stays borderless.
