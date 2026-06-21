@@ -30498,6 +30498,7 @@ body.qside-open {
 }
 .qpd__gallery .details-slider {
   flex-direction: row;
+  direction: ltr;
   gap: 24px;
   align-items: stretch;
 }

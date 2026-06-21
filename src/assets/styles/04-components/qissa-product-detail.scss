@@ -40,6 +40,7 @@
     .details-slider {
       display: flex !important;
       flex-direction: row;          // main + thumbs in a row
+      direction: ltr;               // pin visual order regardless of RTL flip
       gap: 24px;
       align-items: stretch;
     }
