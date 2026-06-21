@@ -654,16 +654,19 @@
 .qpd-viewed {
   font-family: 'GE SS Two', sans-serif;
   padding-block: 40px;
+  // soft blue gradient band behind the whole section (Figma)
+  background: linear-gradient(180deg, #e8fcff 0%, #f4fdff 55%, #ffffff 100%);
 
   .container { max-width: none; padding-inline: 50px; }
 
-  // header row: button LEFT, intro RIGHT (RTL → use flex-start to pin right)
+  // header row: button LEFT, intro RIGHT. LTR makes order unambiguous.
   &__head {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 4px;
     margin-bottom: 24px;
+    direction: ltr;
   }
   &__intro {
     display: flex;
@@ -671,6 +674,7 @@
     align-items: flex-end;   // content to the RIGHT
     gap: 12px;
     text-align: right;
+    direction: rtl;          // text stays RTL
     order: 2;                // RIGHT
   }
   &__eyebrow {
@@ -703,13 +707,14 @@
     color: #6c757d;
   }
 
-  // view-all button (cyan, radius 16, h55)
+  // view-all button (cyan, radius 16, h55): arrow → text → cart (LTR order)
   &__all {
     order: 1;                // LEFT
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    direction: ltr;
     gap: 8px;
     height: 55px;
     padding: 16px;

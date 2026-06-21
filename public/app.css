@@ -31239,6 +31239,7 @@ body.qside-open {
   font-family: "GE SS Two", sans-serif;
   padding-top: 40px;
   padding-bottom: 40px;
+  background: linear-gradient(180deg, #e8fcff 0%, #f4fdff 55%, #ffffff 100%);
 }
 .qpd-viewed .container {
   max-width: none;
@@ -31251,6 +31252,7 @@ body.qside-open {
   justify-content: space-between;
   gap: 4px;
   margin-bottom: 24px;
+  direction: ltr;
 }
 .qpd-viewed__intro {
   display: flex;
@@ -31258,6 +31260,7 @@ body.qside-open {
   align-items: flex-end;
   gap: 12px;
   text-align: right;
+  direction: rtl;
   order: 2;
 }
 .qpd-viewed__eyebrow {
@@ -31297,6 +31300,7 @@ body.qside-open {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  direction: ltr;
   gap: 8px;
   height: 55px;
   padding: 16px;
