@@ -3094,6 +3094,11 @@ textarea.s-input{
     padding-right: 15px;
   }
 }
+.qfooter .s-advertisement-content {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-advertisement-content ul{
         margin: 0px;
@@ -31794,6 +31799,11 @@ salla-menu[topnav]:not(.hydrated)::after {
   background: #fff;
   direction: rtl;
 }
+.qfooter .container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
+}
 .qfooter__cols {
   display: flex;
   align-items: flex-start;
@@ -34368,6 +34378,11 @@ model-viewer[style*=width]:before{
     padding-left: 15px;
     padding-right: 15px;
   }
+}
+.qfooter .s-comments-product .s-comments-container {
+  max-width: none;
+  padding-left: 50px;
+  padding-right: 50px;
 }
 @media only screen and (min-width: 1024px) {
   .main-menu .sub-menu li.mega-menu .s-comments-product .s-comments-container ul{

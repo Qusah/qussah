@@ -15,6 +15,9 @@
   background: #fff;
   direction: rtl;
 
+  // align footer edges with every other section (50px page gutter)
+  .container { max-width: none; padding-inline: 50px; }
+
   // ---- columns row (desktop: 5 across; RTL order = right→left) ----
   &__cols {
     display: flex; align-items: flex-start; gap: 24px;
