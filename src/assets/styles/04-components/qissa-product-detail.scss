@@ -640,9 +640,45 @@
   .qpd {
     padding-inline: 15px;
     &__title { font-size: 24px; line-height: 30px; }
-    &__priceqty { flex-wrap: wrap; }
-    &__gift { flex-direction: column; align-items: stretch; text-align: center; }
-    &__gift-btn { width: 100%; }
+
+    // ----- GALLERY: main image on top, thumbnails as a horizontal row below -----
+    &__gallery {
+      .details-slider { flex-direction: column; gap: 12px; }
+      .s-slider-container { order: 1; width: 100%; height: 340px; flex: none; }
+      .s-slider-thumbs { order: 2; width: 100%; height: auto; flex: none; }
+      .s-slider-thumbs-container { height: auto !important; }
+      .s-slider-thumbs-container .swiper-wrapper {
+        flex-direction: row !important;
+        height: auto !important;
+        gap: 10px;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+      }
+      .slide--one-fourth {
+        width: 80px !important;
+        height: 80px !important;
+        flex: 0 0 80px;
+        border-radius: 18px;
+        padding: 7px;
+      }
+    }
+
+    // ----- price (LEFT) + quantity & label (RIGHT) -----
+    &__priceqty { flex-wrap: nowrap; gap: 12px; }
+    &__price { order: 2; }                 // → left in RTL
+    &__qty   { order: 1; }                 // → right in RTL
+    &__qty salla-quantity-input { order: 2; }   // stepper left
+    &__qty-label { order: 1; }                  // "حدد الكمية" far right
+
+    // ----- actions: stack full-width; أضف للسلة (outline) on top -----
+    &__actions { flex-direction: column-reverse; gap: 12px; }
+
+    // ----- payment cards stack vertically -----
+    &__paydemo { flex-direction: column; }
+
+    // ----- gift: icon + text on top, button full-width below -----
+    &__gift { flex-wrap: wrap; row-gap: 14px; }
+    &__gift-btn { flex: 1 1 100%; width: 100%; order: 2; }
   }
 }
 
