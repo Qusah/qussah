@@ -150,13 +150,21 @@
     justify-content: center;
     border: 1px solid #e9ecef;
     border-radius: 12px;
+    overflow: hidden;                 // clip the inner Salla element to the 12px corners
     color: #0a1f30;
     background: #fff;
     cursor: pointer;
     i { font-size: 18px; }
     &:hover { border-color: #30378e; color: #30378e; }
-    // salla-button / salla-social-share host overrides
-    &::part(base) { border: none; background: none; width: 100%; height: 100%; }
+    // salla-button / salla-social-share host overrides — force the same square + radius
+    &::part(base) {
+      border: none;
+      background: none;
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      border-radius: 12px;
+    }
   }
   // social-share renders its own trigger — neutralize its default chrome
   &__share {
@@ -425,18 +433,26 @@
     margin: 0;
     order: 2;
   }
+  // quantity stepper — match the cart-page style: baby-blue border + inner dividers
   salla-quantity-input {
     order: 1;
-    --salla-quantity-input-border-color: #e9ecef;
+    --salla-quantity-input-border-color: #daeff7;
     height: 50px;
-    border: 1px solid #e9ecef;
-    border-radius: 10px;
+    border: 1px solid #daeff7;
+    border-radius: 8px;
     display: inline-flex;
     align-items: center;
     overflow: hidden;
-    &::part(base) { border: none; height: 100%; }
+    background: #fff;
+    &::part(base)   { border: none; height: 100%; width: 100%; }
     &::part(button) { color: #0a1f30; }
-    &::part(input) { color: #30378e; font-weight: 500; font-size: 19px; }
+    &::part(input)  { color: #0a1f30; font-weight: 500; font-size: 19px; }
+    .s-quantity-input-container { border: none; height: 100%; width: 100%; }
+    .s-quantity-input-input {
+      color: #0a1f30;
+      font-family: 'Poppins', 'GE SS Two', sans-serif;
+      border-inline: 1px solid #daeff7;   // the divider lines (Figma)
+    }
   }
 
   // two action buttons: الشراء السريع (solid, left) + أضف للسلة (outline, right)
