@@ -36181,6 +36181,36 @@ salla-quantity-input[max="1"] .s-quantity-input-button{
     min-height: 41px;
   }
 }
+.qwish {
+  display: block;
+  font-family: "GE SS Two", sans-serif;
+}
+.qwish salla-products-list {
+  display: block;
+}
+.qwish salla-products-list::part(base),
+.qwish .s-products-list-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 24px 16px;
+  gap: 24px 16px;
+}
+.qwish custom-salla-product-card {
+  display: block;
+  width: 100%;
+}
+@media (max-width: 1023px) {
+  .qwish salla-products-list::part(base),
+  .qwish .s-products-list-wrapper {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .qwish salla-products-list::part(base),
+  .qwish .s-products-list-wrapper {
+    gap: 12px 10px;
+  }
+}
 .brands-nav{
     display: flex;
     flex-wrap: wrap;

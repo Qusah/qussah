@@ -6,16 +6,13 @@
 | page.slug  | string               |             |
 #}
 {% extends "layouts.customer" %}
-{% block head_scripts %}
-	<script defer data-cfasync="false" src="{{ 'wishlist-card.js'|asset }}"></script>
-{% endblock %}
 
 {% block inner_content %}
-	<div class="space-y-5" id="wishlist">
+	{# Wishlist grid — reuses the Qissa product card (custom-salla-product-card),
+	   registered globally in product-card.js. 3 cols desktop / 2 cols mobile (Figma 184:904 / 341:4271). #}
+	<div class="qwish" id="wishlist">
 		{% hook 'customer:wishlist.items.start' %}
-		<salla-products-list source="wishlist" row-cards product-card-component="custom-wishlist-card"></salla-products-list>
+		<salla-products-list source="wishlist" product-card-component="custom-salla-product-card"></salla-products-list>
 		{% hook 'customer:wishlist.items.end' %}
 	</div>
 {% endblock %}
-
- 

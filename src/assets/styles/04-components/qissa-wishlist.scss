@@ -1,0 +1,34 @@
+// ====================================================================
+// Qissa Wishlist (المفضلة) — Figma 184:904 (desktop) / 341:4271 (mobile)
+// Renders the reusable Qissa product card (custom-salla-product-card) in a
+// grid: 3 columns on desktop, 2 on mobile. The account sidebar comes from
+// the shared customer layout (salla-user-menu). CSS-only over Salla components.
+// ====================================================================
+
+.qwish {
+  display: block;
+  font-family: 'GE SS Two', sans-serif;
+
+  salla-products-list { display: block; }
+
+  // grid wrapper exposed by salla-products-list
+  salla-products-list::part(base),
+  .s-products-list-wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px 16px;
+  }
+
+  // each card fills its cell
+  custom-salla-product-card { display: block; width: 100%; }
+
+  // tablet / mobile (sidebar is hidden below lg → full width) → 2 columns
+  @media (max-width: 1023px) {
+    salla-products-list::part(base),
+    .s-products-list-wrapper { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 480px) {
+    salla-products-list::part(base),
+    .s-products-list-wrapper { gap: 12px 10px; }
+  }
+}
