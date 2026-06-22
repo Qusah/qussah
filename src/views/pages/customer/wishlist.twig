@@ -15,4 +15,31 @@
 		<salla-products-list source="wishlist" product-card-component="custom-salla-product-card"></salla-products-list>
 		{% hook 'customer:wishlist.items.end' %}
 	</div>
+
+	{# The card's heart calls salla.wishlist.toggle(). On this page a toggle-off must
+	   also drop the card from the grid (the Qissa card uses id="{product.id}", not the
+	   old "#wishlist-product-{id}" that wishlist.js targets). #}
+	<script>
+		(function () {
+			function wire() {
+				if (!(window.salla && salla.wishlist && salla.wishlist.event)) { return false; }
+				var grid = document.getElementById('wishlist');
+				if (!grid) { return true; }
+				salla.wishlist.event.onRemoved(function (response, id) {
+					var card = document.getElementById(String(id));
+					if (!card || !grid.contains(card)) { return; }
+					card.remove();
+					if (!grid.querySelector('custom-salla-product-card')) {
+						window.location.reload(); // show the empty-wishlist state
+					}
+				});
+				return true;
+			}
+			if (!wire()) {
+				(window.salla && salla.onReady)
+					? salla.onReady(wire)
+					: document.addEventListener('DOMContentLoaded', wire);
+			}
+		})();
+	</script>
 {% endblock %}
