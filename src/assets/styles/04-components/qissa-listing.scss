@@ -145,7 +145,17 @@
     &:hover { border-color: #30378e; }
     &--view.is-active { background: #30378e; border-color: #30378e; color: #fff; }
   }
-  &__filter-toggle { display: none; }   // mobile only
+  // filter button — mobile/tablet only (sidebar is always visible on desktop)
+  &__filter-toggle {
+    display: none;
+    align-items: center; gap: 6px;
+    height: 34px; padding: 0 12px;
+    background: #fff; border: 1px solid #f8f9fa; border-radius: 5px;
+    color: #30378e; font-size: 13px; font-weight: 500; cursor: pointer;
+    i { font-size: 16px; }
+    &:hover { border-color: #30378e; }
+    &.is-active { background: #30378e; border-color: #30378e; color: #fff; }
+  }
 
   // ---- grid: 4 cols, col-gap 16, row-gap 32 ----
   &__grid {
@@ -154,45 +164,46 @@
     column-gap: 16px; row-gap: 32px;
   }
 
-  // ---- list view: single column, each card laid out as a horizontal row ----
-  // toggled by the list/grid bullet buttons in the sort bar
+  // ---- list view (Figma 340:304): 2 columns per row, each card horizontal ----
+  // toggled by the list/grid bullet buttons in the sort bar.
+  // Card: content LEFT (info top, buttons bottom), fixed-height image RIGHT (187).
   &__grid--list {
-    grid-template-columns: 1fr;
-    column-gap: 0; row-gap: 16px;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 16px; row-gap: 16px;
 
     .qprod {
-      flex-direction: row;
-      align-items: center;
-      gap: 20px;
-      padding: 16px;
+      display: grid;
+      grid-template-columns: 190px 1fr;          // image (right in RTL) | content (left)
+      grid-template-rows: 1fr auto;              // info fills, buttons pinned to bottom
+      grid-template-areas:
+        "img info"
+        "img btns";
+      column-gap: 25px;                          // Figma gap
+      border: 1px solid #daeff7;                 // Figma list-card border
     }
-    // image fixed on the right (RTL); keep card height compact
     .qprod__img {
-      flex: 0 0 240px;
-      width: 240px;
-      height: 200px;
-      img { height: 100%; }
+      grid-area: img;
+      align-self: center;
+      width: 100%;
+      height: 187px;                             // Figma fixed image height (no stretch)
+      img { width: 100%; height: 100%; }
     }
     .qprod__info {
-      flex: 1 1 auto;
+      grid-area: info;
       padding-block: 0;
       min-width: 0;
     }
-    .qprod__name { -webkit-line-clamp: 1; }
-    // actions sit at the far end (left in RTL), stacked, fixed width
     .qprod__btns {
-      flex: 0 0 220px;
-      width: 220px;
-      flex-direction: column-reverse;
-      align-items: stretch;
-      gap: 8px;
+      grid-area: btns;
+      align-self: end;
+      margin-top: 12px;
     }
-    .qprod__like { width: 100%; flex: 0 0 50px; }
 
+    // narrow screens: one horizontal card per row, smaller image
     @media (max-width: 768px) {
-      .qprod { gap: 12px; padding: 12px; }
-      .qprod__img { flex-basis: 130px; width: 130px; height: 130px; }
-      .qprod__btns { flex-basis: 140px; width: 140px; }
+      grid-template-columns: 1fr;
+      .qprod { grid-template-columns: 130px 1fr; column-gap: 12px; }
+      .qprod__img { height: 150px; }
     }
   }
 
@@ -306,6 +317,7 @@
     &__layout { flex-direction: column; }
     &__side { width: 100%; flex-basis: auto; }
     &__filter { display: none; }            // collapsed behind the filter toggle on tablet/mobile
+    &__filter.is-open { display: block; }   // revealed by the filter button
     &__filter-toggle { display: inline-flex; }
     &__grid:not(.qlist__grid--list) { grid-template-columns: repeat(3, 1fr); }
     &__banner { max-width: 420px; margin-inline: auto; }

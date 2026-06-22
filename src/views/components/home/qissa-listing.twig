@@ -26,6 +26,12 @@
                         <span class="qlist__sort-value">{{ component.sort_label|default('من الاعلى الى الاقل') }}</span>
                     </button>
                     <div class="qlist__tools">
+                        {% if filters %}
+                        <button type="button" class="qlist__filter-toggle" data-qfilter aria-label="تصفية" aria-expanded="false">
+                            <i class="sicon-filter"></i>
+                            <span>تصفية</span>
+                        </button>
+                        {% endif %}
                         <button type="button" class="qlist__tool qlist__tool--view" data-qview="list" aria-label="عرض قائمة">
                             <i class="sicon-list"></i>
                         </button>
@@ -163,6 +169,20 @@
                 }
             });
         });
+
+        // filter button (mobile/tablet): show/hide the filters sidebar
+        var filterBtn = root.querySelector('[data-qfilter]');
+        var filterPanel = root.querySelector('.qlist__filter');
+        if (filterBtn && filterPanel) {
+            filterBtn.addEventListener('click', function () {
+                var open = filterPanel.classList.toggle('is-open');
+                filterBtn.classList.toggle('is-active', open);
+                filterBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+                if (open) {
+                    filterPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        }
     })();
     </script>
 </section>

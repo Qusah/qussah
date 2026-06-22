@@ -30272,6 +30272,28 @@ body.qside-open {
 }
 .qlist__filter-toggle {
   display: none;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  background: #fff;
+  border: 1px solid #f8f9fa;
+  border-radius: 5px;
+  color: #30378e;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.qlist__filter-toggle i {
+  font-size: 16px;
+}
+.qlist__filter-toggle:hover {
+  border-color: #30378e;
+}
+.qlist__filter-toggle.is-active {
+  background: #30378e;
+  border-color: #30378e;
+  color: #fff;
 }
 .qlist__grid {
   display: grid;
@@ -30283,58 +30305,53 @@ body.qside-open {
   row-gap: 32px;
 }
 .qlist__grid--list {
-  grid-template-columns: 1fr;
-  -moz-column-gap: 0;
-       column-gap: 0;
+  grid-template-columns: repeat(2, 1fr);
+  -moz-column-gap: 16px;
+       column-gap: 16px;
   row-gap: 16px;
 }
 .qlist__grid--list .qprod {
-  flex-direction: row;
-  align-items: center;
-  gap: 20px;
-  padding: 16px;
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  grid-template-rows: 1fr auto;
+  grid-template-areas: "img info" "img btns";
+  grid-column-gap: 25px;
+  -moz-column-gap: 25px;
+       column-gap: 25px;
+  border: 1px solid #daeff7;
 }
 .qlist__grid--list .qprod__img {
-  flex: 0 0 240px;
-  width: 240px;
-  height: 200px;
+  grid-area: img;
+  align-self: center;
+  width: 100%;
+  height: 187px;
 }
 .qlist__grid--list .qprod__img img {
+  width: 100%;
   height: 100%;
 }
 .qlist__grid--list .qprod__info {
-  flex: 1 1 auto;
+  grid-area: info;
   padding-top: 0;
   padding-bottom: 0;
   min-width: 0;
 }
-.qlist__grid--list .qprod__name {
-  -webkit-line-clamp: 1;
-}
 .qlist__grid--list .qprod__btns {
-  flex: 0 0 220px;
-  width: 220px;
-  flex-direction: column-reverse;
-  align-items: stretch;
-  gap: 8px;
-}
-.qlist__grid--list .qprod__like {
-  width: 100%;
-  flex: 0 0 50px;
+  grid-area: btns;
+  align-self: end;
+  margin-top: 12px;
 }
 @media (max-width: 768px) {
+  .qlist__grid--list {
+    grid-template-columns: 1fr;
+  }
   .qlist__grid--list .qprod {
-    gap: 12px;
-    padding: 12px;
+    grid-template-columns: 130px 1fr;
+    -moz-column-gap: 12px;
+         column-gap: 12px;
   }
   .qlist__grid--list .qprod__img {
-    flex-basis: 130px;
-    width: 130px;
-    height: 130px;
-  }
-  .qlist__grid--list .qprod__btns {
-    flex-basis: 140px;
-    width: 140px;
+    height: 150px;
   }
 }
 .qlist__empty {
@@ -30580,6 +30597,9 @@ body.qside-open {
   }
   .qlist__filter {
     display: none;
+  }
+  .qlist__filter.is-open {
+    display: block;
   }
   .qlist__filter-toggle {
     display: inline-flex;
