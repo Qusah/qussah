@@ -30594,6 +30594,11 @@ body.qside-open {
 @media (max-width: 1024px) {
   .qlist__layout {
     flex-direction: column;
+    align-items: stretch;
+  }
+  .qlist__main {
+    width: 100%;
+    min-width: 0;
   }
   .qlist__side {
     width: 100%;
