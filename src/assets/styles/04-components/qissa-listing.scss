@@ -154,6 +154,48 @@
     column-gap: 16px; row-gap: 32px;
   }
 
+  // ---- list view: single column, each card laid out as a horizontal row ----
+  // toggled by the list/grid bullet buttons in the sort bar
+  &__grid--list {
+    grid-template-columns: 1fr;
+    column-gap: 0; row-gap: 16px;
+
+    .qprod {
+      flex-direction: row;
+      align-items: center;
+      gap: 20px;
+      padding: 16px;
+    }
+    // image fixed on the right (RTL); keep card height compact
+    .qprod__img {
+      flex: 0 0 240px;
+      width: 240px;
+      height: 200px;
+      img { height: 100%; }
+    }
+    .qprod__info {
+      flex: 1 1 auto;
+      padding-block: 0;
+      min-width: 0;
+    }
+    .qprod__name { -webkit-line-clamp: 1; }
+    // actions sit at the far end (left in RTL), stacked, fixed width
+    .qprod__btns {
+      flex: 0 0 220px;
+      width: 220px;
+      flex-direction: column-reverse;
+      align-items: stretch;
+      gap: 8px;
+    }
+    .qprod__like { width: 100%; flex: 0 0 50px; }
+
+    @media (max-width: 768px) {
+      .qprod { gap: 12px; padding: 12px; }
+      .qprod__img { flex-basis: 130px; width: 130px; height: 130px; }
+      .qprod__btns { flex-basis: 140px; width: 140px; }
+    }
+  }
+
   // ---- empty state (Figma node 172:5500) ----
   &__empty {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -265,13 +307,13 @@
     &__side { width: 100%; flex-basis: auto; }
     &__filter { display: none; }            // collapsed behind the filter toggle on tablet/mobile
     &__filter-toggle { display: inline-flex; }
-    &__grid { grid-template-columns: repeat(3, 1fr); }
+    &__grid:not(.qlist__grid--list) { grid-template-columns: repeat(3, 1fr); }
     &__banner { max-width: 420px; margin-inline: auto; }
   }
   @media (max-width: 768px) {
     padding-block: 8px;
     .container { padding-inline: 15px; }
     &__top { padding: 14px 10px; margin-bottom: 16px; }
-    &__grid { grid-template-columns: repeat(2, 1fr); column-gap: 8px; row-gap: 10px; }
+    &__grid:not(.qlist__grid--list) { grid-template-columns: repeat(2, 1fr); column-gap: 8px; row-gap: 10px; }
   }
 }

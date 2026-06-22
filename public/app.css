@@ -30282,6 +30282,61 @@ body.qside-open {
   grid-row-gap: 32px;
   row-gap: 32px;
 }
+.qlist__grid--list {
+  grid-template-columns: 1fr;
+  -moz-column-gap: 0;
+       column-gap: 0;
+  row-gap: 16px;
+}
+.qlist__grid--list .qprod {
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  padding: 16px;
+}
+.qlist__grid--list .qprod__img {
+  flex: 0 0 240px;
+  width: 240px;
+  height: 200px;
+}
+.qlist__grid--list .qprod__img img {
+  height: 100%;
+}
+.qlist__grid--list .qprod__info {
+  flex: 1 1 auto;
+  padding-top: 0;
+  padding-bottom: 0;
+  min-width: 0;
+}
+.qlist__grid--list .qprod__name {
+  -webkit-line-clamp: 1;
+}
+.qlist__grid--list .qprod__btns {
+  flex: 0 0 220px;
+  width: 220px;
+  flex-direction: column-reverse;
+  align-items: stretch;
+  gap: 8px;
+}
+.qlist__grid--list .qprod__like {
+  width: 100%;
+  flex: 0 0 50px;
+}
+@media (max-width: 768px) {
+  .qlist__grid--list .qprod {
+    gap: 12px;
+    padding: 12px;
+  }
+  .qlist__grid--list .qprod__img {
+    flex-basis: 130px;
+    width: 130px;
+    height: 130px;
+  }
+  .qlist__grid--list .qprod__btns {
+    flex-basis: 140px;
+    width: 140px;
+  }
+}
 .qlist__empty {
   display: flex;
   flex-direction: column;
@@ -30529,7 +30584,7 @@ body.qside-open {
   .qlist__filter-toggle {
     display: inline-flex;
   }
-  .qlist__grid {
+  .qlist__grid:not(.qlist__grid--list) {
     grid-template-columns: repeat(3, 1fr);
   }
   .qlist__banner {
@@ -30551,7 +30606,7 @@ body.qside-open {
     padding: 14px 10px;
     margin-bottom: 16px;
   }
-  .qlist__grid {
+  .qlist__grid:not(.qlist__grid--list) {
     grid-template-columns: repeat(2, 1fr);
     -moz-column-gap: 8px;
          column-gap: 8px;

@@ -26,10 +26,10 @@
                         <span class="qlist__sort-value">{{ component.sort_label|default('من الاعلى الى الاقل') }}</span>
                     </button>
                     <div class="qlist__tools">
-                        <button type="button" class="qlist__tool qlist__tool--view" aria-label="عرض قائمة">
+                        <button type="button" class="qlist__tool qlist__tool--view" data-qview="list" aria-label="عرض قائمة">
                             <i class="sicon-list"></i>
                         </button>
-                        <button type="button" class="qlist__tool qlist__tool--view is-active" aria-label="عرض شبكي">
+                        <button type="button" class="qlist__tool qlist__tool--view is-active" data-qview="grid" aria-label="عرض شبكي">
                             <i class="sicon-grid"></i>
                         </button>
                     </div>
@@ -144,4 +144,25 @@
 
         </div>
     </div>
+
+    {# view toggle: switch the product grid between grid and list layout #}
+    <script>
+    (function () {
+        var root = document.getElementById('qlist-{{ position }}');
+        if (!root || root.dataset.qviewInit) { return; }
+        root.dataset.qviewInit = '1';
+        var grid = root.querySelector('.qlist__grid');
+        var btns = root.querySelectorAll('.qlist__tool--view');
+        Array.prototype.forEach.call(btns, function (btn) {
+            btn.addEventListener('click', function () {
+                Array.prototype.forEach.call(btns, function (b) {
+                    b.classList.toggle('is-active', b === btn);
+                });
+                if (grid) {
+                    grid.classList.toggle('qlist__grid--list', btn.dataset.qview === 'list');
+                }
+            });
+        });
+    })();
+    </script>
 </section>
