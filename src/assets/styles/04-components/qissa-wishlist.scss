@@ -8,24 +8,27 @@
 .qwish {
   display: block;
   font-family: 'GE SS Two', sans-serif;
+  min-width: 0;
 
   salla-products-list { display: block; }
 
-  // grid wrapper exposed by salla-products-list
+  // grid wrapper exposed by salla-products-list.
+  // minmax(0,1fr) (not 1fr) so wide card content can't blow the columns out
+  // past the container on narrow screens.
   salla-products-list::part(base),
   .s-products-list-wrapper {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 24px 16px;
   }
 
-  // each card fills its cell
-  custom-salla-product-card { display: block; width: 100%; }
+  // each card fills its cell and may shrink below content width
+  custom-salla-product-card { display: block; width: 100%; min-width: 0; }
 
   // tablet / mobile (sidebar is hidden below lg → full width) → 2 columns
   @media (max-width: 1023px) {
     salla-products-list::part(base),
-    .s-products-list-wrapper { grid-template-columns: repeat(2, 1fr); }
+    .s-products-list-wrapper { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (max-width: 480px) {
     salla-products-list::part(base),

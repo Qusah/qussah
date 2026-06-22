@@ -7,6 +7,10 @@
 #}
 {% extends "layouts.customer" %}
 
+{# breadcrumb already shows "الأمنيات" — drop the duplicate page title so the
+   product grid starts level with the account sidebar box #}
+{% block inner_title %}{% endblock %}
+
 {% block inner_content %}
 	{# Wishlist grid — reuses the Qissa product card (custom-salla-product-card),
 	   registered globally in product-card.js. 3 cols desktop / 2 cols mobile (Figma 184:904 / 341:4271). #}
@@ -21,12 +25,14 @@
 	   old "#wishlist-product-{id}" that wishlist.js targets). #}
 	<script>
 		(function () {
-			// make the account sidebar static (not sticky) on the wishlist + keep content wide
+			// account sidebar: static (not sticky) + not pulled up into the header banner,
+			// so its top sits level with the product cards
 			var sidebar = document.querySelector('.sidebar');
 			if (sidebar) {
-				sidebar.classList.remove('lg:sticky');
+				sidebar.classList.remove('lg:sticky', 'lg:-mt-28');
 				sidebar.style.position = 'static';
 				sidebar.style.top = 'auto';
+				sidebar.style.marginTop = '0';
 			}
 			var main = document.querySelector('.main-content');
 			if (main) { main.classList.remove('max-w-3xl'); }

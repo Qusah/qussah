@@ -154,6 +154,8 @@
     i { font-size: 18px; }
     // hover swap only on real pointer devices (avoids tap-flash on mobile)
     @media (hover: hover) { &:hover { color: #f55157; border-color: #f55157; } }
+    // wishlisted state (set by the global heart-sync script)
+    &[wishlisted] { border-color: #f55157; i { color: #f55157; } }
   }
   &__add {
     flex: 1 1 auto; min-width: 1px; height: 50px;

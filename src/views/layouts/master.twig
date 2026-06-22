@@ -127,5 +127,38 @@
     <salla-scopes selection="{{ store.scope.display_as == 'popup' ? 'mandatory' : 'optional' }}"></salla-scopes>
 {% endif %}
 {% block scripts %}{% endblock %}
+
+{# Reflect wishlist state on the hand-built Qissa heart buttons (.qprod__like /
+   .qoffer__like) across every page: red when wishlisted, optimistic toggle on
+   click, and stays in sync with Salla's wishlist add/remove events. #}
+<script>
+(function () {
+  var SEL = '.qprod__like[data-id], .qoffer__like[data-id]';
+  function storageIds() { return (window.salla && salla.storage) ? salla.storage.get('salla::wishlist', []) : []; }
+  function mark(id, on) {
+    document.querySelectorAll('.qprod__like[data-id="' + id + '"], .qoffer__like[data-id="' + id + '"]')
+      .forEach(function (b) { b.toggleAttribute('wishlisted', on); });
+  }
+  function syncAll() {
+    var list = storageIds();
+    document.querySelectorAll(SEL).forEach(function (b) {
+      b.toggleAttribute('wishlisted', list.includes(Number(b.getAttribute('data-id'))));
+    });
+  }
+  function init() {
+    syncAll();
+    if (window.salla && salla.wishlist && salla.wishlist.event) {
+      salla.wishlist.event.onAdded(function (r, id) { mark(id, true); });
+      salla.wishlist.event.onRemoved(function (r, id) { mark(id, false); });
+    }
+    // optimistic flip on click (the inline onclick already calls salla.wishlist.toggle)
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest(SEL);
+      if (b) { b.toggleAttribute('wishlisted'); }
+    });
+  }
+  (window.salla && salla.onReady) ? salla.onReady(init) : document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
 </body>
 </html>

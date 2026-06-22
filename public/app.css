@@ -28132,6 +28132,9 @@ body.qside-open {
   color: #f55157;
   border-color: #f55157;
 }
+.qprod__like.s-product-card-wishlisted, .qprod__like[wishlisted] {
+  border-color: #f55157;
+}
 .qprod__like.s-product-card-wishlisted i, .qprod__like[wishlisted] i {
   color: #f55157;
 }
@@ -28544,6 +28547,12 @@ body.qside-open {
     color: #f55157;
     border-color: #f55157;
   }
+}
+.qoffer__like[wishlisted] {
+  border-color: #f55157;
+}
+.qoffer__like[wishlisted] i {
+  color: #f55157;
 }
 .qoffer__add {
   background: #30378e !important;
@@ -36184,6 +36193,7 @@ salla-quantity-input[max="1"] .s-quantity-input-button{
 .qwish {
   display: block;
   font-family: "GE SS Two", sans-serif;
+  min-width: 0;
 }
 .qwish salla-products-list {
   display: block;
@@ -36191,18 +36201,19 @@ salla-quantity-input[max="1"] .s-quantity-input-button{
 .qwish salla-products-list::part(base),
 .qwish .s-products-list-wrapper {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   grid-gap: 24px 16px;
   gap: 24px 16px;
 }
 .qwish custom-salla-product-card {
   display: block;
   width: 100%;
+  min-width: 0;
 }
 @media (max-width: 1023px) {
   .qwish salla-products-list::part(base),
   .qwish .s-products-list-wrapper {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 @media (max-width: 480px) {

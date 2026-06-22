@@ -259,9 +259,10 @@
       color: #f55157;
       border-color: #f55157;
     }
-    &.s-product-card-wishlisted i,
-    &[wishlisted] i {
-      color: #f55157;
+    &.s-product-card-wishlisted,
+    &[wishlisted] {
+      border-color: #f55157;
+      i { color: #f55157; }
     }
   }
 }
