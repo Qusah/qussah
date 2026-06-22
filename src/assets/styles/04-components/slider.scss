@@ -14,8 +14,10 @@ salla-slider{
       @apply absolute rtl:right-4 ltr:left-4 bottom-4 z-[2] sm:hidden;
     }
 
+    // main-image arrows: hidden on desktop (thumbnails are the nav there);
+    // shown on mobile via the .qpd gallery override (qissa-product-detail.scss)
     .s-slider-block__title-nav{
-      @apply hidden sm:flex;
+      @apply hidden;
     }
   }
 

@@ -527,15 +527,6 @@
                     <h2 class="qpd-viewed__title">المنتجات التي تم <span class="qpd-viewed__title-hl">مشاهدتها مؤخراً</span></h2>
                     <p class="qpd-viewed__subtitle">قائمه المنتجات التي شاهدتها مؤخراً</p>
                 </div>
-                {# prev/next arrows — mobile carousel controls #}
-                <div class="qpd-viewed__nav">
-                    <button type="button" class="qpd-viewed__navbtn" data-qv-prev aria-label="السابق">
-                        <i class="sicon-keyboard_arrow_right"></i>
-                    </button>
-                    <button type="button" class="qpd-viewed__navbtn" data-qv-next aria-label="التالي">
-                        <i class="sicon-keyboard_arrow_left"></i>
-                    </button>
-                </div>
 
                 {# left: view-all button #}
                 <a href="{{ store.url }}" class="qpd-viewed__all">
@@ -550,22 +541,40 @@
 
             {# real recently-viewed products; falls back to related on this product #}
             <salla-products-slider class="qpd-viewed__slider" source="latest-viewed" limit="8"></salla-products-slider>
+
+            {# prev/next arrows — mobile carousel controls, centered under the products #}
+            <div class="qpd-viewed__nav">
+                <button type="button" class="qpd-viewed__navbtn" data-qv-prev aria-label="السابق">
+                    <i class="sicon-keyboard_arrow_right"></i>
+                </button>
+                <button type="button" class="qpd-viewed__navbtn" data-qv-next aria-label="التالي">
+                    <i class="sicon-keyboard_arrow_left"></i>
+                </button>
+            </div>
         </div>
     </section>
 
-    {# recently-viewed carousel arrows → drive the slider's inner Swiper #}
+    {# recently-viewed carousel arrows → move the slider (click its built-in arrows,
+       fall back to the inner Swiper instance if needed) #}
     <script>
         (function () {
             var sec = document.querySelector('.qpd-viewed');
             if (!sec) { return; }
-            function swiper() {
-                var el = sec.querySelector('.qpd-viewed__slider .swiper');
-                return el ? el.swiper : null;
+            function move(dir) {
+                var slider = sec.querySelector('.qpd-viewed__slider');
+                if (!slider) { return; }
+                // 1) click the slider's own prev/next button if present
+                var btn = slider.querySelector(dir === 'next' ? '.s-slider-next' : '.s-slider-prev');
+                if (btn) { btn.click(); return; }
+                // 2) fall back to the Swiper instance on the inner .swiper element
+                var sw = slider.querySelector('.swiper');
+                sw = sw && sw.swiper;
+                if (sw) { dir === 'next' ? sw.slideNext() : sw.slidePrev(); }
             }
             var prev = sec.querySelector('[data-qv-prev]');
             var next = sec.querySelector('[data-qv-next]');
-            if (prev) { prev.addEventListener('click', function () { var s = swiper(); if (s) { s.slidePrev(); } }); }
-            if (next) { next.addEventListener('click', function () { var s = swiper(); if (s) { s.slideNext(); } }); }
+            if (prev) { prev.addEventListener('click', function () { move('prev'); }); }
+            if (next) { next.addEventListener('click', function () { move('next'); }); }
         })();
     </script>
     
