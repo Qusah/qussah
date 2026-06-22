@@ -12,11 +12,11 @@
    <div class="container">
     <div class="qheader-topbar">
       <div class="qheader-topbar__links">
-        <a href="{{ store.url }}" data-route="contact-us">تواصل معنا</a>
+        <a href="{{ link('/contact-us') }}">تواصل معنا</a>
         <span class="qheader-sep"></span>
         <a href="{{ store.url }}">سياسة الإستبدال أو الاسترجاع</a>
         <span class="qheader-sep"></span>
-        <a href="{{ store.url }}" data-route="wishlist">المفضلة</a>
+        <a href="{{ link('/wishlist') }}">المفضلة</a>
         <span class="qheader-sep"></span>
         <span class="qheader-lang">العربية - رس</span>
       </div>
@@ -47,7 +47,7 @@
             <span class="qheader-act__badge">{{ cart.items_count|default(0) }}</span>
           </span>
         </a>
-        <a href="{{ store.url }}" data-route="profile" class="qheader-act">
+        <a href="{{ link('/profile') }}" class="qheader-act">
           <span class="qheader-act__txt">
             <b>مرحبا بك</b>
             <em>تسجيل دخول</em>
@@ -97,13 +97,13 @@
       <a class="qside__link" href="{{ store.url }}" {{ is_page('index') ? 'aria-current="page"' : '' }}>الرئيسية</a>
       <a class="qside__link" href="{{ store.url }}/كل-المنتجات/c1390845573">المنتجات</a>
       <a class="qside__link" href="{{ store.url }}/about-us">عن قصة</a>
-      <a class="qside__link" href="{{ store.url }}" data-route="contact-us">تواصل معنا</a>
+      <a class="qside__link" href="{{ link('/contact-us') }}">تواصل معنا</a>
     </nav>
 
     {# secondary links — reuse the existing top-bar links #}
     <nav class="qside__secondary">
       <a href="{{ store.url }}">سياسة الإستبدال أو الاسترجاع</a>
-      <a href="{{ store.url }}" data-route="wishlist">المفضلة</a>
+      <a href="{{ link('/wishlist') }}">المفضلة</a>
     </nav>
 
     {# language / currency / location row #}
