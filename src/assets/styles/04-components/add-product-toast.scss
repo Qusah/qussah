@@ -183,7 +183,24 @@
     }
   }
 
-  // ---- narrow phones ----
+  // ---- phones/small modal: 2-row layout so nothing is cramped ----
+  // image (right, spans both rows) | name + remove on top | qty + price below
+  @media (max-width: 600px) {
+    .qcart .qcart__item-row {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      grid-template-areas:
+        "thumb name remove"
+        "thumb qty  price";
+      align-items: center;
+      column-gap: 12px;
+      row-gap: 8px;
+    }
+    .qcart .qcart__item-thumb { align-self: center; }
+    .qcart .qcart__item-price { justify-self: end; }   // price on the left (RTL)
+    .qcart .qcart__item-qty   { justify-self: start; } // stepper on the right
+  }
+
+  // ---- narrow phones: full-width bottom sheet + compact sizes ----
   @media (max-width: 480px) {
     @apply p-0 items-end;
 
@@ -194,9 +211,6 @@
       padding: 20px;
     }
 
-    .qcart .qcart__item-row {
-      column-gap: 10px;
-    }
     .qcart .qcart__item-thumb img {
       width: 72px;
       height: 58px;
