@@ -79,7 +79,7 @@ Cards reuse the shared .qprod card (identical to "منتجات مميزة").
 
                         {# buttons — like LEFT, add-to-cart fills RIGHT #}
                         <div class="qprod__btns">
-                            <button class="qprod__like" onclick="salla.wishlist.toggle({{ product.id }})" aria-label="المفضلة">
+                            <button class="qprod__like" onclick="salla.wishlist.toggle('{{ product.id }}')" aria-label="المفضلة">
                                 <i class="sicon-heart"></i>
                             </button>
                             <button class="qprod__add" type="button"

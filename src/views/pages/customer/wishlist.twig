@@ -21,6 +21,16 @@
 	   old "#wishlist-product-{id}" that wishlist.js targets). #}
 	<script>
 		(function () {
+			// make the account sidebar static (not sticky) on the wishlist + keep content wide
+			var sidebar = document.querySelector('.sidebar');
+			if (sidebar) {
+				sidebar.classList.remove('lg:sticky');
+				sidebar.style.position = 'static';
+				sidebar.style.top = 'auto';
+			}
+			var main = document.querySelector('.main-content');
+			if (main) { main.classList.remove('max-w-3xl'); }
+
 			function wire() {
 				if (!(window.salla && salla.wishlist && salla.wishlist.event)) { return false; }
 				var grid = document.getElementById('wishlist');
