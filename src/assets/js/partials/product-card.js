@@ -241,7 +241,7 @@ class ProductCard extends HTMLElement {
               name="product-name-${this.product.id}"
               aria-label="Add or remove to wishlist"
               class="s-product-card-wishlist-btn animated ${this.isInWishlist ? 's-product-card-wishlist-added pulse-anime' : 'not-added un-favorited'}"
-              onclick="salla.wishlist.toggle('${this.product.id}')"
+              onclick="salla.wishlist.toggle(${this.product.id})"
               data-id="${this.product.id}">
               <i class="sicon-heart"></i>
             </salla-button>` : ``
@@ -331,7 +331,7 @@ class ProductCard extends HTMLElement {
                   id="card-wishlist-btn-${this.product.id}-horizontal"
                   aria-label="Add or remove to wishlist"
                   class="s-product-card-wishlist-btn animated ${this.isInWishlist ? 's-product-card-wishlist-added pulse-anime' : 'not-added un-favorited'}"
-                  onclick="salla.wishlist.toggle('${this.product.id}')"
+                  onclick="salla.wishlist.toggle(${this.product.id})"
                   data-id="${this.product.id}">
                   <i class="sicon-heart"></i> 
                 </salla-button>`
