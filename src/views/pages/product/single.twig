@@ -527,6 +527,16 @@
                     <h2 class="qpd-viewed__title">المنتجات التي تم <span class="qpd-viewed__title-hl">مشاهدتها مؤخراً</span></h2>
                     <p class="qpd-viewed__subtitle">قائمه المنتجات التي شاهدتها مؤخراً</p>
                 </div>
+                {# prev/next arrows — mobile carousel controls #}
+                <div class="qpd-viewed__nav">
+                    <button type="button" class="qpd-viewed__navbtn" data-qv-prev aria-label="السابق">
+                        <i class="sicon-keyboard_arrow_right"></i>
+                    </button>
+                    <button type="button" class="qpd-viewed__navbtn" data-qv-next aria-label="التالي">
+                        <i class="sicon-keyboard_arrow_left"></i>
+                    </button>
+                </div>
+
                 {# left: view-all button #}
                 <a href="{{ store.url }}" class="qpd-viewed__all">
                     <i class="sicon-keyboard_arrow_left"></i>
@@ -542,6 +552,22 @@
             <salla-products-slider class="qpd-viewed__slider" source="latest-viewed" limit="8"></salla-products-slider>
         </div>
     </section>
+
+    {# recently-viewed carousel arrows → drive the slider's inner Swiper #}
+    <script>
+        (function () {
+            var sec = document.querySelector('.qpd-viewed');
+            if (!sec) { return; }
+            function swiper() {
+                var el = sec.querySelector('.qpd-viewed__slider .swiper');
+                return el ? el.swiper : null;
+            }
+            var prev = sec.querySelector('[data-qv-prev]');
+            var next = sec.querySelector('[data-qv-next]');
+            if (prev) { prev.addEventListener('click', function () { var s = swiper(); if (s) { s.slidePrev(); } }); }
+            if (next) { next.addEventListener('click', function () { var s = swiper(); if (s) { s.slideNext(); } }); }
+        })();
+    </script>
     
     {#
         Hook: product.single.after_product_recommendations

@@ -641,6 +641,10 @@
     padding-inline: 15px;
     &__title { font-size: 24px; line-height: 30px; }
 
+    // stack order: gallery (image + thumbs) FIRST, info below (Figma 299:4271)
+    &__gallery { order: 0; }
+    &__info { order: 1; }
+
     // ----- GALLERY: main image on top, thumbnails as a horizontal row below -----
     &__gallery {
       .details-slider { flex-direction: column; gap: 12px; }
@@ -661,6 +665,8 @@
         border-radius: 18px;
         padding: 7px;
       }
+      // show the main-image carousel arrows on mobile (hidden by default — slider.scss)
+      .s-slider-block__title-nav { display: flex !important; }
     }
 
     // ----- price (LEFT) + quantity & label (RIGHT) -----
@@ -778,12 +784,25 @@
   // slider cards keep the global qissa-product-card look
   &__slider { display: block; }
 
+  // prev/next carousel arrows — mobile only
+  &__nav { display: none; }
+  &__navbtn {
+    width: 46px; height: 46px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid #e9ecef; border-radius: 50%;
+    background: #fff; color: #30378e; cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+    i { font-size: 18px; }
+    &:hover { background: #30378e; border-color: #30378e; color: #fff; }
+  }
+
   @media (max-width: 768px) {
     padding-block: 24px;
     .container { padding-inline: 15px; }
     &__head { flex-direction: column; align-items: stretch; gap: 16px; }
     &__intro { align-items: flex-end; order: 1; }
-    &__all { order: 2; width: 100%; }
+    &__nav { order: 2; display: inline-flex; gap: 10px; justify-content: center; }
+    &__all { order: 3; width: 100%; }
     &__title { font-size: 24px; line-height: 30px; }
   }
 }

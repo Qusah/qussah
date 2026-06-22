@@ -31396,6 +31396,12 @@ body.qside-open {
     font-size: 24px;
     line-height: 30px;
   }
+  .qpd__gallery {
+    order: 0;
+  }
+  .qpd__info {
+    order: 1;
+  }
   .qpd__gallery .details-slider {
     flex-direction: column;
     gap: 12px;
@@ -31432,6 +31438,9 @@ body.qside-open {
     flex: 0 0 80px;
     border-radius: 18px;
     padding: 7px;
+  }
+  .qpd__gallery .s-slider-block__title-nav {
+    display: flex !important;
   }
   .qpd__priceqty {
     flex-wrap: nowrap;
@@ -31568,6 +31577,30 @@ body.qside-open {
 .qpd-viewed__slider {
   display: block;
 }
+.qpd-viewed__nav {
+  display: none;
+}
+.qpd-viewed__navbtn {
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e9ecef;
+  border-radius: 50%;
+  background: #fff;
+  color: #30378e;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.qpd-viewed__navbtn i {
+  font-size: 18px;
+}
+.qpd-viewed__navbtn:hover {
+  background: #30378e;
+  border-color: #30378e;
+  color: #fff;
+}
 @media (max-width: 768px) {
   .qpd-viewed {
     padding-top: 24px;
@@ -31586,8 +31619,14 @@ body.qside-open {
     align-items: flex-end;
     order: 1;
   }
-  .qpd-viewed__all {
+  .qpd-viewed__nav {
     order: 2;
+    display: inline-flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .qpd-viewed__all {
+    order: 3;
     width: 100%;
   }
   .qpd-viewed__title {
