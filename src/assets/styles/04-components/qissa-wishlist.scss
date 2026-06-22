@@ -25,6 +25,9 @@
   // each card fills its cell and may shrink below content width
   custom-salla-product-card { display: block; width: 100%; min-width: 0; }
 
+  // every product on this page is wishlisted → heart is always red
+  .s-product-card-wishlist-btn i { color: #f55157; }
+
   // tablet / mobile (sidebar is hidden below lg → full width) → 2 columns
   @media (max-width: 1023px) {
     salla-products-list::part(base),

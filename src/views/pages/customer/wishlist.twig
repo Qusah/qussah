@@ -20,16 +20,14 @@
 		{% hook 'customer:wishlist.items.end' %}
 	</div>
 
-	{# The card's heart calls salla.wishlist.toggle(). On this page a toggle-off must
-	   also drop the card from the grid (the Qissa card uses id="{product.id}", not the
-	   old "#wishlist-product-{id}" that wishlist.js targets). #}
 	<script>
 		(function () {
-			// account sidebar: static (not sticky) + not pulled up into the header banner,
-			// so its top sits level with the product cards
+			// ---- layout: thin teal banner + account box level with the products ----
+			var header = document.querySelector('.profile-header');
+			if (header) { header.classList.remove('lg:h-48'); }   // kill the big empty cyan band
 			var sidebar = document.querySelector('.sidebar');
 			if (sidebar) {
-				sidebar.classList.remove('lg:sticky', 'lg:-mt-28');
+				sidebar.classList.remove('lg:sticky', 'lg:-mt-28');  // not sticky, not pulled into the banner
 				sidebar.style.position = 'static';
 				sidebar.style.top = 'auto';
 				sidebar.style.marginTop = '0';
@@ -37,10 +35,25 @@
 			var main = document.querySelector('.main-content');
 			if (main) { main.classList.remove('max-w-3xl'); }
 
+			var grid = document.getElementById('wishlist');
+			if (!grid) { return; }
+
+			// Every product shown here is already wishlisted, so the heart always REMOVES.
+			// Intercept in the capture phase so the card's inline salla.wishlist.toggle()
+			// — which mis-fires "add" because the local wishlist cache is empty here — never runs.
+			grid.addEventListener('click', function (e) {
+				var btn = e.target.closest('.s-product-card-wishlist-btn');
+				if (!btn) { return; }
+				e.preventDefault();
+				e.stopPropagation();
+				var card = btn.closest('custom-salla-product-card');
+				var id = card && card.id;
+				if (id && window.salla && salla.wishlist) { salla.wishlist.remove(Number(id)); }
+			}, true);
+
+			// drop the card once Salla confirms the removal
 			function wire() {
 				if (!(window.salla && salla.wishlist && salla.wishlist.event)) { return false; }
-				var grid = document.getElementById('wishlist');
-				if (!grid) { return true; }
 				salla.wishlist.event.onRemoved(function (response, id) {
 					var card = document.getElementById(String(id));
 					if (!card || !grid.contains(card)) { return; }

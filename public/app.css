@@ -36210,6 +36210,9 @@ salla-quantity-input[max="1"] .s-quantity-input-button{
   width: 100%;
   min-width: 0;
 }
+.qwish .s-product-card-wishlist-btn i {
+  color: #f55157;
+}
 @media (max-width: 1023px) {
   .qwish salla-products-list::part(base),
   .qwish .s-products-list-wrapper {
@@ -37779,6 +37782,9 @@ body.font-dinnextltarabic-regular .btn--add-to-cart {
     }
     .lg\:hidden{
         display: none;
+    }
+    .lg\:h-48{
+        height: 12rem;
     }
     .lg\:min-h-\[528px\]{
         min-height: 528px;
