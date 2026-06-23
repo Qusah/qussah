@@ -196,6 +196,75 @@
                 </salla-slider>
             </div>
 
+            {# Custom gallery prev/next arrows — injected into the main image and
+               wired straight to the main Swiper instance (robust, replaces the
+               brittle salla built-in title-nav overlay). Only when >1 image. #}
+            {% if has_many_images %}
+            <script>
+                (function () {
+                    var host = document.getElementById('details-slider-{{ product.id }}');
+                    if (!host) { return; }
+                    var tries = 0;
+
+                    function mainSwiper() {
+                        var el = host.querySelector('.s-slider-container .swiper');
+                        return el && el.swiper ? el.swiper : null;
+                    }
+
+                    function init() {
+                        var container = host.querySelector('.s-slider-container');
+                        if (!container) {
+                            if (tries++ < 90) { requestAnimationFrame(init); }
+                            return;
+                        }
+                        if (container.querySelector('.qpd__gallery-arrow')) { return; }
+
+                        var prev = document.createElement('button');
+                        prev.type = 'button';
+                        prev.className = 'qpd__gallery-arrow qpd__gallery-arrow--prev';
+                        prev.setAttribute('aria-label', 'السابق');
+                        prev.innerHTML = '<i class="sicon-keyboard_arrow_right"></i>';
+
+                        var next = document.createElement('button');
+                        next.type = 'button';
+                        next.className = 'qpd__gallery-arrow qpd__gallery-arrow--next';
+                        next.setAttribute('aria-label', 'التالي');
+                        next.innerHTML = '<i class="sicon-keyboard_arrow_left"></i>';
+
+                        container.appendChild(prev);
+                        container.appendChild(next);
+
+                        function sync() {
+                            var s = mainSwiper();
+                            if (!s) { return; }
+                            var loop = s.params && s.params.loop;
+                            prev.classList.toggle('is-disabled', !loop && s.isBeginning);
+                            next.classList.toggle('is-disabled', !loop && s.isEnd);
+                        }
+                        function go(dir) {
+                            var s = mainSwiper();
+                            if (s) {
+                                dir === 'next' ? s.slideNext() : s.slidePrev();
+                            } else {
+                                var b = container.querySelector(dir === 'next' ? '.s-slider-next' : '.s-slider-prev');
+                                if (b) { b.click(); }
+                            }
+                            setTimeout(sync, 60);
+                        }
+
+                        prev.addEventListener('click', function () { go('prev'); });
+                        next.addEventListener('click', function () { go('next'); });
+
+                        var s = mainSwiper();
+                        if (s && s.on) { s.on('slideChange', sync); }
+                        sync();
+                    }
+
+                    requestAnimationFrame(init);
+                })();
+            </script>
+            {% endif %}
+
             <div class="main-content qpd__info md:sticky md:overflow-hidden top-24 w-full md:w-2/4">
                 {% hook 'product:single.description.start' %}
 

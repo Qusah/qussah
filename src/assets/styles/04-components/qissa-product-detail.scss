@@ -2244,3 +2244,99 @@
     height: 340px !important;
   }
 }
+
+// ====================================================================
+// Product gallery slider arrows — FINAL authoritative pass.
+// Custom prev/next buttons are injected into .s-slider-container by the
+// inline script in single.twig and drive the main Swiper directly. This
+// replaces salla's brittle built-in title-nav overlay (hidden below).
+// RTL: prev (previous) = RIGHT side, next = LEFT side. Shown on all sizes.
+// Appended last so it wins the cascade over the earlier layered passes.
+// ====================================================================
+.qpd__gallery {
+  // we render our own arrows → hide every salla built-in nav variant
+  .s-slider-block__title-nav,
+  .s-slider-nav-arrow,
+  .s-slider-button-prev,
+  .s-slider-button-next,
+  .s-slider-prev,
+  .s-slider-next {
+    display: none !important;
+  }
+
+  // anchor the custom arrows to the main image on every breakpoint
+  .s-slider-container {
+    position: relative;
+  }
+
+  .qpd__gallery-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 7;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid #e9ecef;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    color: #30378e;
+    box-shadow: 0 6px 16px rgba(10, 31, 48, 0.14);
+    cursor: pointer;
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    transition:
+      background 0.15s,
+      color 0.15s,
+      border-color 0.15s,
+      opacity 0.15s;
+
+    i {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    &:hover {
+      background: #30378e;
+      border-color: #30378e;
+      color: #fff;
+    }
+
+    // disabled at a non-looping end → faded, non-interactive
+    &.is-disabled {
+      opacity: 0.35;
+      pointer-events: none;
+      box-shadow: none;
+    }
+  }
+
+  .qpd__gallery-arrow--prev {
+    right: 14px;
+    left: auto;
+  } // RTL: previous lives on the RIGHT
+  .qpd__gallery-arrow--next {
+    left: 14px;
+    right: auto;
+  } // next on the LEFT
+}
+
+@media (max-width: 768px) {
+  .qpd__gallery {
+    .qpd__gallery-arrow {
+      width: 40px;
+      height: 40px;
+      i {
+        font-size: 18px;
+      }
+    }
+    .qpd__gallery-arrow--prev {
+      right: 12px;
+    }
+    .qpd__gallery-arrow--next {
+      left: 12px;
+    }
+  }
+}
