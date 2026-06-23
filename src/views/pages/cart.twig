@@ -205,10 +205,19 @@
                             <b class="qcart__summary-value">{{ cart.real_shipping_cost|money }}</b>
                         </div>
 
-                        <!-- coupon discount -->
-                        <div id="total-discount" class="qcart__summary-row qcart__summary-row--discount {{ cart.total_discount ? '' : 'hidden' }}">
+                        <!-- Salla-managed coupon/offer discount. Kept (so Salla keeps
+                             its amount in sync) but visually hidden — its value is folded
+                             into the combined discount row below. -->
+                        <div id="total-discount" class="qcart__summary-row qcart__summary-row--discount qcart__summary-row--salla-hidden {{ cart.total_discount ? '' : 'hidden' }}" aria-hidden="true">
                             <span class="qcart__summary-label">قيمة الخصم</span>
                             <b class="qcart__summary-value">- {{ cart.total_discount|money }}</b>
+                        </div>
+
+                        <!-- Combined discount = product sale savings (regular − sale) +
+                             coupon discount. Computed in JS; hidden when both are zero. -->
+                        <div id="qcart-discount" class="qcart__summary-row qcart__summary-row--discount hidden">
+                            <span class="qcart__summary-label">قيمة الخصم</span>
+                            <b class="qcart__summary-value" id="qcart-discount-value">- 0</b>
                         </div>
 
                         {% if cart.tax_amount %}
@@ -247,6 +256,116 @@
         </div>
     </div>
     </div>
+
+    {# Combined cart discount = product sale savings (Σ (regular − sale) × qty) +
+       Salla's coupon/offer discount. Shows the total in #qcart-discount, hidden
+       when zero. Recomputes on every cart change. #}
+    <script>
+        (function () {
+            var root = document.querySelector('.qcart');
+            if (!root) { return; }
+            var row = document.getElementById('qcart-discount');
+            var valEl = document.getElementById('qcart-discount-value');
+            var subTotalEl = document.getElementById('sub-total');
+            if (!row || !valEl) { return; }
+
+            // formatted money string → number (handles Arabic/Persian digits + currency glyph)
+            function toNum(s) {
+                if (s == null) { return 0; }
+                s = String(s)
+                    .replace(/[٠-٩]/g, function (d) { return d.charCodeAt(0) - 0x0660; })
+                    .replace(/[۰-۹]/g, function (d) { return d.charCodeAt(0) - 0x06F0; })
+                    .replace(/[^0-9.]/g, '');
+                var n = parseFloat(s);
+                return isNaN(n) ? 0 : n;
+            }
+
+            // current quantity for a cart item (salla-quantity-input or hidden input)
+            function itemQty(item) {
+                var q = item.querySelector('salla-quantity-input');
+                if (q) {
+                    var inp = q.querySelector('input');
+                    var v = (inp && inp.value) || q.value || q.getAttribute('value');
+                    return parseInt(v, 10) || 1;
+                }
+                var hidden = item.querySelector('input[name="quantity"]');
+                return hidden ? (parseInt(hidden.value, 10) || 1) : 1;
+            }
+
+            // Σ (per-unit regular − per-unit sale) × quantity over on-sale items.
+            // Only the product's own sale (.item-original-price / is_on_sale) is summed
+            // here — cart-level offers live in .item-regular-price and are already part
+            // of Salla's coupon/offer discount, so counting them too would double up.
+            function productSavings() {
+                var sum = 0;
+                root.querySelectorAll('.qcart__item').forEach(function (item) {
+                    var reg = item.querySelector('.item-original-price:not(.hidden)');
+                    if (!reg) { return; }
+                    var saleEl = item.querySelector('.item-price');
+                    var regV = toNum(reg.textContent);
+                    var saleV = saleEl ? toNum(saleEl.textContent) : 0;
+                    if (regV > saleV) { sum += (regV - saleV) * itemQty(item); }
+                });
+                return sum;
+            }
+
+            // Salla keeps the coupon/offer amount in the hidden #total-discount row
+            function couponDiscount() {
+                var el = document.getElementById('total-discount');
+                var v = el && el.querySelector('.qcart__summary-value');
+                return v ? toNum(v.textContent) : 0;
+            }
+
+            // Σ of the per-line totals (sale prices) — Salla-managed, never written by
+            // us, so it's a safe base for the regular subtotal without double-counting.
+            function saleSubtotal() {
+                var sum = 0;
+                root.querySelectorAll('.qcart__item .item-total').forEach(function (el) {
+                    sum += toNum(el.textContent);
+                });
+                return sum;
+            }
+
+            function fmt(n) {
+                if (window.salla && typeof salla.money === 'function') { return salla.money(n); }
+                return n.toLocaleString('ar-EG') + ' ر.س';
+            }
+
+            function update() {
+                var savings = productSavings();
+                var discount = savings + couponDiscount();
+
+                // show المجموع as the pre-sale (regular) sum so the summary reads
+                // coherently: subtotal − discount = total. Base = Σ line totals
+                // (sale) + product savings = regular sum.
+                if (subTotalEl) {
+                    var base = saleSubtotal();
+                    if (base > 0) { subTotalEl.textContent = fmt(base + savings); }
+                }
+
+                if (discount > 0.0001) {
+                    valEl.textContent = '- ' + fmt(discount);
+                    row.classList.remove('hidden');
+                } else {
+                    row.classList.add('hidden');
+                }
+            }
+
+            update();
+            // re-run once Salla is ready so salla.money() formats the currency correctly
+            if (window.salla && salla.onReady) { salla.onReady(update); }
+
+            // recompute after Salla processes any cart change (qty, remove, coupon)
+            if (window.salla && salla.cart && salla.cart.event && salla.cart.event.onUpdated) {
+                salla.cart.event.onUpdated(function () { setTimeout(update, 80); });
+            }
+            // and on direct interactions (quantity steppers, coupon apply)
+            root.addEventListener('change', function () { setTimeout(update, 80); });
+            root.addEventListener('click', function (e) {
+                if (e.target.closest('.qcart__coupon')) { setTimeout(update, 450); }
+            });
+        })();
+    </script>
 {% endblock %}
 
 {% block scripts %}
