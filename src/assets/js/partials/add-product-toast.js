@@ -45,27 +45,28 @@ class AddToCartToast extends HTMLElement {
     this.render();
   }
 
-  // Combined discount = product sale savings (Σ line regular − line sale over
-  // on-sale items) + Salla's coupon/offer discount. The shown المجموع is the
-  // pre-sale (regular) sum so the summary reads coherently: subtotal − discount
-  // = total. Offer-only items are left out of `savings` (their discount is
-  // already in cart.total_discount) to avoid double-counting.
+  // Total discount (sales + offers + coupon) = regular subtotal − final total.
+  // Coherent by construction: المجموع − الخصم = الإجمالى. Regular subtotal is the
+  // sum of each item's pre-discount line price (original × qty when it has a
+  // struck price, else its line total).
   discountInfo(cart) {
-    let savings = 0;
+    let regularSubtotal = 0;
     (cart.items || []).forEach((it) => {
-      if (!it.is_on_sale) return;
-      const lineRegular = (it.original_price || 0) * (it.quantity || 1);
-      const lineSale = it.total != null ? it.total : lineRegular;
-      if (lineRegular > lineSale) savings += lineRegular - lineSale;
+      const qty = it.quantity || 1;
+      const hasStruck = (it.has_discount || it.is_on_sale) && it.original_price != null;
+      if (hasStruck) {
+        regularSubtotal += it.original_price * qty;
+      } else if (it.total != null) {
+        regularSubtotal += it.total;
+      } else {
+        regularSubtotal += (it.price || 0) * qty;
+      }
     });
-    // coupon/offer discount — take whichever field carries it (some responses
-    // populate `discount`, others `total_discount`; one may be 0).
-    const coupon = Math.max(Number(cart.discount) || 0, Number(cart.total_discount) || 0);
-    return {
-      savings,
-      combined: savings + coupon,
-      regularSubtotal: (cart.sub_total || 0) + savings,
-    };
+    const total = Number(cart.total) || 0;
+    // round2 avoids float artefacts (e.g. 624 − 592.8 = 31.20000000000045)
+    const round2 = (n) => Math.round(n * 100) / 100;
+    const combined = total > 0 && regularSubtotal > total ? round2(regularSubtotal - total) : 0;
+    return { combined, regularSubtotal: round2(regularSubtotal) };
   }
 
   async handleProductAdded() {

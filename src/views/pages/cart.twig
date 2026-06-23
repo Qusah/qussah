@@ -274,12 +274,15 @@
             var schedTimer = null;
 
             // formatted money string → number. Handles Arabic/Persian digits, the
-            // currency glyph, and comma-as-thousands vs comma-as-decimal.
+            // Arabic decimal (٫ U+066B) / thousands (٬ U+066C, ، U+060C) separators,
+            // the currency glyph, and comma-as-thousands vs comma-as-decimal.
             function toNum(s) {
                 if (s == null) { return 0; }
                 s = String(s)
                     .replace(/[٠-٩]/g, function (d) { return d.charCodeAt(0) - 0x0660; })
                     .replace(/[۰-۹]/g, function (d) { return d.charCodeAt(0) - 0x06F0; })
+                    .replace(/٫/g, '.')        // Arabic decimal separator → dot
+                    .replace(/[٬،]/g, ',') // Arabic thousands / comma → comma
                     .replace(/[^0-9.,]/g, '');
                 if (!s) { return 0; }
                 var dec = Math.max(s.lastIndexOf(','), s.lastIndexOf('.'));
@@ -308,46 +311,28 @@
                 return hidden ? (parseInt(hidden.value, 10) || 1) : 1;
             }
 
-            // Σ (per-unit regular − per-unit sale) × quantity over on-sale items.
-            // Only the product's own sale (.item-original-price / is_on_sale) is summed
-            // here — cart-level offers live in .item-regular-price and are already part
-            // of Salla's coupon/offer discount, so counting them too would double up.
-            function productSavings() {
+            // Σ of each item's REGULAR line price: the struck price (per-unit regular,
+            // .item-original-price for sales or .item-regular-price for offers) × qty,
+            // or the line total when the item has no struck price. This is the pre-any-
+            // discount subtotal.
+            function regularSubtotal() {
                 var sum = 0;
                 root.querySelectorAll('.qcart__item').forEach(function (item) {
-                    var reg = item.querySelector('.item-original-price:not(.hidden)');
-                    if (!reg) { return; }
-                    var saleEl = item.querySelector('.item-price');
-                    var regV = toNum(reg.textContent);
-                    var saleV = saleEl ? toNum(saleEl.textContent) : 0;
-                    if (regV > saleV) { sum += (regV - saleV) * itemQty(item); }
+                    var struck = item.querySelector('.item-original-price:not(.hidden), .item-regular-price:not(.hidden)');
+                    if (struck) {
+                        sum += toNum(struck.textContent) * itemQty(item);
+                    } else {
+                        var totalEl = item.querySelector('.item-total');
+                        if (totalEl) { sum += toNum(totalEl.textContent); }
+                    }
                 });
                 return sum;
             }
 
-            // Σ of the per-line totals (sale prices) — Salla-managed, never written by
-            // us, so it's a safe base for the regular subtotal without double-counting.
-            function saleSubtotal() {
-                var sum = 0;
-                root.querySelectorAll('.qcart__item .item-total').forEach(function (el) {
-                    sum += toNum(el.textContent);
-                });
-                return sum;
-            }
-
-            // الإجمالى that Salla renders (already reflects any applied coupon/offer)
+            // الإجمالى that Salla renders (already reflects every sale/offer/coupon)
             function displayedTotal() {
                 var el = document.querySelector('[data-cart-total]');
                 return el ? toNum(el.textContent) : 0;
-            }
-
-            // Coupon/offer discount = how much Salla reduced the sale subtotal to reach
-            // the displayed total. The salla-cart-coupons component updates the TOTAL,
-            // not the #total-discount row, so this is the reliable source.
-            function couponDiscount() {
-                var sale = saleSubtotal();
-                var total = displayedTotal();
-                return (sale > 0 && total > 0 && sale > total + 0.01) ? (sale - total) : 0;
             }
 
             function fmt(n) {
@@ -359,20 +344,20 @@
                 // pause observation while we mutate the summary (avoid self-trigger loop)
                 if (observer) { observer.disconnect(); }
 
-                var savings = productSavings();
-                var discount = savings + couponDiscount();
+                // Total discount (sales + offers + coupon) = regular subtotal − final
+                // total. Coherent by construction: المجموع − الخصم = الإجمالى.
+                // round2 avoids float artefacts (e.g. 624 − 592.8 = 31.20000000000045).
+                var round2 = function (n) { return Math.round(n * 100) / 100; };
+                var regular = round2(regularSubtotal());
+                var total = displayedTotal();
+                var discount = (regular > 0 && total > 0 && regular > total + 0.01) ? round2(regular - total) : 0;
 
-                // show المجموع as the pre-sale (regular) sum so the summary reads
-                // coherently: subtotal − discount = total. Base = Σ line totals
-                // (sale) + product savings = regular sum.
-                if (subTotalEl) {
-                    var base = saleSubtotal();
-                    // salla.money() returns HTML (the SAR symbol is an <i> icon) → innerHTML
-                    if (base > 0) { subTotalEl.innerHTML = fmt(base + savings); }
-                }
+                // show المجموع as the regular (pre-discount) sum.
+                // salla.money() returns HTML (the SAR symbol is an <i> icon) → innerHTML
+                if (subTotalEl && regular > 0) { subTotalEl.innerHTML = fmt(regular); }
 
                 // inline display wins over the .qcart__summary-row flex rule, so the
-                // row is fully hidden when there's no product discount AND no coupon.
+                // row is fully hidden when there's no discount and no coupon.
                 if (discount > 0.0001) {
                     valEl.innerHTML = '- ' + fmt(discount);
                     row.style.display = 'flex';
