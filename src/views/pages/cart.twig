@@ -303,13 +303,18 @@
 
                     var form = document.getElementById('item-' + it.id);
                     if (!form) { return; }
+                    var discounted = regularLine > current + 0.01;
                     // accurate current line price (Salla leaves this stale for sale items)
                     var totalSpan = form.querySelector('.item-total');
-                    if (totalSpan && it.is_available !== false) { totalSpan.innerHTML = money(current); }
+                    if (totalSpan && it.is_available !== false) {
+                        totalSpan.innerHTML = money(current);
+                        // red only when the item is actually discounted
+                        totalSpan.classList.toggle('is-sale', discounted);
+                    }
                     // struck regular line price; hidden when there's no discount
                     var struck = form.querySelector('.item-struck');
                     if (struck) {
-                        if (regularLine > current + 0.01) {
+                        if (discounted) {
                             struck.innerHTML = money(regularLine);
                             struck.classList.remove('hidden');
                         } else {
