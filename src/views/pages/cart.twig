@@ -273,13 +273,25 @@
             var observer = null;
             var schedTimer = null;
 
-            // formatted money string → number (handles Arabic/Persian digits + currency glyph)
+            // formatted money string → number. Handles Arabic/Persian digits, the
+            // currency glyph, and comma-as-thousands vs comma-as-decimal.
             function toNum(s) {
                 if (s == null) { return 0; }
                 s = String(s)
                     .replace(/[٠-٩]/g, function (d) { return d.charCodeAt(0) - 0x0660; })
                     .replace(/[۰-۹]/g, function (d) { return d.charCodeAt(0) - 0x06F0; })
-                    .replace(/[^0-9.]/g, '');
+                    .replace(/[^0-9.,]/g, '');
+                if (!s) { return 0; }
+                var dec = Math.max(s.lastIndexOf(','), s.lastIndexOf('.'));
+                if (dec !== -1) {
+                    var after = s.length - dec - 1;
+                    if (after >= 1 && after <= 2) {
+                        // last separator is a decimal point
+                        s = s.slice(0, dec).replace(/[.,]/g, '') + '.' + s.slice(dec + 1).replace(/[.,]/g, '');
+                    } else {
+                        s = s.replace(/[.,]/g, ''); // all separators are thousands
+                    }
+                }
                 var n = parseFloat(s);
                 return isNaN(n) ? 0 : n;
             }
@@ -313,13 +325,6 @@
                 return sum;
             }
 
-            // Salla keeps the coupon/offer amount in the hidden #total-discount row
-            function couponDiscount() {
-                var el = document.getElementById('total-discount');
-                var v = el && el.querySelector('.qcart__summary-value');
-                return v ? toNum(v.textContent) : 0;
-            }
-
             // Σ of the per-line totals (sale prices) — Salla-managed, never written by
             // us, so it's a safe base for the regular subtotal without double-counting.
             function saleSubtotal() {
@@ -328,6 +333,21 @@
                     sum += toNum(el.textContent);
                 });
                 return sum;
+            }
+
+            // الإجمالى that Salla renders (already reflects any applied coupon/offer)
+            function displayedTotal() {
+                var el = document.querySelector('[data-cart-total]');
+                return el ? toNum(el.textContent) : 0;
+            }
+
+            // Coupon/offer discount = how much Salla reduced the sale subtotal to reach
+            // the displayed total. The salla-cart-coupons component updates the TOTAL,
+            // not the #total-discount row, so this is the reliable source.
+            function couponDiscount() {
+                var sale = saleSubtotal();
+                var total = displayedTotal();
+                return (sale > 0 && total > 0 && sale > total + 0.01) ? (sale - total) : 0;
             }
 
             function fmt(n) {

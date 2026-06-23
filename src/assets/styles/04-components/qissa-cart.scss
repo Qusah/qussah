@@ -442,6 +442,10 @@
   // source) but never shown — the combined #qcart-discount row replaces it.
   .qcart__summary-row--salla-hidden { display: none !important; }
 
+  // Hide the available-coupons suggestion carousel — coupons are applied only by
+  // typing the code into the input (keeps the input + apply button).
+  .s-cart-coupons-slider { display: none !important; }
+
   .qcart__summary-divider {
     border-top: 1px solid #d7e6ee;
     height: 0;

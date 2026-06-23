@@ -58,7 +58,9 @@ class AddToCartToast extends HTMLElement {
       const lineSale = it.total != null ? it.total : lineRegular;
       if (lineRegular > lineSale) savings += lineRegular - lineSale;
     });
-    const coupon = (cart.total_discount != null ? cart.total_discount : cart.discount) || 0;
+    // coupon/offer discount — take whichever field carries it (some responses
+    // populate `discount`, others `total_discount`; one may be 0).
+    const coupon = Math.max(Number(cart.discount) || 0, Number(cart.total_discount) || 0);
     return {
       savings,
       combined: savings + coupon,
