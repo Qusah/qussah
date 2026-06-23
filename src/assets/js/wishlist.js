@@ -44,6 +44,14 @@ class Wishlist extends BasePage {
                 app.toggleElementClassIf(btn, 'is-added', 'not-added', () => isAdded);
                 // app.toggleElementClassIf(btn, 'pulse', 'un-favorited', () => isAdded);
             });
+
+        // product-card hearts (default salla card + custom-salla-product-card) use a
+        // different class — sync their added state too so the toggle is visible
+        // (e.g. recently-viewed slider on the product page).
+        document.querySelectorAll('.s-product-card-wishlist-btn[data-id="' + id + '"]')
+            .forEach(btn => {
+                app.toggleElementClassIf(btn, 's-product-card-wishlist-added', 'not-added', () => isAdded);
+            });
     }
 }
 

@@ -198,6 +198,9 @@
   }
 
   // wishlist as a separate rounded square (overrides the round icon-button base)
+  // Figma 214:5324: WHITE/outline by default with a heart; turns solid red only
+  // when the product is in the wishlist (.s-product-card-wishlist-added). This is
+  // what makes the toggle visible (e.g. recently-viewed slider).
   .s-product-card-wishlist-btn {
     position: static;
     flex: 0 0 50px;
@@ -210,12 +213,12 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 0 !important;
+    border: 1px solid #daeff7 !important;
     border-radius: 12px !important;
     outline: 0 !important;
-    background: #dc3545 !important;
-    color: #fff !important;
-    fill: #fff !important;
+    background: #fff !important;
+    color: #30378e !important;
+    fill: #30378e !important;
     box-shadow: none !important;
     opacity: 1;
     overflow: hidden;
@@ -235,9 +238,9 @@
       border: 0 !important;
       border-radius: 12px !important;
       outline: 0 !important;
-      background: #dc3545 !important;
-      color: #fff !important;
-      fill: #fff !important;
+      background: transparent !important;
+      color: #30378e !important;
+      fill: #30378e !important;
       box-shadow: none !important;
     }
 
@@ -246,19 +249,42 @@
       display: block;
       font-size: 18px;
       line-height: 1;
-      color: #fff !important;
-      fill: #fff !important;
-      stroke: #fff !important;
+      color: #30378e !important;
+      fill: #30378e !important;
+      stroke: #30378e !important;
     }
 
-    &:hover,
-    &:hover::part(base),
-    &:hover button,
-    &:hover .s-button-btn,
-    &:hover .s-button-element {
-      background: #c92f3d !important;
+    &:hover {
+      border-color: #30378e !important;
+    }
+
+    // ----- added state → solid red, white heart -----
+    &.s-product-card-wishlist-added,
+    &.is-added {
+      border-color: #dc3545 !important;
+      background: #dc3545 !important;
       color: #fff !important;
       fill: #fff !important;
+
+      &::part(base),
+      button,
+      .s-button-btn,
+      .s-button-element {
+        background: #dc3545 !important;
+        color: #fff !important;
+        fill: #fff !important;
+      }
+      i,
+      svg {
+        color: #fff !important;
+        fill: #fff !important;
+        stroke: #fff !important;
+      }
+
+      &:hover {
+        background: #c92f3d !important;
+        border-color: #c92f3d !important;
+      }
     }
   }
 }

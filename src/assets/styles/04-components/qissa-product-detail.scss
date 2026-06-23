@@ -2456,3 +2456,163 @@
     }
   }
 }
+
+// ====================================================================
+// Wishlist (favorite) button — clean rebuild from Figma node 299:4326.
+// salla-button was dropped from the gallery markup (its light-DOM kept
+// clipping the heart); this is a plain <button class="qpd__fav"> with full
+// CSS control, so the glyph is always centered. Matches the share button
+// beside it: 40px white rounded square, 1px #e9ecef border, navy heart.
+// Overlay only on mobile (desktop uses the info-column heart, like before).
+// ====================================================================
+.qpd__gallery .qpd__fav {
+  display: none; // desktop: hidden, info-column heart is used instead
+}
+
+@media (max-width: 768px) {
+  .qpd__gallery .qpd__fav {
+    position: absolute;
+    top: 18px; // Figma 299:4325 container top
+    left: 17px; // RIGHT-most in RTL → leftmost overlay (matches Figma)
+    right: auto;
+    z-index: 6;
+
+    width: 40px; // 40.134 → 40
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+
+    border: 1px solid #e9ecef; // 0.803 → 1px, gray/200
+    border-radius: 10px; // 9.632 → 10
+    background: #fff;
+    color: #30378e;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    transition:
+      background 0.15s,
+      border-color 0.15s,
+      color 0.15s;
+
+    // heart glyph — 15px (Figma 14.448), centered, navy outline
+    .qpd__fav-icon {
+      width: 15px;
+      height: 15px;
+      display: block;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    &:hover {
+      border-color: #30378e;
+    }
+    &:active {
+      transform: scale(0.94);
+    }
+
+    // wishlisted → solid red, filled white heart (toggled by wishlist.js)
+    &.is-added {
+      background: #d62f45;
+      border-color: #d62f45;
+      color: #fff;
+      .qpd__fav-icon {
+        fill: #fff;
+        stroke: #fff;
+      }
+    }
+  }
+}
+
+// ====================================================================
+// Gallery follow-ups (requested):
+//   1) Hide the slider arrows on desktop — keep them on mobile only.
+//   2) Remove the blue selection outline on the main image + thumbnails.
+//   3) Share = plain native-share button (.qpd__share-btn), styled to
+//      match the heart (.qpd__fav); shown as a mobile overlay only.
+// ====================================================================
+
+// 1) arrows: mobile only
+@media (min-width: 769px) {
+  .qpd__gallery .qpd__gallery-arrow {
+    display: none !important;
+  }
+}
+
+// 2) no blue outline anywhere in the gallery (main image + thumbnails).
+//    Active thumb keeps a neutral border instead of the royal-blue one,
+//    and the slide links never show a focus ring.
+.qpd__gallery {
+  .slide--one-fourth,
+  .slide--one-fourth.swiper-slide-thumb-active {
+    border-color: #e9ecef !important;
+  }
+  .s-slider-container,
+  .homeslider__slide,
+  .swiper-slide,
+  .magnify-wrapper,
+  a:focus,
+  a:focus-visible,
+  button:focus,
+  button:focus-visible {
+    outline: none !important;
+    box-shadow: none;
+  }
+}
+
+// 3) share button — same square as the heart, sits to its left (Figma row).
+//    Desktop: hidden (info-column share is used, like the heart).
+.qpd__gallery .qpd__share-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .qpd__gallery .qpd__share-btn {
+    position: absolute;
+    top: 18px;
+    left: 69px; // 17 + 40 (heart) + 12 gap → second slot
+    right: auto;
+    z-index: 6;
+
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    background: #fff;
+    color: #30378e;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    transition:
+      background 0.15s,
+      border-color 0.15s,
+      color 0.15s;
+
+    .qpd__share-icon {
+      width: 16px;
+      height: 16px;
+      display: block;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    &:hover {
+      border-color: #30378e;
+    }
+    &:active {
+      transform: scale(0.94);
+    }
+  }
+}

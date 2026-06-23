@@ -115,19 +115,36 @@
                         <div class="promotion-title">{{ product.promotion_title }}</div>
                     {% endif %}
 
-                    <salla-button
-                            class="qpd__gallery-icon btn--wishlist animated sws"
+                    {# Wishlist (favorite) — plain button rebuilt from Figma 299:4326
+                       (40px white rounded square, centered heart). salla-button was
+                       dropped here because its light-DOM kept clipping the glyph.
+                       wishlist.js toggles .is-added on any .btn--wishlist[data-id]. #}
+                    <button type="button"
+                            class="qpd__fav btn--wishlist not-added"
                             data-id="{{ product.id }}"
                             onclick="salla.wishlist.toggle('{{ product.id }}')"
-                            shape="icon"
-                            fill="outline"
-                            color="light">
-                        <svg class="qpd__heart-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            aria-label="add to wishlist">
+                        <svg class="qpd__fav-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/>
                         </svg>
-                    </salla-button>
+                    </button>
 
-                    <salla-social-share class="qpd__gallery-icon qpd__gallery-share" aria-label="social share"></salla-social-share>
+                    {# Share — plain button using the native share sheet (Figma 299:4330).
+                       salla-social-share was dropped here: its AddToAny popup was being
+                       clipped by the 40px overlay host, so it appeared dead. #}
+                    <button type="button"
+                            class="qpd__share-btn"
+                            data-url="{{ product.url }}"
+                            data-title="{{ product.name|e('html_attr') }}"
+                            aria-label="share product">
+                        <svg class="qpd__share-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <circle cx="18" cy="5" r="3"/>
+                            <circle cx="6" cy="12" r="3"/>
+                            <circle cx="18" cy="19" r="3"/>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                        </svg>
+                    </button>
 
                     {# Calories Badge #}
                     {% if product.calories %}
@@ -195,6 +212,27 @@
                     {% endif %}
                 </salla-slider>
             </div>
+
+            {# Share button → native share sheet, with clipboard / prompt fallback. #}
+            <script>
+                (function () {
+                    var b = document.querySelector('#product-{{ product.id }} .qpd__share-btn');
+                    if (!b) { return; }
+                    b.addEventListener('click', function () {
+                        var url = b.getAttribute('data-url') || window.location.href;
+                        var title = b.getAttribute('data-title') || document.title;
+                        if (navigator.share) {
+                            navigator.share({ title: title, url: url }).catch(function () {});
+                        } else if (navigator.clipboard && navigator.clipboard.writeText) {
+                            navigator.clipboard.writeText(url).then(function () {
+                                if (window.salla && salla.notify) { salla.notify.success('تم نسخ رابط المنتج'); }
+                            });
+                        } else {
+                            window.prompt('انسخ رابط المنتج', url);
+                        }
+                    });
+                })();
+            </script>
 
             {# Custom gallery prev/next arrows — injected into the main image and
                wired straight to the main Swiper instance (robust, replaces the
