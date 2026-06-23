@@ -116,7 +116,7 @@
                     {% endif %}
 
                     <salla-button
-                            class="btn--wishlist animated sws"
+                            class="qpd__gallery-icon btn--wishlist animated sws"
                             data-id="{{ product.id }}"
                             onclick="salla.wishlist.toggle('{{ product.id }}')"
                             shape="icon"
@@ -124,6 +124,8 @@
                             color="light">
                         <i class="sicon-heart"></i>
                     </salla-button>
+
+                    <salla-social-share class="qpd__gallery-icon qpd__gallery-share" aria-label="social share"></salla-social-share>
 
                     {# Calories Badge #}
                     {% if product.calories %}

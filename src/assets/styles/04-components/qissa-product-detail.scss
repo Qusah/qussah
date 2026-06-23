@@ -715,6 +715,232 @@
 }
 
 // ====================================================================
+// Product-detail Figma refresh (desktop 160:4121 / mobile 214:4223)
+// ====================================================================
+.qpd {
+  &__title { letter-spacing: 0; }
+
+  &__gallery {
+    .details-slider { position: relative; }
+
+    .qpd__gallery-icon {
+      display: none !important;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .qpd {
+    &__row { gap: 0; }
+    &__gallery,
+    &__info { width: 100%; flex: 0 0 auto; }
+
+    &__gallery {
+      overflow: visible !important;
+
+      .details-slider {
+        flex-direction: column;
+        gap: 20px;
+        overflow: visible;
+      }
+
+      .s-slider-container {
+        order: 1;
+        width: 100%;
+        height: 371px;
+        flex: none;
+        border-radius: 25px;
+        background: #30378e;
+      }
+
+      .homeslider__slide {
+        border-radius: 25px;
+        background: #30378e;
+
+        img {
+          border-radius: 25px;
+          object-fit: cover;
+        }
+      }
+
+      .s-slider-thumbs {
+        order: 2;
+        width: 100%;
+        height: 89px;
+        flex: none;
+        overflow: visible;
+      }
+
+      .s-slider-thumbs-container {
+        width: 100% !important;
+        height: 89px !important;
+      }
+
+      .s-slider-thumbs-container .swiper-wrapper {
+        flex-direction: row !important;
+        height: 89px !important;
+        gap: 16px;
+        justify-content: stretch;
+        flex-wrap: nowrap;
+        transform: none !important;
+      }
+
+      .slide--one-fourth {
+        width: auto !important;
+        min-width: 0;
+        max-width: none;
+        height: 89px !important;
+        flex: 1 1 0;
+        border-radius: 15px;
+        padding: 10px;
+
+        img { border-radius: 10px; }
+      }
+
+      .qpd__gallery-icon {
+        position: absolute !important;
+        top: 18px !important;
+        right: auto !important;
+        bottom: auto !important;
+        z-index: 6 !important;
+        width: 40px !important;
+        min-width: 40px !important;
+        height: 40px !important;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #e9ecef !important;
+        border-radius: 10px !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: #fff !important;
+        box-shadow: none !important;
+        overflow: hidden;
+
+        i { font-size: 14px; line-height: 1; }
+
+        &::part(base) {
+          width: 100%;
+          height: 100%;
+          min-width: 0;
+          padding: 0;
+          border: 0;
+          border-radius: 10px;
+          background: transparent;
+          color: inherit;
+          box-shadow: none;
+        }
+      }
+
+      .btn--wishlist.qpd__gallery-icon { left: 17px !important; }
+      .qpd__gallery-share { left: 69px !important; }
+      .qpd__gallery-share::part(base) { padding: 0; }
+
+      .s-slider-block__title-nav { display: flex !important; }
+    }
+
+    &__info {
+      order: 1;
+      display: flex;
+      flex-direction: column;
+      padding-top: 30px;
+    }
+
+    &__titlerow {
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+
+    &__iconbtns { display: none !important; }
+    &__title { font-size: 24px; font-weight: 700; line-height: 30px; letter-spacing: 0; }
+    &__stock { margin-bottom: 8px; font-size: 14px; line-height: 21px; }
+    &__rating { margin-bottom: 8px; }
+    &__desc { margin-bottom: 16px; font-size: 14px; line-height: 22px; }
+    &__chips { gap: 8px; margin-bottom: 16px; }
+    &__chip { font-size: 12px; }
+
+    &__weight {
+      height: 44px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 12px;
+    }
+
+    &__gift {
+      order: 12;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    &__gift-icon { font-size: 20px; }
+    &__gift-title { font-size: 14px; margin-bottom: 4px; }
+    &__gift-sub { font-size: 10px; line-height: 16px; }
+    &__gift-btn {
+      min-height: 36px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .product-form { order: 16; }
+    &__installment,
+    &__paydemo {
+      order: 20;
+      margin-top: 16px;
+    }
+
+    &__priceqty {
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    &__price { order: 2; }
+    &__price-now { font-size: 16px; line-height: 22px; }
+    &__price-old { font-size: 12px; }
+    &__qty { order: 1; gap: 8px; flex-shrink: 0; }
+    &__qty-label { order: 1; font-size: 12px; line-height: 18px; }
+
+    salla-quantity-input {
+      order: 2;
+      width: 96px;
+      min-width: 96px;
+      height: 36px;
+      border-radius: 6px;
+
+      &::part(input) { font-size: 14px; }
+    }
+
+    &__actions { gap: 12px; }
+    &__btn--buy,
+    &__btn--cart .s-button-element {
+      height: 40px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    &__cart-icon {
+      width: 14px !important;
+      height: 14px !important;
+      min-width: 14px;
+      flex-basis: 14px;
+    }
+
+    &__paydemo { flex-direction: column; gap: 12px; }
+    &__pay { padding: 14px; gap: 12px; }
+  }
+}
+
+@media (max-width: 390px) {
+  .qpd {
+    &__gallery {
+      .s-slider-container { height: 340px; }
+      .s-slider-thumbs,
+      .s-slider-thumbs-container,
+      .s-slider-thumbs-container .swiper-wrapper { height: 82px !important; }
+      .slide--one-fourth { height: 82px !important; padding: 8px; }
+    }
+  }
+}
+// ====================================================================
 // Recently-viewed products — Figma node 6036:5118
 // Header band: eyebrow + title + subtitle (RIGHT) + view-all btn (LEFT).
 // Cards use the global qissa-product-card styling.
