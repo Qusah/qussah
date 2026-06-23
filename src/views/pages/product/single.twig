@@ -146,6 +146,18 @@
                         </svg>
                     </button>
 
+                    {# Zoom / expand — opens the image lightbox for the active slide
+                       (Figma zoom 1, node 160:6138 desktop / 214:4961 mobile).
+                       Bottom-left of the main image. #}
+                    <button type="button" class="qpd__zoom" aria-label="تكبير الصورة">
+                        <svg class="qpd__zoom-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <polyline points="15 3 21 3 21 9"/>
+                            <polyline points="9 21 3 21 3 15"/>
+                            <line x1="21" y1="3" x2="14" y2="10"/>
+                            <line x1="3" y1="21" x2="10" y2="14"/>
+                        </svg>
+                    </button>
+
                     {# Calories Badge #}
                     {% if product.calories %}
                         <div class="absolute z-[2] top-4 rtl:left-4 ltr:right-4 bg-white shadow-sm flex flex-col justify-center items-center rounded-full w-20 h-20 md:w-24 md:h-24">
@@ -243,6 +255,23 @@
                     } else {
                         bind();
                     }
+                })();
+            </script>
+
+            {# Zoom button → open the lightbox for the currently active image by
+               triggering its data-fslightbox link (same as clicking the image). #}
+            <script>
+                (function () {
+                    var host = document.getElementById('details-slider-{{ product.id }}');
+                    var btn = document.querySelector('#product-{{ product.id }} .qpd__zoom');
+                    if (!host || !btn) { return; }
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        var active = host.querySelector('.s-slider-container .swiper-slide-active[data-fslightbox]')
+                            || host.querySelector('.s-slider-container .swiper-slide-active a[data-fslightbox]')
+                            || host.querySelector('.s-slider-container [data-fslightbox]');
+                        if (active) { active.click(); }
+                    });
                 })();
             </script>
 

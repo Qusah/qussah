@@ -2654,3 +2654,100 @@
     color: #fff !important;
   }
 }
+
+// ====================================================================
+// Thumbnails (alternative images) — show ALL of them + center the strip.
+//   * Un-cap: earlier CSS hid every thumb past the 4th (nth-child(n+5)).
+//   * Desktop (vertical column) → centered vertically.
+//   * Mobile (horizontal row)   → centered horizontally.
+//   `safe center` keeps every thumb reachable: it centers when they fit and
+//   falls back to start-alignment (so scroll reaches them) when they overflow.
+// ====================================================================
+.qpd__gallery .slide--one-fourth:nth-child(n + 5) {
+  display: flex !important; // was display:none → unlock the 5th+ thumbnail
+}
+
+@media (min-width: 769px) {
+  .qpd__gallery {
+    .s-slider-thumbs-container {
+      overflow-y: auto !important; // scroll when there are more than fit
+    }
+    .s-slider-thumbs-container .swiper-wrapper {
+      justify-content: safe center !important; // vertical center (column axis)
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .qpd__gallery {
+    .s-slider-thumbs-container {
+      overflow-x: auto !important; // scroll the row when it overflows
+    }
+    .s-slider-thumbs-container .swiper-wrapper {
+      justify-content: safe center !important; // horizontal center (row axis)
+    }
+  }
+}
+
+// ====================================================================
+// Zoom / expand button — opens the image lightbox (Figma "zoom 1",
+// node 160:6138 desktop / 214:4961 mobile). 40px translucent square at the
+// BOTTOM-LEFT of the main image; shown on desktop and mobile. Lives in the
+// slider default slot → rendered inside .s-slider-container (relative).
+// ====================================================================
+.qpd__gallery .qpd__zoom {
+  position: absolute;
+  left: 24px; // Figma desktop inset
+  bottom: 24px;
+  right: auto;
+  top: auto;
+  z-index: 6;
+
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 10px;
+  background: rgba(10, 31, 48, 0.4);
+  color: #fff;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+
+  .qpd__zoom-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover {
+    background: #30378e;
+    border-color: #30378e;
+  }
+  &:active {
+    transform: scale(0.94);
+  }
+}
+
+@media (max-width: 768px) {
+  .qpd__gallery .qpd__zoom {
+    left: 15px; // Figma mobile inset
+    bottom: 14px;
+    .qpd__zoom-icon {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
