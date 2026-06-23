@@ -35925,7 +35925,9 @@ salla-quantity-input[max="1"] .s-quantity-input-button{
   flex-direction: column;
   justify-content: flex-start;
   background: #fff;
+  border: 1px solid #daeff7;
   border-radius: 24px;
+  box-shadow: none;
   padding: 15px;
 }
 .s-product-card-vertical:not(.s-product-card-special) .s-product-card-image {
@@ -36088,59 +36090,129 @@ salla-quantity-input[max="1"] .s-quantity-input-button{
   width: 100%;
 }
 .s-product-card-vertical:not(.s-product-card-special) salla-add-product-button {
-  flex: 1 1 auto;
-  min-width: 1px;
+  flex: 1 1 0;
+  min-width: 0;
   margin: 0;
 }
-.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button .s-button-btn {
+.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button::part(base),
+.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button button,
+.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button .s-button-btn,
+.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button .s-button-element {
+  width: 100% !important;
+  height: 50px !important;
+  min-height: 50px !important;
+  margin: 0 !important;
+  padding: 8px 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  border: 1px solid #30378e !important;
+  border-radius: 12px !important;
+  outline: 0 !important;
   background: #30378e !important;
-  border-color: #30378e !important;
   color: #fff !important;
   fill: #fff !important;
+  box-shadow: none !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  line-height: 24px !important;
 }
-.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button .s-button-btn {
-  height: 50px;
-  min-height: 50px;
-  border-radius: 12px;
+.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button::part(base),
+.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button button,
+.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button .s-button-btn,
+.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button .s-button-element {
   font-family: "GE SS Two", sans-serif;
-  font-size: 16px;
-  font-weight: 500;
+  overflow: hidden;
 }
-.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button .s-button-btn:hover {
+.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button .s-button-text {
+  min-width: 0;
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button i,
+.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  font-size: 16px;
+  line-height: 1;
+}
+.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button:hover::part(base), .s-product-card-vertical:not(.s-product-card-special) salla-add-product-button:hover button, .s-product-card-vertical:not(.s-product-card-special) salla-add-product-button:hover .s-button-btn, .s-product-card-vertical:not(.s-product-card-special) salla-add-product-button:hover .s-button-element {
   background: #91e6f7 !important;
   border-color: #91e6f7 !important;
   color: #30378e !important;
   fill: #30378e !important;
 }
-.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button .s-button-btn:hover {
+.s-product-card-vertical:not(.s-product-card-special) salla-add-product-button:hover::part(base), .s-product-card-vertical:not(.s-product-card-special) salla-add-product-button:hover button, .s-product-card-vertical:not(.s-product-card-special) salla-add-product-button:hover .s-button-btn, .s-product-card-vertical:not(.s-product-card-special) salla-add-product-button:hover .s-button-element {
   opacity: 1;
 }
 .s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn {
-  position: static;
-  opacity: 1;
-  flex: 0 0 50px;
-}
-.s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn .s-button-btn {
   padding: 0 !important;
-  border: 1px solid #e9ecef !important;
+  border: 0 !important;
   border-radius: 12px !important;
-  background: #fff !important;
+  outline: 0 !important;
+  background: #dc3545 !important;
+  color: #fff !important;
+  fill: #fff !important;
+  box-shadow: none !important;
 }
-.s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn .s-button-btn {
+.s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn {
+  position: static;
+  flex: 0 0 50px;
   width: 50px;
   height: 50px;
+  min-width: 50px;
   min-height: 50px;
   margin: 0;
-  color: #0a1f30;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  overflow: hidden;
 }
-.s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn i {
+.s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn::part(base),
+.s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn button,
+.s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn .s-button-btn,
+.s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn .s-button-element {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  outline: 0 !important;
+  background: #dc3545 !important;
+  color: #fff !important;
+  fill: #fff !important;
+  box-shadow: none !important;
+}
+.s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn i,
+.s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn svg {
+  color: #fff !important;
+  fill: #fff !important;
+  stroke: #fff !important;
+}
+.s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn i,
+.s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn svg {
+  display: block;
   font-size: 18px;
+  line-height: 1;
 }
-.s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn:hover .s-button-btn {
-  border-color: #f55157 !important;
-}
-.s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn.s-product-card-wishlist-added i {
-  color: #f55157;
+.s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn:hover, .s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn:hover::part(base), .s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn:hover button, .s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn:hover .s-button-btn, .s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn:hover .s-button-element {
+  background: #c92f3d !important;
+  color: #fff !important;
+  fill: #fff !important;
 }
 @media (max-width: 768px) {
   .s-product-card-vertical:not(.s-product-card-special) {
@@ -36175,19 +36247,34 @@ salla-quantity-input[max="1"] .s-quantity-input-button{
   .s-product-card-vertical:not(.s-product-card-special) .s-product-card-starting-price h4 {
     font-size: 14px;
   }
-  .s-product-card-vertical:not(.s-product-card-special) salla-add-product-button .s-button-btn {
-    height: 40px;
-    min-height: 40px;
-    border-radius: 8px;
-    font-size: 14px;
+  .s-product-card-vertical:not(.s-product-card-special) salla-add-product-button::part(base),
+  .s-product-card-vertical:not(.s-product-card-special) salla-add-product-button button,
+  .s-product-card-vertical:not(.s-product-card-special) salla-add-product-button .s-button-btn,
+  .s-product-card-vertical:not(.s-product-card-special) salla-add-product-button .s-button-element {
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 8px 10px !important;
+    gap: 6px !important;
+    border-radius: 8px !important;
+    font-size: 14px !important;
+  }
+  .s-product-card-vertical:not(.s-product-card-special) salla-add-product-button .s-button-text {
+    gap: 6px;
   }
   .s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn {
-    flex-basis: 41px;
+    flex-basis: 42px;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    min-height: 42px;
   }
-  .s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn .s-button-btn {
-    width: 41px;
-    height: 41px;
-    min-height: 41px;
+  .s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn::part(base),
+  .s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn button,
+  .s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn .s-button-btn,
+  .s-product-card-vertical:not(.s-product-card-special) .s-product-card-wishlist-btn .s-button-element {
+    width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
   }
 }
 .qwishlist-profile-header {
@@ -36369,18 +36456,68 @@ salla-quantity-input[max="1"] .s-quantity-input-button{
   border: 1px solid #daeff7;
   box-shadow: none;
 }
-.qwish .s-product-card-wishlist-btn .s-button-btn {
+.qwish .s-product-card-wishlist-btn {
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  outline: 0 !important;
   background: #dc3545 !important;
-  border-color: #e9ecef !important;
   color: #fff !important;
   fill: #fff !important;
+  box-shadow: none !important;
+}
+.qwish .s-product-card-wishlist-btn {
+  flex: 0 0 50px;
+  width: 50px;
+  height: 50px;
+  min-width: 50px;
+  min-height: 50px;
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  overflow: hidden;
+}
+.qwish .s-product-card-wishlist-btn::part(base),
+.qwish .s-product-card-wishlist-btn button,
+.qwish .s-product-card-wishlist-btn .s-button-btn,
+.qwish .s-product-card-wishlist-btn .s-button-element {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  outline: 0 !important;
+  background: #dc3545 !important;
+  color: #fff !important;
+  fill: #fff !important;
+  box-shadow: none !important;
+}
+.qwish .s-product-card-wishlist-btn i,
+.qwish .s-product-card-wishlist-btn svg {
+  color: #fff !important;
+  fill: #fff !important;
+  stroke: #fff !important;
 }
 .qwish .s-product-card-wishlist-btn i {
-  color: #fff !important;
+  display: block;
+  font-size: 18px;
+  line-height: 1;
 }
-.qwish .s-product-card-wishlist-btn:hover .s-button-btn {
+.qwish .s-product-card-wishlist-btn:hover,
+.qwish .s-product-card-wishlist-btn:hover::part(base),
+.qwish .s-product-card-wishlist-btn:hover button,
+.qwish .s-product-card-wishlist-btn:hover .s-button-btn,
+.qwish .s-product-card-wishlist-btn:hover .s-button-element {
   background: #c92f3d !important;
-  border-color: #e9ecef !important;
+  color: #fff !important;
+  fill: #fff !important;
 }
 @media (max-width: 1279px) and (min-width: 1024px) {
   .qwishlist-shell {
@@ -36430,11 +36567,50 @@ salla-quantity-input[max="1"] .s-quantity-input-button{
   }
   .qwish .s-product-card-wishlist-btn {
     flex-basis: 42px;
-  }
-  .qwish .s-product-card-wishlist-btn .s-button-btn {
     width: 42px;
     height: 42px;
+    min-width: 42px;
     min-height: 42px;
+  }
+  .qwish .s-product-card-wishlist-btn::part(base),
+  .qwish .s-product-card-wishlist-btn button,
+  .qwish .s-product-card-wishlist-btn .s-button-btn,
+  .qwish .s-product-card-wishlist-btn .s-button-element {
+    width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+  }
+  .qwish .s-product-card-content-footer {
+    gap: 6px;
+  }
+  .qwish salla-add-product-button {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .qwish salla-add-product-button::part(base),
+  .qwish salla-add-product-button button,
+  .qwish salla-add-product-button .s-button-btn,
+  .qwish salla-add-product-button .s-button-element {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 8px 6px !important;
+    gap: 4px !important;
+    font-size: 12px !important;
+    line-height: 20px !important;
+  }
+  .qwish salla-add-product-button .s-button-text {
+    gap: 4px;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .qwish salla-add-product-button i,
+  .qwish salla-add-product-button svg {
+    width: 15px;
+    height: 15px;
+    flex-basis: 15px;
+    font-size: 15px;
   }
 }
 @media (max-width: 380px) {
