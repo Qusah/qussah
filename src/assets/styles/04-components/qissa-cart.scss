@@ -157,9 +157,14 @@
       font-family: 'Poppins', 'GE SS Two', sans-serif;
       &.is-sale { color: $red; }
     }
+    .item-struck { color: $g500; font-size: 14px; }
+    // Salla's checkout.js re-toggles these on coupon/sale changes — force them
+    // hidden (their text is still read by the discount JS for the max regular
+    // price) so ONLY our computed .item-struck shows. !important beats Salla
+    // removing the `hidden` class.
     .item-original-price,
-    .item-regular-price { color: $g500; font-size: 14px; }
-    .item-price { display: none; }
+    .item-regular-price,
+    .item-price { display: none !important; }
   }
 
   // ---- quantity stepper (Figma: white pill, baby-blue border + dividers) ----
