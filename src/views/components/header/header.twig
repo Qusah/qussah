@@ -37,23 +37,34 @@
 
       {# cart + profile (left) #}
       <div class="qheader-actions">
-        <a href="{{ link('/cart') }}" class="qheader-act">
+        <a href="{{ link('/cart') }}" class="qheader-act qheader-act--cart">
           <span class="qheader-act__txt">
             <b>سلة المشتريات</b>
-            <em>{{ cart.total|default('0 رس') }}</em>
           </span>
           <span class="qheader-act__ic">
             <i class="sicon-shopping-bag"></i>
             <span class="qheader-act__badge">{{ cart.items_count|default(0) }}</span>
           </span>
         </a>
-        <a href="{{ link('/profile') }}" class="qheader-act">
-          <span class="qheader-act__txt">
-            <b>مرحبا بك</b>
-            <em>تسجيل دخول</em>
-          </span>
-          <span class="qheader-act__ic"><i class="sicon-user"></i></span>
-        </a>
+        {# account: real login state — show the customer's name when logged in,
+           otherwise open Salla's login modal (<salla-login-modal> in master). #}
+        {% if user.type == 'user' %}
+          <a href="{{ link('/profile') }}" class="qheader-act">
+            <span class="qheader-act__txt">
+              <b>مرحبا بك</b>
+              <em>{{ user.first_name|default('حسابي') }}</em>
+            </span>
+            <span class="qheader-act__ic"><i class="sicon-user"></i></span>
+          </a>
+        {% else %}
+          <a href="#" onclick="event.preventDefault(); salla.event.dispatch('login::open')" class="qheader-act">
+            <span class="qheader-act__txt">
+              <b>مرحبا بك</b>
+              <em>تسجيل دخول</em>
+            </span>
+            <span class="qheader-act__ic"><i class="sicon-user"></i></span>
+          </a>
+        {% endif %}
       </div>
 
       {# pill menu (center) — static links, exact Figma pill #}

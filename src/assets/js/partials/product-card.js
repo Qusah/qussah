@@ -234,17 +234,14 @@ class ProductCard extends HTMLElement {
           </a>
           ${this.fullImage ? `<a href="${this.product?.url}" aria-label=${this.product.name} class="s-product-card-overlay"></a>`:''}
           ${(!this.horizontal && !this.fullImage && !this.isPlainVertical) || (this.isPlainVertical && this.hideAddBtn) ?
-            `<salla-button
-              shape="icon"
-              fill="outline"
-              color="light"
+            `<button type="button"
               name="product-name-${this.product.id}"
               aria-label="Add or remove to wishlist"
               class="s-product-card-wishlist-btn animated ${this.isInWishlist ? 's-product-card-wishlist-added pulse-anime' : 'not-added un-favorited'}"
               onclick="salla.wishlist.toggle(${this.product.id})"
               data-id="${this.product.id}">
               <i class="sicon-heart"></i>
-            </salla-button>` : ``
+            </button>` : ``
           }
         </div>
         <div class="s-product-card-content">
@@ -324,17 +321,14 @@ class ProductCard extends HTMLElement {
               </salla-add-product-button>
 
               ${this.horizontal || this.fullImage || (this.isPlainVertical && !this.hideAddBtn) ?
-                `<salla-button
-                  shape="icon"
-                  fill="outline"
-                  color="light"
+                `<button type="button"
                   id="card-wishlist-btn-${this.product.id}-horizontal"
                   aria-label="Add or remove to wishlist"
                   class="s-product-card-wishlist-btn animated ${this.isInWishlist ? 's-product-card-wishlist-added pulse-anime' : 'not-added un-favorited'}"
                   onclick="salla.wishlist.toggle(${this.product.id})"
                   data-id="${this.product.id}">
-                  <i class="sicon-heart"></i> 
-                </salla-button>`
+                  <i class="sicon-heart"></i>
+                </button>`
                 : ``}
             </div>`
             : ``}

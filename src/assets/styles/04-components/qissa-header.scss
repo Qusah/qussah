@@ -74,6 +74,11 @@ body, main, #app { background: transparent; }
     }
   }
 
+  // cart action has no total line now → center its single label + make it
+  // a proper white label (not the small dimmed sub-text).
+  .qheader-act--cart .qheader-act__txt { justify-content: center; }
+  .qheader-act--cart .qheader-act__txt b { font-size: 13px; color: #fff; }
+
   // pill menu (Figma px-25 py-15)
   .qheader-menu {
     display: flex; align-items: center; gap: 20px;
