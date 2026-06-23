@@ -133,7 +133,7 @@
                        salla-social-share was dropped here: its AddToAny popup was being
                        clipped by the 40px overlay host, so it appeared dead. #}
                     <button type="button"
-                            class="qpd__share-btn"
+                            class="qpd__share-btn qpd-share"
                             data-url="{{ product.url }}"
                             data-title="{{ product.name|e('html_attr') }}"
                             aria-label="share product">
@@ -213,24 +213,36 @@
                 </salla-slider>
             </div>
 
-            {# Share button → native share sheet, with clipboard / prompt fallback. #}
+            {# Share buttons (gallery + info column) → native share sheet, with
+               clipboard / prompt fallback. Bound on DOM ready so both exist. #}
             <script>
                 (function () {
-                    var b = document.querySelector('#product-{{ product.id }} .qpd__share-btn');
-                    if (!b) { return; }
-                    b.addEventListener('click', function () {
-                        var url = b.getAttribute('data-url') || window.location.href;
-                        var title = b.getAttribute('data-title') || document.title;
-                        if (navigator.share) {
-                            navigator.share({ title: title, url: url }).catch(function () {});
-                        } else if (navigator.clipboard && navigator.clipboard.writeText) {
-                            navigator.clipboard.writeText(url).then(function () {
-                                if (window.salla && salla.notify) { salla.notify.success('تم نسخ رابط المنتج'); }
+                    function bind() {
+                        var root = document.getElementById('product-{{ product.id }}');
+                        if (!root) { return; }
+                        root.querySelectorAll('.qpd-share').forEach(function (b) {
+                            if (b.dataset.qpdShareBound) { return; }
+                            b.dataset.qpdShareBound = '1';
+                            b.addEventListener('click', function () {
+                                var url = b.getAttribute('data-url') || window.location.href;
+                                var title = b.getAttribute('data-title') || document.title;
+                                if (navigator.share) {
+                                    navigator.share({ title: title, url: url }).catch(function () {});
+                                } else if (navigator.clipboard && navigator.clipboard.writeText) {
+                                    navigator.clipboard.writeText(url).then(function () {
+                                        if (window.salla && salla.notify) { salla.notify.success('تم نسخ رابط المنتج'); }
+                                    });
+                                } else {
+                                    window.prompt('انسخ رابط المنتج', url);
+                                }
                             });
-                        } else {
-                            window.prompt('انسخ رابط المنتج', url);
-                        }
-                    });
+                        });
+                    }
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', bind);
+                    } else {
+                        bind();
+                    }
                 })();
             </script>
 
@@ -326,14 +338,31 @@
                 {# Title row: title (right) + wishlist/share icon buttons (left) #}
                 <div class="qpd__titlerow">
                     <div class="qpd__iconbtns">
-                        <salla-button
-                                class="qpd__iconbtn btn--wishlist animated sws"
+                        {# Heart + share rebuilt as plain buttons (same reason as the
+                           gallery): salla-button clipped the glyph and salla-social-share's
+                           popup was unreliable. wishlist.js toggles .is-added here. #}
+                        <button type="button"
+                                class="qpd__iconbtn qpd__iconbtn--fav btn--wishlist not-added"
                                 data-id="{{ product.id }}"
                                 onclick="salla.wishlist.toggle('{{ product.id }}')"
-                                shape="icon" fill="outline" color="light" aria-label="add to wishlist">
-                            <i class="sicon-heart"></i>
-                        </salla-button>
-                        <salla-social-share class="qpd__iconbtn qpd__share" aria-label="social share"></salla-social-share>
+                                aria-label="add to wishlist">
+                            <svg class="qpd__iconbtn-icon qpd__iconbtn-heart" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"/>
+                            </svg>
+                        </button>
+                        <button type="button"
+                                class="qpd__iconbtn qpd__iconbtn--share qpd-share"
+                                data-url="{{ product.url }}"
+                                data-title="{{ product.name|e('html_attr') }}"
+                                aria-label="share product">
+                            <svg class="qpd__iconbtn-icon qpd__iconbtn-share" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <circle cx="18" cy="5" r="3"/>
+                                <circle cx="6" cy="12" r="3"/>
+                                <circle cx="18" cy="19" r="3"/>
+                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                            </svg>
+                        </button>
                     </div>
                     <h1 class="qpd__title">{{ product.name }}</h1>
                 </div>

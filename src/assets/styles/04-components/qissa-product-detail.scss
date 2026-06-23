@@ -2616,3 +2616,41 @@
     }
   }
 }
+
+// ====================================================================
+// Info-column heart + share rebuilt as plain buttons (desktop title row).
+// They reuse the existing 50px .qpd__iconbtn square; only the icon sizing
+// + the wishlisted (red) state are added here. Native-share JS lives in
+// single.twig (binds all .qpd-share). Matches the gallery overlay icons.
+// ====================================================================
+.qpd__iconbtn {
+  cursor: pointer;
+
+  .qpd__iconbtn-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+// wishlisted → solid red square, white heart (toggled by wishlist.js)
+.qpd__iconbtn--fav.is-added {
+  background: #d62f45 !important;
+  border-color: #d62f45 !important;
+  color: #fff !important;
+
+  .qpd__iconbtn-heart {
+    fill: #fff;
+    stroke: #fff;
+  }
+  &:hover {
+    background: #c92f3d !important;
+    border-color: #c92f3d !important;
+    color: #fff !important;
+  }
+}
