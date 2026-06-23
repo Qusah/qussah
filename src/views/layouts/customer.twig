@@ -1,6 +1,6 @@
 {% extends "layouts.master" %}
 {% block content %}
-    <div class="profile-header gradient-bg">
+    <div class="profile-header gradient-bg {{ is_page('customer.wishlist') ? 'qwishlist-profile-header' : '' }}">
         <div class="container relative flex justify-between h-full items-center">
             {# add breadcumbs container in pages to make a space in case breadcrumbs is off #}
             <nav class="breadcrumbs w-full py-5 self-start">
@@ -8,11 +8,11 @@
             </nav>
         </div>
     </div>
-    <div class="container lg:mb-24">
-        <div class="flex items-start flex-col lg:flex-row justify-center">
+    <div class="container lg:mb-24 {{ is_page('customer.wishlist') ? 'qwishlist-shell' : '' }}">
+        <div class="flex items-start flex-col lg:flex-row justify-center {{ is_page('customer.wishlist') ? 'qwishlist-layout' : '' }}">
             {# wishlist: let the account box scroll with the page (not sticky) #}
             <nav aria-label="Sidebar"
-                class="shrink-0 {{ is_page('customer.wishlist') ? '' : 'lg:sticky top-24' }} lg:-mt-28 lg:shadow-default rounded-md lg:bg-white w-full lg:w-72 rtl:lg:ml-8 ltr:lg:mr-8 lg:pt-8 lg:pb-11 sidebar space-y-px">
+                class="shrink-0 {{ is_page('customer.wishlist') ? 'qwishlist-sidebar' : 'lg:sticky top-24' }} lg:-mt-28 lg:shadow-default rounded-md lg:bg-white w-full lg:w-72 rtl:lg:ml-8 ltr:lg:mr-8 lg:pt-8 lg:pb-11 sidebar space-y-px">
                 {% if is_page('customer.profile') %}
                     <div class="text-center md:mb-9">
                         <div class="h-20 w-20 m-auto avatar-wrap bg-gray-100 rounded-full">
@@ -25,11 +25,11 @@
                         </div>
                     </div>
                 {% endif %}
-                <div class="hidden lg:block">
+                <div class="hidden lg:block {{ is_page('customer.wishlist') ? 'qwishlist-sidebar-menu' : '' }}">
                     <salla-user-menu inline></salla-user-menu>
                 </div>
             </nav>
-            <div class="main-content w-full flex-1 lg:pt-10 {{ is_page('customer.wishlist') ? '' : 'max-w-3xl' }}">
+            <div class="main-content w-full flex-1 lg:pt-10 {{ is_page('customer.wishlist') ? 'qwishlist-main' : 'max-w-3xl' }}">
                 {% block inner_title %}
                     <h1 class="font-bold text-lg text-center sm:rtl:text-right sm:ltr:text-left mb-2">{{ page.title }}</h1>
                 {% endblock %}

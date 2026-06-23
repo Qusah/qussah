@@ -7,40 +7,24 @@
 #}
 {% extends "layouts.customer" %}
 
-{# breadcrumb already shows "الأمنيات" — drop the duplicate page title so the
-   product grid starts level with the account sidebar box #}
 {% block inner_title %}{% endblock %}
 
 {% block inner_content %}
-	{# Wishlist grid — reuses the Qissa product card (custom-salla-product-card),
-	   registered globally in product-card.js. 3 cols desktop / 2 cols mobile (Figma 184:904 / 341:4271). #}
-	<div class="qwish" id="wishlist">
-		{% hook 'customer:wishlist.items.start' %}
-		<salla-products-list source="wishlist" product-card-component="custom-salla-product-card"></salla-products-list>
-		{% hook 'customer:wishlist.items.end' %}
-	</div>
+	<section class="qwish" aria-labelledby="wishlist-title">
+		<h2 class="qwish__title" id="wishlist-title">قائمة المفضلة و الامنيات</h2>
+		<div class="qwish__list" id="wishlist">
+			{% hook 'customer:wishlist.items.start' %}
+			<salla-products-list source="wishlist" product-card-component="custom-salla-product-card"></salla-products-list>
+			{% hook 'customer:wishlist.items.end' %}
+		</div>
+	</section>
 
 	<script>
 		(function () {
-			// ---- layout: thin teal banner + account box level with the products ----
-			var header = document.querySelector('.profile-header');
-			if (header) { header.classList.remove('lg:h-48'); }   // kill the big empty cyan band
-			var sidebar = document.querySelector('.sidebar');
-			if (sidebar) {
-				sidebar.classList.remove('lg:sticky', 'lg:-mt-28');  // not sticky, not pulled into the banner
-				sidebar.style.position = 'static';
-				sidebar.style.top = 'auto';
-				sidebar.style.marginTop = '0';
-			}
-			var main = document.querySelector('.main-content');
-			if (main) { main.classList.remove('max-w-3xl'); }
-
 			var grid = document.getElementById('wishlist');
 			if (!grid) { return; }
 
-			// Every product shown here is already wishlisted, so the heart always REMOVES.
-			// Intercept in the capture phase so the card's inline salla.wishlist.toggle()
-			// — which mis-fires "add" because the local wishlist cache is empty here — never runs.
+			// Products shown here are already wishlisted, so the heart removes the item.
 			grid.addEventListener('click', function (e) {
 				var btn = e.target.closest('.s-product-card-wishlist-btn');
 				if (!btn) { return; }
@@ -51,7 +35,6 @@
 				if (id && window.salla && salla.wishlist) { salla.wishlist.remove(Number(id)); }
 			}, true);
 
-			// drop the card once Salla confirms the removal
 			function wire() {
 				if (!(window.salla && salla.wishlist && salla.wishlist.event)) { return false; }
 				salla.wishlist.event.onRemoved(function (response, id) {
@@ -59,7 +42,7 @@
 					if (!card || !grid.contains(card)) { return; }
 					card.remove();
 					if (!grid.querySelector('custom-salla-product-card')) {
-						window.location.reload(); // show the empty-wishlist state
+						window.location.reload();
 					}
 				});
 				return true;
