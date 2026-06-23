@@ -340,11 +340,12 @@
                 // (sale) + product savings = regular sum.
                 if (subTotalEl) {
                     var base = saleSubtotal();
-                    if (base > 0) { subTotalEl.textContent = fmt(base + savings); }
+                    // salla.money() returns HTML (the SAR symbol is an <i> icon) → innerHTML
+                    if (base > 0) { subTotalEl.innerHTML = fmt(base + savings); }
                 }
 
                 if (discount > 0.0001) {
-                    valEl.textContent = '- ' + fmt(discount);
+                    valEl.innerHTML = '- ' + fmt(discount);
                     row.classList.remove('hidden');
                 } else {
                     row.classList.add('hidden');
