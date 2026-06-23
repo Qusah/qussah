@@ -9,7 +9,7 @@
 // ====================================================================
 
 .qpd {
-  font-family: 'GE SS Two', sans-serif;
+  font-family: "GE SS Two", sans-serif;
   max-width: none;
   padding-inline: 50px;
 
@@ -21,17 +21,23 @@
     direction: ltr;
   }
   &__info {
-    order: 1;                 // LEFT
+    order: 1; // LEFT
     width: 100%;
-    direction: rtl;           // text stays RTL inside
+    direction: rtl; // text stays RTL inside
   }
   &__gallery {
-    order: 2;                 // RIGHT
+    order: 2; // RIGHT
     margin: 0 !important;
   }
   @media (min-width: 768px) {
-    &__gallery { width: 50%; flex: 0 0 50%; }
-    &__info    { width: 50%; flex: 0 0 50%; }
+    &__gallery {
+      width: 50%;
+      flex: 0 0 50%;
+    }
+    &__info {
+      width: 50%;
+      flex: 0 0 50%;
+    }
   }
 
   // ===== GALLERY (Figma node 6036:5032) =====
@@ -41,8 +47,8 @@
   &__gallery {
     .details-slider {
       display: flex !important;
-      flex-direction: row;          // main + thumbs in a row
-      direction: ltr;               // pin visual order regardless of RTL flip
+      flex-direction: row; // main + thumbs in a row
+      direction: ltr; // pin visual order regardless of RTL flip
       gap: 24px;
       align-items: stretch;
     }
@@ -50,7 +56,7 @@
     // ----- main image (radius 25, takes remaining width) -----
     // main image RIGHT, thumb column LEFT
     .s-slider-container {
-      order: 1;                     // main image LEFT within gallery (Figma)
+      order: 1; // main image LEFT within gallery (Figma)
       flex: 1 1 0;
       min-width: 0;
       border-radius: 25px;
@@ -70,7 +76,7 @@
 
     // ----- thumb column: VERTICAL, 148 wide, 4 frames stacked -----
     .s-slider-thumbs {
-      order: 2;                     // thumb column RIGHT within gallery (Figma)
+      order: 2; // thumb column RIGHT within gallery (Figma)
       flex: 0 0 148px;
       width: 148px;
       height: 637px;
@@ -106,16 +112,24 @@
         border-radius: 20px;
         background: transparent;
       }
-      &.swiper-slide-thumb-active { border-color: #30378e; }
+      &.swiper-slide-thumb-active {
+        border-color: #30378e;
+      }
     }
 
     // ----- zoom button (40x40, bottom-left of main image) -----
     .magnify-wrapper::after,
-    .s-slider-container { position: relative; }
+    .s-slider-container {
+      position: relative;
+    }
 
     // ----- wishlist / share overlays on the slider → keep top, restyle -----
-    .btn--wishlist { z-index: 3; }
-    .promotion-title { z-index: 3; }
+    .btn--wishlist {
+      z-index: 3;
+    }
+    .promotion-title {
+      z-index: 3;
+    }
   }
 
   // ===== INFO COLUMN =====
@@ -150,12 +164,17 @@
     justify-content: center;
     border: 1px solid #e9ecef;
     border-radius: 12px;
-    overflow: hidden;                 // clip the inner Salla element to the 12px corners
+    overflow: hidden; // clip the inner Salla element to the 12px corners
     color: #0a1f30;
     background: #fff;
     cursor: pointer;
-    i { font-size: 18px; }
-    &:hover { border-color: #30378e; color: #30378e; }
+    i {
+      font-size: 18px;
+    }
+    &:hover {
+      border-color: #30378e;
+      color: #30378e;
+    }
     // salla-button / salla-social-share host overrides — force the same square + radius
     &::part(base) {
       border: none;
@@ -168,7 +187,9 @@
   }
   // social-share renders its own trigger — neutralize its default chrome
   &__share {
-    &::part(base) { padding: 0; }
+    &::part(base) {
+      padding: 0;
+    }
   }
 
   // ----- stock row: sold + remaining -----
@@ -187,8 +208,15 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    i { font-size: 16px; color: #30378e; }
-    b { color: #30378e; font-weight: 500; font-family: 'Poppins', 'GE SS Two', sans-serif; }
+    i {
+      font-size: 16px;
+      color: #30378e;
+    }
+    b {
+      color: #30378e;
+      font-weight: 500;
+      font-family: "Poppins", "GE SS Two", sans-serif;
+    }
   }
   &__stock-sep {
     width: 1px;
@@ -202,7 +230,9 @@
     justify-content: flex-end;
     margin-bottom: 16px;
     --salla-rating-star-color: #fd7e14;
-    salla-rating-stars { direction: rtl; }
+    salla-rating-stars {
+      direction: rtl;
+    }
   }
 
   // ----- short description + read more -----
@@ -214,10 +244,20 @@
     color: #6c757d;
     text-align: right;
     white-space: normal;
-    overflow-wrap: anywhere;     // wrap long unbroken strings (e.g. dimension specs)
+    overflow-wrap: anywhere; // wrap long unbroken strings (e.g. dimension specs)
     word-break: break-word;
-    .link--primary, #btn-show-more { color: #30378e; font-weight: 500; }
-    .article, .article--main, p { white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
+    .link--primary,
+    #btn-show-more {
+      color: #30378e;
+      font-weight: 500;
+    }
+    .article,
+    .article--main,
+    p {
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
   }
 
   // ----- chips (tags): packs / sheets-per-box -----
@@ -238,7 +278,9 @@
     border-radius: 4px;
     padding: 2px 8px;
     text-decoration: none;
-    &:hover { background: #d6f6fc; }
+    &:hover {
+      background: #d6f6fc;
+    }
   }
 
   // ----- weight box -----
@@ -246,7 +288,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    flex-direction: row;          // Figma: value LEFT, label + icon RIGHT
+    flex-direction: row; // Figma: value LEFT, label + icon RIGHT
     height: 60px;
     padding: 16px;
     border: 1px solid #e9ecef;
@@ -256,9 +298,17 @@
     color: #0a1f30;
     font-size: 16px;
   }
-  &__weight-icon { font-size: 22px; color: #30378e; }
-  &__weight-label { flex: 1; text-align: right; }
-  &__weight-value { white-space: nowrap; }
+  &__weight-icon {
+    font-size: 22px;
+    color: #30378e;
+  }
+  &__weight-label {
+    flex: 1;
+    text-align: right;
+  }
+  &__weight-value {
+    white-space: nowrap;
+  }
 
   // ----- sku (compact) -----
   &__sku {
@@ -272,7 +322,10 @@
     margin-bottom: 16px;
     font-size: 14px;
     color: #6c757d;
-    i { color: #30378e; margin-inline-end: 4px; }
+    i {
+      color: #30378e;
+      margin-inline-end: 4px;
+    }
   }
 
   // ----- installment cards (tamara / tabby) → Figma gradient cards -----
@@ -281,8 +334,12 @@
   // When empty (demo store has installments off) collapse the gap.
   &__installment {
     display: block;
-    &:empty { margin: 0; }
-    &:not(:empty) { margin-bottom: 16px; }
+    &:empty {
+      margin: 0;
+    }
+    &:not(:empty) {
+      margin-bottom: 16px;
+    }
 
     // method list → 2-up row, 16 gap
     .s-installment-app-tabby-content,
@@ -307,8 +364,14 @@
     }
     // text + "أعرف أكثر"
     [class*="installment"] a,
-    [class*="installment"] [class*="learn"] { color: #30378e; font-size: 13px; }
-    [class*="installment"] p { font-size: 14px; color: #0a1f30; }
+    [class*="installment"] [class*="learn"] {
+      color: #30378e;
+      font-size: 13px;
+    }
+    [class*="installment"] p {
+      font-size: 14px;
+      color: #0a1f30;
+    }
   }
 
   // ----- DEMO tamara/tabby cards (Figma node 6036:4962). Remove before live. -----
@@ -323,15 +386,24 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;     // content to the RIGHT (RTL)
+    align-items: flex-end; // content to the RIGHT (RTL)
     justify-content: center;
     gap: 16px;
     padding: 16px;
     border: 1px solid #eee;
     border-radius: 12px;
     text-align: right;
-    &--tamara { background: linear-gradient(-88.7deg, #ffffff 1.5%, rgba(255,215,110,0) 47.8%, rgba(248,143,155,0.33) 94%); }
-    &--tabby  { background: linear-gradient(-88.7deg, #ffffff 1.5%, #dafff4 94%); }
+    &--tamara {
+      background: linear-gradient(
+        -88.7deg,
+        #ffffff 1.5%,
+        rgba(255, 215, 110, 0) 47.8%,
+        rgba(248, 143, 155, 0.33) 94%
+      );
+    }
+    &--tabby {
+      background: linear-gradient(-88.7deg, #ffffff 1.5%, #dafff4 94%);
+    }
   }
   &__pay-logo {
     width: 135px;
@@ -340,7 +412,12 @@
     object-position: right center;
     border-radius: 10px;
     // tabby SVG viewBox is 100x40 (2.5:1) — keep that ratio, don't stretch
-    &--tabby { width: 90px; height: 36px; border-radius: 0; object-fit: contain; }
+    &--tabby {
+      width: 90px;
+      height: 36px;
+      border-radius: 0;
+      object-fit: contain;
+    }
   }
   &__pay-text {
     width: 100%;
@@ -353,7 +430,9 @@
     width: 100%;
     font-size: 13px;
     color: #30378e;
-    &:hover { text-decoration: underline; }
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   // ----- gift box -----
@@ -368,10 +447,28 @@
     margin-bottom: 24px;
     background: linear-gradient(-86deg, #ffffff 1.5%, #daeff7 94%);
   }
-  &__gift-icon { font-size: 24px; color: #30378e; order: 0; }
-  &__gift-body { flex: 1; text-align: right; order: 1; }
-  &__gift-title { font-size: 16px; color: #0a1f30; margin: 0 0 6px; }
-  &__gift-sub { font-size: 14px; font-weight: 300; color: #adb5bd; margin: 0; line-height: 1.5; }
+  &__gift-icon {
+    font-size: 24px;
+    color: #30378e;
+    order: 0;
+  }
+  &__gift-body {
+    flex: 1;
+    text-align: right;
+    order: 1;
+  }
+  &__gift-title {
+    font-size: 16px;
+    color: #0a1f30;
+    margin: 0 0 6px;
+  }
+  &__gift-sub {
+    font-size: 14px;
+    font-weight: 300;
+    color: #adb5bd;
+    margin: 0;
+    line-height: 1.5;
+  }
   &__gift-btn {
     order: 2;
     flex-shrink: 0;
@@ -384,7 +481,10 @@
     font-weight: 500;
     cursor: pointer;
     white-space: nowrap;
-    &:hover { background: #30378e; color: #fff; }
+    &:hover {
+      background: #30378e;
+      color: #fff;
+    }
   }
 
   // ===== BUY BAR: price + qty + buttons =====
@@ -400,12 +500,14 @@
     gap: 16px;
     margin-bottom: 24px;
   }
-  &__price { order: 0; }
+  &__price {
+    order: 0;
+  }
   &__price-now {
     font-size: 24px;
     font-weight: 600;
     color: #30378e;
-    font-family: 'Poppins', 'GE SS Two', sans-serif;
+    font-family: "Poppins", "GE SS Two", sans-serif;
     white-space: nowrap;
   }
   &__price-old {
@@ -414,9 +516,20 @@
     text-decoration: line-through;
     margin-inline-start: 8px;
   }
-  &__price-from { font-size: 14px; color: #6c757d; margin-inline-end: 6px; }
-  &__price-sale { display: inline-flex; align-items: baseline; gap: 8px; }
-  &__oos { color: #e04956; font-weight: 700; }
+  &__price-from {
+    font-size: 14px;
+    color: #6c757d;
+    margin-inline-end: 6px;
+  }
+  &__price-sale {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  &__oos {
+    color: #e04956;
+    font-weight: 700;
+  }
 
   // qty stepper + "حدد الكمية" label
   &__qty {
@@ -444,14 +557,28 @@
     align-items: center;
     overflow: hidden;
     background: #fff;
-    &::part(base)   { border: none; height: 100%; width: 100%; }
-    &::part(button) { color: #0a1f30; }
-    &::part(input)  { color: #0a1f30; font-weight: 500; font-size: 19px; }
-    .s-quantity-input-container { border: none; height: 100%; width: 100%; }
+    &::part(base) {
+      border: none;
+      height: 100%;
+      width: 100%;
+    }
+    &::part(button) {
+      color: #0a1f30;
+    }
+    &::part(input) {
+      color: #0a1f30;
+      font-weight: 500;
+      font-size: 19px;
+    }
+    .s-quantity-input-container {
+      border: none;
+      height: 100%;
+      width: 100%;
+    }
     .s-quantity-input-input {
       color: #0a1f30;
-      font-family: 'Poppins', 'GE SS Two', sans-serif;
-      border-inline: 1px solid #daeff7;   // the divider lines (Figma)
+      font-family: "Poppins", "GE SS Two", sans-serif;
+      border-inline: 1px solid #daeff7; // the divider lines (Figma)
     }
   }
 
@@ -462,7 +589,10 @@
     margin-top: 0;
   }
   // Each button column takes half the row.
-  &__btn { flex: 1 0 0; width: 100%; }
+  &__btn {
+    flex: 1 0 0;
+    width: 100%;
+  }
   // inline Figma cart icon (16x16, inherits button color via currentColor)
   &__cart-icon {
     width: 16px !important;
@@ -477,7 +607,11 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    .qpd__cart-icon { width: 16px !important; height: 16px !important; flex: 0 0 16px; }
+    .qpd__cart-icon {
+      width: 16px !important;
+      height: 16px !important;
+      flex: 0 0 16px;
+    }
   }
 
   // The actual visible button: the plain <button> (buy) OR the inner
@@ -491,13 +625,18 @@
     justify-content: center;
     gap: 8px;
     border-radius: 12px;
-    font-family: 'GE SS Two', sans-serif;
+    font-family: "GE SS Two", sans-serif;
     font-size: 16px;
     font-weight: 500;
     border: 1px solid #30378e !important;
     cursor: pointer;
-    transition: background .15s, color .15s, border-color .15s;
-    i { font-size: 16px; }
+    transition:
+      background 0.15s,
+      color 0.15s,
+      border-color 0.15s;
+    i {
+      font-size: 16px;
+    }
   }
 
   // salla host = transparent flex shell, NO border/height of its own
@@ -505,14 +644,20 @@
     border: none !important;
     height: auto !important;
     background: none !important;
-    > div { width: 100%; }
+    > div {
+      width: 100%;
+    }
   }
 
   // الشراء السريع — solid navy → hover cyan
   &__btn--buy {
     background: #30378e !important;
     color: #fff !important;
-    &:hover { background: #91e6f7 !important; border-color: #91e6f7 !important; color: #30378e !important; }
+    &:hover {
+      background: #91e6f7 !important;
+      border-color: #91e6f7 !important;
+      color: #30378e !important;
+    }
   }
   // أضف للسلة — outline navy → hover cyan fill
   &__btn--cart .s-button-element {
@@ -530,7 +675,7 @@
 // TABS: تفاصيل المنتج / تقييمات المنتج
 // ====================================================================
 .qpd-tabs {
-  font-family: 'GE SS Two', sans-serif;
+  font-family: "GE SS Two", sans-serif;
   max-width: none;
   padding-inline: 50px;
   margin-top: 32px;
@@ -538,7 +683,7 @@
 
   &__nav {
     display: flex;
-    justify-content: flex-start;   // RTL: flex-start = RIGHT (Figma)
+    justify-content: flex-start; // RTL: flex-start = RIGHT (Figma)
     gap: 0;
   }
   &__tab {
@@ -551,8 +696,13 @@
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
-    transition: background .15s, color .15s;
-    &.is-active { background: #30378e; color: #fff; }
+    transition:
+      background 0.15s,
+      color 0.15s;
+    &.is-active {
+      background: #30378e;
+      color: #fff;
+    }
   }
 
   &__panel {
@@ -561,7 +711,9 @@
     border-radius: 0 15px 15px 15px;
     padding: 16px;
     background: #fff;
-    &.is-active { display: block; }
+    &.is-active {
+      display: block;
+    }
   }
 
   // details tab text
@@ -571,11 +723,28 @@
     font-size: 16px;
     line-height: 25px;
     white-space: normal;
-    overflow-wrap: anywhere;     // wrap long unbroken strings (e.g. dimension specs)
+    overflow-wrap: anywhere; // wrap long unbroken strings (e.g. dimension specs)
     word-break: break-word;
-    p { margin: 0 0 0; white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
-    h1, h2, h3, h4, strong, b { color: #0a1f30; font-weight: 700; }
-    h2, h3 { font-size: 25px; margin: 16px 0 8px; }
+    p {
+      margin: 0 0 0;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    strong,
+    b {
+      color: #0a1f30;
+      font-weight: 700;
+    }
+    h2,
+    h3 {
+      font-size: 25px;
+      margin: 16px 0 8px;
+    }
   }
 
   // ===== reviews tab: restyle salla-comments to Figma =====
@@ -585,13 +754,18 @@
     background: transparent !important;
     padding: 0 !important;
   }
-  salla-comments .s-comments-container { padding: 0 !important; max-width: none !important; }
+  salla-comments .s-comments-container {
+    padding: 0 !important;
+    max-width: none !important;
+  }
 
   // layout: comment list (left/flex) + summary+add card (right 380)
   .s-comments {
     direction: rtl;
     &-list-wrapper,
-    &-body { gap: 24px; }
+    &-body {
+      gap: 24px;
+    }
   }
 
   // rating summary / add-comment card → bordered Figma card
@@ -602,18 +776,41 @@
     padding: 16px;
     background: #fff;
   }
-  .s-comments-rating-average { font-size: 20px; color: #0a1f30; font-weight: 500; }
-  .s-comments-rating-count { font-size: 14px; color: #6c757d; }
+  .s-comments-rating-average {
+    font-size: 20px;
+    color: #0a1f30;
+    font-weight: 500;
+  }
+  .s-comments-rating-count {
+    font-size: 14px;
+    color: #6c757d;
+  }
 
   // single comment row
   .s-comments-item {
     border-bottom: 1px solid #eee;
     padding-bottom: 16px;
-    &-user-info-name { font-size: 16px; color: #0a1f30; font-weight: 500; }
-    &-date { font-size: 13px; color: #6c757d; }
+    &-user-info-name {
+      font-size: 16px;
+      color: #0a1f30;
+      font-weight: 500;
+    }
+    &-date {
+      font-size: 13px;
+      color: #6c757d;
+    }
     &-content,
-    &-text { font-size: 14px; color: #6c757d; line-height: 20px; }
-    &-user-avatar img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+    &-text {
+      font-size: 14px;
+      color: #6c757d;
+      line-height: 20px;
+    }
+    &-user-avatar img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
   }
 
   // textarea + publish button
@@ -649,7 +846,10 @@
 
   @media (max-width: 768px) {
     padding-inline: 15px;
-    &__tab { min-width: 0; flex: 1; }
+    &__tab {
+      min-width: 0;
+      flex: 1;
+    }
   }
 }
 
@@ -657,23 +857,47 @@
 // Responsive — buy box
 // ====================================================================
 @media (max-width: 1024px) {
-  .qpd { padding-inline: 24px; }
+  .qpd {
+    padding-inline: 24px;
+  }
 }
 @media (max-width: 768px) {
   .qpd {
     padding-inline: 15px;
-    &__title { font-size: 24px; line-height: 30px; }
+    &__title {
+      font-size: 24px;
+      line-height: 30px;
+    }
 
     // stack order: gallery (image + thumbs) FIRST, info below (Figma 299:4271)
-    &__gallery { order: 0; }
-    &__info { order: 1; }
+    &__gallery {
+      order: 0;
+    }
+    &__info {
+      order: 1;
+    }
 
     // ----- GALLERY: main image on top, thumbnails as a horizontal row below -----
     &__gallery {
-      .details-slider { flex-direction: column; gap: 12px; }
-      .s-slider-container { order: 1; width: 100%; height: 340px; flex: none; }
-      .s-slider-thumbs { order: 2; width: 100%; height: auto; flex: none; }
-      .s-slider-thumbs-container { height: auto !important; }
+      .details-slider {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .s-slider-container {
+        order: 1;
+        width: 100%;
+        height: 340px;
+        flex: none;
+      }
+      .s-slider-thumbs {
+        order: 2;
+        width: 100%;
+        height: auto;
+        flex: none;
+      }
+      .s-slider-thumbs-container {
+        height: auto !important;
+      }
       .s-slider-thumbs-container .swiper-wrapper {
         flex-direction: row !important;
         height: auto !important;
@@ -689,28 +913,58 @@
         padding: 7px;
       }
       // show the main-image carousel arrows on mobile (hidden by default — slider.scss)
-      .s-slider-block__title-nav { display: flex !important; }
+      .s-slider-block__title-nav {
+        display: flex !important;
+      }
     }
 
     // ----- price (LEFT) + quantity & label (RIGHT) -----
-    &__priceqty { flex-wrap: nowrap; gap: 12px; }
-    &__price { order: 2; }                 // → left in RTL
-    &__qty   { order: 1; }                 // → right in RTL
-    &__qty salla-quantity-input { order: 2; }   // stepper left
-    &__qty-label { order: 1; }                  // "حدد الكمية" far right
+    &__priceqty {
+      flex-wrap: nowrap;
+      gap: 12px;
+    }
+    &__price {
+      order: 2;
+    } // → left in RTL
+    &__qty {
+      order: 1;
+    } // → right in RTL
+    &__qty salla-quantity-input {
+      order: 2;
+    } // stepper left
+    &__qty-label {
+      order: 1;
+    } // "حدد الكمية" far right
 
     // ----- actions: stack full-width; أضف للسلة (outline) on top -----
     // flex:0 0 auto so flex-basis doesn't override the 56px button height in a column
-    &__actions { flex-direction: column-reverse; gap: 12px; }
-    &__btn { flex: 0 0 auto; width: 100%; }
-    &__btn--buy { height: 56px; }
+    &__actions {
+      flex-direction: column-reverse;
+      gap: 12px;
+    }
+    &__btn {
+      flex: 0 0 auto;
+      width: 100%;
+    }
+    &__btn--buy {
+      height: 56px;
+    }
 
     // ----- payment cards stack vertically -----
-    &__paydemo { flex-direction: column; }
+    &__paydemo {
+      flex-direction: column;
+    }
 
     // ----- gift: icon + text on top, button full-width below -----
-    &__gift { flex-wrap: wrap; row-gap: 14px; }
-    &__gift-btn { flex: 1 1 100%; width: 100%; order: 2; }
+    &__gift {
+      flex-wrap: wrap;
+      row-gap: 14px;
+    }
+    &__gift-btn {
+      flex: 1 1 100%;
+      width: 100%;
+      order: 2;
+    }
   }
 }
 
@@ -718,10 +972,14 @@
 // Product-detail Figma refresh (desktop 160:4121 / mobile 214:4223)
 // ====================================================================
 .qpd {
-  &__title { letter-spacing: 0; }
+  &__title {
+    letter-spacing: 0;
+  }
 
   &__gallery {
-    .details-slider { position: relative; }
+    .details-slider {
+      position: relative;
+    }
 
     .qpd__gallery-icon {
       display: none !important;
@@ -731,9 +989,14 @@
 
 @media (max-width: 768px) {
   .qpd {
-    &__row { gap: 0; }
+    &__row {
+      gap: 0;
+    }
     &__gallery,
-    &__info { width: 100%; flex: 0 0 auto; }
+    &__info {
+      width: 100%;
+      flex: 0 0 auto;
+    }
 
     &__gallery {
       overflow: visible !important;
@@ -794,7 +1057,9 @@
         border-radius: 15px;
         padding: 10px;
 
-        img { border-radius: 10px; }
+        img {
+          border-radius: 10px;
+        }
       }
 
       .qpd__gallery-icon {
@@ -816,7 +1081,10 @@
         box-shadow: none !important;
         overflow: hidden;
 
-        i { font-size: 14px; line-height: 1; }
+        i {
+          font-size: 14px;
+          line-height: 1;
+        }
 
         &::part(base) {
           width: 100%;
@@ -828,10 +1096,21 @@
           background: transparent;
           color: inherit;
           box-shadow: none;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        // salla-button can render an async loading spinner part — never show
+        // it on these tiny overlay buttons (the heart toggles via the onclick).
+        &::part(loader) {
+          display: none !important;
         }
       }
 
-      .btn--wishlist.qpd__gallery-icon { left: 17px !important; }
+      .btn--wishlist.qpd__gallery-icon {
+        left: 17px !important;
+      }
       // The base style above is a translucent white pill with a white heart — it
       // disappears on light product images. Give the heart a solid, visible look
       // (like the share) on any image. The wishlisted (.is-added) red state is
@@ -841,15 +1120,33 @@
         border-color: #e9ecef !important;
         color: #30378e !important;
 
-        i { color: #30378e !important; }
+        // render the heart clearly and centered (size + weight to match the share)
+        i,
+        .sicon-heart {
+          display: inline-flex !important;
+          align-items: center;
+          justify-content: center;
+          color: #30378e !important;
+          font-size: 17px !important;
+          line-height: 1;
+        }
 
-        &::part(base) { background: #fff !important; color: #30378e !important; }
+        &::part(base) {
+          background: #fff !important;
+          color: #30378e !important;
+        }
       }
 
-      .qpd__gallery-share { left: 69px !important; }
-      .qpd__gallery-share::part(base) { padding: 0; }
+      .qpd__gallery-share {
+        left: 69px !important;
+      }
+      .qpd__gallery-share::part(base) {
+        padding: 0;
+      }
 
-      .s-slider-block__title-nav { display: flex !important; }
+      .s-slider-block__title-nav {
+        display: flex !important;
+      }
     }
 
     &__info {
@@ -864,13 +1161,35 @@
       margin-bottom: 16px;
     }
 
-    &__iconbtns { display: none !important; }
-    &__title { font-size: 24px; font-weight: 700; line-height: 30px; letter-spacing: 0; }
-    &__stock { margin-bottom: 8px; font-size: 14px; line-height: 21px; }
-    &__rating { margin-bottom: 8px; }
-    &__desc { margin-bottom: 16px; font-size: 14px; line-height: 22px; }
-    &__chips { gap: 8px; margin-bottom: 16px; }
-    &__chip { font-size: 12px; }
+    &__iconbtns {
+      display: none !important;
+    }
+    &__title {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 30px;
+      letter-spacing: 0;
+    }
+    &__stock {
+      margin-bottom: 8px;
+      font-size: 14px;
+      line-height: 21px;
+    }
+    &__rating {
+      margin-bottom: 8px;
+    }
+    &__desc {
+      margin-bottom: 16px;
+      font-size: 14px;
+      line-height: 22px;
+    }
+    &__chips {
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    &__chip {
+      font-size: 12px;
+    }
 
     &__weight {
       height: 44px;
@@ -886,9 +1205,17 @@
       border-radius: 8px;
       margin-bottom: 16px;
     }
-    &__gift-icon { font-size: 20px; }
-    &__gift-title { font-size: 14px; margin-bottom: 4px; }
-    &__gift-sub { font-size: 10px; line-height: 16px; }
+    &__gift-icon {
+      font-size: 20px;
+    }
+    &__gift-title {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    &__gift-sub {
+      font-size: 10px;
+      line-height: 16px;
+    }
     &__gift-btn {
       min-height: 36px;
       padding: 8px 12px;
@@ -896,7 +1223,9 @@
       font-size: 12px;
     }
 
-    .product-form { order: 16; }
+    .product-form {
+      order: 16;
+    }
     &__installment,
     &__paydemo {
       order: 20;
@@ -908,11 +1237,26 @@
       gap: 10px;
       margin-bottom: 12px;
     }
-    &__price { order: 2; }
-    &__price-now { font-size: 16px; line-height: 22px; }
-    &__price-old { font-size: 12px; }
-    &__qty { order: 1; gap: 8px; flex-shrink: 0; }
-    &__qty-label { order: 1; font-size: 12px; line-height: 18px; }
+    &__price {
+      order: 2;
+    }
+    &__price-now {
+      font-size: 16px;
+      line-height: 22px;
+    }
+    &__price-old {
+      font-size: 12px;
+    }
+    &__qty {
+      order: 1;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    &__qty-label {
+      order: 1;
+      font-size: 12px;
+      line-height: 18px;
+    }
 
     salla-quantity-input {
       order: 2;
@@ -921,10 +1265,14 @@
       height: 36px;
       border-radius: 6px;
 
-      &::part(input) { font-size: 14px; }
+      &::part(input) {
+        font-size: 14px;
+      }
     }
 
-    &__actions { gap: 12px; }
+    &__actions {
+      gap: 12px;
+    }
     &__btn--buy,
     &__btn--cart .s-button-element {
       height: 40px;
@@ -938,8 +1286,14 @@
       flex-basis: 14px;
     }
 
-    &__paydemo { flex-direction: column; gap: 12px; }
-    &__pay { padding: 14px; gap: 12px; }
+    &__paydemo {
+      flex-direction: column;
+      gap: 12px;
+    }
+    &__pay {
+      padding: 14px;
+      gap: 12px;
+    }
   }
 }
 
@@ -952,16 +1306,26 @@
 // ====================================================================
 @media (min-width: 769px) {
   .qpd {
-    &__titlerow { flex-direction: row-reverse; }   // heart/share LEFT, title RIGHT
-    &__paydemo  { flex-direction: row-reverse; }   // tamara LEFT, tabby RIGHT
-    &__priceqty { flex-direction: row-reverse; }   // price LEFT, quantity RIGHT
-    &__qty      { flex-direction: row-reverse; }   // stepper LEFT, "حدد الكمية" RIGHT
+    &__titlerow {
+      flex-direction: row-reverse;
+    } // heart/share LEFT, title RIGHT
+    &__paydemo {
+      flex-direction: row-reverse;
+    } // tamara LEFT, tabby RIGHT
+    &__priceqty {
+      flex-direction: row-reverse;
+    } // price LEFT, quantity RIGHT
+    &__qty {
+      flex-direction: row-reverse;
+    } // stepper LEFT, "حدد الكمية" RIGHT
   }
 }
 
 // Mobile Product_Image node 214:4948 exactness pass.
 @media (max-width: 768px) {
-  .qpd-breadcrumbs { display: none !important; }
+  .qpd-breadcrumbs {
+    display: none !important;
+  }
 
   .container--product-details.qpd {
     margin-top: 0;
@@ -1019,7 +1383,7 @@
         padding: 10px !important;
       }
 
-      .slide--one-fourth:nth-child(n+5) {
+      .slide--one-fourth:nth-child(n + 5) {
         display: none !important;
       }
 
@@ -1071,37 +1435,13 @@
 @media (max-width: 768px) {
   .qpd {
     &__gallery {
-      .s-slider-block__title-nav {
-        position: absolute !important;
-        top: 165px !important;
-        left: 0 !important;
-        right: 0 !important;
-        z-index: 7 !important;
-        display: flex !important;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        padding-inline: 22px;
-        pointer-events: none;
-      }
-
+      // Figma mobile gallery has NO prev/next arrows — the thumbnails are the
+      // navigation. Hide the slider's nav buttons (they were floating over the
+      // image).
+      .s-slider-block__title-nav,
       .s-slider-prev,
-      .s-slider-next,
-      .s-slider-block__title-nav button {
-        width: 40px !important;
-        min-width: 40px !important;
-        height: 40px !important;
-        min-height: 40px !important;
-        display: inline-flex !important;
-        align-items: center;
-        justify-content: center;
-        border: 0 !important;
-        border-radius: 50% !important;
-        background: #fff !important;
-        color: #30378e !important;
-        box-shadow: 0 8px 18px rgba(10, 31, 48, 0.12) !important;
-        opacity: 1 !important;
-        pointer-events: auto;
+      .s-slider-next {
+        display: none !important;
       }
 
       .qpd__gallery-icon,
@@ -1112,6 +1452,26 @@
         background: #fff !important;
         color: #30378e !important;
         opacity: 1 !important;
+      }
+
+      // center the heart inside salla-button's light-DOM button (was rendering
+      // in the corner and getting clipped by the host's overflow:hidden)
+      .qpd__gallery-icon::part(base),
+      .qpd__gallery-icon .s-button-element,
+      .qpd__gallery-icon .s-button-btn,
+      .qpd__gallery-icon button {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+      }
+      .qpd__gallery-icon .s-button-text {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        margin: 0 !important;
       }
 
       .qpd__gallery-icon i,
@@ -1152,11 +1512,18 @@
 @media (max-width: 390px) {
   .qpd {
     &__gallery {
-      .s-slider-container { height: 340px; }
+      .s-slider-container {
+        height: 340px;
+      }
       .s-slider-thumbs,
       .s-slider-thumbs-container,
-      .s-slider-thumbs-container .swiper-wrapper { height: 82px !important; }
-      .slide--one-fourth { height: 82px !important; padding: 8px; }
+      .s-slider-thumbs-container .swiper-wrapper {
+        height: 82px !important;
+      }
+      .slide--one-fourth {
+        height: 82px !important;
+        padding: 8px;
+      }
     }
   }
 }
@@ -1166,12 +1533,15 @@
 // Cards use the global qissa-product-card styling.
 // ====================================================================
 .qpd-viewed {
-  font-family: 'GE SS Two', sans-serif;
+  font-family: "GE SS Two", sans-serif;
   padding-block: 40px;
   // soft blue gradient band behind the whole section (Figma)
   background: linear-gradient(180deg, #e8fcff 0%, #f4fdff 55%, #ffffff 100%);
 
-  .container { max-width: none; padding-inline: 50px; }
+  .container {
+    max-width: none;
+    padding-inline: 50px;
+  }
 
   // header row: button LEFT, intro RIGHT. LTR makes order unambiguous.
   &__head {
@@ -1185,11 +1555,11 @@
   &__intro {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;   // LTR column → flex-end = RIGHT
+    align-items: flex-end; // LTR column → flex-end = RIGHT
     gap: 12px;
     text-align: right;
-    direction: ltr;          // keep flex-end = visual RIGHT, unambiguous
-    order: 2;                // RIGHT
+    direction: ltr; // keep flex-end = visual RIGHT, unambiguous
+    order: 2; // RIGHT
   }
   &__eyebrow {
     display: inline-flex;
@@ -1203,7 +1573,7 @@
     font-size: 14px;
     font-weight: 500;
     letter-spacing: -0.16px;
-    direction: rtl;          // Arabic text RTL inside the pill
+    direction: rtl; // Arabic text RTL inside the pill
   }
   &__title {
     margin: 0;
@@ -1216,7 +1586,9 @@
     letter-spacing: -0.2px;
     color: #0a1f30;
   }
-  &__title-hl { color: #30378e; }
+  &__title-hl {
+    color: #30378e;
+  }
   &__subtitle {
     margin: 0;
     width: 100%;
@@ -1230,7 +1602,7 @@
 
   // view-all button (cyan, radius 16, h55): arrow → text → cart (LTR order)
   &__all {
-    order: 1;                // LEFT
+    order: 1; // LEFT
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
@@ -1247,34 +1619,628 @@
     font-weight: 500;
     white-space: nowrap;
     text-decoration: none;
-    transition: background .15s, border-color .15s;
-    i { font-size: 16px; }
-    .qpd__cart-icon { width: 23px; height: 23px; flex: 0 0 23px; }
-    &:hover { background: #7fdcef; border-color: #7fdcef; }
+    transition:
+      background 0.15s,
+      border-color 0.15s;
+    i {
+      font-size: 16px;
+    }
+    .qpd__cart-icon {
+      width: 23px;
+      height: 23px;
+      flex: 0 0 23px;
+    }
+    &:hover {
+      background: #7fdcef;
+      border-color: #7fdcef;
+    }
   }
 
   // slider cards keep the global qissa-product-card look
-  &__slider { display: block; }
+  &__slider {
+    display: block;
+  }
 
   // prev/next carousel arrows — mobile only, centered under the products
-  &__nav { display: none; direction: rtl; justify-content: center; }   // rtl → arrows point outward
+  &__nav {
+    display: none;
+    direction: rtl;
+    justify-content: center;
+  } // rtl → arrows point outward
   &__navbtn {
-    width: 46px; height: 46px;
-    display: inline-flex; align-items: center; justify-content: center;
-    border: 1px solid #e9ecef; border-radius: 50%;
-    background: #fff; color: #30378e; cursor: pointer;
-    transition: background .15s, color .15s, border-color .15s;
-    i { font-size: 18px; }
-    &:hover { background: #30378e; border-color: #30378e; color: #fff; }
+    width: 46px;
+    height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e9ecef;
+    border-radius: 50%;
+    background: #fff;
+    color: #30378e;
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      color 0.15s,
+      border-color 0.15s;
+    i {
+      font-size: 18px;
+    }
+    &:hover {
+      background: #30378e;
+      border-color: #30378e;
+      color: #fff;
+    }
   }
 
   @media (max-width: 768px) {
     padding-block: 24px;
-    .container { padding-inline: 15px; }
-    &__head { flex-direction: column; align-items: stretch; gap: 16px; }
-    &__intro { align-items: flex-end; order: 1; }
-    &__all { order: 2; width: 100%; }
-    &__nav { display: flex; gap: 10px; justify-content: center; margin-top: 16px; }
-    &__title { font-size: 24px; line-height: 30px; }
+    .container {
+      padding-inline: 15px;
+    }
+    &__head {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
+    }
+    &__intro {
+      align-items: flex-end;
+      order: 1;
+    }
+    &__all {
+      order: 2;
+      width: 100%;
+    }
+    &__nav {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+    &__title {
+      font-size: 24px;
+      line-height: 30px;
+    }
+  }
+}
+
+// ====================================================================
+// Gallery polish pass (requested) — appended last so it wins the cascade
+//   Desktop: main image lines up with the thumbnail column (top + bottom);
+//            heart/share keep ONE square border (no inner round border).
+//   Mobile:  prev/next arrows float on the image sides; heart icon fixed;
+//            thumbnails centered horizontally.
+// ====================================================================
+
+// ----- Desktop -----
+@media (min-width: 769px) {
+  .qpd__gallery {
+    .details-slider {
+      align-items: flex-start;
+    } // pin tops to the same line
+
+    // main image + thumb column share the exact height so top AND bottom
+    // edges align (auto-height could otherwise leave the image taller)
+    .s-slider-container,
+    .s-slider-container .swiper,
+    .s-slider-container .swiper-wrapper,
+    .s-slider-container .swiper-slide,
+    .s-slider-container .homeslider__slide {
+      height: 637px !important;
+    }
+    .s-slider-thumbs,
+    .s-slider-thumbs-container,
+    .s-slider-thumbs-container .swiper,
+    .s-slider-thumbs-container .swiper-wrapper {
+      height: 637px !important;
+    }
+  }
+
+  // heart + share: keep only the outer 12px square (.qpd__iconbtn border),
+  // kill the inner round button border the salla components render.
+  .qpd__iconbtn,
+  .qpd__share {
+    .s-button-element,
+    .s-button-btn,
+    button,
+    .s-social-share-wrapper,
+    .s-social-share-btn {
+      width: 100% !important;
+      height: 100% !important;
+      min-width: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      border-radius: 12px !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+  }
+}
+
+// ----- Mobile -----
+@media (max-width: 768px) {
+  .qpd__gallery {
+    .details-slider {
+      position: relative;
+    }
+
+    // arrows live in .s-slider-block__title (above the image by default).
+    // collapse the title wrappers so the nav can float over the image.
+    .s-slider-block__title,
+    .s-slider-block__title-left {
+      display: contents !important;
+    }
+    .s-slider-block__title-nav {
+      display: flex !important;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 371px; // = mobile main-image height → centers arrows
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      margin: 0;
+      pointer-events: none; // only the buttons capture clicks
+      z-index: 6;
+    }
+    .s-slider-block__title-nav .s-slider-nav-arrow {
+      pointer-events: auto;
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #e9ecef;
+      border-radius: 50%;
+      background: #fff;
+      color: #30378e;
+      box-shadow: 0 2px 6px rgba(10, 31, 48, 0.12);
+      cursor: pointer;
+      svg {
+        fill: #30378e;
+      }
+      &:hover {
+        background: #30378e;
+        border-color: #30378e;
+        color: #fff;
+      }
+      &:hover svg {
+        fill: #fff;
+      }
+    }
+    .s-slider-block__title-nav .s-slider-nav-arrow .s-slider-button-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .s-slider-block__title-nav .s-slider-nav-arrow svg {
+      width: 16px;
+      height: 16px;
+      fill: #30378e;
+    }
+
+    // thumbnails: center the row horizontally (was start-aligned)
+    .s-slider-thumbs-container .swiper-wrapper {
+      justify-content: center !important;
+    }
+
+    // ----- heart / share icon: single clean square, glyph centered -----
+    .qpd__gallery-icon {
+      &,
+      &::part(base),
+      .s-button-element,
+      .s-button-btn,
+      button {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        padding: 0 !important;
+        border-radius: 10px !important;
+        background: #fff !important;
+        color: #30378e !important;
+        box-shadow: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      // outer host draws the square border; inner button must not (no double box)
+      & {
+        border: 1px solid #e9ecef !important;
+      }
+      &::part(base),
+      .s-button-element,
+      .s-button-btn,
+      button,
+      .s-social-share-wrapper,
+      .s-social-share-btn {
+        border: none !important;
+        background: transparent !important;
+      }
+      &::part(loader) {
+        display: none !important;
+      }
+      .s-button-text {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        height: auto;
+        margin: 0 !important;
+      }
+      i {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        color: #30378e !important;
+        fill: currentColor;
+        stroke: none;
+        font-size: 17px !important;
+        line-height: 1 !important;
+      }
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    // wishlisted (added) state → solid red, white heart
+    .btn--wishlist.qpd__gallery-icon.is-added,
+    .btn--wishlist.qpd__gallery-icon.is-added::part(base),
+    .btn--wishlist.qpd__gallery-icon.is-added .s-button-element,
+    .btn--wishlist.qpd__gallery-icon.is-added button {
+      background: #d62f45 !important;
+      border-color: #d62f45 !important;
+      color: #fff !important;
+    }
+    .btn--wishlist.qpd__gallery-icon.is-added i {
+      color: #fff !important;
+    }
+  }
+}
+
+@media (max-width: 390px) {
+  .qpd__gallery .s-slider-block__title-nav {
+    height: 340px;
+  } // smaller image
+}
+
+// Final mobile product gallery tune.
+@media (max-width: 768px) {
+  .qpd__gallery {
+    .details-slider {
+      position: relative !important;
+    }
+
+    .s-slider-block__title,
+    .s-slider-block__title-left {
+      display: contents !important;
+    }
+
+    .s-slider-block__title-nav {
+      position: absolute !important;
+      inset: 0 0 auto 0 !important;
+      z-index: 8 !important;
+      display: block !important;
+      width: 100% !important;
+      height: 371px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      pointer-events: none;
+    }
+
+    .s-slider-prev,
+    .s-slider-next,
+    .s-slider-block__title-nav .s-slider-nav-arrow,
+    .s-slider-block__title-nav button {
+      position: absolute !important;
+      top: 50% !important;
+      z-index: 9 !important;
+      width: 40px !important;
+      min-width: 40px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      border: 1px solid #e9ecef !important;
+      border-radius: 50% !important;
+      background: #fff !important;
+      color: #30378e !important;
+      box-shadow: 0 8px 18px rgba(10, 31, 48, 0.14) !important;
+      opacity: 1 !important;
+      pointer-events: auto;
+      transform: translateY(-50%) !important;
+    }
+
+    .s-slider-prev {
+      left: 14px !important;
+      right: auto !important;
+    }
+
+    .s-slider-next {
+      right: 14px !important;
+      left: auto !important;
+    }
+
+    .s-slider-block__title-nav svg,
+    .s-slider-block__title-nav .s-slider-button-icon {
+      width: 16px !important;
+      height: 16px !important;
+      color: #30378e !important;
+      fill: currentColor !important;
+    }
+
+    .s-slider-thumbs {
+      display: flex !important;
+      justify-content: center !important;
+      width: 100% !important;
+    }
+
+    .s-slider-thumbs-container {
+      width: auto !important;
+      max-width: 100% !important;
+      margin-inline: auto !important;
+    }
+
+    .s-slider-thumbs-container .swiper,
+    .s-slider-thumbs-container .swiper-wrapper {
+      width: auto !important;
+      max-width: 100% !important;
+    }
+
+    .s-slider-thumbs-container .swiper-wrapper {
+      justify-content: center !important;
+      gap: 12px !important;
+      margin-inline: auto !important;
+      transform: none !important;
+    }
+
+    .slide--one-fourth {
+      flex: 0 0 62px !important;
+      width: 62px !important;
+      min-width: 62px !important;
+      height: 52px !important;
+      padding: 7px !important;
+      border-radius: 8px !important;
+    }
+
+    .slide--one-fourth img {
+      border-radius: 6px !important;
+    }
+
+    .qpd__gallery-icon,
+    .qpd__gallery-icon::part(base),
+    .qpd__gallery-icon .s-button-element,
+    .qpd__gallery-icon .s-button-btn,
+    .qpd__gallery-icon button {
+      width: 40px !important;
+      min-width: 40px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      border-radius: 10px !important;
+      background: #fff !important;
+      color: #30378e !important;
+      opacity: 1 !important;
+      box-shadow: none !important;
+    }
+
+    .qpd__gallery-icon {
+      border: 1px solid #e9ecef !important;
+      overflow: hidden !important;
+    }
+
+    .qpd__gallery-icon::part(base),
+    .qpd__gallery-icon .s-button-element,
+    .qpd__gallery-icon .s-button-btn,
+    .qpd__gallery-icon button {
+      border: 0 !important;
+      background: transparent !important;
+    }
+
+    .qpd__gallery-icon .s-button-text {
+      width: 100% !important;
+      height: 100% !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 !important;
+    }
+
+    .qpd__heart-icon {
+      width: 18px !important;
+      height: 18px !important;
+      display: block !important;
+      fill: none !important;
+      stroke: currentColor !important;
+      stroke-width: 2.2 !important;
+      stroke-linecap: round !important;
+      stroke-linejoin: round !important;
+      color: #30378e !important;
+    }
+
+    .btn--wishlist.qpd__gallery-icon,
+    .btn--wishlist.qpd__gallery-icon:not(.is-added) {
+      left: 17px !important;
+      background: #fff !important;
+      color: #30378e !important;
+    }
+
+    .btn--wishlist.qpd__gallery-icon.is-added,
+    .btn--wishlist.qpd__gallery-icon.is-added::part(base),
+    .btn--wishlist.qpd__gallery-icon.is-added .s-button-element,
+    .btn--wishlist.qpd__gallery-icon.is-added button {
+      background: #d62f45 !important;
+      border-color: #d62f45 !important;
+      color: #fff !important;
+    }
+
+    .btn--wishlist.qpd__gallery-icon.is-added .qpd__heart-icon {
+      color: #fff !important;
+    }
+  }
+}
+
+@media (max-width: 390px) {
+  .qpd__gallery .s-slider-block__title-nav {
+    height: 340px !important;
+  }
+}
+// Final mobile thumbnail strip centering.
+@media (max-width: 768px) {
+  .qpd__gallery {
+    .s-slider-thumbs,
+    .s-slider-thumbs-container,
+    .s-slider-thumbs-container .swiper,
+    .s-slider-thumbs-container .swiper-wrapper {
+      height: 52px !important;
+    }
+
+    .s-slider-thumbs-container .swiper-wrapper {
+      align-items: center !important;
+      justify-content: center !important;
+    }
+  }
+}
+// Mobile product gallery final correction from Figma heart node 214:5104.
+@media (max-width: 768px) {
+  .qpd__gallery {
+    .s-slider-block__title-nav {
+      position: absolute !important;
+      top: 0 !important;
+      right: 0 !important;
+      bottom: auto !important;
+      left: 0 !important;
+      z-index: 20 !important;
+      display: block !important;
+      width: 100% !important;
+      height: 371px !important;
+      pointer-events: none !important;
+    }
+
+    .s-slider-block__title-nav > *,
+    .s-slider-block__title-nav button,
+    .s-slider-block__title-nav .s-slider-nav-arrow,
+    .s-slider-prev,
+    .s-slider-next {
+      position: absolute !important;
+      top: 50% !important;
+      width: 40px !important;
+      min-width: 40px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      border: 1px solid #e9ecef !important;
+      border-radius: 999px !important;
+      background: #fff !important;
+      color: #30378e !important;
+      box-shadow: 0 8px 18px rgba(10, 31, 48, 0.14) !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      transform: translateY(-50%) !important;
+    }
+
+    .s-slider-block__title-nav > *:first-child,
+    .s-slider-block__title-nav button:first-child,
+    .s-slider-block__title-nav .s-slider-nav-arrow:first-child,
+    .s-slider-prev {
+      left: 14px !important;
+      right: auto !important;
+    }
+
+    .s-slider-block__title-nav > *:last-child,
+    .s-slider-block__title-nav button:last-child,
+    .s-slider-block__title-nav .s-slider-nav-arrow:last-child,
+    .s-slider-next {
+      right: 14px !important;
+      left: auto !important;
+    }
+
+    .s-slider-block__title-nav svg,
+    .s-slider-block__title-nav .s-slider-button-icon {
+      width: 16px !important;
+      height: 16px !important;
+      color: #30378e !important;
+      fill: currentColor !important;
+    }
+
+    .btn--wishlist.qpd__gallery-icon,
+    .btn--wishlist.qpd__gallery-icon:not(.is-added),
+    .btn--wishlist.qpd__gallery-icon.is-added,
+    .btn--wishlist.qpd__gallery-icon::part(base),
+    .btn--wishlist.qpd__gallery-icon:not(.is-added)::part(base),
+    .btn--wishlist.qpd__gallery-icon.is-added::part(base),
+    .btn--wishlist.qpd__gallery-icon .s-button-element,
+    .btn--wishlist.qpd__gallery-icon .s-button-btn,
+    .btn--wishlist.qpd__gallery-icon button {
+      width: 40px !important;
+      min-width: 40px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      border-radius: 10px !important;
+      background: #fff !important;
+      color: #30378e !important;
+      box-shadow: none !important;
+      opacity: 1 !important;
+    }
+
+    .btn--wishlist.qpd__gallery-icon {
+      left: 17px !important;
+      border: 1px solid #e9ecef !important;
+      overflow: hidden !important;
+    }
+
+    .btn--wishlist.qpd__gallery-icon::part(base),
+    .btn--wishlist.qpd__gallery-icon .s-button-element,
+    .btn--wishlist.qpd__gallery-icon .s-button-btn,
+    .btn--wishlist.qpd__gallery-icon button {
+      border: 0 !important;
+      background: transparent !important;
+    }
+
+    .btn--wishlist.qpd__gallery-icon .s-button-text {
+      width: 100% !important;
+      height: 100% !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 !important;
+      line-height: 1 !important;
+    }
+
+    .btn--wishlist.qpd__gallery-icon .qpd__heart-icon {
+      width: 15px !important;
+      height: 15px !important;
+      display: block !important;
+      fill: none !important;
+      stroke: #30378e !important;
+      stroke-width: 2.2 !important;
+      stroke-linecap: round !important;
+      stroke-linejoin: round !important;
+      color: #30378e !important;
+    }
+  }
+}
+
+@media (max-width: 390px) {
+  .qpd__gallery .s-slider-block__title-nav {
+    height: 340px !important;
   }
 }
