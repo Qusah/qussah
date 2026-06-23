@@ -53,13 +53,19 @@ class AddToCartToast extends HTMLElement {
     let regularSubtotal = 0;
     (cart.items || []).forEach((it) => {
       const qty = it.quantity || 1;
-      const hasStruck = (it.has_discount || it.is_on_sale) && it.original_price != null;
-      if (hasStruck) {
-        regularSubtotal += it.original_price * qty;
+      // true regular per-unit = highest of product_price / original_price / price,
+      // so the original (e.g. 349) is used even when only the sale price (174) shows.
+      const unit = Math.max(
+        Number(it.product_price) || 0,
+        Number(it.original_price) || 0,
+        Number(it.price) || 0
+      );
+      if (unit > 0) {
+        regularSubtotal += unit * qty;
       } else if (it.total != null) {
         regularSubtotal += it.total;
       } else {
-        regularSubtotal += (it.price || 0) * qty;
+        regularSubtotal += 0;
       }
     });
     const total = Number(cart.total) || 0;
@@ -157,8 +163,11 @@ class AddToCartToast extends HTMLElement {
   renderItem(item) {
     const name = this.escapeHTML(item.product_name);
     const total = salla.money(item.total);
-    const original = salla.money(item.original_price * item.quantity);
-    const showOriginal = item.has_discount || item.is_on_sale;
+    // struck = true regular line price (use the highest of product_price /
+    // original_price so it stays the original even when a coupon is applied)
+    const regularUnit = Math.max(Number(item.product_price) || 0, Number(item.original_price) || 0);
+    const original = salla.money(regularUnit * item.quantity);
+    const showOriginal = (item.has_discount || item.is_on_sale) && regularUnit * item.quantity > (Number(item.total) || 0) + 0.01;
 
     return `
       <form onchange="salla.form.onChange('cart.updateItem', event)" id="item-${item.id}">

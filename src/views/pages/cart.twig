@@ -106,9 +106,13 @@
                                     <div class="qcart__item-price">
                                         {% set item_total = item.detailed_offers|length > 0 ? item.total_special_price|money : item.total|money %}
                                         <span class="item-total {{ item.has_discount ? 'is-sale' : '' }}">{{ item.is_available ? item_total : trans('pages.cart.out_of_stock') }}</span>
-                                        <span class="text-sm text-gray-500 line-through item-regular-price {{ item.offer ? '' : 'hidden' }}">{{ item.product_price|money }}</span>
-                                        <span class="inline-flex gap-1 leading-4 text-sm text-gray-500 line-through item-original-price {{ item.is_on_sale ? '' : 'hidden' }}" id="original_price">{{ item.original_price|money }}</span>
-                                        <span class="inline-flex gap-1 leading-4 item-price {{ item.has_discount ?  'text-red-800' : 'text-sm text-gray-500' }}" id="has_discount">{{ item.price|money }}</span>
+                                        {# Struck = the product's REGULAR price (item.product_price), shown for any
+                                           discount so it stays the true original (e.g. 349) even when a coupon makes
+                                           the sale price (174) the comparison base. #}
+                                        <span class="text-sm text-gray-500 line-through item-regular-price {{ (item.has_discount or item.is_on_sale or item.offer) ? '' : 'hidden' }}">{{ item.product_price|money }}</span>
+                                        {# kept in the DOM (hidden) so the summary JS can still read every price field #}
+                                        <span class="item-original-price hidden" id="original_price">{{ item.original_price|money }}</span>
+                                        <span class="item-price hidden" id="has_discount">{{ item.price|money }}</span>
                                     </div>
 
                                     <span class="qcart__item-remove">
@@ -311,16 +315,22 @@
                 return hidden ? (parseInt(hidden.value, 10) || 1) : 1;
             }
 
-            // Σ of each item's REGULAR line price: the struck price (per-unit regular,
-            // .item-original-price for sales or .item-regular-price for offers) × qty,
-            // or the line total when the item has no struck price. This is the pre-any-
-            // discount subtotal.
+            // Σ of each item's REGULAR (pre-discount) line price. The true regular
+            // per-unit is the HIGHEST of the rendered price spans — product_price
+            // (.item-regular-price), original_price (.item-original-price) and the
+            // current price (.item-price) — all of which stay in the DOM even when
+            // visually hidden. Using the max recovers the original price (e.g. 349)
+            // even when the cart only shows the post-sale price (174) as struck.
             function regularSubtotal() {
                 var sum = 0;
                 root.querySelectorAll('.qcart__item').forEach(function (item) {
-                    var struck = item.querySelector('.item-original-price:not(.hidden), .item-regular-price:not(.hidden)');
-                    if (struck) {
-                        sum += toNum(struck.textContent) * itemQty(item);
+                    var unit = 0;
+                    ['.item-regular-price', '.item-original-price', '.item-price'].forEach(function (sel) {
+                        var el = item.querySelector(sel);
+                        if (el) { unit = Math.max(unit, toNum(el.textContent)); }
+                    });
+                    if (unit > 0) {
+                        sum += unit * itemQty(item);
                     } else {
                         var totalEl = item.querySelector('.item-total');
                         if (totalEl) { sum += toNum(totalEl.textContent); }
