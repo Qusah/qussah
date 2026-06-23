@@ -214,8 +214,9 @@
                         </div>
 
                         <!-- Combined discount = product sale savings (regular − sale) +
-                             coupon discount. Computed in JS; hidden when both are zero. -->
-                        <div id="qcart-discount" class="qcart__summary-row qcart__summary-row--discount hidden">
+                             coupon discount. Computed in JS; hidden when both are zero.
+                             Inline display:none (the .qcart__summary-row flex beats .hidden). -->
+                        <div id="qcart-discount" class="qcart__summary-row qcart__summary-row--discount" style="display:none">
                             <span class="qcart__summary-label">قيمة الخصم</span>
                             <b class="qcart__summary-value" id="qcart-discount-value">- 0</b>
                         </div>
@@ -268,6 +269,9 @@
             var valEl = document.getElementById('qcart-discount-value');
             var subTotalEl = document.getElementById('sub-total');
             if (!row || !valEl) { return; }
+
+            var observer = null;
+            var schedTimer = null;
 
             // formatted money string → number (handles Arabic/Persian digits + currency glyph)
             function toNum(s) {
@@ -332,6 +336,9 @@
             }
 
             function update() {
+                // pause observation while we mutate the summary (avoid self-trigger loop)
+                if (observer) { observer.disconnect(); }
+
                 var savings = productSavings();
                 var discount = savings + couponDiscount();
 
@@ -344,26 +351,47 @@
                     if (base > 0) { subTotalEl.innerHTML = fmt(base + savings); }
                 }
 
+                // inline display wins over the .qcart__summary-row flex rule, so the
+                // row is fully hidden when there's no product discount AND no coupon.
                 if (discount > 0.0001) {
                     valEl.innerHTML = '- ' + fmt(discount);
-                    row.classList.remove('hidden');
+                    row.style.display = 'flex';
                 } else {
-                    row.classList.add('hidden');
+                    row.style.display = 'none';
                 }
+
+                if (observer) { observe(); }
+            }
+
+            function schedule() {
+                clearTimeout(schedTimer);
+                schedTimer = setTimeout(update, 80);
+            }
+
+            function observe() {
+                observer.observe(root, { childList: true, subtree: true, characterData: true });
             }
 
             update();
             // re-run once Salla is ready so salla.money() formats the currency correctly
             if (window.salla && salla.onReady) { salla.onReady(update); }
 
-            // recompute after Salla processes any cart change (qty, remove, coupon)
-            if (window.salla && salla.cart && salla.cart.event && salla.cart.event.onUpdated) {
-                salla.cart.event.onUpdated(function () { setTimeout(update, 80); });
+            // Recompute on ANY cart DOM change — item removed/added, quantity re-render,
+            // or Salla updating the totals/coupon. This is what catches item removal
+            // (deleteItem doesn't reliably fire onUpdated for this listener).
+            if (window.MutationObserver) {
+                observer = new MutationObserver(schedule);
+                observe();
             }
-            // and on direct interactions (quantity steppers, coupon apply)
-            root.addEventListener('change', function () { setTimeout(update, 80); });
+            // explicit hooks too (belt-and-suspenders; all just re-run update)
+            if (window.salla && salla.cart && salla.cart.event && salla.cart.event.onUpdated) {
+                salla.cart.event.onUpdated(schedule);
+            }
+            root.addEventListener('change', schedule);
             root.addEventListener('click', function (e) {
-                if (e.target.closest('.qcart__coupon')) { setTimeout(update, 450); }
+                if (e.target.closest('.qcart__coupon') || e.target.closest('.qcart__item-remove')) {
+                    setTimeout(update, 450);
+                }
             });
         })();
     </script>

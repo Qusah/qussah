@@ -40,9 +40,30 @@ class AddToCartToast extends HTMLElement {
     salla.event.on("Product Added", () => this.handleProductAdded());
 
     // Keep the modal's totals in sync with Salla's live cart updates.
-    salla.cart.event.onUpdated((summary) => this.refreshSummary(summary));
+    salla.cart.event.onUpdated(() => this.refreshSummary());
 
     this.render();
+  }
+
+  // Combined discount = product sale savings (Σ line regular − line sale over
+  // on-sale items) + Salla's coupon/offer discount. The shown المجموع is the
+  // pre-sale (regular) sum so the summary reads coherently: subtotal − discount
+  // = total. Offer-only items are left out of `savings` (their discount is
+  // already in cart.total_discount) to avoid double-counting.
+  discountInfo(cart) {
+    let savings = 0;
+    (cart.items || []).forEach((it) => {
+      if (!it.is_on_sale) return;
+      const lineRegular = (it.original_price || 0) * (it.quantity || 1);
+      const lineSale = it.total != null ? it.total : lineRegular;
+      if (lineRegular > lineSale) savings += lineRegular - lineSale;
+    });
+    const coupon = (cart.total_discount != null ? cart.total_discount : cart.discount) || 0;
+    return {
+      savings,
+      combined: savings + coupon,
+      regularSubtotal: (cart.sub_total || 0) + savings,
+    };
   }
 
   async handleProductAdded() {
@@ -90,22 +111,35 @@ class AddToCartToast extends HTMLElement {
     if (!this.querySelector(".s-add-product-toast__items form")) this.close();
   }
 
-  refreshSummary(summary) {
-    if (!this.isVisible || !summary) return;
+  async refreshSummary() {
+    if (!this.isVisible) return;
+
+    // Re-fetch the full cart so we have per-item prices to compute the savings
+    // (the onUpdated summary doesn't carry item-level original prices).
+    let cart;
+    try {
+      const res = await salla.cart.api.details(null, ["options"]);
+      cart = res?.data?.cart;
+    } catch (error) {
+      salla.log("Error refreshing mini-cart summary:", error);
+      return;
+    }
+    if (!cart || !this.isVisible) return;
+    this.cart = cart;
+
+    const info = this.discountInfo(cart);
 
     const subtotal = this.querySelector("[data-cart-subtotal]");
-    if (subtotal && summary.sub_total != null) {
-      subtotal.innerHTML = salla.money(summary.sub_total);
-    }
+    if (subtotal) subtotal.innerHTML = salla.money(info.regularSubtotal);
 
-    const discountValue = summary.total_discount ?? summary.discount;
-    const discountRow = this.querySelector(".qcart__summary-row--discount");
+    const discountRow = this.querySelector("[data-discount-row]");
     const discountEl = this.querySelector("[data-cart-discount]");
-    if (discountEl && discountValue != null) {
-      discountEl.innerHTML = "- " + salla.money(discountValue);
-      if (discountRow) discountRow.classList.toggle("hidden", !(discountValue > 0));
-    }
-    // [data-cart-total] is updated globally by the theme's cart onUpdated hook.
+    if (discountEl) discountEl.innerHTML = "- " + salla.money(info.combined);
+    // inline display wins over .qcart__summary-row flex → fully hide when zero
+    if (discountRow) discountRow.style.display = info.combined > 0 ? "flex" : "none";
+
+    const totalEl = this.querySelector("[data-cart-total]");
+    if (totalEl && cart.total != null) totalEl.innerHTML = salla.money(cart.total);
   }
 
   escapeHTML(str = "") {
@@ -163,7 +197,7 @@ class AddToCartToast extends HTMLElement {
     }
 
     const cart = this.cart;
-    const hasDiscount = cart.total_discount > 0;
+    const info = this.discountInfo(cart);
 
     this.innerHTML = `
       <div class="s-add-product-toast__dialog" role="dialog" aria-modal="true">
@@ -184,12 +218,12 @@ class AddToCartToast extends HTMLElement {
 
             <div class="qcart__summary-row qcart__summary-row--subtotal">
               <span class="qcart__summary-label">المجموع</span>
-              <b class="qcart__summary-value" data-cart-subtotal>${salla.money(cart.sub_total)}</b>
+              <b class="qcart__summary-value" data-cart-subtotal>${salla.money(info.regularSubtotal)}</b>
             </div>
 
-            <div class="qcart__summary-row qcart__summary-row--discount ${hasDiscount ? "" : "hidden"}">
+            <div class="qcart__summary-row qcart__summary-row--discount" data-discount-row style="display:${info.combined > 0 ? "flex" : "none"}">
               <span class="qcart__summary-label">قيمة الخصم</span>
-              <b class="qcart__summary-value" data-cart-discount>- ${salla.money(cart.total_discount || 0)}</b>
+              <b class="qcart__summary-value" data-cart-discount>- ${salla.money(info.combined)}</b>
             </div>
 
             <div class="qcart__summary-divider" aria-hidden="true"></div>
