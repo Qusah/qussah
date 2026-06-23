@@ -246,7 +246,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    flex-direction: row-reverse;
+    flex-direction: row;          // Figma: value LEFT, label + icon RIGHT
     height: 60px;
     padding: 16px;
     border: 1px solid #e9ecef;
@@ -832,6 +832,20 @@
       }
 
       .btn--wishlist.qpd__gallery-icon { left: 17px !important; }
+      // The base style above is a translucent white pill with a white heart — it
+      // disappears on light product images. Give the heart a solid, visible look
+      // (like the share) on any image. The wishlisted (.is-added) red state is
+      // kept by leaving it untouched here.
+      .btn--wishlist.qpd__gallery-icon:not(.is-added) {
+        background: #fff !important;
+        border-color: #e9ecef !important;
+        color: #30378e !important;
+
+        i { color: #30378e !important; }
+
+        &::part(base) { background: #fff !important; color: #30378e !important; }
+      }
+
       .qpd__gallery-share { left: 69px !important; }
       .qpd__gallery-share::part(base) { padding: 0; }
 
@@ -929,6 +943,212 @@
   }
 }
 
+// ====================================================================
+// Desktop horizontal arrangement → match Figma left/right (node 160:4121).
+// The info column flows RTL by default (first child → visual right). Figma
+// places these rows the other way (icons / price / tamara / stepper on the
+// LEFT), so flip them on desktop only — mobile already positions these via
+// its own order overrides and must stay untouched.
+// ====================================================================
+@media (min-width: 769px) {
+  .qpd {
+    &__titlerow { flex-direction: row-reverse; }   // heart/share LEFT, title RIGHT
+    &__paydemo  { flex-direction: row-reverse; }   // tamara LEFT, tabby RIGHT
+    &__priceqty { flex-direction: row-reverse; }   // price LEFT, quantity RIGHT
+    &__qty      { flex-direction: row-reverse; }   // stepper LEFT, "حدد الكمية" RIGHT
+  }
+}
+
+// Mobile Product_Image node 214:4948 exactness pass.
+@media (max-width: 768px) {
+  .qpd-breadcrumbs { display: none !important; }
+
+  .container--product-details.qpd {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  .qpd {
+    &__gallery {
+      .details-slider {
+        width: 100%;
+        gap: 20px !important;
+      }
+
+      .s-slider-container {
+        height: 371px !important;
+        max-height: 371px;
+        border-radius: 25px !important;
+        background: #30378e !important;
+      }
+
+      .swiper,
+      .swiper-wrapper,
+      .homeslider__slide {
+        height: 100% !important;
+      }
+
+      .homeslider__slide img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+      }
+
+      .s-slider-thumbs,
+      .s-slider-thumbs-container,
+      .s-slider-thumbs-container .swiper,
+      .s-slider-thumbs-container .swiper-wrapper {
+        height: 89px !important;
+        overflow: visible !important;
+      }
+
+      .s-slider-thumbs-container .swiper-wrapper {
+        display: flex !important;
+        gap: 16px !important;
+        width: 100% !important;
+      }
+
+      .slide--one-fourth {
+        display: flex !important;
+        flex: 1 1 0 !important;
+        width: auto !important;
+        min-width: 0 !important;
+        height: 89px !important;
+        margin: 0 !important;
+        border-radius: 15px !important;
+        padding: 10px !important;
+      }
+
+      .slide--one-fourth:nth-child(n+5) {
+        display: none !important;
+      }
+
+      .slide--one-fourth img {
+        border-radius: 10px !important;
+        object-fit: cover !important;
+      }
+
+      .s-slider-block__title-nav,
+      .s-slider-next,
+      .s-slider-prev {
+        display: none !important;
+      }
+
+      .qpd__gallery-icon,
+      .qpd__gallery-icon::part(base),
+      .qpd__gallery-icon .s-button-element,
+      .qpd__gallery-icon button {
+        width: 40px !important;
+        min-width: 40px !important;
+        height: 40px !important;
+        min-height: 40px !important;
+        border-radius: 10px !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: #fff !important;
+        border-color: #e9ecef !important;
+        box-shadow: none !important;
+      }
+
+      .btn--wishlist.qpd__gallery-icon,
+      .btn--wishlist.qpd__gallery-icon:not(.is-added) {
+        left: 17px !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: #fff !important;
+      }
+
+      .btn--wishlist.qpd__gallery-icon i,
+      .btn--wishlist.qpd__gallery-icon:not(.is-added) i {
+        color: #fff !important;
+      }
+
+      .qpd__gallery-share {
+        left: 69px !important;
+      }
+    }
+  }
+}
+// Mobile gallery arrow and heart correction.
+@media (max-width: 768px) {
+  .qpd {
+    &__gallery {
+      .s-slider-block__title-nav {
+        position: absolute !important;
+        top: 165px !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 7 !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding-inline: 22px;
+        pointer-events: none;
+      }
+
+      .s-slider-prev,
+      .s-slider-next,
+      .s-slider-block__title-nav button {
+        width: 40px !important;
+        min-width: 40px !important;
+        height: 40px !important;
+        min-height: 40px !important;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        border: 0 !important;
+        border-radius: 50% !important;
+        background: #fff !important;
+        color: #30378e !important;
+        box-shadow: 0 8px 18px rgba(10, 31, 48, 0.12) !important;
+        opacity: 1 !important;
+        pointer-events: auto;
+      }
+
+      .qpd__gallery-icon,
+      .qpd__gallery-icon::part(base),
+      .qpd__gallery-icon .s-button-element,
+      .qpd__gallery-icon button {
+        border: 1px solid #e9ecef !important;
+        background: #fff !important;
+        color: #30378e !important;
+        opacity: 1 !important;
+      }
+
+      .qpd__gallery-icon i,
+      .qpd__gallery-icon svg {
+        color: #30378e !important;
+        fill: none;
+        stroke: currentColor;
+      }
+
+      .btn--wishlist.qpd__gallery-icon,
+      .btn--wishlist.qpd__gallery-icon:not(.is-added) {
+        left: 17px !important;
+        background: #fff !important;
+        color: #30378e !important;
+      }
+
+      .btn--wishlist.qpd__gallery-icon i,
+      .btn--wishlist.qpd__gallery-icon:not(.is-added) i {
+        display: block;
+        color: #30378e !important;
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      .btn--wishlist.qpd__gallery-icon.is-added,
+      .btn--wishlist.qpd__gallery-icon.is-added::part(base) {
+        background: #d62f45 !important;
+        border-color: #d62f45 !important;
+        color: #fff !important;
+      }
+
+      .btn--wishlist.qpd__gallery-icon.is-added i {
+        color: #fff !important;
+      }
+    }
+  }
+}
 @media (max-width: 390px) {
   .qpd {
     &__gallery {
