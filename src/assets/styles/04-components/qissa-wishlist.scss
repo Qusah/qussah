@@ -376,3 +376,43 @@
     gap: 8px;
   }
 }
+
+// ====================================================================
+// Wishlist-page heart = always the red "remove" state.
+// Every product shown here IS wishlisted, but on first (soft) navigation
+// the custom card renders before salla::wishlist storage syncs, so it
+// lands in the not-added (white) state — which read as a missing heart
+// until a hard refresh. Force red here, independent of that timing.
+// (Elsewhere the heart stays white→red toggle; this is scoped to .qwish.)
+// ====================================================================
+.qwish .s-product-card-wishlist-btn {
+  border-color: #dc3545 !important;
+  background: #dc3545 !important;
+  color: #fff !important;
+  fill: #fff !important;
+
+  &::part(base),
+  button,
+  .s-button-btn,
+  .s-button-element {
+    background: #dc3545 !important;
+    color: #fff !important;
+    fill: #fff !important;
+  }
+
+  i,
+  svg {
+    color: #fff !important;
+    fill: #fff !important;
+    stroke: #fff !important;
+  }
+
+  &:hover,
+  &:hover::part(base),
+  &:hover button,
+  &:hover .s-button-btn,
+  &:hover .s-button-element {
+    background: #c92f3d !important;
+    border-color: #c92f3d !important;
+  }
+}
