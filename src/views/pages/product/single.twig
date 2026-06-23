@@ -202,19 +202,22 @@
             {% if has_many_images %}
             <script>
                 (function () {
+                    // <salla-slider> host: exposes public slideNext()/slidePrev().
+                    // The main image element is <div class="swiper s-slider-container">,
+                    // and Swiper attaches its instance to that element as `.swiper`.
                     var host = document.getElementById('details-slider-{{ product.id }}');
                     if (!host) { return; }
                     var tries = 0;
 
-                    function mainSwiper() {
-                        var el = host.querySelector('.s-slider-container .swiper');
-                        return el && el.swiper ? el.swiper : null;
+                    // the Swiper instance lives on the .s-slider-container element itself
+                    function swiper(container) {
+                        return container && container.swiper ? container.swiper : null;
                     }
 
                     function init() {
                         var container = host.querySelector('.s-slider-container');
                         if (!container) {
-                            if (tries++ < 90) { requestAnimationFrame(init); }
+                            if (tries++ < 120) { requestAnimationFrame(init); }
                             return;
                         }
                         if (container.querySelector('.qpd__gallery-arrow')) { return; }
@@ -235,28 +238,31 @@
                         container.appendChild(next);
 
                         function sync() {
-                            var s = mainSwiper();
+                            var s = swiper(container);
                             if (!s) { return; }
                             var loop = s.params && s.params.loop;
                             prev.classList.toggle('is-disabled', !loop && s.isBeginning);
                             next.classList.toggle('is-disabled', !loop && s.isEnd);
                         }
                         function go(dir) {
-                            var s = mainSwiper();
+                            var s = swiper(container);
                             if (s) {
                                 dir === 'next' ? s.slideNext() : s.slidePrev();
-                            } else {
-                                var b = container.querySelector(dir === 'next' ? '.s-slider-next' : '.s-slider-prev');
-                                if (b) { b.click(); }
+                            } else if (typeof host[dir === 'next' ? 'slideNext' : 'slidePrev'] === 'function') {
+                                // fall back to the salla-slider public method
+                                host[dir === 'next' ? 'slideNext' : 'slidePrev']();
                             }
-                            setTimeout(sync, 60);
+                            setTimeout(sync, 80);
                         }
 
-                        prev.addEventListener('click', function () { go('prev'); });
-                        next.addEventListener('click', function () { go('next'); });
+                        prev.addEventListener('click', function (e) { e.preventDefault(); go('prev'); });
+                        next.addEventListener('click', function (e) { e.preventDefault(); go('next'); });
 
-                        var s = mainSwiper();
-                        if (s && s.on) { s.on('slideChange', sync); }
+                        var s = swiper(container);
+                        if (s && s.on) {
+                            s.on('slideChange', sync);
+                            s.on('transitionEnd', sync);
+                        }
                         sync();
                     }
 
