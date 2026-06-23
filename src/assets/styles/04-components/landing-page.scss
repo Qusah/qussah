@@ -103,7 +103,81 @@
             }
         }
     }
-    .s-product-card-wishlist-btn{
-        display: hidden;
+    .s-product-card-entry .s-product-card-wishlist-btn {
+        width: 50px;
+        height: 50px;
+        min-width: 50px;
+        min-height: 50px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 12px !important;
+        outline: 0 !important;
+        background: #dc3545 !important;
+        color: #fff !important;
+        fill: #fff !important;
+        box-shadow: none !important;
+        opacity: 1;
+        overflow: hidden;
+
+        &::part(base),
+        button,
+        .s-button-btn,
+        .s-button-element,
+        .s-button-icon {
+            width: 100% !important;
+            height: 100% !important;
+            min-height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border: 0 !important;
+            border-radius: 12px !important;
+            outline: 0 !important;
+            background: #dc3545 !important;
+            color: #fff !important;
+            fill: #fff !important;
+            box-shadow: none !important;
+        }
+
+        i,
+        svg {
+            color: #fff !important;
+            fill: #fff !important;
+            stroke: #fff !important;
+        }
+
+        &:hover,
+        &:hover::part(base),
+        &:hover button,
+        &:hover .s-button-btn,
+        &:hover .s-button-element,
+        &:hover .s-button-icon {
+            background: #c92f3d !important;
+            color: #fff !important;
+            fill: #fff !important;
+        }
     }
-}
+
+    @media (max-width: 768px) {
+        .s-product-card-entry .s-product-card-wishlist-btn {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            min-height: 42px;
+
+            &::part(base),
+            button,
+            .s-button-btn,
+            .s-button-element,
+            .s-button-icon {
+                width: 42px !important;
+                height: 42px !important;
+                min-height: 42px !important;
+            }
+        }
+    }}

@@ -259,10 +259,14 @@
       color: #f55157;
       border-color: #f55157;
     }
+    // active / wishlisted → match the wishlist-page heart (filled red square, white heart)
     &.s-product-card-wishlisted,
     &[wishlisted] {
-      border-color: #f55157;
-      i { color: #f55157; }
+      background: #dc3545;
+      border-color: #dc3545;
+      color: #fff;
+      i { color: #fff; }
+      &:hover { background: #c92f3d; border-color: #c92f3d; color: #fff; i { color: #fff; } }
     }
   }
 }

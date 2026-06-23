@@ -76,8 +76,25 @@ salla-button {
       @apply text-gray-600;
     }
 
+    // active → match the wishlist-page heart: filled red square, white heart
     &.is-added {
-      @apply text-red-500;
+      @apply text-white;
+      background: #dc3545 !important;
+      border-color: #dc3545 !important;
+      border-radius: 12px;
+
+      &::part(base) {
+        background: #dc3545 !important;
+        border-color: #dc3545 !important;
+        color: #fff !important;
+        fill: #fff !important;
+        border-radius: 12px;
+      }
+
+      i,
+      .sicon-heart {
+        color: #fff !important;
+      }
     }
   }
 

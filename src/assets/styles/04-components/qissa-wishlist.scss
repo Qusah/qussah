@@ -340,24 +340,25 @@
     min-width: 0 !important;
     height: 42px !important;
     min-height: 42px !important;
-    padding: 8px 6px !important;
-    gap: 4px !important;
+    padding: 8px 4px !important;
+    gap: 0 !important;
     font-size: 12px !important;
     line-height: 20px !important;
   }
 
+  // narrow 2-col cards: let the Arabic label own the full width and never clip
   .qwish salla-add-product-button .s-button-text {
-    gap: 4px;
+    gap: 0;
     min-width: 0;
     max-width: 100%;
+    overflow: visible;
+    text-overflow: clip;
   }
 
+  // hide the leading cart icon on mobile so "إضافة للسلة" fits on one line
   .qwish salla-add-product-button i,
   .qwish salla-add-product-button svg {
-    width: 15px;
-    height: 15px;
-    flex-basis: 15px;
-    font-size: 15px;
+    display: none !important;
   }
 }
 
