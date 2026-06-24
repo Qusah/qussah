@@ -201,6 +201,18 @@
   }
 }
 
+// ---- tablet / in-between (769–1280) ----
+// Each offer card needs ~559px (info 322 + image 237), so two side-by-side
+// cards overflow/overlap below ~1350px. Stack them full-width (keeping the
+// desktop horizontal card layout) and trim the heavy 80px side padding.
+@media (min-width: 769px) and (max-width: 1280px) {
+  .qoffers__box { padding: 40px 40px 20px; }
+  .qoffers__row { flex-direction: column; gap: 20px; max-width: 680px; }
+  .qoffer { flex: 0 0 auto; width: 100%; }
+  .qoffer__img { flex: 0 0 200px; height: 300px; }
+  .qoffer__img img { width: 180px; height: 260px; }
+}
+
 // ---- mobile (Figma node 6036:21548 offers block @428) ----
 @media (max-width: 768px) {
   .qoffers { padding-block: 8px; }

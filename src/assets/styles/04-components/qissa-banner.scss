@@ -70,6 +70,18 @@
     }
   }
 
+  // ---- tablet / in-between (769–1280): the design has no tablet frame, so keep
+  //      the desktop row but let the text column SHRINK (it was flex:0 0 592px,
+  //      which crushed/overlapped the product image below ~1300px) and trim the
+  //      heavy 90/80 padding so the image keeps a sane share of the width. ----
+  @media (min-width: 769px) and (max-width: 1280px) {
+    &__box { padding: 56px 40px; gap: 32px; }
+    &__box::after { height: 200px; }
+    &__text { flex: 1 1 0; min-width: 0; max-width: 56%; gap: 24px; }
+    &__title { font-size: 36px; line-height: 52px; }
+    &__media { margin: -56px 0; img { max-height: 460px; } }
+  }
+
   // ---- mobile (Figma node 6036:21752 @428): title + button at top-right,
   //      product image bleeds full-width across the bottom (behind the copy) ----
   @media (max-width: 768px) {

@@ -140,7 +140,7 @@
                     <div class="qlist__banner-body">
                         {% if component.banner_eyebrow %}<span class="qlist__banner-eyebrow">{{ component.banner_eyebrow }}</span>{% endif %}
                         {% if component.banner_title %}<h3 class="qlist__banner-title">{{ component.banner_title }}</h3>{% endif %}
-                        {% if component.banner_btn %}<a href="{{ component.banner_url|default('#') }}" class="qlist__banner-btn">{{ component.banner_btn }}</a>{% endif %}
+                        {% if component.banner_btn %}<a href="{{ (component.banner_url and component.banner_url not in ['#', '/products']) ? component.banner_url : store.url ~ '/كل-المنتجات/c1390845573' }}" class="qlist__banner-btn">{{ component.banner_btn }}</a>{% endif %}
                     </div>
                     {% if component.banner_image %}
                         <img class="qlist__banner-img" src="{{ component.banner_image }}" alt="{{ component.banner_title }}" loading="lazy"/>

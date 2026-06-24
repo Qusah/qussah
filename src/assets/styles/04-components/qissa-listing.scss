@@ -192,9 +192,13 @@
     }
     .qprod__info { padding-block: 0; }
 
-    // narrow screens: one horizontal card per row, smaller image
-    @media (max-width: 768px) {
+    // tablet + mobile: a horizontal card needs the full row width — two per
+    // row squeezes the content column so the add-to-cart label wraps/clips.
+    @media (max-width: 1024px) {
       grid-template-columns: 1fr;
+    }
+    // mobile: smaller image to keep the row compact
+    @media (max-width: 768px) {
       .qprod { gap: 14px; }
       .qprod__img { flex-basis: 130px; width: 130px; height: 150px; }
     }
@@ -307,6 +311,7 @@
 
   // ===== responsive =====
   @media (max-width: 1024px) {
+    .container { padding-inline: 24px; }                         // trim the 50px gutter so cards get more room
     &__layout { flex-direction: column; align-items: stretch; }  // children fill width (was flex-start = right-aligned in RTL)
     &__main { width: 100%; min-width: 0; }
     &__side { width: 100%; flex-basis: auto; }
@@ -314,7 +319,10 @@
     &__filter.is-open { display: block; }   // revealed by the filter button
     &__filter-toggle { display: inline-flex; }
     &__grid:not(.qlist__grid--list) { grid-template-columns: repeat(3, 1fr); }
-    &__banner { max-width: 420px; margin-inline: auto; }
+    // full-width banner on tablet (was a narrow 420px box, looked misaligned
+    // against the full-width nav / sort bar / grid). Shorter, wide-banner ratio.
+    &__banner { max-width: none; margin-inline: 0; height: 320px; }
+    &__banner-img { max-height: 260px; object-position: bottom center; }
   }
   @media (max-width: 768px) {
     padding-block: 8px;

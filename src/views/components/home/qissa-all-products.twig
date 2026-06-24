@@ -20,7 +20,7 @@ Cards reuse the shared .qprod card (identical to "منتجات مميزة").
 
             {# top bar: title RIGHT, CTA LEFT (desktop) — CTA drops to the BOTTOM on mobile #}
             <div class="qallprods__top">
-                <a href="{{ component.button_url|default('/products') }}" class="qallprods__all">
+                <a href="{{ (component.button_url and component.button_url not in ['#', '/products']) ? component.button_url : store.url ~ '/كل-المنتجات/c1390845573' }}" class="qallprods__all">
                     <i class="sicon-arrow-left"></i>
                     <span>عرض كل المنتجات</span>
                     <i class="sicon-shopping-bag"></i>

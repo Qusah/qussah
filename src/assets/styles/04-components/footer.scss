@@ -118,6 +118,20 @@
 
   // ---- bottom bar lives in its own `.qissa-footer-bottom` block (below) ----
 
+  // ============ tablet / in-between (769–1100) ============
+  // 5 columns can't fit (Account/Links/Contact/Social are fixed 175/175/200px),
+  // so About was squeezed to ~0 and the fixed columns overlapped each other.
+  // Put About on its own row, then let the other four share the row as equal
+  // flexible columns.
+  @media (min-width: 769px) and (max-width: 1100px) {
+    &__cols { flex-wrap: wrap; gap: 24px; }
+    &__about { flex: 0 0 100%; }
+    &__about-text { max-width: 100%; }
+    &__links-col,
+    &__contact,
+    &__social { flex: 1 1 0; min-width: 0; }
+  }
+
   // ================= mobile (Figma 6036:22124) =================
   @media (max-width: 768px) {
     .container { padding-inline: 15px; }
@@ -184,6 +198,13 @@
     display: inline-flex; align-items: center; justify-content: center;
     img { max-width: 100%; max-height: 25px; width: auto; height: auto; object-fit: contain; display: block; }
     &--visa { width: 64px; }
+  }
+
+  // ---- tablet / in-between (769–1024): keep the horizontal pill but trim the
+  //      heavy 80px side padding so payments + VAT + copyright stop colliding ----
+  @media (min-width: 769px) and (max-width: 1024px) {
+    padding: 16px 32px;
+    gap: 16px;
   }
 
   // ---- mobile (Figma 6036:15433): stacked, radius 20 ----

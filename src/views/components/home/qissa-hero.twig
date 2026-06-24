@@ -23,7 +23,8 @@
                 <p class="qissa-hero__subtitle qissa-hero__subtitle--mobile">كل ما تحتاجه للنظافة، في مكان واحد</p>
                 {% if component.button_text %}
                     {# Figma node 100:127 — order: arrow_left (left) · text · cart (right) #}
-                    <a href="{{ component.button_url|default('#') }}" class="qissa-hero__btn">
+                    {# fall back to the products listing (same target as the header "المنتجات") #}
+                    <a href="{{ (component.button_url and component.button_url not in ['#', '/products']) ? component.button_url : store.url ~ '/كل-المنتجات/c1390845573' }}" class="qissa-hero__btn">
                         <i class="sicon-arrow-left qissa-hero__btn-arrow"></i>
                         <span>{{ component.button_text }}</span>
                         <i class="sicon-shopping-cart qissa-hero__btn-cart"></i>

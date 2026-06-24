@@ -27,7 +27,7 @@
         {# circular cards #}
         <div class="qcats__row">
             {% for card in component.cards %}
-                <a href="{{ card.url|default('#') }}" class="qcats__card">
+                <a href="{{ (card.url and card.url not in ['#', '/products']) ? card.url : store.url ~ '/كل-المنتجات/c1390845573' }}" class="qcats__card">
                     {% if card.image %}
                         <span class="qcats__card-img">
                             <img src="{{ card.image }}" alt="{{ card.name }}" loading="lazy"/>

@@ -85,6 +85,20 @@
     &:hover { background: #fff; color: #172951; }
   }
 
+  // ---- tablet / in-between (769–1280): media is absolute (left 55%) and the
+  //      text was flex:0 0 592px, so at mid widths the fixed text slid over the
+  //      media. Constrain text to the right ~46% and pull the media/play in. ----
+  @media (min-width: 769px) and (max-width: 1280px) {
+    &__box { padding: 56px 40px; min-height: 420px; }
+    &__media { width: 48%; }
+    &__play {
+      left: 44%; width: 84px; height: 84px;
+      &::before { width: 58px; height: 58px; }
+    }
+    &__text { flex: 0 1 46%; min-width: 0; max-width: 46%; gap: 24px; }
+    &__title { font-size: 34px; line-height: 48px; }
+  }
+
   // ---- mobile (Figma 6036:21955): title only, smaller play button ----
   @media (max-width: 768px) {
     padding-block: 8px;

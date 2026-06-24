@@ -1672,6 +1672,18 @@
     }
   }
 
+  // tablet / in-between: the slider scrolls (only ~3–4 cards fit) but the
+  // desktop view hides the arrows → show the carousel controls here.
+  @media (min-width: 769px) and (max-width: 1150px) {
+    .container { padding-inline: 32px; }
+    &__nav {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+  }
+
   @media (max-width: 768px) {
     padding-block: 24px;
     .container {

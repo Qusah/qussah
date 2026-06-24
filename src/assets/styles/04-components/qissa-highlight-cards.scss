@@ -121,6 +121,35 @@
   }
 }
 
+// ---------- tablet / in-between (769–1024): keep the 3-card row but scale the
+//            oversized desktop type (100px stat number, 30px titles) and the
+//            absolutely-positioned badge so nothing overflows the narrow cards.
+@media (min-width: 769px) and (max-width: 1024px) {
+  .qhcards .container { padding-inline: 24px; }
+  .qhcards__row { gap: 16px; }
+  .qhcard { min-height: 320px; }
+
+  .qhcard--stat { padding: 24px 20px; gap: 20px; }
+  .qhcard__stat-num { font-size: 64px; }
+  .qhcard__stat-label { font-size: 20px; }
+  .qhcard__stat-text { font-size: 16px; line-height: 26px; }
+
+  .qhcard--banner { padding: 28px 20px 0; }
+  .qhcard__banner-title { font-size: 24px; line-height: 30px; }
+  // the long caption can't fit one line on the narrow card — let it wrap and
+  // pin it across the card bottom instead of overflowing the left edge
+  .qhcard__banner-badge {
+    top: auto; bottom: 14px; left: 14px; right: 14px;
+    height: auto; line-height: 1.35; padding: 6px 10px;
+    font-size: 11.5px; white-space: normal;
+    text-align: center; justify-content: center;
+  }
+  .qhcard__banner-media { top: 96px; }
+
+  .qhcard--shop { padding: 24px 20px; }
+  .qhcard__shop-text { font-size: 16px; line-height: 26px; }
+}
+
 // ---------- mobile (Figma 6036:21915): stacked & reversed ----------
 @media (max-width: 768px) {
   .qhcards { padding-block: 8px; }

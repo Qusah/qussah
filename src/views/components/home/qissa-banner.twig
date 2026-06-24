@@ -29,7 +29,7 @@
                     <p class="qbanner__subtitle">{{ component.subheading }}</p>
                 {% endif %}
                 {% if component.button_text %}
-                    <a href="{{ component.button_url|default('/products') }}" class="qbanner__btn">
+                    <a href="{{ (component.button_url and component.button_url not in ['#', '/products']) ? component.button_url : store.url ~ '/كل-المنتجات/c1390845573' }}" class="qbanner__btn">
                         <i class="sicon-arrow-left"></i>
                         <span>{{ component.button_text }}</span>
                         <i class="sicon-shopping-bag"></i>

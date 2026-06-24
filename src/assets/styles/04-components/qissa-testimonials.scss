@@ -106,6 +106,15 @@
 }
 
 // ====================================================================
+// Tablet / in-between (769–1024): 3 columns under the heavy 80px container
+// padding get too narrow; trim padding and drop to a 2-column grid.
+// ====================================================================
+@media (min-width: 769px) and (max-width: 1024px) {
+  .qtest .container { padding-inline: 40px; }
+  .qtest__row { grid-template-columns: repeat(2, 1fr); }
+}
+
+// ====================================================================
 // Mobile (Figma 6036:21971): gradient box, centered title, swipe carousel
 // ====================================================================
 @media (max-width: 768px) {

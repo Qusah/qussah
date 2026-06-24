@@ -65,6 +65,13 @@
   }
 }
 
+// ---- tablet / in-between (769–1024): 4 columns get cramped; drop to 3 ----
+@media (min-width: 769px) and (max-width: 1024px) {
+  .qallprods .container { padding-inline: 24px; }
+  .qallprods__box { padding: 40px 30px; }
+  .qallprods__grid { grid-template-columns: repeat(3, 1fr); }
+}
+
 // ---- mobile (Figma 6036:21765): centered title, 2-col grid, CTA at bottom ----
 @media (max-width: 768px) {
   .qallprods { padding-block: 8px; }

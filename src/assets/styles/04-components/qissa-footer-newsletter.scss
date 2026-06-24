@@ -102,6 +102,21 @@
     &:focus { outline: none; border-color: #30378e; }
   }
 
+  // ============ tablet / in-between (769–1024) ============
+  // Content already shrinks (flex 0 1 550); just trim the 80px side padding
+  // and the tall 418px image so the visual stays balanced at mid widths.
+  @media (min-width: 769px) and (max-width: 1024px) {
+    // bottom-align the row and remove the card's bottom padding so the product
+    // photo sits flush at the BOTTOM of the card (bursts up from the edge)
+    &__card { padding: 24px 40px 0; gap: 24px; align-items: flex-end; }
+    &__content { flex: 1 1 0; min-width: 0; max-width: none; padding-bottom: 28px; }
+    &__media {
+      flex: 0 0 40%; min-width: 0; height: 260px;
+      img { height: 100%; object-fit: contain; object-position: bottom center; }
+    }
+    &__title { font-size: 28px; line-height: 34px; }
+  }
+
   // ================= mobile (Figma 6036:14322) =================
   @media (max-width: 768px) {
     padding-block: 8px;

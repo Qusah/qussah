@@ -15,7 +15,7 @@
 
             {# top bar: title on the RIGHT, "تسوق كل المنتجات" button on the LEFT #}
             <div class="qoffers__top">
-                <a href="{{ component.button_url|default('/products') }}" class="qoffers__all">
+                <a href="{{ (component.button_url and component.button_url not in ['#', '/products']) ? component.button_url : store.url ~ '/كل-المنتجات/c1390845573' }}" class="qoffers__all">
                     <i class="sicon-arrow-left"></i>
                     <span>تسوق كل المنتجات</span>
                 </a>

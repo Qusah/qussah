@@ -47,7 +47,7 @@ The play button plays the merchant video in place (direct file → <video>, YouT
                     <p class="qfbanner__subtitle">{{ component.subtitle }}</p>
                 {% endif %}
                 {% if component.button_text %}
-                    <a href="{{ component.button_url|default('/products') }}" class="qfbanner__btn">
+                    <a href="{{ (component.button_url and component.button_url not in ['#', '/products']) ? component.button_url : store.url ~ '/كل-المنتجات/c1390845573' }}" class="qfbanner__btn">
                         <i class="sicon-arrow-left"></i>
                         <span>{{ component.button_text }}</span>
                         <i class="sicon-shopping-bag"></i>

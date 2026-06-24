@@ -52,7 +52,7 @@ Heterogeneous cards (not a collection). Glows are CSS gradients; photos are imag
                 <div class="qhcard__shop-body">
                     {% if component.shop_text %}<p class="qhcard__shop-text">{{ component.shop_text }}</p>{% endif %}
                     {% if component.shop_button_text %}
-                        <a href="{{ component.shop_button_url|default('/products') }}" class="qhcard__shop-btn">
+                        <a href="{{ (component.shop_button_url and component.shop_button_url not in ['#', '/products']) ? component.shop_button_url : store.url ~ '/كل-المنتجات/c1390845573' }}" class="qhcard__shop-btn">
                             <i class="sicon-arrow-left"></i>
                             <span>{{ component.shop_button_text }}</span>
                             <i class="sicon-shopping-bag"></i>

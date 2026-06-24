@@ -50,6 +50,16 @@
   }
 }
 
+// ---- tablet / in-between (769–1024): keep the row but trim the 32px padding
+//      and icon/text sizes so the three features don't collide the dividers ----
+@media (min-width: 769px) and (max-width: 1024px) {
+  .qtb__feature { padding: 20px 16px; gap: 12px; }
+  .qtb__icon { flex: 0 0 32px; width: 32px; height: 32px; i { font-size: 28px; } }
+  .qtb__title { font-size: 16px; line-height: 22px; }
+  .qtb__subtitle { font-size: 13px; line-height: 18px; }
+  .qtb__divider { height: 56px; }
+}
+
 // ---- mobile (Figma 6036:22058): stack vertically, horizontal dividers ----
 @media (max-width: 768px) {
   .qtb { padding-block: 8px; }
