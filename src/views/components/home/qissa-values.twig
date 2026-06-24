@@ -1,0 +1,80 @@
+{#
+| Variable                | Type       | Description                                       |
+|-------------------------|------------|---------------------------------------------------|
+| component               | object     | merchant settings from twilight.json              |
+| component.heading       | string     | section heading                                   |
+| component.body          | string     | first paragraph                                   |
+| component.body_2        | string     | second paragraph (optional)                       |
+| component.button_text   | string     | primary CTA label (shop)                          |
+| component.button_url    | string     | primary CTA link                                  |
+| component.contact_text  | string     | secondary CTA label (contact)                     |
+| component.contact_url   | string     | secondary CTA link (path or full URL)             |
+| component.cards         | collection | icon · title · description · dark (highlight)     |
+| position                | int        | sorting block                                     |
+#}
+{% set default_icons = [
+    'images/qissa-values/icon-factory.svg',
+    'images/qissa-values/icon-quality.svg',
+    'images/qissa-values/icon-price.svg',
+    'images/qissa-values/icon-delivery.svg'
+] %}
+{# primary CTA → merchant link, else the products listing (same target as the header) #}
+{% set shop_href = (component.button_url and component.button_url not in ['#', '/products']) ? component.button_url : store.url ~ '/كل-المنتجات/c1390845573' %}
+{# secondary CTA → full URL as-is, otherwise treat as a store path #}
+{% set contact_path = component.contact_url|default('/contact-us') %}
+{% set contact_href = contact_path starts with 'http' ? contact_path : store.url ~ '/' ~ contact_path|trim('/') %}
+
+<section class="s-block qvalues" id="qvalues-{{ position }}">
+    <div class="container">
+        <div class="qvalues__inner">
+
+            {# ---- intro text (RIGHT in RTL) ---- #}
+            <div class="qvalues__text">
+                {% if component.heading %}
+                    <h2 class="qvalues__title">{{ component.heading }}</h2>
+                {% endif %}
+                {% if component.body %}
+                    <p class="qvalues__desc">{{ component.body }}</p>
+                {% endif %}
+                {% if component.body_2 %}
+                    <p class="qvalues__desc">{{ component.body_2 }}</p>
+                {% endif %}
+
+                {% if component.button_text or component.contact_text %}
+                    <div class="qvalues__actions">
+                        {% if component.button_text %}
+                            <a href="{{ shop_href }}" class="qvalues__btn qvalues__btn--solid">
+                                <span>{{ component.button_text }}</span>
+                                <i class="sicon-shopping-cart"></i>
+                            </a>
+                        {% endif %}
+                        {% if component.contact_text %}
+                            <a href="{{ contact_href }}" class="qvalues__btn qvalues__btn--outline">
+                                <span>{{ component.contact_text }}</span>
+                                <i class="sicon-arrow-left"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+
+            {# ---- feature cards (LEFT in RTL) — 2 columns, the visual-left column sits lower ---- #}
+            {% if component.cards %}
+                <div class="qvalues__grid">
+                    {% for card in component.cards %}
+                        <article class="qvalues__card{{ card.dark ? ' qvalues__card--dark' : '' }}">
+                            <span class="qvalues__icon">
+                                <img src="{{ card.icon ?: (default_icons[loop.index0 % 4]|asset) }}" alt="" loading="lazy"/>
+                            </span>
+                            <div class="qvalues__card-body">
+                                {% if card.title %}<h3 class="qvalues__card-title">{{ card.title }}</h3>{% endif %}
+                                {% if card.description %}<p class="qvalues__card-text">{{ card.description }}</p>{% endif %}
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+</section>

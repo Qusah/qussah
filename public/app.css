@@ -27384,15 +27384,216 @@ input[type=radio].sr-only:checked ~ div.radio-images__badge {
     align-self: flex-start;
   }
   .qstory__deco {
-    width: 150px;
-    bottom: 0;
+    width: 160px;
+    height: 100px;
+    -o-object-position: bottom center;
+       object-position: bottom center;
   }
   .qstory__deco--right {
-    display: none;
+    width: 120px;
+    height: 84px;
+    top: -16px;
+    right: 0;
+    bottom: auto;
+    left: auto;
+    transform: translateX(36%) rotate(-9deg);
+    transform-origin: top right;
   }
   .qstory__deco--left {
-    bottom: 6%;
+    top: auto;
+    bottom: 6px;
+    left: 0;
     transform: translateX(-38%) rotate(9deg);
+    transform-origin: bottom left;
+  }
+}
+.qvalues {
+  font-family: "GE SS Two", sans-serif;
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+.qvalues__inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+}
+.qvalues__text {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 30px;
+  text-align: right;
+}
+.qvalues__title {
+  margin: 0;
+  max-width: 590px;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 38px;
+  letter-spacing: -0.2px;
+  color: #0a1f30;
+}
+.qvalues__desc {
+  margin: 0;
+  max-width: 577px;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 22px;
+  letter-spacing: -0.18px;
+  color: #6c757d;
+}
+.qvalues__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+}
+.qvalues__btn {
+  flex: 0 0 208px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 50px;
+  padding: 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  border: 1px solid #30378e;
+  transition: background-color 0.2s, color 0.2s;
+}
+.qvalues__btn i {
+  font-size: 16px;
+}
+.qvalues__btn--solid {
+  background: #30378e;
+  color: #fff;
+}
+.qvalues__btn--solid:hover {
+  background: #fff;
+  color: #30378e;
+}
+.qvalues__btn--outline {
+  background: transparent;
+  color: #30378e;
+}
+.qvalues__btn--outline:hover {
+  background: #30378e;
+  color: #fff;
+}
+.qvalues__grid {
+  flex: 1 1 0;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 30px;
+  gap: 30px;
+}
+.qvalues__card:nth-child(even) {
+  margin-top: 50px;
+}
+.qvalues__card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 301px;
+  padding: 24px 28px;
+  border-radius: 30px;
+  background: #eff8fc;
+  text-align: right;
+}
+.qvalues__icon {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+}
+.qvalues__icon img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.qvalues__card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+.qvalues__card-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 22px;
+  color: #0a1f30;
+}
+.qvalues__card-text {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 22px;
+  letter-spacing: -0.18px;
+  color: #6c757d;
+}
+.qvalues__card--dark {
+  background: #30378e;
+}
+.qvalues__card--dark .qvalues__card-title {
+  color: #fff;
+}
+.qvalues__card--dark .qvalues__card-text {
+  color: #fff;
+  opacity: 0.9;
+}
+.qvalues__card--dark .qvalues__icon img {
+  filter: brightness(0) invert(1);
+}
+@media (max-width: 768px) {
+  .qvalues {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+  .qvalues__inner {
+    flex-direction: column;
+    gap: 32px;
+  }
+  .qvalues__text {
+    gap: 24px;
+  }
+  .qvalues__title {
+    font-size: 20px;
+    line-height: 24px;
+    letter-spacing: 0;
+  }
+  .qvalues__actions {
+    width: 100%;
+    margin-top: 8px;
+  }
+  .qvalues__btn {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .qvalues__grid {
+    width: 100%;
+    gap: 16px;
+  }
+  .qvalues__card:nth-child(even) {
+    margin-top: 0;
+  }
+  .qvalues__card {
+    min-height: 0;
+    gap: 16px;
+    padding: 16px 18px;
+    border-radius: 24px;
+  }
+  .qvalues__card-text {
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.16px;
   }
 }
 body, main, #app {

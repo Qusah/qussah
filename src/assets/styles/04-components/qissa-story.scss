@@ -105,16 +105,35 @@
       line-height: 22px;
       letter-spacing: -0.18px;
     }
+    // leave room at the bottom-left for the bleeding product image (button is on the right)
     &__btn { align-self: flex-start; }
 
+    // single product image — small box pinned to the bottom-left, bleeding off the
+    // edge beside the button (Figma 340:3352: rotate 9.19°, mostly off-screen).
+    // height is CAPPED so a tall merchant image can't climb up over the body copy.
     &__deco {
-      width: 150px;
-      bottom: 0;
+      width: 160px;
+      height: 100px;
+      object-position: bottom center;
     }
-    &__deco--right { display: none; } // mobile design shows one image only
+    // second image — small accent in the top-right gap (below the header, above the
+    // heading), bled off the corner so it never sits over the heading copy.
+    &__deco--right {
+      width: 120px;
+      height: 84px;
+      top: -16px;
+      right: 0;
+      bottom: auto;
+      left: auto;
+      transform: translateX(36%) rotate(-9deg);
+      transform-origin: top right;
+    }
     &__deco--left {
-      bottom: 6%;
+      top: auto;
+      bottom: 6px;
+      left: 0;
       transform: translateX(-38%) rotate(9deg);
+      transform-origin: bottom left;
     }
   }
 }

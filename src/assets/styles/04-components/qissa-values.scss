@@ -1,0 +1,176 @@
+// ====================================================================
+// Qissa Values — "نسعى أن يكون كل بيت سعودي..." intro + feature cards
+// Figma desktop 172:4098 · mobile 340:3377
+// Right: heading (32/38) + two paragraphs (16/22) + shop/contact CTAs.
+// Left : staggered 2-column grid of cards (radius 30, one navy highlight).
+// ====================================================================
+
+.qvalues {
+  font-family: 'GE SS Two', sans-serif;
+  padding-block: 80px;
+
+  &__inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+  }
+
+  // ---- intro text (RIGHT in RTL) ----
+  &__text {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;            // RTL → right
+    gap: 30px;
+    text-align: right;
+  }
+  &__title {
+    margin: 0;
+    max-width: 590px;
+    font-size: 32px;
+    font-weight: 500;                 // Heading/H4 Medium
+    line-height: 38px;
+    letter-spacing: -0.2px;
+    color: #0a1f30;                   // base/chosen-blue
+  }
+  &__desc {
+    margin: 0;
+    max-width: 577px;
+    font-size: 16px;
+    font-weight: 300;                 // Label-1 Light
+    line-height: 22px;
+    letter-spacing: -0.18px;
+    color: #6c757d;                   // gray/600
+  }
+
+  // ---- CTAs (shop = solid, contact = outline). Text right, icon left (RTL). ----
+  &__actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;                 // 30 + 22 ≈ 52px from the paragraphs (Figma)
+  }
+  &__btn {
+    flex: 0 0 208px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 50px;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    border: 1px solid #30378e;
+    transition: background-color .2s, color .2s;
+    i { font-size: 16px; }
+  }
+  &__btn--solid {
+    background: #30378e;
+    color: #fff;
+    &:hover { background: #fff; color: #30378e; }
+  }
+  &__btn--outline {
+    background: transparent;
+    color: #30378e;
+    &:hover { background: #30378e; color: #fff; }
+  }
+
+  // ---- feature card grid (LEFT in RTL) ----
+  &__grid {
+    flex: 1 1 0;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+  // desktop stagger: the visual-left column (2nd DOM child in each row) sits ~50px lower
+  &__card:nth-child(even) { margin-top: 50px; }
+
+  &__card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;            // RTL → right
+    justify-content: space-between;
+    gap: 24px;
+    min-height: 301px;
+    padding: 24px 28px;
+    border-radius: 30px;
+    background: #eff8fc;              // light card
+    text-align: right;
+  }
+  &__icon {
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    img { display: block; width: 100%; height: 100%; object-fit: contain; }
+  }
+  &__card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+  &__card-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;                 // Label-1 SemiBold
+    line-height: 22px;
+    color: #0a1f30;
+  }
+  &__card-text {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 300;                 // Label-1 Light
+    line-height: 22px;
+    letter-spacing: -0.18px;
+    color: #6c757d;
+  }
+
+  // highlighted (navy) card — white text + whitened monochrome icon
+  &__card--dark {
+    background: #30378e;
+    .qvalues__card-title { color: #fff; }
+    .qvalues__card-text  { color: #fff; opacity: .9; }
+    .qvalues__icon img   { filter: brightness(0) invert(1); }
+  }
+
+  // ---- mobile (Figma 340:3377 @428): text on top, 2-col card grid below, no stagger ----
+  @media (max-width: 768px) {
+    padding-block: 40px;
+
+    &__inner {
+      flex-direction: column;
+      gap: 32px;
+    }
+    &__text { gap: 24px; }
+    &__title {
+      font-size: 20px;                // Heading/H6 Medium
+      line-height: 24px;
+      letter-spacing: 0;
+    }
+    &__actions {
+      width: 100%;
+      margin-top: 8px;
+    }
+    &__btn { flex: 1 1 0; min-width: 0; }
+
+    &__grid {
+      width: 100%;
+      gap: 16px;
+    }
+    &__card:nth-child(even) { margin-top: 0; }   // drop the desktop stagger
+    &__card {
+      min-height: 0;
+      gap: 16px;
+      padding: 16px 18px;
+      border-radius: 24px;
+    }
+    &__card-text {
+      font-size: 14px;                // Label-2 on mobile
+      line-height: 20px;
+      letter-spacing: -0.16px;
+    }
+  }
+}

@@ -415,6 +415,169 @@
       ]
     },
     {
+      "key": "b47b5d77-3e72-4e8a-ac8d-0358bd047373",
+      "title": {
+        "en": "Qissa Values",
+        "ar": "مميزات قصة"
+      },
+      "icon": "sicon-apps",
+      "path": "home.qissa-values",
+      "fields": [
+        {
+          "id": "heading",
+          "type": "string",
+          "format": "textarea",
+          "label": {
+            "en": "Heading",
+            "ar": "العنوان"
+          },
+          "value": "نسعى أن يكون كل بيت سعودي يحمل لمسة قصة — نظافة، راحة، وتوفير."
+        },
+        {
+          "id": "body",
+          "type": "string",
+          "format": "textarea",
+          "label": {
+            "en": "Paragraph 1",
+            "ar": "الفقرة الأولى"
+          },
+          "value": "بيتك يستاهل الأحسن، وراحة عيلتك تهمنا من قبل ما تهمك. عشان كذا تعبنا وجبنا لك أجود المنتجات — ناعمة، نظيفة، وبسعر ما يكسر الخاطر. من المصنع لبيتك على طول، بدون تعب وبدون غلا. لأنه في النهاية، اللي يلمس بيتك يلمس قلبك. 🤍"
+        },
+        {
+          "id": "body_2",
+          "type": "string",
+          "format": "textarea",
+          "label": {
+            "en": "Paragraph 2 (optional)",
+            "ar": "الفقرة الثانية (اختياري)"
+          },
+          "value": "بيتك يستاهل الأحسن، وراحة عيلتك تهمنا من قبل ما تهمك. عشان كذا تعبنا وجبنا لك أجود المنتجات — ناعمة، نظيفة، وبسعر ما يكسر الخاطر. من المصنع لبيتك على طول، بدون تعب وبدون غلا. لأنه في النهاية، اللي يلمس بيتك يلمس قلبك. 🤍"
+        },
+        {
+          "id": "button_text",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Shop button text",
+            "ar": "نص زر التسوق"
+          },
+          "value": "تسوق المنتجات"
+        },
+        {
+          "id": "button_url",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Shop button URL",
+            "ar": "رابط زر التسوق"
+          },
+          "value": "/products"
+        },
+        {
+          "id": "contact_text",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Contact button text",
+            "ar": "نص زر التواصل"
+          },
+          "value": "تواصل معنا"
+        },
+        {
+          "id": "contact_url",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Contact button URL",
+            "ar": "رابط زر التواصل"
+          },
+          "value": "/contact-us"
+        },
+        {
+          "id": "cards",
+          "type": "collection",
+          "format": "collection",
+          "required": true,
+          "minLength": 1,
+          "maxLength": 8,
+          "label": null,
+          "item_label": "ميزة",
+          "value": [
+            {
+              "cards.icon": null,
+              "cards.title": "مباشرة من المصنع",
+              "cards.description": "اطلب من المصدر وارتاح — ما في وسيط يزيد عليك ريا",
+              "cards.dark": false
+            },
+            {
+              "cards.icon": null,
+              "cards.title": "جودة ما فيها مجاملة",
+              "cards.description": "كل منتج يتفحص قبل ما يطلع منّا، عشان يوصلك زي ما تتوقع أو أحسن",
+              "cards.dark": false
+            },
+            {
+              "cards.icon": null,
+              "cards.title": "أسعار تناسب",
+              "cards.description": "أسعار تناسب الكل بيت ولا شغل ولا جملة — عندنا السعر والكمية اللي يناسب كل واحد.",
+              "cards.dark": false
+            },
+            {
+              "cards.icon": null,
+              "cards.title": "نوصلك مكان ما كنت",
+              "cards.description": "وصّل لك أينما كنت من الشمال للجنوب، من الشرق للغرب — طلبك يوصل بسرعة وبأمان.",
+              "cards.dark": true
+            }
+          ],
+          "fields": [
+            {
+              "type": "string",
+              "icon": "sicon-image",
+              "value": null,
+              "id": "cards.icon",
+              "label": "أيقونة الميزة",
+              "format": "image",
+              "required": false,
+              "placeholder": null,
+              "description": "اختياري — اتركها فارغة لاستخدام أيقونة قصة الافتراضية"
+            },
+            {
+              "type": "string",
+              "icon": "sicon-format-text-alt",
+              "label": "العنوان",
+              "id": "cards.title",
+              "value": null,
+              "required": true,
+              "format": "text",
+              "multilanguage": true,
+              "placeholder": "عنوان الميزة"
+            },
+            {
+              "type": "string",
+              "icon": "sicon-typography",
+              "label": "الوصف",
+              "id": "cards.description",
+              "value": null,
+              "required": false,
+              "format": "textarea",
+              "multilanguage": true,
+              "placeholder": "وصف قصير للميزة"
+            },
+            {
+              "type": "boolean",
+              "icon": "sicon-toggle-off",
+              "label": "تمييز البطاقة (خلفية زرقاء)",
+              "description": null,
+              "id": "cards.dark",
+              "format": "switch",
+              "required": false,
+              "value": false,
+              "selected": false
+            }
+          ]
+        }
+      ]
+    },
+    {
       "key": "f445348a-d5a8-4d2b-8ae9-9fd99b5ac177",
       "title": {
         "en": "Qissa Categories",
