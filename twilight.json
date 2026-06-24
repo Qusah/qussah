@@ -334,6 +334,87 @@
       ]
     },
     {
+      "key": "c7348b9f-fb45-40cd-9854-ff7ec9684c90",
+      "title": {
+        "en": "Qissa Story",
+        "ar": "قصتنا"
+      },
+      "icon": "sicon-presentation",
+      "path": "home.qissa-story",
+      "fields": [
+        {
+          "id": "heading",
+          "type": "string",
+          "format": "textarea",
+          "label": {
+            "en": "Heading",
+            "ar": "العنوان"
+          },
+          "value": "قصتنا بدأت من بيتك في متجر قصة، نؤمن أن النظافة ليست مجرد عادة  بل هي جزء من راحة البيت وسعادة الأسرة. انطلقنا عام 2020 بهدف واضح: نوصّل لك منتجات النظافة المنزلية بأعلى جودة، وأفضل سعر، مباشرةً من المصنع إلى باب بيتك."
+        },
+        {
+          "id": "highlights",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Highlighted phrases (separate with ، )",
+            "ar": "العبارات المميزة باللون الأزرق (افصل بينها بفاصلة عربية ،)"
+          },
+          "value": "بدأت من بيتك،وسعادة الأسرة"
+        },
+        {
+          "id": "body",
+          "type": "string",
+          "format": "textarea",
+          "label": {
+            "en": "Body text",
+            "ar": "النص الفرعي"
+          },
+          "value": "ما في أحلى من بيت نظيف وعيلة مرتاحة. من هالفكرة انطلقنا، وعليها سرنا. نجيبلك أفضل المنتجات بجودة ما تقدر تتنازل عنها، وبسعر يخليك ترجع لنا كل مرة. لأن قصة ما بتبيعك منتج — قصة تبي تكون جزء من بيتك. 🤍"
+        },
+        {
+          "id": "button_text",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Button Text",
+            "ar": "نص الزر"
+          },
+          "value": "تسوق المنتجات"
+        },
+        {
+          "id": "button_url",
+          "type": "string",
+          "format": "text",
+          "label": {
+            "en": "Button URL",
+            "ar": "رابط الزر"
+          },
+          "value": "/products"
+        },
+        {
+          "id": "image_right",
+          "type": "string",
+          "format": "image",
+          "label": {
+            "en": "Decorative image — right",
+            "ar": "صورة جانبية — يمين"
+          },
+          "value": null
+        },
+        {
+          "id": "image_left",
+          "type": "string",
+          "format": "image",
+          "label": {
+            "en": "Decorative image — left",
+            "ar": "صورة جانبية — يسار"
+          },
+          "value": null
+        }
+      ]
+    },
+    {
       "key": "f445348a-d5a8-4d2b-8ae9-9fd99b5ac177",
       "title": {
         "en": "Qissa Categories",

@@ -1,0 +1,55 @@
+{#
+| Variable                | Type   | Description                                              |
+|-------------------------|--------|----------------------------------------------------------|
+| component               | object | merchant settings from twilight.json                       |
+| component.heading       | string | story headline (plain text)                                |
+| component.highlights    | string | phrases to color royal-blue, separated by the Arabic ، |
+| component.body          | string | supporting gray paragraph                                  |
+| component.button_text   | string | CTA label                                                  |
+| component.button_url    | string | CTA link                                                   |
+| component.image_right   | string | decorative product image (bleeds from the right)           |
+| component.image_left    | string | decorative product image (bleeds from the left)            |
+| position                | int    | sorting block                                              |
+#}
+{% set heading = component.heading|default('قصتنا بدأت من بيتك في متجر قصة، نؤمن أن النظافة ليست مجرد عادة  بل هي جزء من راحة البيت وسعادة الأسرة. انطلقنا عام 2020 بهدف واضح: نوصّل لك منتجات النظافة المنزلية بأعلى جودة، وأفضل سعر، مباشرةً من المصنع إلى باب بيتك.') %}
+{# wrap each merchant-supplied phrase in a royal-blue highlight span #}
+{% set heading_html = heading|e('html') %}
+{% for phrase in component.highlights|default('')|split('،') %}
+    {% set p = phrase|trim %}
+    {% if p %}
+        {% set ep = p|e('html') %}
+        {% set heading_html = heading_html|replace({ (ep): '<span class="qstory__hl">' ~ ep ~ '</span>' }) %}
+    {% endif %}
+{% endfor %}
+<section class="s-block qstory" id="qstory-{{ position }}">
+
+    {# decorative product images — bleed from the page edges, shown only when set #}
+    {% if component.image_right %}
+        <img class="qstory__deco qstory__deco--right" src="{{ component.image_right }}" alt="" loading="lazy" aria-hidden="true"/>
+    {% endif %}
+    {% if component.image_left %}
+        <img class="qstory__deco qstory__deco--left" src="{{ component.image_left }}" alt="" loading="lazy" aria-hidden="true"/>
+    {% endif %}
+
+    <div class="container">
+        <div class="qstory__content">
+
+            {% if heading %}
+                <h2 class="qstory__title">{{ heading_html|raw }}</h2>
+            {% endif %}
+
+            {% if component.body %}
+                <p class="qstory__body">{{ component.body }}</p>
+            {% endif %}
+
+            {% if component.button_text %}
+                {# fall back to the products listing (same target as the header "المنتجات") #}
+                <a href="{{ (component.button_url and component.button_url not in ['#', '/products']) ? component.button_url : store.url ~ '/كل-المنتجات/c1390845573' }}" class="qstory__btn">
+                    <span>{{ component.button_text }}</span>
+                    <i class="sicon-shopping-cart"></i>
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+</section>

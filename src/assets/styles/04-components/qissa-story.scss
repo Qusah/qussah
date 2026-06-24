@@ -1,0 +1,120 @@
+// ====================================================================
+// Qissa Story — "قصتنا بدأت من بيتك" centered story block
+// Figma desktop 172:4023 · mobile 340:3352
+// Centered copy (heading 32/50, body 20/24, gap 24) + royal-blue CTA,
+// with optional decorative product images bleeding from the page edges.
+// ====================================================================
+
+.qstory {
+  position: relative;
+  overflow: hidden;                 // decorative images bleed off the edges
+  font-family: 'GE SS Two', sans-serif;
+  padding-block: 80px;              // Figma spacing annotation = 80px
+
+  // ---- centered copy column ----
+  &__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;                       // 3xl
+    max-width: 982px;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  &__title {
+    margin: 0;
+    width: 100%;
+    font-size: 32px;
+    font-weight: 500;                // Heading/H4 Medium
+    line-height: 50px;
+    letter-spacing: -0.2px;
+    color: #0a1f30;                  // base/chosen-blue
+  }
+
+  &__hl { color: #30378e; }          // base/royal-blue highlighted phrases
+
+  &__body {
+    margin: 0;
+    max-width: 808px;
+    font-size: 20px;
+    font-weight: 500;                // Heading/H6 Medium
+    line-height: 24px;
+    color: #6c757d;                  // gray/600
+  }
+
+  // ---- CTA — تسوق المنتجات 🛒 (text right, cart left in RTL) ----
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;                        // lg
+    width: 208px;
+    height: 50px;
+    padding: 16px;                   // xl
+    background: #30378e;             // base/royal-blue
+    border: 1px solid #30378e;
+    border-radius: 12px;             // xl
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    i { font-size: 16px; }
+    &:hover { background: #fff; color: #30378e; }
+  }
+
+  // ---- decorative product images (optional) ----
+  &__deco {
+    position: absolute;
+    z-index: 1;
+    width: 230px;
+    height: auto;
+    object-fit: contain;
+    pointer-events: none;
+  }
+  &__deco--right {
+    top: 12%;
+    right: 0;
+    transform: translateX(28%) rotate(-9deg);
+  }
+  &__deco--left {
+    bottom: 10%;
+    left: 0;
+    transform: translateX(-28%) rotate(9deg);
+  }
+
+  // ---- mobile (Figma 340:3352 @428): copy aligns to the start (RTL = right),
+  //      smaller type, single product image bleeds from the bottom-left ----
+  @media (max-width: 768px) {
+    padding-block: 40px;
+
+    &__content {
+      align-items: flex-start;       // RTL → visual right
+      gap: 16px;                     // 2xl
+      text-align: right;
+    }
+    &__title {
+      font-size: 18px;
+      line-height: 28px;
+    }
+    &__body {
+      font-size: 16px;
+      font-weight: 300;              // Label-1 Light
+      line-height: 22px;
+      letter-spacing: -0.18px;
+    }
+    &__btn { align-self: flex-start; }
+
+    &__deco {
+      width: 150px;
+      bottom: 0;
+    }
+    &__deco--right { display: none; } // mobile design shows one image only
+    &__deco--left {
+      bottom: 6%;
+      transform: translateX(-38%) rotate(9deg);
+    }
+  }
+}
