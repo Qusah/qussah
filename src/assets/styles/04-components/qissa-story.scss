@@ -90,6 +90,8 @@
   @media (max-width: 768px) {
     padding-block: 40px;
 
+    .container { padding-inline: 15px; }   // Figma mobile side margin (was 10px default)
+
     &__content {
       align-items: flex-start;       // RTL → visual right
       gap: 16px;                     // 2xl

@@ -2948,6 +2948,16 @@ textarea.s-input{
     padding-top: 0.625rem;
     padding-bottom: 0.625rem;
 }
+@media (max-width: 768px) {
+  .qstory .s-advertisement-content {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .qvalues .s-advertisement-content {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
 .qheader .s-advertisement-content {
   max-width: none;
   margin-left: auto;
@@ -27365,6 +27375,10 @@ input[type=radio].sr-only:checked ~ div.radio-images__badge {
     padding-top: 40px;
     padding-bottom: 40px;
   }
+  .qstory .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
   .qstory__content {
     align-items: flex-start;
     gap: 16px;
@@ -27446,7 +27460,9 @@ input[type=radio].sr-only:checked ~ div.radio-images__badge {
 }
 .qvalues__actions {
   display: flex;
+  justify-content: flex-start;
   gap: 10px;
+  width: 100%;
   margin-top: 22px;
 }
 .qvalues__btn {
@@ -27497,7 +27513,7 @@ input[type=radio].sr-only:checked ~ div.radio-images__badge {
 .qvalues__card {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
   min-height: 301px;
@@ -27557,17 +27573,25 @@ input[type=radio].sr-only:checked ~ div.radio-images__badge {
     padding-top: 40px;
     padding-bottom: 40px;
   }
+  .qvalues .container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
   .qvalues__inner {
     flex-direction: column;
     gap: 32px;
   }
   .qvalues__text {
+    padding-left: 20px;
+    padding-right: 20px;
     gap: 24px;
   }
   .qvalues__title {
     font-size: 20px;
     line-height: 24px;
     letter-spacing: 0;
+    width: 100%;
+    text-align: center;
   }
   .qvalues__actions {
     width: 100%;
@@ -37126,6 +37150,16 @@ model-viewer[style*=width]:before{
     .s-comments-product .s-comments-container{
         max-width: 1280px;
     }
+}
+@media (max-width: 768px) {
+  .qstory .s-comments-product .s-comments-container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .qvalues .s-comments-product .s-comments-container {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
 }
 .qheader .s-comments-product .s-comments-container {
   max-width: none;

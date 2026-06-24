@@ -47,7 +47,9 @@
   // ---- CTAs (shop = solid, contact = outline). Text right, icon left (RTL). ----
   &__actions {
     display: flex;
+    justify-content: flex-start;      // RTL → packs buttons to the right (shop first = rightmost)
     gap: 10px;
+    width: 100%;                      // span the text column so the buttons align to its right edge
     margin-top: 22px;                 // 30 + 22 ≈ 52px from the paragraphs (Figma)
   }
   &__btn {
@@ -91,7 +93,7 @@
   &__card {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;            // RTL → right
+    align-items: flex-start;          // RTL → right (icon hugs the right edge)
     justify-content: space-between;
     gap: 24px;
     min-height: 301px;
@@ -140,15 +142,21 @@
   @media (max-width: 768px) {
     padding-block: 40px;
 
+    .container { padding-inline: 15px; }   // Figma mobile side margin (was 10px default)
+
     &__inner {
       flex-direction: column;
       gap: 32px;
     }
+    // Figma insets the intro text a touch more than the cards (text 35px vs cards 15px)
+    &__text { padding-inline: 20px; }
     &__text { gap: 24px; }
     &__title {
       font-size: 20px;                // Heading/H6 Medium
       line-height: 24px;
       letter-spacing: 0;
+      width: 100%;
+      text-align: center;             // center the heading on mobile only
     }
     &__actions {
       width: 100%;
