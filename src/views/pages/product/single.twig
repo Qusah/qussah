@@ -660,7 +660,12 @@
 
         {# Tab: reviews #}
         <div class="qpd-tabs__panel" data-qpd-panel="reviews" role="tabpanel">
-            {% hook 'product.single.before_customer_reviews' %}
+            {#
+                Hook: product.single.before_customer_reviews
+                Fires before the customer reviews/comments section.
+                Use this hook to inject content between the product info and the reviews block.
+            #}
+            <div class="s-blocks-wrapper s-before-reviews">{% hook 'product.single.before_customer_reviews' %}</div>
             <salla-comments item-id="{{product.id}}" type="product"></salla-comments>
         </div>
     </div>
