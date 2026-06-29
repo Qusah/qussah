@@ -493,7 +493,7 @@
                             <p class="qpd__gift-sub">{{ trans('blocks.qissa.gift_sub') }}</p>
                         </div>
                         <button type="button" class="qpd__gift-btn"
-                                onclick="document.querySelector('#product-{{ product.id }} salla-gifting')?.scrollIntoView({behavior:'smooth',block:'center'})">
+                                onclick="var g=document.querySelector('#product-{{ product.id }} .s-gifting-widget-action')||document.querySelector('.s-gifting-widget-action'); g ? g.click() : document.querySelector('#product-{{ product.id }} salla-gifting')?.scrollIntoView({behavior:'smooth',block:'center'})">
                             أرسل كهدية
                         </button>
                     </div>
@@ -694,7 +694,6 @@
                 <div class="qpd-viewed__intro">
                     <span class="qpd-viewed__eyebrow">{{ trans('blocks.qissa.cleaning_tagline') }}</span>
                     <h2 class="qpd-viewed__title">{{ trans('blocks.qissa.recently_viewed_lead') }} <span class="qpd-viewed__title-hl">{{ trans('blocks.qissa.recently_viewed_highlight') }}</span></h2>
-                    <p class="qpd-viewed__subtitle">{{ trans('blocks.qissa.recently_viewed_subtitle') }}</p>
                 </div>
 
                 {# left: view-all button #}

@@ -135,6 +135,7 @@
 (function () {
   var SEL = '.qprod__like[data-id], .qoffer__like[data-id]';
   function storageIds() { return (window.salla && salla.storage) ? salla.storage.get('salla::wishlist', []) : []; }
+  function isGuest() { return !!(window.salla && salla.config && typeof salla.config.isUser === 'function' && !salla.config.isUser()); }
   function mark(id, on) {
     document.querySelectorAll('.qprod__like[data-id="' + id + '"], .qoffer__like[data-id="' + id + '"]')
       .forEach(function (b) { b.toggleAttribute('wishlisted', on); });
@@ -151,7 +152,19 @@
       salla.wishlist.event.onAdded(function (r, id) { mark(id, true); });
       salla.wishlist.event.onRemoved(function (r, id) { mark(id, false); });
     }
-    // optimistic flip on click (the inline onclick already calls salla.wishlist.toggle)
+    // guests can't wishlist: intercept the heart click in the CAPTURE phase,
+    // before the button's inline salla.wishlist.toggle runs — keep the heart
+    // empty and open the login modal instead of letting Salla flash an error.
+    document.addEventListener('click', function (e) {
+      var b = e.target.closest(SEL);
+      if (b && isGuest()) {
+        e.stopPropagation();
+        e.preventDefault();
+        b.removeAttribute('wishlisted');
+        if (window.salla && salla.event) { salla.event.dispatch('login::open'); }
+      }
+    }, true);
+    // optimistic flip on click for signed-in users (the inline onclick calls salla.wishlist.toggle)
     document.addEventListener('click', function (e) {
       var b = e.target.closest(SEL);
       if (b) { b.toggleAttribute('wishlisted'); }

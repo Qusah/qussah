@@ -12,19 +12,15 @@
    <div class="container">
     <div class="qheader-topbar">
       <div class="qheader-topbar__links">
-        <a href="{{ link('/contact-us') }}">{{ trans('blocks.qissa.contact_us') }}</a>
-        <span class="qheader-sep"></span>
-        <a href="{{ store.url }}">{{ trans('blocks.qissa.return_policy') }}</a>
-        <span class="qheader-sep"></span>
         <a href="{{ link('/wishlist') }}">{{ trans('blocks.qissa.wishlist') }}</a>
         <span class="qheader-sep"></span>
         <span class="qheader-lang">{{ trans('blocks.qissa.lang_currency_display') }}</span>
       </div>
       <div class="qheader-topbar__contact">
-        <span>{{ store.email|default('Support@salla.sa') }}</span>
+        <span>{{ store.email|default('info@qusahstore.com') }}</span>
         <i class="sicon-mail"></i>
         <span class="qheader-sep"></span>
-        <span dir="ltr">{{ store.mobile|default('+966556754472') }}</span>
+        <span dir="ltr">{{ store.mobile|default('+966550085002') }}</span>
         <i class="sicon-phone"></i>
       </div>
     </div>
@@ -81,8 +77,7 @@
       <nav class="qheader-menu" data-qmenu>
         <a href="{{ store.url }}" {{ is_page('index') ? 'class="is-active"' : '' }}>{{ trans('blocks.qissa.nav_home') }}</a>
         <a href="{{ store.url }}/كل-المنتجات/c1390845573">{{ trans('blocks.qissa.nav_products') }}</a>
-        <a href="{{ store.url }}/عن-قصة/page-2011684181">{{ trans('blocks.qissa.nav_about') }}</a>
-        <a href="{{ store.url }}/contact-us">{{ trans('blocks.qissa.contact_us') }}</a>
+        <a href="{{ store.url }}/عن-قصة/page-944077204">{{ trans('blocks.qissa.nav_about') }}</a>
       </nav>
 
       {# logo (right) + hamburger (mobile only) #}
@@ -117,13 +112,11 @@
     <nav class="qside__nav">
       <a class="qside__link" href="{{ store.url }}" {{ is_page('index') ? 'aria-current="page"' : '' }}>{{ trans('blocks.qissa.nav_home') }}</a>
       <a class="qside__link" href="{{ store.url }}/كل-المنتجات/c1390845573">{{ trans('blocks.qissa.nav_products') }}</a>
-      <a class="qside__link" href="{{ store.url }}/عن-قصة/page-2011684181">{{ trans('blocks.qissa.nav_about') }}</a>
-      <a class="qside__link" href="{{ link('/contact-us') }}">{{ trans('blocks.qissa.contact_us') }}</a>
+      <a class="qside__link" href="{{ store.url }}/عن-قصة/page-944077204">{{ trans('blocks.qissa.nav_about') }}</a>
     </nav>
 
     {# secondary links — reuse the existing top-bar links #}
     <nav class="qside__secondary">
-      <a href="{{ store.url }}">{{ trans('blocks.qissa.return_policy') }}</a>
       <a href="{{ link('/wishlist') }}">{{ trans('blocks.qissa.wishlist') }}</a>
     </nav>
 
@@ -139,12 +132,12 @@
 
     {# contact — dynamic store email/phone #}
     <div class="qside__contact">
-      <a class="qside__contact-row" href="mailto:{{ store.email|default('Support@salla.sa') }}">
-        <span>{{ store.email|default('Support@salla.sa') }}</span>
+      <a class="qside__contact-row" href="mailto:{{ store.email|default('info@qusahstore.com') }}">
+        <span>{{ store.email|default('info@qusahstore.com') }}</span>
         <i class="sicon-mail"></i>
       </a>
-      <a class="qside__contact-row" href="tel:{{ store.mobile|default('+966556754472') }}">
-        <span dir="ltr">{{ store.mobile|default('+966556754472') }}</span>
+      <a class="qside__contact-row" href="tel:{{ store.mobile|default('+966550085002') }}">
+        <span dir="ltr">{{ store.mobile|default('+966550085002') }}</span>
         <i class="sicon-phone"></i>
       </a>
     </div>

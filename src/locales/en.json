@@ -10,7 +10,7 @@
       "add_to_cart": "Add to cart",
       "sale": "Sale",
       "view_all_products": "View all products",
-      "shop_all_products": "Shop all products",
+      "shop_all_products": "More",
       "products_unit": "products",
       "cleaning_tagline": "Everything you need for cleaning, in one place",
       "order_summary": "Order summary",
@@ -21,8 +21,8 @@
       "product_weight": "Product weight",
       "gift_title": "Gift someone you love",
       "gift_sub": "You can now send gifts to your loved ones through our platform, whenever you like!",
-      "recently_viewed_lead": "Products you",
-      "recently_viewed_highlight": "viewed recently",
+      "recently_viewed_lead": "You may also",
+      "recently_viewed_highlight": "like",
       "recently_viewed_subtitle": "A list of the products you viewed recently",
       "wishlist_page_title": "Wishlist & favourites",
       "sort_by": "Sort by:",
@@ -50,6 +50,7 @@
       "currency_sar": "SAR",
       "lang_arabic": "Arabic",
       "account": "My account",
+      "account_manage": "Account management",
       "orders": "My orders",
       "important_links": "Important links",
       "whatsapp_label": "WhatsApp:",
@@ -57,7 +58,7 @@
       "email_label": "Email:",
       "follow_us": "Follow us",
       "tax_number_label": "Tax number:",
-      "copyright": "All rights reserved to Salla"
+      "copyright": "All rights reserved to Qusah Store"
     }
   },
   "pages": {

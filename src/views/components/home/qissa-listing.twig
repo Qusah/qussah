@@ -175,7 +175,7 @@
         // sort button: toggle product order by price (high→low / low→high)
         var sortBtn = root.querySelector('.qlist__sort');
         var sortValue = root.querySelector('.qlist__sort-value');
-        var asc = false; // default label is "من الاعلى الى الاقل" (high→low)
+        var asc = false; // default label is "من الأعلى إلى الأقل" (high→low)
         function sortCards() {
             if (!grid) { return; }
             var cards = Array.prototype.slice.call(grid.querySelectorAll('.qprod'));
@@ -191,8 +191,8 @@
             sortBtn.addEventListener('click', function () {
                 asc = !asc;
                 sortValue.textContent = asc
-                    ? (salla.lang.get('blocks.qissa.sort_low_high') || 'من الاقل للاعلى')
-                    : (salla.lang.get('blocks.qissa.sort_high_low') || 'من الاعلى الى الاقل');
+                    ? (salla.lang.get('blocks.qissa.sort_low_high') || 'من الأقل إلى الأعلى')
+                    : (salla.lang.get('blocks.qissa.sort_high_low') || 'من الأعلى إلى الأقل');
                 sortBtn.classList.toggle('is-asc', asc);
                 sortCards();
             });

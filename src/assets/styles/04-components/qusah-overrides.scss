@@ -1,0 +1,91 @@
+/* ============================================================
+ *  QUSAH STORE — store-specific overrides
+ *  Migrated from the Salla dashboard custom-CSS editor. Anything that
+ *  had a real root cause (text, links, hidden nav items, section titles)
+ *  was fixed in the templates / locales instead. What remains here are
+ *  genuine CSS-only concerns that target Salla PLATFORM output
+ *  (.s-* classes, web-component internals, specific block instances) and
+ *  so don't belong to any single Qissa component.
+ * ============================================================ */
+
+/* ---- Section spacing (Figma) ---- */
+.qheader.qheader--home { padding-top: 0; }
+.s-blocks-wrapper.s-after-testimonials { margin-top: 0; }
+.s-block.qlist { margin-top: 0; padding-top: 0; }
+
+/* Instance-specific: tighten the products block at home position 6.
+   NOTE: tied to the block's render position — revisit if the home order changes. */
+#qprods-6 { margin-top: -20px; padding-top: 0; }
+#qprods-6 .qprods__box { padding-top: 0; margin-top: 0; }
+
+/* ---- Hide platform UI this store doesn't use ---- */
+/* Coupon-code input on the cart (store does not take coupon codes here) */
+.s-cart-coupons-input-section { display: none !important; }
+
+/* Trust-badges strip (qtb) */
+.s-block.qtb { display: none !important; }
+
+/* Default Salla gifting tile — the custom .qpd__gift card triggers it instead.
+   Kept in the DOM (visually hidden, still clickable) so .qpd__gift-btn can fire it. */
+.s-list-tile-item:has(.s-gifting-widget-action) {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* A second product-listing block on the same page: drop its duplicate toolbar */
+.s-block.qlist ~ .s-block.qlist .qlist__top { display: none !important; }
+
+/* ---- Highlight-cards visual order (Figma): stat · shop · banner ---- */
+.qhcards__row { display: flex; }
+.qhcards__row .qhcard--stat   { order: 1; }
+.qhcards__row .qhcard--shop   { order: 2; }
+.qhcards__row .qhcard--banner { order: 3; }
+
+/* ---- Salla sale / promotion badge ---- */
+.promotion-title {
+  font-size: 20px !important;
+  padding: 10px 20px !important;
+  right: auto !important;
+  left: 0 !important;
+  background-color: rgb(245, 81, 87) !important;
+  color: #fff !important;
+}
+@media (max-width: 1024px) {
+  .promotion-title {
+    right: 0 !important;
+    left: auto !important;
+    font-size: 16px !important;
+    padding: 8px 14px !important;
+  }
+}
+
+/* ---- Mobile: keep Salla's own add-to-cart button text from overflowing ----
+   (Salla's <salla-add-product-button> ships its own "إضافة للسلة" label; the
+   theme's custom cards already use the shorter "أضف للسلة" locale string.) */
+@media (max-width: 768px) {
+  button[product-id] .s-button-text span { font-size: 12px !important; white-space: nowrap !important; }
+  button[product-id] .s-button-text i { font-size: 14px !important; }
+}
+
+/* ---- Western (Latin) numerals ----
+   Digits render in Nunito everywhere; non-digit glyphs fall through to the
+   Arabic UI font. Icon glyphs are unaffected — they render via ::before,
+   which the `body *` selector below does not match. */
+@font-face {
+  font-family: 'WesternDigits';
+  src: url('https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofINeaB.woff2') format('woff2');
+  unicode-range: U+0030-0039;
+}
+/* LTR spans (phone numbers, prices) get a Latin face + lining numerals */
+span[dir="ltr"] {
+  font-family: Arial, "Helvetica Neue", sans-serif !important;
+  font-feature-settings: "lnum" 1 !important;
+}
+body, body *, .qprod__price-now, .qprod__price-old,
+[class*="price"], [class*="qcart"], [class*="total"] {
+  font-family: 'WesternDigits', "GE SS Two", "GE SS", Tahoma, sans-serif !important;
+}

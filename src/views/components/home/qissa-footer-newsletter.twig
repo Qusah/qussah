@@ -57,10 +57,12 @@ handling is PENDING a real, safe mechanism — no fake backend flow is wired her
                     <div class="qfnews__field">
                         <input
                             type="email"
+                            name="email"
                             class="qfnews__input"
                             placeholder="{{ component.email_placeholder }}"
                             aria-label="{{ component.email_placeholder }}"
                             autocomplete="email"
+                            required
                         />
                         <button type="submit" class="qfnews__btn">{{ component.button_text }}</button>
 
@@ -70,4 +72,53 @@ handling is PENDING a real, safe mechanism — no fake backend flow is wired her
             </div>
         </div>
     </div>
+
+    {# success popup — client-side confirmation only (no subscription is persisted; see note above) #}
+    <div class="qfnews-congrats" data-qfnews-congrats hidden>
+        <div class="qfnews-congrats__box" role="dialog" aria-modal="true" aria-labelledby="qfnews-congrats-title-{{ position }}">
+            <div class="qfnews-congrats__emoji" aria-hidden="true">🎉</div>
+            <h3 class="qfnews-congrats__title" id="qfnews-congrats-title-{{ position }}">تم اشتراكك بنجاح!</h3>
+            <p class="qfnews-congrats__text">شكراً لانضمامك إلى نشرة قصة البريدية. سنوافيك بأحدث العروض والمنتجات أولاً بأول.</p>
+            <button type="button" class="qfnews-congrats__btn" data-qfnews-close>رائع، شكراً</button>
+        </div>
+    </div>
+
+    {# validate the email, animate the button, then show the confirmation popup #}
+    <script>
+    (function () {
+        var root = document.getElementById('qfnews-{{ position }}');
+        if (!root || root.dataset.qfnewsInit) { return; }
+        root.dataset.qfnewsInit = '1';
+
+        var form  = root.querySelector('.qfnews__form');
+        var input = root.querySelector('.qfnews__input');
+        var btn   = root.querySelector('.qfnews__btn');
+        var popup = root.querySelector('[data-qfnews-congrats]');
+        if (!form || !input || !btn || !popup) { return; }
+
+        function openPopup()  { popup.hidden = false; requestAnimationFrame(function () { popup.classList.add('is-open'); }); }
+        function closePopup() { popup.classList.remove('is-open'); setTimeout(function () { popup.hidden = true; }, 250); }
+
+        popup.addEventListener('click', function (e) { if (e.target === popup) { closePopup(); } });
+        var closeBtn = popup.querySelector('[data-qfnews-close]');
+        if (closeBtn) { closeBtn.addEventListener('click', closePopup); }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (input.value.trim() === '' || !input.checkValidity()) {
+                input.focus();
+                input.reportValidity();
+                input.classList.remove('qfnews-shake');
+                void input.offsetWidth;           // restart the shake animation
+                input.classList.add('qfnews-shake');
+                return;
+            }
+            btn.classList.remove('is-clicked');
+            void btn.offsetWidth;
+            btn.classList.add('is-clicked');
+            setTimeout(openPopup, 250);
+            // client-side only — no subscription is persisted (theme has no Salla newsletter API)
+        });
+    })();
+    </script>
 </section>

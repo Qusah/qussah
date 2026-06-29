@@ -43,12 +43,14 @@
 
                             {# rating — stars on the RIGHT, (rating) to their left. filled = ★, empty = ☆ #}
                             {% set rate = product.rating.stars|default(0) %}
+                            {% if rate > 0 %}
                             <div class="qoffer__star">
                                 <span class="qoffer__star-icons">
                                     {% for i in 1..5 %}<span class="qoffer__star-ic {{ i <= rate ? 'is-on' : 'is-off' }}">{{ i <= rate ? '★' : '☆' }}</span>{% endfor %}
                                 </span>
                                 <span class="qoffer__star-num">({{ rate }})</span>
                             </div>
+                            {% endif %}
 
                             {# price #}
                             <div class="qoffer__price">
