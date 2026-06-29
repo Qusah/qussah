@@ -734,7 +734,7 @@
                     "multichoice": true,
                     "source": "products",
                     "searchable": true,
-                    "maxLength": 8,
+                    "maxLength": 100,
                     "minLength": 1,
                     "value": []
                 }
@@ -1011,7 +1011,7 @@
                     "multichoice": true,
                     "source": "products",
                     "searchable": true,
-                    "maxLength": 12,
+                    "maxLength": 100,
                     "minLength": 0,
                     "value": []
                 },
