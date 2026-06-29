@@ -11,7 +11,7 @@
 
 {% block inner_content %}
 	<section class="qwish" aria-labelledby="wishlist-title">
-		<h2 class="qwish__title" id="wishlist-title">قائمة المفضلة و الامنيات</h2>
+		<h2 class="qwish__title" id="wishlist-title">{{ trans('blocks.qissa.wishlist_page_title') }}</h2>
 		<div class="qwish__list" id="wishlist">
 			{% hook 'customer:wishlist.items.start' %}
 			<salla-products-list source="wishlist" product-card-component="custom-salla-product-card"></salla-products-list>

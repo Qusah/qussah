@@ -192,14 +192,14 @@
                     </div>
 
                     <div class="qcart__totals relative transition-height duration-1000">
-                        <h2 class="qcart__summary-title">ملخص الطلب</h2>
+                        <h2 class="qcart__summary-title">{{ trans('blocks.qissa.order_summary') }}</h2>
 
                         <div class="qcart__coupon">
                             <salla-cart-coupons></salla-cart-coupons>
                         </div>
 
                         <div class="qcart__summary-row qcart__summary-row--subtotal">
-                            <span class="qcart__summary-label">المجموع</span>
+                            <span class="qcart__summary-label">{{ trans('blocks.qissa.subtotal') }}</span>
                             <b id="sub-total" class="qcart__summary-value">{{ cart.sub_total|money }}</b>
                         </div>
 
@@ -221,7 +221,7 @@
                              its amount in sync) but visually hidden — its value is folded
                              into the combined discount row below. -->
                         <div id="total-discount" class="qcart__summary-row qcart__summary-row--discount qcart__summary-row--salla-hidden {{ cart.total_discount ? '' : 'hidden' }}" aria-hidden="true">
-                            <span class="qcart__summary-label">قيمة الخصم</span>
+                            <span class="qcart__summary-label">{{ trans('blocks.qissa.discount') }}</span>
                             <b class="qcart__summary-value">- {{ cart.total_discount|money }}</b>
                         </div>
 
@@ -229,7 +229,7 @@
                              coupon discount. Computed in JS; hidden when both are zero.
                              Inline display:none (the .qcart__summary-row flex beats .hidden). -->
                         <div id="qcart-discount" class="qcart__summary-row qcart__summary-row--discount" style="display:none">
-                            <span class="qcart__summary-label">قيمة الخصم</span>
+                            <span class="qcart__summary-label">{{ trans('blocks.qissa.discount') }}</span>
                             <b class="qcart__summary-value" id="qcart-discount-value">- 0</b>
                         </div>
 
@@ -244,12 +244,12 @@
 
                         <div class="qcart__summary-total">
                             <div class="qcart__summary-total-row">
-                                <span class="qcart__summary-total-label">الإجمالى</span>
+                                <span class="qcart__summary-total-label">{{ trans('blocks.qissa.total') }}</span>
                                 <b class="qcart__summary-total-value" data-cart-total>{{ cart.total|money }}</b>
                             </div>
 
                             {% if store.settings.tax.taxable_prices_enabled %}
-                                <p class="qcart__totals-taxnote">الاسعار شاملة للضريبة 15٪ <span>*</span></p>
+                                <p class="qcart__totals-taxnote">{{ trans('blocks.qissa.prices_include_tax') }} <span>*</span></p>
                             {% endif %}
                         </div>
                         <div class="cart-submit-wrap">

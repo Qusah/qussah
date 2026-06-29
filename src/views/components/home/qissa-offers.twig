@@ -17,7 +17,7 @@
             <div class="qoffers__top">
                 <a href="{{ (component.button_url and component.button_url not in ['#', '/products']) ? component.button_url : store.url ~ '/كل-المنتجات/c1390845573' }}" class="qoffers__all">
                     <i class="sicon-arrow-left"></i>
-                    <span>تسوق كل المنتجات</span>
+                    <span>{{ trans('blocks.qissa.shop_all_products') }}</span>
                 </a>
                 <div class="qoffers__head">
                     <h2 class="qoffers__title">
@@ -63,10 +63,10 @@
                             {# countdown — يوم / ساعة / دقيقة / ثانية (duration set by merchant) #}
                             {% set total_secs = (component.duration_days|default(0)) * 86400 + (component.duration_hours|default(0)) * 3600 + (component.duration_minutes|default(0)) * 60 %}
                             <div class="qoffer__time" data-secs="{{ total_secs }}" data-key="qoffer-{{ position }}-{{ loop.index }}">
-                                <div class="qoffer__cell"><b data-d>00</b><span>يوم</span></div>
-                                <div class="qoffer__cell"><b data-h>00</b><span>ساعة</span></div>
-                                <div class="qoffer__cell"><b data-m>00</b><span>دقيقة</span></div>
-                                <div class="qoffer__cell"><b data-s>00</b><span>ثانية</span></div>
+                                <div class="qoffer__cell"><b data-d>00</b><span>{{ trans('blocks.qissa.countdown_day') }}</span></div>
+                                <div class="qoffer__cell"><b data-h>00</b><span>{{ trans('blocks.qissa.countdown_hour') }}</span></div>
+                                <div class="qoffer__cell"><b data-m>00</b><span>{{ trans('blocks.qissa.countdown_minute') }}</span></div>
+                                <div class="qoffer__cell"><b data-s>00</b><span>{{ trans('blocks.qissa.countdown_second') }}</span></div>
                             </div>
 
                             {# buttons — like LEFT, add-to-cart fills RIGHT #}
@@ -76,7 +76,7 @@
                                 </button>
                                 <button class="qoffer__add" type="button"
                                     onclick="salla.cart.addItem({ id: {{ product.id }}, quantity: 1 })">
-                                    <span>أضف للسلة</span>
+                                    <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
                                     <i class="sicon-shopping-bag"></i>
                                 </button>
                             </div>
@@ -85,7 +85,7 @@
                         {# image (right in RTL) #}
                         <a href="{{ product.url }}" class="qoffer__img">
                             {% if product.is_on_sale %}
-                                <span class="qoffer__badge">{{ product.promotion_title|default('خصم') }}</span>
+                                <span class="qoffer__badge">{{ product.promotion_title|default(trans('blocks.qissa.sale')) }}</span>
                             {% endif %}
                             <img src="{{ product.image.url|default(product.images[0].url) }}" alt="{{ product.name }}" loading="lazy"/>
                         </a>

@@ -12,13 +12,13 @@
    <div class="container">
     <div class="qheader-topbar">
       <div class="qheader-topbar__links">
-        <a href="{{ link('/contact-us') }}">تواصل معنا</a>
+        <a href="{{ link('/contact-us') }}">{{ trans('blocks.qissa.contact_us') }}</a>
         <span class="qheader-sep"></span>
-        <a href="{{ store.url }}">سياسة الإستبدال أو الاسترجاع</a>
+        <a href="{{ store.url }}">{{ trans('blocks.qissa.return_policy') }}</a>
         <span class="qheader-sep"></span>
-        <a href="{{ link('/wishlist') }}">المفضلة</a>
+        <a href="{{ link('/wishlist') }}">{{ trans('blocks.qissa.wishlist') }}</a>
         <span class="qheader-sep"></span>
-        <span class="qheader-lang">العربية - رس</span>
+        <span class="qheader-lang">{{ trans('blocks.qissa.lang_currency_display') }}</span>
       </div>
       <div class="qheader-topbar__contact">
         <span>{{ store.email|default('Support@salla.sa') }}</span>
@@ -49,7 +49,7 @@
         </div>
         <a href="{{ link('/cart') }}" class="qheader-act qheader-act--cart">
           <span class="qheader-act__txt">
-            <b>سلة المشتريات</b>
+            <b>{{ trans('blocks.qissa.cart_label') }}</b>
           </span>
           <span class="qheader-act__ic">
             <i class="sicon-shopping-bag"></i>
@@ -61,7 +61,7 @@
         {% if user.type == 'user' %}
           <a href="{{ link('/profile') }}" class="qheader-act">
             <span class="qheader-act__txt">
-              <b>مرحبا بك</b>
+              <b>{{ trans('blocks.qissa.welcome') }}</b>
               <em>{{ user.first_name|default('حسابي') }}</em>
             </span>
             <span class="qheader-act__ic"><i class="sicon-user"></i></span>
@@ -69,8 +69,8 @@
         {% else %}
           <a href="#" onclick="event.preventDefault(); salla.event.dispatch('login::open')" class="qheader-act">
             <span class="qheader-act__txt">
-              <b>مرحبا بك</b>
-              <em>تسجيل دخول</em>
+              <b>{{ trans('blocks.qissa.welcome') }}</b>
+              <em>{{ trans('blocks.qissa.login') }}</em>
             </span>
             <span class="qheader-act__ic"><i class="sicon-user"></i></span>
           </a>
@@ -79,10 +79,10 @@
 
       {# pill menu (center) — static links, exact Figma pill #}
       <nav class="qheader-menu" data-qmenu>
-        <a href="{{ store.url }}" {{ is_page('index') ? 'class="is-active"' : '' }}>الرئيسية</a>
-        <a href="{{ store.url }}/كل-المنتجات/c1390845573">المنتجات</a>
-        <a href="{{ store.url }}/عن-قصة/page-2011684181">عن قصة</a>
-        <a href="{{ store.url }}/contact-us">تواصل معنا</a>
+        <a href="{{ store.url }}" {{ is_page('index') ? 'class="is-active"' : '' }}>{{ trans('blocks.qissa.nav_home') }}</a>
+        <a href="{{ store.url }}/كل-المنتجات/c1390845573">{{ trans('blocks.qissa.nav_products') }}</a>
+        <a href="{{ store.url }}/عن-قصة/page-2011684181">{{ trans('blocks.qissa.nav_about') }}</a>
+        <a href="{{ store.url }}/contact-us">{{ trans('blocks.qissa.contact_us') }}</a>
       </nav>
 
       {# logo (right) + hamburger (mobile only) #}
@@ -107,7 +107,7 @@
   <aside class="qside__panel" role="dialog" aria-modal="true" aria-label="القائمة">
 
     <div class="qside__header">
-      <span class="qside__title">القائمة</span>
+      <span class="qside__title">{{ trans('blocks.qissa.menu') }}</span>
       <button type="button" class="qside__close" aria-label="إغلاق القائمة" data-qside-close>
         <i class="sicon-cancel"></i>
       </button>
@@ -115,25 +115,25 @@
 
     {# primary links — same destinations as the desktop nav #}
     <nav class="qside__nav">
-      <a class="qside__link" href="{{ store.url }}" {{ is_page('index') ? 'aria-current="page"' : '' }}>الرئيسية</a>
-      <a class="qside__link" href="{{ store.url }}/كل-المنتجات/c1390845573">المنتجات</a>
-      <a class="qside__link" href="{{ store.url }}/عن-قصة/page-2011684181">عن قصة</a>
-      <a class="qside__link" href="{{ link('/contact-us') }}">تواصل معنا</a>
+      <a class="qside__link" href="{{ store.url }}" {{ is_page('index') ? 'aria-current="page"' : '' }}>{{ trans('blocks.qissa.nav_home') }}</a>
+      <a class="qside__link" href="{{ store.url }}/كل-المنتجات/c1390845573">{{ trans('blocks.qissa.nav_products') }}</a>
+      <a class="qside__link" href="{{ store.url }}/عن-قصة/page-2011684181">{{ trans('blocks.qissa.nav_about') }}</a>
+      <a class="qside__link" href="{{ link('/contact-us') }}">{{ trans('blocks.qissa.contact_us') }}</a>
     </nav>
 
     {# secondary links — reuse the existing top-bar links #}
     <nav class="qside__secondary">
-      <a href="{{ store.url }}">سياسة الإستبدال أو الاسترجاع</a>
-      <a href="{{ link('/wishlist') }}">المفضلة</a>
+      <a href="{{ store.url }}">{{ trans('blocks.qissa.return_policy') }}</a>
+      <a href="{{ link('/wishlist') }}">{{ trans('blocks.qissa.wishlist') }}</a>
     </nav>
 
     {# language / currency / location row #}
     <div class="qside__meta">
-      <span class="qside__meta-box">الرياض</span>
+      <span class="qside__meta-box">{{ trans('blocks.qissa.city_riyadh') }}</span>
       <span class="qside__meta-box qside__meta-lang">
-        <span>ر.س</span>
+        <span>{{ trans('blocks.qissa.currency_sar') }}</span>
         <span class="qside__meta-sep"></span>
-        <span>العربية</span>
+        <span>{{ trans('blocks.qissa.lang_arabic') }}</span>
       </span>
     </div>
 

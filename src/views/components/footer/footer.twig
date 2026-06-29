@@ -37,32 +37,32 @@
       </div>
 
       {# Account — حسابى #}
-      <nav class="qfooter__col qfooter__links-col" aria-label="حسابى">
-        <h3 class="qfooter__title">حسابى</h3>
+      <nav class="qfooter__col qfooter__links-col" aria-label="{{ trans('blocks.qissa.account') }}">
+        <h3 class="qfooter__title">{{ trans('blocks.qissa.account') }}</h3>
         <ul class="qfooter__list">
-          <li><a class="qfooter__link" href="{{ link('/profile') }}"><i class="qfooter__arrow" aria-hidden="true"></i><span>حسابى</span></a></li>
-          <li><a class="qfooter__link" href="{{ link('/orders') }}"><i class="qfooter__arrow" aria-hidden="true"></i><span>طلباتى</span></a></li>
-          <li><a class="qfooter__link" href="{{ link('/cart') }}"><i class="qfooter__arrow" aria-hidden="true"></i><span>سلة المشتريات</span></a></li>
-          <li><a class="qfooter__link" href="{{ link('/wishlist') }}"><i class="qfooter__arrow" aria-hidden="true"></i><span>المفضلة</span></a></li>
+          <li><a class="qfooter__link" href="{{ link('/profile') }}"><i class="qfooter__arrow" aria-hidden="true"></i><span>{{ trans('blocks.qissa.account') }}</span></a></li>
+          <li><a class="qfooter__link" href="{{ link('/orders') }}"><i class="qfooter__arrow" aria-hidden="true"></i><span>{{ trans('blocks.qissa.orders') }}</span></a></li>
+          <li><a class="qfooter__link" href="{{ link('/cart') }}"><i class="qfooter__arrow" aria-hidden="true"></i><span>{{ trans('blocks.qissa.cart_label') }}</span></a></li>
+          <li><a class="qfooter__link" href="{{ link('/wishlist') }}"><i class="qfooter__arrow" aria-hidden="true"></i><span>{{ trans('blocks.qissa.wishlist') }}</span></a></li>
         </ul>
       </nav>
 
       {# Links — روابط مهمة (dynamic merchant footer menu) #}
-      <nav class="qfooter__col qfooter__links-col" aria-label="روابط مهمة">
-        <h3 class="qfooter__title">روابط مهمة</h3>
+      <nav class="qfooter__col qfooter__links-col" aria-label="{{ trans('blocks.qissa.important_links') }}">
+        <h3 class="qfooter__title">{{ trans('blocks.qissa.important_links') }}</h3>
         <salla-menu class="qfooter__menu" source="footer" with-cookie-preferences></salla-menu>
       </nav>
 
       {# Contact — تواصل معنا (dynamic store contacts) #}
       <div class="qfooter__col qfooter__contact">
-        <h3 class="qfooter__title">تواصل معنا</h3>
+        <h3 class="qfooter__title">{{ trans('blocks.qissa.contact_us') }}</h3>
         <ul class="qfooter__list">
           {% if store.contacts.whatsapp %}
             <li>
               <a class="qfooter__contact-item" href="https://wa.me/{{ store.contacts.whatsapp|replace({'+': '', ' ': ''}) }}" target="_blank" rel="noopener">
                 <i class="qfooter__arrow" aria-hidden="true"></i>
                 <span class="qfooter__contact-text">
-                  <span class="qfooter__contact-label">واتساب :</span>
+                  <span class="qfooter__contact-label">{{ trans('blocks.qissa.whatsapp_label') }}</span>
                   <span class="qfooter__contact-val" dir="ltr">{{ store.contacts.whatsapp }}</span>
                 </span>
               </a>
@@ -73,7 +73,7 @@
               <a class="qfooter__contact-item" href="tel:{{ store.contacts.mobile|replace({' ': ''}) }}">
                 <i class="qfooter__arrow" aria-hidden="true"></i>
                 <span class="qfooter__contact-text">
-                  <span class="qfooter__contact-label">موبايل :</span>
+                  <span class="qfooter__contact-label">{{ trans('blocks.qissa.mobile_label') }}</span>
                   <span class="qfooter__contact-val" dir="ltr">{{ store.contacts.mobile }}</span>
                 </span>
               </a>
@@ -84,7 +84,7 @@
               <a class="qfooter__contact-item" href="mailto:{{ store.contacts.email }}">
                 <i class="qfooter__arrow" aria-hidden="true"></i>
                 <span class="qfooter__contact-text">
-                  <span class="qfooter__contact-label">البريد :</span>
+                  <span class="qfooter__contact-label">{{ trans('blocks.qissa.email_label') }}</span>
                   <span class="qfooter__contact-val" dir="ltr">{{ store.contacts.email }}</span>
                 </span>
               </a>
@@ -95,7 +95,7 @@
 
       {# Social — تابعنا على (LEFT in RTL; dynamic merchant social links) #}
       <div class="qfooter__col qfooter__social">
-        <h3 class="qfooter__title">تابعنا على</h3>
+        <h3 class="qfooter__title">{{ trans('blocks.qissa.follow_us') }}</h3>
         <salla-social></salla-social>
       </div>
 
@@ -108,13 +108,13 @@
 
       {# copyright (RIGHT on desktop / BOTTOM on mobile) #}
       <p class="qissa-footer-bottom__copyright">
-        الحقوق محفوظة لمنصة سلة <span class="qissa-footer-bottom__year">{{ "now"|date("Y") }}</span>
+        {{ trans('blocks.qissa.copyright') }} <span class="qissa-footer-bottom__year">{{ "now"|date("Y") }}</span>
       </p>
 
       {# VAT badge (always) + number (dynamic; falls back to the store VAT) — Figma 6036:1419 #}
       <div class="qissa-footer-bottom__tax">
         <img class="qissa-footer-bottom__tax-badge" src="{{ 'images/payments/zatca-badge.jpg' | asset }}" alt="ضريبة القيمة المضافة" loading="lazy"/>
-        <span class="qissa-footer-bottom__tax-num">الرقم الضريبي : <span dir="ltr">{{ store.settings.tax.number|default('546987552') }}</span></span>
+        <span class="qissa-footer-bottom__tax-num">{{ trans('blocks.qissa.tax_number_label') }} <span dir="ltr">{{ store.settings.tax.number|default('546987552') }}</span></span>
       </div>
 
       {# payment methods (LEFT on desktop / TOP on mobile) — Figma logos, local assets #}

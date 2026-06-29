@@ -22,14 +22,14 @@
                 <div class="qlist__top">
                     <button type="button" class="qlist__sort">
                         <i class="sicon-arrow-down qlist__sort-arrow"></i>
-                        <span class="qlist__sort-label">ترتيب حسب :</span>
-                        <span class="qlist__sort-value">{{ component.sort_label|default('من الاعلى الى الاقل') }}</span>
+                        <span class="qlist__sort-label">{{ trans('blocks.qissa.sort_by') }}</span>
+                        <span class="qlist__sort-value">{{ component.sort_label|default(trans('blocks.qissa.sort_high_low')) }}</span>
                     </button>
                     <div class="qlist__tools">
                         {% if filters %}
-                        <button type="button" class="qlist__filter-toggle" data-qfilter aria-label="تصفية" aria-expanded="false">
+                        <button type="button" class="qlist__filter-toggle" data-qfilter aria-label="{{ trans('blocks.qissa.filter') }}" aria-expanded="false">
                             <i class="sicon-filter"></i>
-                            <span>تصفية</span>
+                            <span>{{ trans('blocks.qissa.filter') }}</span>
                         </button>
                         {% endif %}
                         <button type="button" class="qlist__tool qlist__tool--view" data-qview="list" aria-label="عرض قائمة">
@@ -50,7 +50,7 @@
                                 {% if product.is_on_sale and product.promotion_title %}
                                     <span class="qprod__badge">{{ product.promotion_title }}</span>
                                 {% elseif product.is_on_sale %}
-                                    <span class="qprod__badge">خصم</span>
+                                    <span class="qprod__badge">{{ trans('blocks.qissa.sale') }}</span>
                                 {% endif %}
                                 <img src="{{ product.image.url|default(product.images[0].url) }}" alt="{{ product.name }}" loading="lazy"/>
                             </a>
@@ -80,7 +80,7 @@
                                     </button>
                                     <button class="qprod__add" type="button"
                                         onclick="salla.cart.addItem({ id: {{ product.id }}, quantity: 1 })">
-                                        <span>أضف للسلة</span>
+                                        <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
                                         <i class="sicon-shopping-bag"></i>
                                     </button>
                                 </div>
@@ -120,8 +120,8 @@
                             </defs>
                         </svg>
                     </span>
-                    <h3 class="qlist__empty-title">لا توجد منتجات حتى الآن</h3>
-                    <p class="qlist__empty-sub">بحثك لم يطابق أي منتجات</p>
+                    <h3 class="qlist__empty-title">{{ trans('blocks.qissa.no_products_yet') }}</h3>
+                    <p class="qlist__empty-sub">{{ trans('blocks.qissa.no_products_match') }}</p>
                 </div>
                 {% endif %}
             </div>
@@ -190,7 +190,9 @@
             sortCards(); // apply the default order on load so it matches the label
             sortBtn.addEventListener('click', function () {
                 asc = !asc;
-                sortValue.textContent = asc ? 'من الاقل للاعلى' : 'من الاعلى الى الاقل';
+                sortValue.textContent = asc
+                    ? (salla.lang.get('blocks.qissa.sort_low_high') || 'من الاقل للاعلى')
+                    : (salla.lang.get('blocks.qissa.sort_high_low') || 'من الاعلى الى الاقل');
                 sortBtn.classList.toggle('is-asc', asc);
                 sortCards();
             });
