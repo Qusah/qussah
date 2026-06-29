@@ -3,6 +3,12 @@ allowBuilds:
   bufferutil: true
   es5-ext: true
   utf-8-validate: true
+minimumReleaseAgeExclude:
+  - '@salla.sa/applepay@2.14.478'
+  - '@salla.sa/base@2.14.478'
+  - '@salla.sa/twilight-components@2.14.478'
+  - '@salla.sa/twilight-tailwind-theme@2.14.478'
+  - '@salla.sa/twilight@2.14.478'
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - bufferutil
