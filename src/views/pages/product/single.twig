@@ -635,6 +635,10 @@
                 </form>
 
                 {% hook 'product:single.description.end' %}
+
+                {# Quick Order — required Twilight component; renders the express-order
+                   widget when the merchant enables it (empty otherwise). #}
+                <salla-quick-order class="mt-5 md:-mb-2 block"></salla-quick-order>
             </div>
         </div>
         <salla-offer></salla-offer>

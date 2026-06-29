@@ -86,6 +86,13 @@
                                                 <a href="{{ item.url }}" class="text-base">{{ item.product_name }}</a>
                                             </h1>
 
+                                            {# Cart Item Offers — required Twilight component; renders applied
+                                               offers for this line item (empty when the item has none). #}
+                                            <salla-cart-item-offers
+                                                quantity="{{ item.quantity }}"
+                                                item-id="{{ item.id }}"
+                                                product-price="{{ item.product_price }}"
+                                                offers="{{ item.detailed_offers|json_encode }}"></salla-cart-item-offers>
                                         </div>
 
                                     <div class="qcart__item-qty">

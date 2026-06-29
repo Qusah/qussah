@@ -37,6 +37,16 @@
 
       {# cart + profile (left) #}
       <div class="qheader-actions">
+        {# Required Twilight components. The visible cart/account controls below are the
+           custom Qussah (Figma) header, so Salla's own cart-summary & user-menu are kept
+           here hidden — present for the platform's cart/login wiring without duplicating
+           the custom UI. #}
+        <div class="hidden" aria-hidden="true">
+          <salla-user-menu avatar-only show-header show-trigger></salla-user-menu>
+          <salla-cart-summary>
+            <i slot="icon" class="header-btn__icon icon sicon-shopping-bag"></i>
+          </salla-cart-summary>
+        </div>
         <a href="{{ link('/cart') }}" class="qheader-act qheader-act--cart">
           <span class="qheader-act__txt">
             <b>سلة المشتريات</b>
