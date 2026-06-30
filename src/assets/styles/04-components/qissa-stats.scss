@@ -1,0 +1,116 @@
+// ====================================================================
+// Qissa Stats — "أرقامنا تتكلم عن قصة نجاح" + numeric stat cards
+// Figma desktop 172:4097 (1440) — heading + subtitle, row of 4 cards (gap 30).
+//        mobile  340:3456 (428)  — same, cards as a 2×2 grid (gap 15).
+// Card: white→baby-blue gradient, radius 20, pad 20, number (royal blue) over label.
+// Heading/subtitle reuse the qissa-products header values for visual consistency.
+// ====================================================================
+
+.qstats {
+  font-family: "GE SS Two", sans-serif;
+  padding-block: 24px;
+
+  .container {
+    max-width: none;
+    padding-inline: 50px;
+  }
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px; // Figma content→cards gap
+  }
+
+  // ---- centered title (H4 Medium) ----
+  &__head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px; // Figma content gap
+    text-align: center;
+  }
+  &__title {
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 38px;
+    letter-spacing: -0.2px;
+    color: #0a1f30;
+    margin: 0;
+  }
+  &__title-hl {
+    color: #30378e;
+  } // highlighted "أرقامنا تتكلم عن"
+  &__subtitle {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 25px;
+    color: #6c757d;
+    width: 554px;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  // ---- cards row — 4 equal cards, gap 30 (Figma 172:4048, 1196 wide) ----
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    width: 100%;
+    max-width: 1196px;
+    margin-inline: auto;
+  }
+
+  // ---- one stat card (Figma 172:4049) ----
+  &__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 20px;
+    background: linear-gradient(160deg, #ffffff 12.586%, #daeff7 91.3%);
+    text-align: center;
+  }
+  &__num {
+    font-family: "Poppins", "GE SS Two", sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 35px;
+    color: #30378e;
+  }
+  &__label {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
+    color: #101725;
+    width: 100%;
+  }
+}
+
+// ---- mobile (Figma 340:3456 @428): 2×2 grid, smaller heading + number ----
+@media (max-width: 768px) {
+  .qstats {
+    padding-block: 8px;
+  }
+  .qstats .container {
+    padding-inline: 15px;
+  }
+
+  .qstats__title {
+    font-size: 24px;
+    line-height: 30px;
+    letter-spacing: -0.15px;
+  }
+
+  .qstats__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  .qstats__num {
+    font-size: 25px;
+  }
+}

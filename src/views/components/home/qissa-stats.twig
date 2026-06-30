@@ -1,0 +1,45 @@
+{#
+| Variable                  | Type       | Description                                      |
+|---------------------------|------------|--------------------------------------------------|
+| component                 | object     | merchant settings from twilight.json             |
+| component.title_highlight | string     | highlighted heading part (royal blue)            |
+| component.title           | string     | rest of the heading (dark)                        |
+| component.subtitle        | string     | subheading                                        |
+| component.items           | Collection | stat cards (number · label)                       |
+| item.number               | string     | the big figure (Poppins)                          |
+| item.label                | string     | label under the figure                            |
+| position                  | int        | sorting block                                     |
+
+Figma: desktop 172:4097 (1440) — heading + subtitle, then a row of 4 gradient cards.
+       mobile  340:3456 (428)  — same, cards as a 2×2 grid; smaller heading/number.
+Each card: white→baby-blue gradient, radius 20, number (royal blue) over label (dark blue).
+#}
+<section class="s-block qstats" id="qstats-{{ position }}">
+    <div class="container">
+        <div class="qstats__inner">
+
+            {# centered title — same pattern as qissa-products #}
+            <div class="qstats__head">
+                <h2 class="qstats__title">
+                    <span class="qstats__title-hl">{{ component.title_highlight }}</span> {{ component.title }}
+                </h2>
+                {% if component.subtitle %}
+                    <p class="qstats__subtitle">{{ component.subtitle }}</p>
+                {% endif %}
+            </div>
+
+            {# stat cards — row of 4 (desktop) / 2×2 grid (mobile) #}
+            {% if component.items|length %}
+                <div class="qstats__grid">
+                    {% for item in component.items %}
+                        <div class="qstats__card">
+                            <span class="qstats__num">{{ item.number }}</span>
+                            {% if item.label %}<span class="qstats__label">{{ item.label }}</span>{% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+</section>

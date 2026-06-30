@@ -1179,6 +1179,98 @@
             ]
         },
         {
+            "key": "720f424b-e32d-4cc2-bfec-5ec654cd8a44",
+            "title": {
+                "en": "Qissa Stats",
+                "ar": "أرقام قصة"
+            },
+            "icon": "sicon-presentation",
+            "path": "home.qissa-stats",
+            "fields": [
+                {
+                    "id": "title_highlight",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Highlighted word",
+                        "ar": "الكلمة المميزة"
+                    },
+                    "value": "أرقامنا تتكلم عن"
+                },
+                {
+                    "id": "title",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Title",
+                        "ar": "العنوان"
+                    },
+                    "value": "قصة نجاح"
+                },
+                {
+                    "id": "subtitle",
+                    "type": "string",
+                    "format": "textarea",
+                    "label": {
+                        "en": "Subtitle",
+                        "ar": "النص الفرعي"
+                    },
+                    "value": "تسوق احدث المنتجات المميزة المضافة جديد"
+                },
+                {
+                    "id": "items",
+                    "type": "collection",
+                    "format": "collection",
+                    "required": true,
+                    "minLength": 1,
+                    "maxLength": 8,
+                    "label": null,
+                    "item_label": "رقم",
+                    "value": [
+                        {
+                            "items.number": "15000",
+                            "items.label": "عدد العملاء"
+                        },
+                        {
+                            "items.number": "120",
+                            "items.label": "عدد الزوار"
+                        },
+                        {
+                            "items.number": "5000",
+                            "items.label": "عدد الطلبات"
+                        },
+                        {
+                            "items.number": "12",
+                            "items.label": "قطعة متوفرة"
+                        }
+                    ],
+                    "fields": [
+                        {
+                            "type": "string",
+                            "icon": "sicon-pencil-ruler",
+                            "label": "الرقم",
+                            "id": "items.number",
+                            "value": null,
+                            "required": true,
+                            "format": "text",
+                            "placeholder": "15000"
+                        },
+                        {
+                            "type": "string",
+                            "icon": "sicon-format-text-alt",
+                            "label": "النص",
+                            "id": "items.label",
+                            "value": null,
+                            "required": true,
+                            "format": "text",
+                            "multilanguage": true,
+                            "placeholder": "عدد العملاء"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "key": "b51bcef2-b4cd-4661-a678-722a92f13a6d",
             "title": {
                 "en": "Qissa Feature Banner",
