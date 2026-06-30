@@ -33,18 +33,19 @@ Figma: desktop 177:269 (1440) — text RIGHT (heading + body + 2 CTAs), cover im
                     <p class="qfactory__body">{{ component.body }}</p>
                 {% endif %}
 
-                {% if component.button_text or component.contact_text %}
+                {% if component.contact_text or component.button_text %}
+                    {# Figma order (LTR): outline contact on the left, solid shop on the right #}
                     <div class="qfactory__actions">
+                        {% if component.contact_text %}
+                            <a href="{{ contact_href }}" class="qfactory__btn qfactory__btn--outline">
+                                <i class="sicon-arrow-left"></i>
+                                <span>{{ component.contact_text }}</span>
+                            </a>
+                        {% endif %}
                         {% if component.button_text %}
                             <a href="{{ shop_href }}" class="qfactory__btn qfactory__btn--solid">
                                 <span>{{ component.button_text }}</span>
                                 <i class="sicon-shopping-cart"></i>
-                            </a>
-                        {% endif %}
-                        {% if component.contact_text %}
-                            <a href="{{ contact_href }}" class="qfactory__btn qfactory__btn--outline">
-                                <span>{{ component.contact_text }}</span>
-                                <i class="sicon-arrow-left"></i>
                             </a>
                         {% endif %}
                     </div>

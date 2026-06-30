@@ -1,10 +1,11 @@
 // ====================================================================
 // Qissa Factory — "مصنع مناديل قصة من المصنع إليك مباشرة" intro
-// Figma desktop 177:269 (1440) — text RIGHT (heading 32/38 + body 16/22 +
-//   shop/contact CTAs), cover image LEFT (494×519, radius 30).
-//        mobile  340:3477 (428) — cover image on top (h 275), text below;
-//   heading 24/30, CTAs full-width split.
-// CTAs mirror qissa-values (solid shop + outline contact) for consistency.
+// Figma desktop 177:269 (1440) — laid out LTR: text LEFT (right-aligned
+//   Arabic: heading 32/38 + body 16/22 + CTAs), cover image RIGHT (radius 30).
+//        mobile  340:3477 (428) — cover on top (h 275), text below; CTAs split.
+// CTAs (Figma): outline "تواصل معنا" (chevron left) then solid "تسوق المنتجات"
+//   (cart right). We pin direction:ltr so the layout matches Figma and does not
+//   flip with the page/editor RTL context.
 // ====================================================================
 
 .qfactory {
@@ -13,17 +14,18 @@
 
   &__inner {
     display: flex;
+    direction: ltr; // mirror Figma frame: text column left, image right
     align-items: flex-start;
     gap: 30px;
   }
 
-  // ---- text column (RIGHT in RTL) ----
+  // ---- text column (LEFT, content right-aligned) ----
   &__text {
     flex: 1 1 0;
     min-width: 0;
     display: flex;
     flex-direction: column;
-    align-items: flex-end; // RTL → right
+    align-items: flex-end; // LTR cross-end → right edge of the column
     gap: 30px;
     text-align: right;
   }
@@ -47,12 +49,11 @@
     white-space: pre-line; // keep the merchant's paragraph breaks
   }
 
-  // ---- CTAs (shop = solid, contact = outline). Text right, icon left (RTL). ----
+  // ---- CTAs (outline contact left, solid shop right). Wrap, never overflow. ----
   &__actions {
     display: flex;
-    justify-content: flex-start; // RTL → packs right (shop first = rightmost)
-    gap: 10px;
-    width: 100%;
+    flex-wrap: wrap;
+    gap: 10px; // sits at the right edge via the column's align-items: flex-end
   }
   &__btn {
     flex: 0 0 208px;
@@ -66,6 +67,7 @@
     font-size: 16px;
     font-weight: 500;
     line-height: 24px;
+    white-space: nowrap;
     border: 1px solid #30378e;
     transition: background-color 0.2s, color 0.2s;
     i { font-size: 16px; }
@@ -81,11 +83,11 @@
     &:hover { background: #30378e; color: #fff; }
   }
 
-  // ---- cover image (LEFT in RTL) ----
+  // ---- cover image (RIGHT) — caps at 45% so the text/buttons never get crushed ----
   &__media {
     flex: 0 0 auto;
     width: 494px;
-    max-width: 100%;
+    max-width: 45%;
     img {
       display: block;
       width: 100%;
@@ -93,11 +95,6 @@
       object-fit: cover;
       border-radius: 30px;
     }
-  }
-
-  // ---- tablet: let the image shrink so the row doesn't overflow ----
-  @media (min-width: 769px) and (max-width: 1100px) {
-    &__media { width: 42%; }
   }
 
   // ---- mobile (Figma 340:3477 @428): image on top, text below ----
@@ -113,19 +110,23 @@
     &__media {
       order: -1; // move the cover above the text
       width: 100%;
+      max-width: 100%;
       img {
         aspect-ratio: auto;
         height: 275px;
       }
     }
-    &__text { gap: 20px; }
+    &__text {
+      width: 100%;
+      gap: 20px;
+    }
     &__title {
       font-size: 24px; // Heading/H5 Medium
       line-height: 30px;
       letter-spacing: -0.15px;
       width: 100%;
     }
-    &__actions { width: 100%; }
-    &__btn { flex: 1 1 0; min-width: 0; } // full-width split
+    &__actions { width: 100%; flex-wrap: nowrap; }
+    &__btn { flex: 1 1 0; max-width: none; } // full-width split
   }
 }
