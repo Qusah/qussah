@@ -128,22 +128,10 @@ body, main, #app { background: transparent; }
 // scrolls off and only the nav stays pinned; .is-stuck is added once it locks.
 .qheader-nav { transition: background-color .25s ease; }
 .qheader.is-stuck { box-shadow: 0 6px 22px rgba(10, 31, 48, .18); }
-// the homepage nav is transparent (it overlays the hero); give it a solid navy
-// fill once pinned so it stays readable over page content.
-.qheader--home.is-stuck .qheader-nav {
-  background: linear-gradient(120deg, #172951 0%, #25307a 55%, #30378e 100%);
-}
 
-// HOMEPAGE ONLY: nav row sits ON TOP of the hero, overlapping it, so the
-// hero's rounded top corners stay fully visible.
-.qheader--home > .container:last-of-type {
-  position: relative;
-  z-index: 60;
-  margin-bottom: -90px;     // nav overlaps the hero below it
-}
-
-// ---- SOLID variant (all non-homepage pages) ----
-// Navy rounded nav bar, no hero to overlap. Matches the master header.
+// ---- SOLID variant (all pages, home included) ----
+// Navy rounded nav bar with a bottom margin. Same on the homepage now —
+// the nav no longer overlays the hero.
 .qheader--solid {
   padding-top: 0;
   .qheader-topwrap { padding: 24px 0 12px; }   // breathing room above the top bar
@@ -165,9 +153,9 @@ body, main, #app { background: transparent; }
   position: relative;
   z-index: 1;
 }
-// desktop-only: clear the overlaid nav (mobile sets its own padding-top)
+// desktop-only: top breathing room for the hero (nav no longer overlaps it)
 @media (min-width: 769px) {
-  .qissa-hero .qissa-hero__inner { padding-top: 130px; }
+  .qissa-hero .qissa-hero__inner { padding-top: 70px; }
 }
 // mobile: tighter side margins (Figma hero x≈15 in a 428 frame)
 @media (max-width: 768px) {
@@ -221,8 +209,6 @@ body, main, #app { background: transparent; }
     object-fit: contain;
   }
 
-  // Only the homepage header overlaps the hero on mobile.
-  .qheader--home > .container:last-of-type { margin-bottom: -76px; }
   .qheader--solid > .container:last-of-type { margin-bottom: 0; }
 }
 
