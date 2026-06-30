@@ -12,6 +12,8 @@
    <div class="container">
     <div class="qheader-topbar">
       <div class="qheader-topbar__links">
+        <a href="{{ store.url }}/%D8%B3%D9%8A%D8%A7%D8%B3%D8%A9-%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D8%B1%D8%AC%D8%A7%D8%B9-%D9%88-%D8%A7%D9%84%D8%B6%D9%85%D8%A7%D9%86/page-510446325">{{ trans('blocks.qissa.return_policy') }}</a>
+        <span class="qheader-sep"></span>
         <a href="{{ link('/wishlist') }}">{{ trans('blocks.qissa.wishlist') }}</a>
         <span class="qheader-sep"></span>
         <span class="qheader-lang">{{ trans('blocks.qissa.lang_currency_display') }}</span>
@@ -77,7 +79,7 @@
       <nav class="qheader-menu" data-qmenu>
         <a href="{{ store.url }}" {{ is_page('index') ? 'class="is-active"' : '' }}>{{ trans('blocks.qissa.nav_home') }}</a>
         <a href="{{ store.url }}/كل-المنتجات/c1390845573">{{ trans('blocks.qissa.nav_products') }}</a>
-        <a href="{{ store.url }}/عن-قصة/page-944077204">{{ trans('blocks.qissa.nav_about') }}</a>
+        <a href="{{ store.url }}/%D8%B9%D9%86-%D9%82%D8%B5%D8%A9/page-944077204">{{ trans('blocks.qissa.nav_about') }}</a>
       </nav>
 
       {# logo (right) + hamburger (mobile only) #}
@@ -112,11 +114,12 @@
     <nav class="qside__nav">
       <a class="qside__link" href="{{ store.url }}" {{ is_page('index') ? 'aria-current="page"' : '' }}>{{ trans('blocks.qissa.nav_home') }}</a>
       <a class="qside__link" href="{{ store.url }}/كل-المنتجات/c1390845573">{{ trans('blocks.qissa.nav_products') }}</a>
-      <a class="qside__link" href="{{ store.url }}/عن-قصة/page-944077204">{{ trans('blocks.qissa.nav_about') }}</a>
+      <a class="qside__link" href="{{ store.url }}/%D8%B9%D9%86-%D9%82%D8%B5%D8%A9/page-944077204">{{ trans('blocks.qissa.nav_about') }}</a>
     </nav>
 
     {# secondary links — reuse the existing top-bar links #}
     <nav class="qside__secondary">
+      <a href="{{ store.url }}/%D8%B3%D9%8A%D8%A7%D8%B3%D8%A9-%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D8%B1%D8%AC%D8%A7%D8%B9-%D9%88-%D8%A7%D9%84%D8%B6%D9%85%D8%A7%D9%86/page-510446325">{{ trans('blocks.qissa.return_policy') }}</a>
       <a href="{{ link('/wishlist') }}">{{ trans('blocks.qissa.wishlist') }}</a>
     </nav>
 
