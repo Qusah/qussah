@@ -123,13 +123,13 @@ body, main, #app { background: transparent; }
   }
 }
 
-// ---- pinned/sticky state on scroll (.is-stuck toggled by JS in header.twig) ----
+// ---- pinned/sticky state on scroll ----
+// JS (header.twig) pulls the header up by the utility-bar height so that bar
+// scrolls off and only the nav stays pinned; .is-stuck is added once it locks.
 .qheader-nav { transition: background-color .25s ease; }
 .qheader.is-stuck { box-shadow: 0 6px 22px rgba(10, 31, 48, .18); }
-// the homepage nav is transparent (it overlays the hero); once pinned it needs a
-// solid navy fill to stay readable, plus a white header fill so page content can't
-// show through the top padding above the utility bar.
-.qheader--home.is-stuck { background: #fff; }
+// the homepage nav is transparent (it overlays the hero); give it a solid navy
+// fill once pinned so it stays readable over page content.
 .qheader--home.is-stuck .qheader-nav {
   background: linear-gradient(120deg, #172951 0%, #25307a 55%, #30378e 100%);
 }
