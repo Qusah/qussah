@@ -1,0 +1,63 @@
+{#
+| Variable               | Type   | Description                                            |
+|------------------------|--------|-------------------------------------------------------|
+| component              | object | merchant settings from twilight.json                  |
+| component.heading      | string | section heading (dark)                                |
+| component.body         | string | supporting paragraphs (newlines kept as breaks)       |
+| component.button_text  | string | primary CTA label (shop)                              |
+| component.button_url   | string | primary CTA link                                      |
+| component.contact_text | string | secondary CTA label (contact)                         |
+| component.contact_url  | string | secondary CTA link (path or full URL)                 |
+| component.image        | string | cover image (falls back to the bundled factory photo) |
+| position               | int    | sorting block                                         |
+
+Figma: desktop 177:269 (1440) — text RIGHT (heading + body + 2 CTAs), cover image LEFT.
+       mobile  340:3477 (428)  — cover image on top, text below; CTAs full-width.
+#}
+{# primary CTA → merchant link, else the products listing (same target as the header) #}
+{% set shop_href = (component.button_url and component.button_url not in ['#', '/products']) ? component.button_url : store.url ~ '/كل-المنتجات/c1390845573' %}
+{# secondary CTA → full URL as-is, otherwise treat as a store path #}
+{% set contact_path = component.contact_url|default('/contact-us') %}
+{% set contact_href = contact_path starts with 'http' ? contact_path : store.url ~ '/' ~ contact_path|trim('/') %}
+
+<section class="s-block qfactory" id="qfactory-{{ position }}">
+    <div class="container">
+        <div class="qfactory__inner">
+
+            {# ---- text (RIGHT in RTL) ---- #}
+            <div class="qfactory__text">
+                {% if component.heading %}
+                    <h2 class="qfactory__title">{{ component.heading }}</h2>
+                {% endif %}
+                {% if component.body %}
+                    <p class="qfactory__body">{{ component.body }}</p>
+                {% endif %}
+
+                {% if component.button_text or component.contact_text %}
+                    <div class="qfactory__actions">
+                        {% if component.button_text %}
+                            <a href="{{ shop_href }}" class="qfactory__btn qfactory__btn--solid">
+                                <span>{{ component.button_text }}</span>
+                                <i class="sicon-shopping-cart"></i>
+                            </a>
+                        {% endif %}
+                        {% if component.contact_text %}
+                            <a href="{{ contact_href }}" class="qfactory__btn qfactory__btn--outline">
+                                <span>{{ component.contact_text }}</span>
+                                <i class="sicon-arrow-left"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+
+            {# ---- cover image (LEFT in RTL, on top on mobile) ---- #}
+            <div class="qfactory__media">
+                <img src="{{ component.image ?: ('images/qissa-factory/cover.png' | asset) }}"
+                     alt="{{ component.heading|default('') }}" loading="lazy"
+                     width="494" height="519"/>
+            </div>
+
+        </div>
+    </div>
+</section>
