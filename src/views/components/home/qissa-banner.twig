@@ -7,11 +7,25 @@
 | component.image         | string | products image (bursts from left)    |
 | component.button_text   | string | CTA label                            |
 | component.button_url    | string | CTA link                             |
+| component.bg_color      | string | background color (optional override) |
+| component.bg_gradient   | bool   | make the background a gradient       |
+| component.bg_color2     | string | second gradient color                |
+| component.bg_angle      | int    | gradient angle (deg)                 |
 | position                | int    | sorting block                        |
+
+When bg_color is left empty the section keeps its default Figma background.
 #}
+{% set qbg = '' %}
+{% if component.bg_gradient and component.bg_color and component.bg_color2 %}
+    {% set qbg = 'linear-gradient(' ~ (component.bg_angle|default(135)) ~ 'deg, ' ~ component.bg_color ~ ', ' ~ component.bg_color2 ~ ')' %}
+{% elseif component.bg_color %}
+    {% set qbg = component.bg_color %}
+{% endif %}
+{# bottom-fade overlay follows the chosen (darker) colour #}
+{% set qfade = (component.bg_gradient and component.bg_color2) ? component.bg_color2 : component.bg_color %}
 <section class="s-block qbanner" id="qbanner-{{ position }}">
     <div class="container">
-        <div class="qbanner__box">
+        <div class="qbanner__box"{% if qbg %} style="background: {{ qbg }}; --qbanner-fade: {{ qfade }};"{% endif %}>
 
             {# products image (left in RTL) #}
             {% if component.image %}

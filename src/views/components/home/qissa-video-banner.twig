@@ -8,15 +8,26 @@
 | component.image      | string | optional poster / fallback image                     |
 | component.button_text| string | CTA label                                            |
 | component.button_url | string | CTA link                                             |
+| component.bg_color   | string | background color (optional override)                 |
+| component.bg_gradient| bool   | make the background a gradient                       |
+| component.bg_color2  | string | second gradient color                                |
+| component.bg_angle   | int    | gradient angle (deg)                                 |
 | position             | int    | sorting block                                        |
 
 Same layout as qissa-banner (navy box, text RIGHT, media LEFT) but the media is an
 autoplay + looping (muted) video. Direct files play via <video>; a YouTube URL is
 swapped for an autoplay/loop/muted iframe by the script below.
+When bg_color is left empty the section keeps its default background.
 #}
+{% set qbg = '' %}
+{% if component.bg_gradient and component.bg_color and component.bg_color2 %}
+    {% set qbg = 'linear-gradient(' ~ (component.bg_angle|default(135)) ~ 'deg, ' ~ component.bg_color ~ ', ' ~ component.bg_color2 ~ ')' %}
+{% elseif component.bg_color %}
+    {% set qbg = component.bg_color %}
+{% endif %}
 <section class="s-block qvbanner" id="qvbanner-{{ position }}">
     <div class="container">
-        <div class="qvbanner__box">
+        <div class="qvbanner__box"{% if qbg %} style="background: {{ qbg }}"{% endif %}>
 
             {# video (left in RTL) — autoplay + loop + muted #}
             {% if component.video_url or component.image %}

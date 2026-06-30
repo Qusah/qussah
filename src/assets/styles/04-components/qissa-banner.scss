@@ -24,10 +24,11 @@
   }
 
   // bottom fade overlay (Figma node 100:410)
+  // end colour follows --qbanner-fade so a merchant background still fades cleanly
   &__box::after {
     content: ''; position: absolute; left: -10px; right: -10px; bottom: 0;
     height: 306px; pointer-events: none; z-index: 1;
-    background: linear-gradient(180deg, rgba(47,57,140,0) 0%, #292e81 100%);
+    background: linear-gradient(180deg, rgba(47,57,140,0) 0%, var(--qbanner-fade, #292e81) 100%);
   }
 
   // ---- text (RIGHT — order 1 in RTL = right side) ----

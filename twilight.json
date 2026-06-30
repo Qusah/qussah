@@ -976,6 +976,52 @@
                         "ar": "رابط الزر"
                     },
                     "value": "/products"
+                },
+                {
+                    "id": "bg_color",
+                    "type": "string",
+                    "format": "color",
+                    "label": {
+                        "en": "Background color",
+                        "ar": "لون الخلفية"
+                    },
+                    "description": "اتركه فارغاً لاستخدام الخلفية الافتراضية",
+                    "value": null
+                },
+                {
+                    "id": "bg_gradient",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Use gradient",
+                        "ar": "خلفية متدرجة"
+                    },
+                    "value": false,
+                    "selected": false
+                },
+                {
+                    "id": "bg_color2",
+                    "type": "string",
+                    "format": "color",
+                    "label": {
+                        "en": "Gradient second color",
+                        "ar": "اللون الثاني للتدرج"
+                    },
+                    "value": null
+                },
+                {
+                    "id": "bg_angle",
+                    "type": "number",
+                    "format": "integer",
+                    "icon": "sicon-pencil-ruler",
+                    "label": {
+                        "en": "Gradient angle (deg)",
+                        "ar": "زاوية التدرج (درجة)"
+                    },
+                    "value": 135,
+                    "minimum": 0,
+                    "maximum": 360
                 }
             ]
         },
@@ -1048,6 +1094,52 @@
                         "ar": "رابط الزر"
                     },
                     "value": "/products"
+                },
+                {
+                    "id": "bg_color",
+                    "type": "string",
+                    "format": "color",
+                    "label": {
+                        "en": "Background color",
+                        "ar": "لون الخلفية"
+                    },
+                    "description": "اتركه فارغاً لاستخدام الخلفية الافتراضية",
+                    "value": null
+                },
+                {
+                    "id": "bg_gradient",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Use gradient",
+                        "ar": "خلفية متدرجة"
+                    },
+                    "value": false,
+                    "selected": false
+                },
+                {
+                    "id": "bg_color2",
+                    "type": "string",
+                    "format": "color",
+                    "label": {
+                        "en": "Gradient second color",
+                        "ar": "اللون الثاني للتدرج"
+                    },
+                    "value": null
+                },
+                {
+                    "id": "bg_angle",
+                    "type": "number",
+                    "format": "integer",
+                    "icon": "sicon-pencil-ruler",
+                    "label": {
+                        "en": "Gradient angle (deg)",
+                        "ar": "زاوية التدرج (درجة)"
+                    },
+                    "value": 135,
+                    "minimum": 0,
+                    "maximum": 360
                 }
             ]
         },
