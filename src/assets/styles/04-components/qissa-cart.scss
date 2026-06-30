@@ -538,9 +538,39 @@
     }
   }
   // ----------------------------------------------------------------
-  // Empty cart state - keep the starter placeholder, just center it
+  // Empty cart state — matches the listing empty state (.qlist__empty)
   // ----------------------------------------------------------------
-  .no-content-placeholder { width: 100%; }
+  .qcart__empty {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; width: 100%; padding: 56px 20px; min-height: 360px;
+  }
+  .qcart__empty-icon {
+    display: inline-flex; margin-bottom: 24px;
+    svg { width: 135px; height: 135px; }
+  }
+  .qcart__empty-title { font-size: 30px; font-weight: 600; color: #0a1f30; margin: 0 0 8px; }
+  .qcart__empty-sub   { font-size: 16px; font-weight: 300; color: #6c757d; margin: 0 0 24px; max-width: 420px; }
+  .qcart__empty-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 48px; padding: 0 32px; border-radius: 999px;
+    background: #30378e; color: #fff; font-size: 16px; font-weight: 600;
+    transition: background .2s ease, transform .15s ease;
+    &:hover  { background: #262c72; color: #fff; }
+    &:active { transform: scale(.98); }
+  }
+  .no-content-placeholder { width: 100%; }   // generic fallback, centered
+
+  @media (min-width: 1024px) {
+    // no summary column when empty -> collapse the grid so the state centers full-width
+    .qcart__layout.qcart__layout--empty { display: block; }
+  }
+  @media (max-width: 768px) {
+    .qcart__empty          { padding: 40px 16px; min-height: 300px; }
+    .qcart__empty-icon svg { width: 110px; height: 110px; }
+    .qcart__empty-title    { font-size: 24px; }
+    .qcart__empty-sub      { font-size: 14px; }
+    .qcart__empty-btn      { height: 44px; padding: 0 26px; font-size: 15px; }
+  }
 
   // ----------------------------------------------------------------
   // Responsive

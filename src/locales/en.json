@@ -29,6 +29,7 @@
       "filter": "Filter",
       "no_products_yet": "No products yet",
       "no_products_match": "Your search did not match any products",
+      "cart_empty_sub": "You haven't added any products to your cart yet — start shopping now",
       "sort_high_low": "Highest to lowest",
       "sort_low_high": "Lowest to highest",
       "countdown_day": "Day",

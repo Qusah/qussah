@@ -57,7 +57,7 @@
         </nav>
         <h1 class="sr-only">{{ trans('blocks.header.cart') }}</h1>
         <salla-conditional-offer></salla-conditional-offer>
-        <div class="qcart__layout pt-5 pb-6 lg:pb-20">
+        <div class="qcart__layout pt-5 pb-6 lg:pb-20{{ cart.items|length ? '' : ' qcart__layout--empty' }}">
             <div class="main-content qcart__items">
                 {% hook 'cart:items.start' %}
 
@@ -136,11 +136,11 @@
                         </section>
                     </form>
                 {% else %}
-                    <div class="no-content-placeholder">
-                        <i class="sicon-shopping-bag icon"></i>
-                        <p>{{ trans('pages.cart.empty_cart') }}</p>
-                        <a href="{{ link('/') }}"
-                           class="btn btn--outline-primary btn--rounded-full">{{ trans('common.elements.back_home') }}</a>
+                    <div class="qcart__empty">
+                        <span class="qcart__empty-icon">{% include 'components.partials.empty-bag' %}</span>
+                        <h2 class="qcart__empty-title">{{ trans('pages.cart.empty_cart') }}</h2>
+                        <p class="qcart__empty-sub">{{ trans('blocks.qissa.cart_empty_sub') }}</p>
+                        <a href="{{ link('/') }}" class="qcart__empty-btn">{{ trans('common.elements.back_home') }}</a>
                     </div>
                 {% endfor %}
 
