@@ -2,11 +2,13 @@
 body, main, #app { background: transparent; }
 
 .qheader {
-  position: relative;
-  z-index: 50;
+  position: sticky;
+  top: 0;
+  z-index: 100;
   font-family: 'GE SS Two', sans-serif;
   color: #fff;
   padding-top: 40px;   // push the whole header (top bar + nav) down from the page top
+  transition: background-color .25s ease, box-shadow .25s ease;
 
   // full-bleed edges aligned to the hero (hero = margin 0 50px, no max-width)
   .container { max-width: none; margin-inline: auto; padding-inline: 50px; }
@@ -119,6 +121,17 @@ body, main, #app { background: transparent; }
     border: none; cursor: pointer;
     i { font-size: 21px; }
   }
+}
+
+// ---- pinned/sticky state on scroll (.is-stuck toggled by JS in header.twig) ----
+.qheader-nav { transition: background-color .25s ease; }
+.qheader.is-stuck { box-shadow: 0 6px 22px rgba(10, 31, 48, .18); }
+// the homepage nav is transparent (it overlays the hero); once pinned it needs a
+// solid navy fill to stay readable, plus a white header fill so page content can't
+// show through the top padding above the utility bar.
+.qheader--home.is-stuck { background: #fff; }
+.qheader--home.is-stuck .qheader-nav {
+  background: linear-gradient(120deg, #172951 0%, #25307a 55%, #30378e 100%);
 }
 
 // HOMEPAGE ONLY: nav row sits ON TOP of the hero, overlapping it, so the

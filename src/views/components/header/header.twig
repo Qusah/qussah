@@ -149,6 +149,19 @@
 </div>
 
 <script>
+(function () {
+  // sticky header — solidify the (transparent) home nav once the page scrolls
+  var qh = document.querySelector('.qheader');
+  if (qh) {
+    var stuck = false;
+    var onHeaderScroll = function () {
+      var s = window.scrollY > 30;
+      if (s !== stuck) { stuck = s; qh.classList.toggle('is-stuck', s); }
+    };
+    onHeaderScroll();
+    window.addEventListener('scroll', onHeaderScroll, { passive: true });
+  }
+})();
 (function(){
   // mobile burger → open the offcanvas sidebar (Figma 6036:12721)
   var burger = document.querySelector('[data-qburger]');
