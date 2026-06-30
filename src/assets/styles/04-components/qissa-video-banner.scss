@@ -1,0 +1,105 @@
+// ====================================================================
+// Qissa Video Banner — same look as qissa-banner (navy box, text RIGHT,
+// media LEFT) but the media is an autoplay + looping (muted) video.
+// ====================================================================
+
+.qvbanner {
+  font-family: 'GE SS Two', sans-serif;
+  padding-block: 24px;
+
+  .container { max-width: none; padding-inline: 50px; }
+
+  &__box {
+    position: relative;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 48px;
+    padding: 90px 80px;
+    // Figma: royal-blue base + cyan glow top-left fading to deep navy bottom-right
+    background:
+      radial-gradient(90% 130% at 8% 0%, rgba(145,230,247,.45) 0%, rgba(145,230,247,.12) 28%, rgba(145,230,247,0) 50%),
+      linear-gradient(135deg, #3a43a6 0%, #30378e 45%, #2a2f82 100%);
+    border-radius: 30px;
+    overflow: hidden;
+    direction: rtl;
+  }
+
+  // ---- text (RIGHT — order 1 in RTL = right side) ----
+  &__text {
+    position: relative; z-index: 2; order: 1;
+    flex: 0 0 592px; max-width: 592px;
+    display: flex; flex-direction: column; align-items: flex-start;
+    gap: 32px; text-align: right;
+  }
+  &__title {
+    font-size: 48px; font-weight: 700; line-height: 70px;
+    color: #fff; margin: 0; width: 100%;
+  }
+  &__subtitle {
+    font-size: 16px; font-weight: 300; line-height: 25px;
+    color: #fff; margin: 0; width: 100%;
+  }
+
+  // CTA button — < تسوق مع قصة 🛒
+  &__btn {
+    display: inline-flex; flex-direction: row; direction: ltr;
+    align-items: center; justify-content: center; gap: 8px;
+    padding: 16px; min-width: 160px;
+    background: #30378e; border: 1px solid rgba(255,255,255,.35);
+    color: #fff; border-radius: 12px;
+    font-size: 16px; font-weight: 500;
+    i { font-size: 16px; }
+    &:hover { background: #fff; color: #30378e; border-color: #fff; }
+  }
+
+  // ---- video (LEFT — order 2 in RTL = left side): clean rounded panel ----
+  &__media {
+    position: relative; z-index: 2; order: 2;
+    flex: 1 1 0; min-width: 0; align-self: stretch;
+    display: flex; align-items: center; justify-content: center;
+  }
+  &__video,
+  &__media img {
+    display: block;
+    width: 100%; height: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: 460px;
+    object-fit: cover;
+    border: 0;
+    border-radius: 20px;
+    background: #0a1f30; // shows while the video buffers
+  }
+
+  // ---- tablet / in-between (769–1280): shrink the text column, trim padding ----
+  @media (min-width: 769px) and (max-width: 1280px) {
+    &__box { padding: 56px 40px; gap: 32px; }
+    &__text { flex: 1 1 0; min-width: 0; max-width: 56%; gap: 24px; }
+    &__title { font-size: 36px; line-height: 52px; }
+    &__video, &__media img { max-height: 360px; }
+  }
+
+  // ---- mobile (<=768): stack — text on top, video full-width below ----
+  @media (max-width: 768px) {
+    padding-block: 8px;
+    .container { padding-inline: 15px; }
+    &__box {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 20px;
+      padding: 32px 18px;
+      border-radius: 24px;
+    }
+    &__text {
+      flex-basis: auto; max-width: 100%; width: 100%; order: 1;
+      align-items: flex-start;          // RTL → visual right
+      text-align: right;
+      gap: 16px;
+    }
+    &__title { font-size: 26px; line-height: 38px; width: 100%; }
+    &__btn {
+      align-self: flex-start;           // RTL → right side
+      background: linear-gradient(to right, #172951, #30378e);
+    }
+    &__media { order: 2; width: 100%; align-self: stretch; }
+    &__video, &__media img { max-height: none; }
+  }
+}

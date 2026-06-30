@@ -1,0 +1,81 @@
+{#
+| Variable             | Type   | Description                                          |
+|----------------------|--------|------------------------------------------------------|
+| component            | object | merchant settings from twilight.json                 |
+| component.heading    | string | banner headline                                      |
+| component.subheading | string | supporting paragraph                                 |
+| component.video_url  | string | video source — direct file (mp4/webm) or YouTube URL |
+| component.image      | string | optional poster / fallback image                     |
+| component.button_text| string | CTA label                                            |
+| component.button_url | string | CTA link                                             |
+| position             | int    | sorting block                                        |
+
+Same layout as qissa-banner (navy box, text RIGHT, media LEFT) but the media is an
+autoplay + looping (muted) video. Direct files play via <video>; a YouTube URL is
+swapped for an autoplay/loop/muted iframe by the script below.
+#}
+<section class="s-block qvbanner" id="qvbanner-{{ position }}">
+    <div class="container">
+        <div class="qvbanner__box">
+
+            {# video (left in RTL) — autoplay + loop + muted #}
+            {% if component.video_url or component.image %}
+                <div class="qvbanner__media" data-video="{{ component.video_url }}">
+                    {% if component.video_url %}
+                        <video class="qvbanner__video" autoplay loop muted playsinline preload="auto"
+                               {% if component.image %}poster="{{ component.image }}"{% endif %}>
+                            <source src="{{ component.video_url }}"/>
+                        </video>
+                    {% elseif component.image %}
+                        <img src="{{ component.image }}" alt="{{ component.heading }}" loading="lazy"/>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {# text (right) #}
+            <div class="qvbanner__text">
+                {% if component.heading %}
+                    <h2 class="qvbanner__title">{{ component.heading }}</h2>
+                {% endif %}
+                {% if component.subheading %}
+                    <p class="qvbanner__subtitle">{{ component.subheading }}</p>
+                {% endif %}
+                {% if component.button_text %}
+                    <a href="{{ (component.button_url and component.button_url not in ['#', '/products']) ? component.button_url : store.url ~ '/كل-المنتجات/c1390845573' }}" class="qvbanner__btn">
+                        <i class="sicon-arrow-left"></i>
+                        <span>{{ component.button_text }}</span>
+                        <i class="sicon-shopping-bag"></i>
+                    </a>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script>
+(function(){
+  // A direct video file already autoplays + loops via the <video> tag.
+  // For a YouTube URL we can't do that with <video>, so swap in an
+  // autoplay/loop/muted iframe instead.
+  function ytId(u){
+    if(!u) return null;
+    var m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/))([\w-]{11})/);
+    return m ? m[1] : (/^[\w-]{11}$/.test(u) ? u : null);
+  }
+  document.querySelectorAll('.qvbanner__media[data-video]').forEach(function(media){
+    var id = ytId((media.getAttribute('data-video') || '').trim());
+    if(!id) return; // direct file (or no video) → leave the <video>/<img> as-is
+    var ifr = document.createElement('iframe');
+    ifr.className = 'qvbanner__video';
+    ifr.src = 'https://www.youtube.com/embed/' + id +
+      '?autoplay=1&mute=1&loop=1&playlist=' + id +
+      '&controls=0&modestbranding=1&rel=0&showinfo=0&playsinline=1';
+    ifr.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+    ifr.setAttribute('frameborder', '0');
+    ifr.setAttribute('title', 'video');
+    media.innerHTML = '';
+    media.appendChild(ifr);
+  });
+})();
+</script>

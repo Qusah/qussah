@@ -980,6 +980,78 @@
             ]
         },
         {
+            "key": "8d2d5f79-5f37-4dec-bda4-1aebf4083886",
+            "title": {
+                "en": "Qissa Video Banner",
+                "ar": "بانر قصة بالفيديو"
+            },
+            "icon": "sicon-image",
+            "path": "home.qissa-video-banner",
+            "fields": [
+                {
+                    "id": "heading",
+                    "type": "string",
+                    "format": "textarea",
+                    "label": {
+                        "en": "Heading",
+                        "ar": "العنوان"
+                    },
+                    "value": "نظافة بيتك تبدأ من هنا لأن بيتك يستاهل الأفضل"
+                },
+                {
+                    "id": "subheading",
+                    "type": "string",
+                    "format": "textarea",
+                    "label": {
+                        "en": "Subheading",
+                        "ar": "النص الفرعي"
+                    },
+                    "value": "متجر سلة يوفر لك كل ماتحتاجه من إلكترونيات أو أثاث منزلي بالإضافة إلى أفضل التخفيضات على المنتجات , تسوق الان واستمتع بكل بالتخفيضات على المنتجات"
+                },
+                {
+                    "id": "video_url",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Video URL (direct file mp4/webm, or YouTube)",
+                        "ar": "رابط الفيديو (ملف مباشر mp4/webm أو يوتيوب)"
+                    },
+                    "description": "يُفضّل رفع ملف فيديو مباشر (mp4/webm) ليعمل التشغيل التلقائي والتكرار بسلاسة",
+                    "value": null
+                },
+                {
+                    "id": "image",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "en": "Poster / fallback image",
+                        "ar": "صورة بديلة (تظهر قبل تحميل الفيديو)"
+                    },
+                    "value": null
+                },
+                {
+                    "id": "button_text",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Button Text",
+                        "ar": "نص الزر"
+                    },
+                    "value": "تسوق مع قصة"
+                },
+                {
+                    "id": "button_url",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Button URL",
+                        "ar": "رابط الزر"
+                    },
+                    "value": "/products"
+                }
+            ]
+        },
+        {
             "key": "7f3eaa70-81cd-4165-8e07-8233720dc626",
             "title": {
                 "en": "Qissa Listing",
