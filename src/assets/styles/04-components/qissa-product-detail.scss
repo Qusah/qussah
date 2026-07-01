@@ -496,11 +496,16 @@
   // qty + both buttons live here; order + flex-basis place them:
   // qty (order 1) + أضف للسلة (order 2) share row 1; الشراء السريع (order 3,
   // basis 100%) wraps to a full-width row 2.
+  // grid: row 1 = أضف للسلة (fills) + quantity (fixed); row 2 = quick-buy full width.
+  // RTL places column 1 (cart) on the RIGHT and column 2 (qty) on the LEFT.
   &__controls {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 180px;
+    grid-template-areas:
+      "cart qty"
+      "buy  buy";
     align-items: stretch;
-    gap: 12px;
+    gap: 16px;
   }
   &__price {
     margin-bottom: 20px;
@@ -533,17 +538,16 @@
     font-weight: 700;
   }
 
-  // qty stepper — row 1, right (order 1), fixed width
+  // qty stepper — row 1, LEFT column
   &__qty {
-    order: 1;
-    flex: 0 0 auto;
+    grid-area: qty;
     display: flex;
     align-items: stretch;
   }
   // quantity stepper — match the cart-page style: baby-blue border + inner dividers
   salla-quantity-input {
     --salla-quantity-input-border-color: #daeff7;
-    width: 160px;
+    width: 100%;
     height: 56px;
     border: 1px solid #daeff7;
     border-radius: 12px;
@@ -623,11 +627,12 @@
     }
   }
 
-  // أضف للسلة (salla host) — row 1, fills the space next to the qty. SOLID navy.
-  // The host is a transparent flex shell; the visible surface is .s-button-element.
+  // أضف للسلة (salla host) — row 1, RIGHT (order 1 in RTL), fills the space next
+  // to the qty. SOLID navy. The host is a transparent flex shell; the visible
+  // surface is .s-button-element.
   &__btn--cart {
-    order: 2;
-    flex: 1 1 auto;
+    grid-area: cart;
+    min-width: 0;
     border: none !important;
     height: auto !important;
     background: none !important;
@@ -647,8 +652,7 @@
 
   // الشراء السريع — row 2, full width (basis 100% forces the wrap). OUTLINE → hover cyan.
   &__btn--buy {
-    order: 3;
-    flex: 1 1 100%;
+    grid-area: buy;
     width: 100%;
     background: #fff !important;
     color: #30378e !important;
@@ -1200,13 +1204,8 @@
       font-size: 13px;
     }
     &__controls {
-      gap: 10px;
-    }
-    // keep the stepper a touch narrower on phones so the add-to-cart keeps room
-    salla-quantity-input {
-      width: 120px;
-      min-width: 120px;
-      height: 56px;
+      grid-template-columns: minmax(0, 1fr) 160px;
+      gap: 8px;
     }
 
     &__paydemo {
