@@ -3,9 +3,13 @@
 .qmedia {
   margin-block: 24px;
 
+  // match the site's banner width (same as .qbanner / .qfbanner): a full-bleed
+  // container with 50px side padding, not the default narrow centered container.
+  .container { max-width: none; padding-inline: 50px; }
+
   &__box {
     display: block;
-    border-radius: 24px;
+    border-radius: 30px;
     overflow: hidden;
     line-height: 0;                 // remove the inline-image baseline gap
   }
@@ -32,6 +36,7 @@
 
   @media (max-width: 768px) {
     margin-block: 16px;
-    &__box { border-radius: 16px; }
+    .container { padding-inline: 15px; }
+    &__box { border-radius: 24px; }
   }
 }

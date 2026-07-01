@@ -474,26 +474,6 @@
                     "value": "/products"
                 },
                 {
-                    "id": "contact_text",
-                    "type": "string",
-                    "format": "text",
-                    "label": {
-                        "en": "Contact button text",
-                        "ar": "نص زر التواصل"
-                    },
-                    "value": "تواصل معنا"
-                },
-                {
-                    "id": "contact_url",
-                    "type": "string",
-                    "format": "text",
-                    "label": {
-                        "en": "Contact button URL",
-                        "ar": "رابط زر التواصل"
-                    },
-                    "value": "/contact-us"
-                },
-                {
                     "id": "cards",
                     "type": "collection",
                     "format": "collection",
@@ -1482,26 +1462,6 @@
                         "ar": "رابط زر التسوق"
                     },
                     "value": "/products"
-                },
-                {
-                    "id": "contact_text",
-                    "type": "string",
-                    "format": "text",
-                    "label": {
-                        "en": "Contact button text",
-                        "ar": "نص زر التواصل"
-                    },
-                    "value": "تواصل معنا"
-                },
-                {
-                    "id": "contact_url",
-                    "type": "string",
-                    "format": "text",
-                    "label": {
-                        "en": "Contact button URL",
-                        "ar": "رابط زر التواصل"
-                    },
-                    "value": "/contact-us"
                 },
                 {
                     "id": "image",

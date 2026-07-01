@@ -7,8 +7,6 @@
 | component.body_2        | string     | second paragraph (optional)                       |
 | component.button_text   | string     | primary CTA label (shop)                          |
 | component.button_url    | string     | primary CTA link                                  |
-| component.contact_text  | string     | secondary CTA label (contact)                     |
-| component.contact_url   | string     | secondary CTA link (path or full URL)             |
 | component.cards         | collection | icon · title · description · dark (highlight)     |
 | position                | int        | sorting block                                     |
 #}
@@ -20,9 +18,6 @@
 ] %}
 {# primary CTA → merchant link, else the products listing (same target as the header) #}
 {% set shop_href = (component.button_url and component.button_url not in ['#', '/products']) ? component.button_url : store.url ~ '/كل-المنتجات/c1390845573' %}
-{# secondary CTA → full URL as-is, otherwise treat as a store path #}
-{% set contact_path = component.contact_url|default('/contact-us') %}
-{% set contact_href = contact_path starts with 'http' ? contact_path : store.url ~ '/' ~ contact_path|trim('/') %}
 
 <section class="s-block qvalues" id="qvalues-{{ position }}">
     <div class="container">
@@ -40,20 +35,12 @@
                     <p class="qvalues__desc">{{ component.body_2 }}</p>
                 {% endif %}
 
-                {% if component.button_text or component.contact_text %}
+                {% if component.button_text %}
                     <div class="qvalues__actions">
-                        {% if component.button_text %}
-                            <a href="{{ shop_href }}" class="qvalues__btn qvalues__btn--solid">
-                                <span>{{ component.button_text }}</span>
-                                <i class="sicon-shopping-cart"></i>
-                            </a>
-                        {% endif %}
-                        {% if component.contact_text %}
-                            <a href="{{ contact_href }}" class="qvalues__btn qvalues__btn--outline">
-                                <span>{{ component.contact_text }}</span>
-                                <i class="sicon-arrow-left"></i>
-                            </a>
-                        {% endif %}
+                        <a href="{{ shop_href }}" class="qvalues__btn qvalues__btn--solid">
+                            <span>{{ component.button_text }}</span>
+                            <i class="sicon-shopping-cart"></i>
+                        </a>
                     </div>
                 {% endif %}
             </div>

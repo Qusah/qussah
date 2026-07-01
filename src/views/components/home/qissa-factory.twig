@@ -6,8 +6,6 @@
 | component.body         | string | supporting paragraphs (newlines kept as breaks)       |
 | component.button_text  | string | primary CTA label (shop)                              |
 | component.button_url   | string | primary CTA link                                      |
-| component.contact_text | string | secondary CTA label (contact)                         |
-| component.contact_url  | string | secondary CTA link (path or full URL)                 |
 | component.image        | string | cover image (falls back to the bundled factory photo) |
 | position               | int    | sorting block                                         |
 
@@ -16,9 +14,6 @@ Figma: desktop 177:269 (1440) — text RIGHT (heading + body + 2 CTAs), cover im
 #}
 {# primary CTA → merchant link, else the products listing (same target as the header) #}
 {% set shop_href = (component.button_url and component.button_url not in ['#', '/products']) ? component.button_url : store.url ~ '/كل-المنتجات/c1390845573' %}
-{# secondary CTA → full URL as-is, otherwise treat as a store path #}
-{% set contact_path = component.contact_url|default('/contact-us') %}
-{% set contact_href = contact_path starts with 'http' ? contact_path : store.url ~ '/' ~ contact_path|trim('/') %}
 
 <section class="s-block qfactory" id="qfactory-{{ position }}">
     <div class="container">
@@ -33,21 +28,12 @@ Figma: desktop 177:269 (1440) — text RIGHT (heading + body + 2 CTAs), cover im
                     <p class="qfactory__body">{{ component.body }}</p>
                 {% endif %}
 
-                {% if component.contact_text or component.button_text %}
-                    {# Figma order (LTR): outline contact on the left, solid shop on the right #}
+                {% if component.button_text %}
                     <div class="qfactory__actions">
-                        {% if component.contact_text %}
-                            <a href="{{ contact_href }}" class="qfactory__btn qfactory__btn--outline">
-                                <i class="sicon-arrow-left"></i>
-                                <span>{{ component.contact_text }}</span>
-                            </a>
-                        {% endif %}
-                        {% if component.button_text %}
-                            <a href="{{ shop_href }}" class="qfactory__btn qfactory__btn--solid">
-                                <span>{{ component.button_text }}</span>
-                                <i class="sicon-shopping-cart"></i>
-                            </a>
-                        {% endif %}
+                        <a href="{{ shop_href }}" class="qfactory__btn qfactory__btn--solid">
+                            <span>{{ component.button_text }}</span>
+                            <i class="sicon-shopping-cart"></i>
+                        </a>
                     </div>
                 {% endif %}
             </div>
