@@ -493,15 +493,17 @@
     padding: 0 !important;
     border: none;
   }
-  &__priceqty {
+  // qty + both buttons live here; order + flex-basis place them:
+  // qty (order 1) + أضف للسلة (order 2) share row 1; الشراء السريع (order 3,
+  // basis 100%) wraps to a full-width row 2.
+  &__controls {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 24px;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 12px;
   }
   &__price {
-    order: 0;
+    margin-bottom: 20px;
   }
   &__price-now {
     font-size: 24px;
@@ -531,28 +533,20 @@
     font-weight: 700;
   }
 
-  // qty stepper + "حدد الكمية" label
+  // qty stepper — row 1, right (order 1), fixed width
   &__qty {
+    order: 1;
+    flex: 0 0 auto;
     display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-direction: row;
-  }
-  &__qty-label {
-    font-size: 16px;
-    line-height: 24px;
-    color: #30378e;
-    white-space: nowrap;
-    margin: 0;
-    order: 2;
+    align-items: stretch;
   }
   // quantity stepper — match the cart-page style: baby-blue border + inner dividers
   salla-quantity-input {
-    order: 1;
     --salla-quantity-input-border-color: #daeff7;
-    height: 50px;
+    width: 160px;
+    height: 56px;
     border: 1px solid #daeff7;
-    border-radius: 8px;
+    border-radius: 12px;
     display: inline-flex;
     align-items: center;
     overflow: hidden;
@@ -582,17 +576,7 @@
     }
   }
 
-  // two action buttons: الشراء السريع (solid, left) + أضف للسلة (outline, right)
-  &__actions {
-    display: flex;
-    gap: 16px;
-    margin-top: 0;
-  }
-  // Each button column takes half the row.
-  &__btn {
-    flex: 1 0 0;
-    width: 100%;
-  }
+  // buttons are placed by order/flex on the --cart / --buy rules below
   // inline Figma cart icon (16x16, inherits button color via currentColor)
   &__cart-icon {
     width: 16px !important;
@@ -639,8 +623,11 @@
     }
   }
 
-  // salla host = transparent flex shell, NO border/height of its own
+  // أضف للسلة (salla host) — row 1, fills the space next to the qty. SOLID navy.
+  // The host is a transparent flex shell; the visible surface is .s-button-element.
   &__btn--cart {
+    order: 2;
+    flex: 1 1 auto;
     border: none !important;
     height: auto !important;
     background: none !important;
@@ -648,26 +635,28 @@
       width: 100%;
     }
   }
-
-  // الشراء السريع — solid navy → hover cyan
-  &__btn--buy {
+  &__btn--cart .s-button-element {
     background: #30378e !important;
     color: #fff !important;
-    &:hover {
-      background: #91e6f7 !important;
-      border-color: #91e6f7 !important;
-      color: #30378e !important;
-    }
-  }
-  // أضف للسلة — outline navy → hover cyan fill
-  &__btn--cart .s-button-element {
-    background: #fff !important;
-    color: #30378e !important;
   }
   &__btn--cart:hover .s-button-element {
     background: #91e6f7 !important;
     border-color: #91e6f7 !important;
     color: #30378e !important;
+  }
+
+  // الشراء السريع — row 2, full width (basis 100% forces the wrap). OUTLINE → hover cyan.
+  &__btn--buy {
+    order: 3;
+    flex: 1 1 100%;
+    width: 100%;
+    background: #fff !important;
+    color: #30378e !important;
+    &:hover {
+      background: #91e6f7 !important;
+      border-color: #91e6f7 !important;
+      color: #30378e !important;
+    }
   }
 }
 
@@ -916,38 +905,6 @@
       .s-slider-block__title-nav {
         display: flex !important;
       }
-    }
-
-    // ----- price (LEFT) + quantity & label (RIGHT) -----
-    &__priceqty {
-      flex-wrap: nowrap;
-      gap: 12px;
-    }
-    &__price {
-      order: 2;
-    } // → left in RTL
-    &__qty {
-      order: 1;
-    } // → right in RTL
-    &__qty salla-quantity-input {
-      order: 2;
-    } // stepper left
-    &__qty-label {
-      order: 1;
-    } // "حدد الكمية" far right
-
-    // ----- actions: stack full-width; أضف للسلة (outline) on top -----
-    // flex:0 0 auto so flex-basis doesn't override the 56px button height in a column
-    &__actions {
-      flex-direction: column-reverse;
-      gap: 12px;
-    }
-    &__btn {
-      flex: 0 0 auto;
-      width: 100%;
-    }
-    &__btn--buy {
-      height: 56px;
     }
 
     // ----- payment cards stack vertically -----
@@ -1232,58 +1189,24 @@
       margin-top: 16px;
     }
 
-    &__priceqty {
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
     &__price {
-      order: 2;
+      margin-bottom: 16px;
     }
     &__price-now {
-      font-size: 16px;
-      line-height: 22px;
+      font-size: 20px;
+      line-height: 26px;
     }
     &__price-old {
-      font-size: 12px;
+      font-size: 13px;
     }
-    &__qty {
-      order: 1;
-      gap: 8px;
-      flex-shrink: 0;
+    &__controls {
+      gap: 10px;
     }
-    &__qty-label {
-      order: 1;
-      font-size: 12px;
-      line-height: 18px;
-    }
-
+    // keep the stepper a touch narrower on phones so the add-to-cart keeps room
     salla-quantity-input {
-      order: 2;
-      width: 96px;
-      min-width: 96px;
-      height: 36px;
-      border-radius: 6px;
-
-      &::part(input) {
-        font-size: 14px;
-      }
-    }
-
-    &__actions {
-      gap: 12px;
-    }
-    &__btn--buy,
-    &__btn--cart .s-button-element {
-      height: 40px;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-    &__cart-icon {
-      width: 14px !important;
-      height: 14px !important;
-      min-width: 14px;
-      flex-basis: 14px;
+      width: 120px;
+      min-width: 120px;
+      height: 56px;
     }
 
     &__paydemo {
@@ -1312,12 +1235,6 @@
     &__paydemo {
       flex-direction: row-reverse;
     } // tamara LEFT, tabby RIGHT
-    &__priceqty {
-      flex-direction: row-reverse;
-    } // price LEFT, quantity RIGHT
-    &__qty {
-      flex-direction: row-reverse;
-    } // stepper LEFT, "حدد الكمية" RIGHT
   }
 }
 

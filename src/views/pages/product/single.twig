@@ -550,7 +550,6 @@
 
                     {# Figma price + quantity row #}
                     <section class="sticky-product-bar qpd__buybar">
-                        <div class="qpd__priceqty">
                             <div class="qpd__price price-wrapper">
                                 <div class="{{ product.is_on_sale ? '' : 'hidden' }} price_is_on_sale qpd__price-sale">
                                     <span class="total-price qpd__price-now">{{product.sale_price|money}}</span>
@@ -565,6 +564,8 @@
                                 <div class="out-of-stock hidden qpd__oos">{{ trans('pages.products.out_of_stock')}}</div>
                             </div>
 
+                            {# controls: quantity (row 1, right) + أضف للسلة (row 1, left · solid) + الشراء السريع (row 2 · outline) #}
+                            <div class="qpd__controls">
                             {# Quantity #}
                             {% if product.is_hidden_quantity or product.type == 'booking' %}
                                 <input type="hidden" value="1" name="quantity" aria-label="Quantity"/>
@@ -572,13 +573,9 @@
                                 <div class="qpd__qty">
                                     <salla-quantity-input max="{{ product.max_quantity }}" value="1" name="quantity" aria-label="Quantity"
                                       class="border-gray-200"></salla-quantity-input>
-                                    <label class="qpd__qty-label">{{ trans('pages.products.quantity') }}</label>
                                 </div>
                             {% endif %}
-                        </div>
-                        {# Figma two buttons: أضف للسلة (outline, right) + الشراء السريع (solid, left) #}
-                        <div class="qpd__actions">
-                            {# الشراء السريع — solid (left in RTL). Plain button → quick checkout. #}
+                            {# الشراء السريع — outline, full-width row 2 (order:3). Plain button → quick checkout. #}
                             <button type="button" class="qpd__btn qpd__btn--buy"
                                     onclick="salla.cart.addItem({ id: {{ product.id }}, quantity: parseInt(this.closest('form').querySelector('[name=quantity]')?.value || 1) }).then(() => salla.cart.submit())">
                                 <svg class="qpd__cart-icon" viewBox="0 0 13.5783 13.4447" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -588,7 +585,7 @@
                                 الشراء السريع
                             </button>
 
-                            {# أضف للسلة — outline (right in RTL) #}
+                            {# أضف للسلة — solid, shares row 1 with the qty (order:2, fills the rest) #}
                             <salla-add-product-button
                                     {{product.is_require_shipping ? 'required-shipping' : ''}}
                                     {{product.has_preorder_campaign ? 'has-pre-order' : ''}}
