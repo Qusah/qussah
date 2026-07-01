@@ -616,6 +616,94 @@
                     {% endif %}
                 </form>
 
+                {# ===== Floating sticky add-to-cart bar — appears once the buy buttons scroll out of view (all screens) ===== #}
+                <div class="qpd-sticky" data-qpd-sticky hidden>
+                    <div class="qpd-sticky__inner">
+                        <span class="qpd-sticky__price" data-qpd-sticky-price>
+                            {{ product.is_on_sale ? (product.sale_price|money) : ((product.starting_price ?: product.price)|money) }}
+                        </span>
+                        {% if not (product.is_hidden_quantity or product.type == 'booking') %}
+                        <div class="qpd-sticky__qty">
+                            <button type="button" class="qpd-sticky__step" data-qpd-step="-1" aria-label="نقص الكمية">−</button>
+                            <span class="qpd-sticky__qty-val" data-qpd-qty>1</span>
+                            <button type="button" class="qpd-sticky__step" data-qpd-step="1" aria-label="زيادة الكمية">+</button>
+                        </div>
+                        {% endif %}
+                        <button type="button" class="qpd-sticky__add" data-qpd-sticky-add>
+                            <i class="sicon-shopping-bag"></i>
+                            <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
+                        </button>
+                    </div>
+                </div>
+
+                <script>
+                (function () {
+                    var sticky = document.querySelector('[data-qpd-sticky]');
+                    var buybar = document.querySelector('.qpd__buybar');
+                    if (!sticky || !buybar || sticky.dataset.qpdInit) { return; }
+                    sticky.dataset.qpdInit = '1';
+                    // move to <body> so position:fixed is viewport-relative (immune to transformed ancestors)
+                    document.body.appendChild(sticky);
+                    sticky.hidden = false;
+
+                    var mainQty  = buybar.querySelector('input[name="quantity"]');
+                    var mainQtyC = buybar.querySelector('salla-quantity-input');
+                    var mainAdd  = buybar.querySelector('.qpd__btn--cart');
+                    var qtyVal   = sticky.querySelector('[data-qpd-qty]');
+                    var priceEl  = sticky.querySelector('[data-qpd-sticky-price]');
+
+                    function visiblePrice() {
+                        var els = buybar.querySelectorAll('.qpd__price-now'), i;
+                        for (i = 0; i < els.length; i++) { if (els[i].offsetParent !== null) { return els[i]; } }
+                        return els[0] || null;
+                    }
+                    function getQty() {
+                        var v = mainQty ? parseInt(mainQty.value, 10)
+                              : (mainQtyC ? parseInt(mainQtyC.value, 10) : parseInt(qtyVal ? qtyVal.textContent : '1', 10));
+                        return (v && v > 0) ? v : 1;
+                    }
+                    function setQty(n) {
+                        n = Math.max(1, n);
+                        if (qtyVal) { qtyVal.textContent = n; }
+                        if (mainQtyC) { try { mainQtyC.value = n; mainQtyC.setAttribute('value', n); } catch (e) {} }
+                        if (mainQty) {
+                            mainQty.value = n;
+                            mainQty.dispatchEvent(new Event('input',  { bubbles: true }));
+                            mainQty.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                    }
+                    function sync() {
+                        var p = visiblePrice();
+                        if (p && priceEl) { priceEl.innerHTML = p.innerHTML; }
+                        if (qtyVal) { qtyVal.textContent = getQty(); }
+                    }
+
+                    sticky.querySelectorAll('[data-qpd-step]').forEach(function (b) {
+                        b.addEventListener('click', function () {
+                            setQty(getQty() + parseInt(b.getAttribute('data-qpd-step'), 10));
+                        });
+                    });
+
+                    var addBtn = sticky.querySelector('[data-qpd-sticky-add]');
+                    if (addBtn && mainAdd) {
+                        addBtn.addEventListener('click', function () {
+                            (mainAdd.querySelector('.s-button-element') || mainAdd).click();
+                        });
+                    }
+
+                    function setVisible(v) {
+                        sticky.classList.toggle('is-visible', v);
+                        document.body.classList.toggle('qpd-has-sticky', v);
+                        if (v) { sync(); }
+                    }
+                    if ('IntersectionObserver' in window) {
+                        new IntersectionObserver(function (e) {
+                            setVisible(!e[0].isIntersecting);
+                        }, { threshold: 0 }).observe(buybar);
+                    }
+                })();
+                </script>
+
                 {% hook 'product:single.description.end' %}
 
                 {# Quick Order — required Twilight component; renders the express-order

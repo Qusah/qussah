@@ -2679,3 +2679,114 @@
     }
   }
 }
+
+// ====================================================================
+// Floating sticky add-to-cart bar — appears when the buy buttons scroll
+// out of view (all screens). JS in single.twig moves it to <body> and
+// toggles .is-visible via an IntersectionObserver on the buybar.
+// ====================================================================
+.qpd-sticky {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 90;
+  background: #fff;
+  box-shadow: 0 -2px 16px rgba(10, 31, 48, 0.12);
+  padding: 10px 16px;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  transform: translateY(115%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+
+  &.is-visible {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &__inner {
+    max-width: 1290px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__price {
+    flex: 0 0 auto;
+    font-size: 18px;
+    font-weight: 600;
+    color: #30378e;
+    white-space: nowrap;
+    font-family: "Poppins", "GE SS Two", sans-serif;
+  }
+
+  &__qty {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: stretch;
+    height: 48px;
+    border: 1px solid #daeff7;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+  }
+  &__step {
+    width: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    line-height: 1;
+    color: #0a1f30;
+    background: #fff;
+    cursor: pointer;
+  }
+  &__qty-val {
+    min-width: 44px;
+    padding: 0 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-inline: 1px solid #daeff7;
+    font-weight: 500;
+    color: #0a1f30;
+    font-family: "Poppins", "GE SS Two", sans-serif;
+  }
+
+  &__add {
+    flex: 1 1 auto;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 12px;
+    background: #30378e;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: "GE SS Two", sans-serif;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    &:hover { background: #262c72; }
+    i { font-size: 18px; }
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px 12px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    &__inner { gap: 8px; }
+    &__price { font-size: 15px; }
+    &__qty { height: 44px; }
+    &__step { width: 34px; font-size: 20px; }
+    &__qty-val { min-width: 36px; }
+    &__add { height: 44px; font-size: 14px; }
+  }
+}
+
+// leave room so the fixed bar never hides the last of the page content
+body.qpd-has-sticky {
+  padding-bottom: 76px;
+}
