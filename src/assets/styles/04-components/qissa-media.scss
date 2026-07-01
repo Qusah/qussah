@@ -1,0 +1,37 @@
+// Qissa Media — displays a designer's banner image or their video, no chrome.
+// The media defines its own aspect ratio (we never crop or add overlays).
+.qmedia {
+  margin-block: 24px;
+
+  &__box {
+    display: block;
+    border-radius: 24px;
+    overflow: hidden;
+    line-height: 0;                 // remove the inline-image baseline gap
+  }
+  a.qmedia__box { cursor: pointer; }
+
+  &__pic,
+  &__img,
+  &__poster,
+  &__video,
+  &__player {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  // A YouTube iframe has no intrinsic size — give it 16:9. Direct-file videos and
+  // images keep their own natural ratio via height:auto above.
+  iframe.qmedia__player {
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border: 0;
+  }
+  video.qmedia__player { background: #000; }
+
+  @media (max-width: 768px) {
+    margin-block: 16px;
+    &__box { border-radius: 16px; }
+  }
+}

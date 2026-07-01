@@ -1587,6 +1587,67 @@
             ]
         },
         {
+            "key": "b8491708-bff9-4749-8941-1dd1f1f80761",
+            "title": {
+                "en": "Qissa Media",
+                "ar": "بانر أو فيديو"
+            },
+            "icon": "sicon-image",
+            "path": "home.qissa-media",
+            "fields": [
+                {
+                    "id": "image",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "en": "Banner image (desktop)",
+                        "ar": "صورة البانر (الحاسب)"
+                    },
+                    "value": null
+                },
+                {
+                    "id": "mobile_image",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "en": "Banner image (mobile, optional)",
+                        "ar": "صورة البانر (الجوال، اختياري)"
+                    },
+                    "value": null
+                },
+                {
+                    "id": "video_url",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Video URL (direct file or YouTube, optional)",
+                        "ar": "رابط الفيديو (ملف مباشر أو يوتيوب، اختياري)"
+                    },
+                    "value": null
+                },
+                {
+                    "id": "autoplay",
+                    "type": "boolean",
+                    "format": "switch",
+                    "label": {
+                        "en": "Autoplay video (muted loop)",
+                        "ar": "تشغيل الفيديو تلقائياً (بدون صوت، متكرر)"
+                    },
+                    "value": true
+                },
+                {
+                    "id": "link",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Link when clicked (optional)",
+                        "ar": "رابط عند الضغط (اختياري)"
+                    },
+                    "value": null
+                }
+            ]
+        },
+        {
             "key": "cb0e1043-bed4-4ff8-9f20-49bd960803c3",
             "title": {
                 "en": "Qissa Testimonials",

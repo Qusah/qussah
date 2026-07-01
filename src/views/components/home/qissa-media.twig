@@ -1,0 +1,88 @@
+{#
+| Variable               | Type   | Description                                                    |
+|------------------------|--------|----------------------------------------------------------------|
+| component.image        | string | banner image (desktop) — the designer's full design            |
+| component.mobile_image | string | optional mobile banner (falls back to the desktop image)       |
+| component.video_url    | string | optional video — direct file URL or YouTube link               |
+| component.autoplay     | bool   | video: muted autoplay loop (ambient) vs poster + play controls  |
+| component.link         | string | optional link wrapping the media (no visible CTA)              |
+| position               | int    | sorting block                                                  |
+
+Chrome-free media block: displays ONLY the designer's banner image or their video.
+No heading, no text, no call-to-action — whatever the designers create is shown as-is.
+#}
+{% set has_link = component.link and component.link not in ['#', '/products'] %}
+{# a link is safe around an image or an ambient (controls-less) video, but not around a
+   video with playback controls where a click should play/pause, not navigate. #}
+{% set linkable = has_link and (not component.video_url or component.autoplay) %}
+
+<section class="s-block qmedia" id="qmedia-{{ position }}">
+    <div class="container">
+        {% if linkable %}<a class="qmedia__box" href="{{ component.link }}">{% else %}<div class="qmedia__box">{% endif %}
+
+            {% if component.video_url %}
+                <div class="qmedia__video"
+                     data-qmedia-video="{{ component.video_url }}"
+                     data-qmedia-autoplay="{{ component.autoplay ? '1' : '' }}">
+                    {% if component.image %}
+                        <img class="qmedia__poster" src="{{ component.image }}" alt="{{ store.name }}" loading="lazy"/>
+                    {% endif %}
+                </div>
+            {% elseif component.image or component.mobile_image %}
+                <picture class="qmedia__pic">
+                    {% if component.mobile_image %}
+                        <source media="(max-width: 768px)" srcset="{{ component.mobile_image }}"/>
+                    {% endif %}
+                    <img class="qmedia__img" src="{{ component.image|default(component.mobile_image) }}" alt="{{ store.name }}" loading="lazy"/>
+                </picture>
+            {% endif %}
+
+        {% if linkable %}</a>{% else %}</div>{% endif %}
+    </div>
+</section>
+
+{% if component.video_url %}
+<script>
+(function () {
+  // Build the player from the merchant URL: YouTube -> iframe, otherwise -> <video>.
+  function ytId(u) {
+    if (!u) { return null; }
+    var m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/))([\w-]{11})/);
+    if (m) { return m[1]; }
+    return /^[\w-]{11}$/.test(u) ? u : null;
+  }
+  document.querySelectorAll('.qmedia__video[data-qmedia-video]').forEach(function (box) {
+    if (box.dataset.qmInit) { return; }
+    box.dataset.qmInit = '1';
+    var url = (box.getAttribute('data-qmedia-video') || '').trim();
+    if (!url) { return; }
+    var autoplay = box.getAttribute('data-qmedia-autoplay') === '1';
+    var posterEl = box.querySelector('.qmedia__poster');
+    var poster = posterEl ? posterEl.getAttribute('src') : null;
+    var id = ytId(url), el;
+    if (id) {
+      el = document.createElement('iframe');
+      el.src = 'https://www.youtube.com/embed/' + id + '?rel=0&playsinline=1'
+             + (autoplay ? '&autoplay=1&mute=1&loop=1&controls=0&playlist=' + id : '');
+      el.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+      el.setAttribute('allowfullscreen', '');
+      el.setAttribute('title', 'video');
+      el.loading = 'lazy';
+    } else {
+      el = document.createElement('video');
+      el.src = url;
+      el.playsInline = true;
+      if (autoplay) {
+        el.autoplay = true; el.muted = true; el.loop = true;
+      } else {
+        el.controls = true; el.preload = 'metadata';
+        if (poster) { el.poster = poster; }
+      }
+    }
+    el.className = 'qmedia__player';
+    if (posterEl) { posterEl.remove(); }
+    box.appendChild(el);
+  });
+})();
+</script>
+{% endif %}
