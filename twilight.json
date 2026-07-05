@@ -860,10 +860,33 @@
                     "value": "مجموعة قصة الشاملة لتوفير أكبر"
                 },
                 {
+                    "type": "boolean",
+                    "id": "show_marquee",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Show \"best seller\" marquee",
+                        "ar": "إظهار شريط الأكثر مبيعًا"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "marquee_text",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Marquee text",
+                        "ar": "نص الشريط"
+                    },
+                    "value": "الأكثر مبيعًا"
+                },
+                {
                     "id": "products",
                     "type": "items",
                     "icon": "sicon-keyboard_arrow_down",
-                    "label": "المنتجات",
+                    "label": "المنتج المميز",
                     "format": "dropdown-list",
                     "description": null,
                     "selected": [],
@@ -872,7 +895,7 @@
                     "multichoice": true,
                     "source": "products",
                     "searchable": true,
-                    "maxLength": 100,
+                    "maxLength": 1,
                     "minLength": 1,
                     "value": []
                 }

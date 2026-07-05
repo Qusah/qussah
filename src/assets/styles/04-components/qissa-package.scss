@@ -1,9 +1,8 @@
 // ====================================================================
-// Qissa Package — "البكج الشامل"
-// Figma: desktop card 6345:6721 (in 6345:6706) · mobile 6345:8673 (in 6345:8659).
-// Centered title + a brave-style horizontal slider (drag + arrows + snap) of
-// large package cards: cream image (discount badge + best-seller ribbon),
-// name + sold count, sale/original price, spec chips, quantity + add-to-cart.
+// Qissa Package — "المجموعة الشاملة" (brave-style single-product showcase)
+// Centered title + a swipeable image gallery (big main image + thumbnail
+// strip), an optional best-seller marquee, then the product details
+// (sold count, rating, name, price, spec chips) + quantity & add-to-cart.
 // ====================================================================
 
 .qpack {
@@ -15,7 +14,7 @@
   // ---- centered heading ----
   &__head {
     display: flex; flex-direction: column; align-items: center;
-    gap: 12px; text-align: center; margin-bottom: 32px;
+    gap: 12px; text-align: center; margin-bottom: 28px;
   }
   &__title {
     font-size: 32px; font-weight: 700; line-height: 38px;
@@ -26,186 +25,194 @@
     color: #6c757d; margin: 0;
   }
 
-  // ---- slider ----
-  &__slider { position: relative; }
-  &__track {
-    display: flex; gap: 24px; align-items: stretch; direction: rtl;
-    overflow-x: auto; scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch; scrollbar-width: none;
-    padding-block: 10px;                 // breathing room for the card shadow
-    cursor: grab;
-    &::-webkit-scrollbar { display: none; }
-    &.is-centered { justify-content: center; }
-    &.is-grabbing { cursor: grabbing; scroll-snap-type: none; user-select: none; }
+  // ---- the showcase card ----
+  &__card {
+    width: 100%; max-width: 680px; margin-inline: auto;
+    display: flex; flex-direction: column;
+    background: #fff; border-radius: 24px; padding: 20px;
+    box-shadow: 0 14px 40px rgba(23, 41, 81, .10);
+    direction: rtl; overflow: hidden;
   }
 
-  // ---- nav arrows (only when the track overflows) ----
-  &__nav {
-    display: flex; direction: ltr; gap: 8px;         // keep dark-left / light-right order
-    align-items: center; justify-content: center; margin-top: 24px;
-    &[hidden] { display: none; }
-  }
-  &__nav-btn {
-    flex: 0 0 auto;
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 46px; height: 46px; border-radius: 30px;
-    background: #daeff7; border: 1px solid #daeff7; color: #30378e; cursor: pointer;
-    -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none; outline: none;
-    transition: background-color .2s ease, color .2s ease, border-color .2s ease;
-    i { font-size: 16px; }
-    &.is-primary { background: #30378e; border-color: #30378e; color: #fff; }
-    @media (hover: hover) { &:hover { background: #30378e; border-color: #30378e; color: #fff; } }
-  }
-}
+  // ---- gallery ----
+  &__gallery { position: relative; }
 
-// ---- one package card ----
-.qpack-card {
-  flex: 0 0 444px; max-width: 444px; scroll-snap-align: center;
-  display: flex; flex-direction: column; direction: rtl;
-  background: #fff; border-radius: 20px; padding: 20px;
-  box-shadow: 0 12px 34px rgba(23, 41, 81, .10);
-
-  // ---- media ----
-  &__media {
-    position: relative; display: block;
-    width: 100%; aspect-ratio: 402 / 329;
-    background: #fff9ec; border-radius: 12px; overflow: hidden;
-  }
-  &__img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-  // discount badge — red tag, top-left, small right-pointing tail
+  // discount badge — red tag, top-left, right-pointing tail
   &__badge {
-    position: absolute; top: 20px; left: 20px; z-index: 2;
+    position: absolute; top: 16px; left: 16px; z-index: 3;
     display: inline-flex; align-items: center; justify-content: center;
     height: 36px; padding: 0 14px;
     background: #f55157; color: #fff; border-radius: 8px;
     font-size: 15px; font-weight: 300; line-height: 1; white-space: nowrap;
     &::after {
       content: ''; position: absolute; top: 50%; right: -5px; transform: translateY(-50%);
-      width: 0; height: 0;
-      border-top: 6px solid transparent; border-bottom: 6px solid transparent;
-      border-left: 6px solid #f55157;    // points right, toward the image
+      width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent;
+      border-left: 6px solid #f55157;
     }
   }
-
-  // best-seller ribbon — green repeating strip along the image bottom
-  &__ribbon {
-    position: absolute; left: 0; right: 0; bottom: 0; z-index: 1;
-    display: flex; align-items: center; direction: rtl;
-    height: 27px; background: #1fc16b; overflow: hidden; white-space: nowrap;
-  }
-  &__ribbon-item {
-    flex: 0 0 auto;
-    display: inline-flex; align-items: center; gap: 6px; padding: 0 8px;
-    color: #e9f9f0; font-size: 12px; font-weight: 500; line-height: 1;
-    i { font-size: 11px; color: #e9f9f0; }
-  }
-
-  // ---- body ----
-  &__body {
-    display: flex; flex-direction: column; align-items: stretch;
-    gap: 10px; padding-block: 18px 0;
+  // wishlist — top-right circle
+  &__wish {
+    position: absolute; top: 16px; right: 16px; z-index: 3;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: #fff; border: 1px solid #eee; color: #0a1f30; cursor: pointer;
+    -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none;
+    box-shadow: 0 4px 12px rgba(10, 31, 48, .08);
+    i { font-size: 18px; }
+    @media (hover: hover) { &:hover { color: #f55157; border-color: #f55157; } }
+    &[wishlisted] { background: #dc3545; border-color: #dc3545; color: #fff; i { color: #fff; } }
   }
 
-  // name (right, fills) + sold count (left)
-  &__row {
-    display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
+  // main image slider (swipeable, one image per view)
+  &__main {
+    display: flex; direction: rtl;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    border-radius: 16px; background: #fff9ec; cursor: grab;
+    &::-webkit-scrollbar { display: none; }
+    &.is-grabbing { cursor: grabbing; scroll-snap-type: none; user-select: none; }
   }
-  &__name {
-    flex: 1 1 auto; min-width: 0;
-    font-size: 16px; font-weight: 500; color: #0a1f30; line-height: 1.4; text-align: right;
+  &__slide {
+    flex: 0 0 100%; scroll-snap-align: center;
+    display: block; aspect-ratio: 4 / 3;
+    img { width: 100%; height: 100%; object-fit: contain; display: block; }
+  }
+
+  // thumbnail strip
+  &__thumbs {
+    display: flex; gap: 10px; margin-top: 12px;
+    overflow-x: auto; scrollbar-width: none; padding-block: 2px;
+    &::-webkit-scrollbar { display: none; }
+  }
+  &__thumb {
+    flex: 0 0 auto; width: 64px; height: 64px; padding: 0;
+    border-radius: 12px; overflow: hidden; cursor: pointer;
+    background: #fff9ec; border: 2px solid transparent;
+    -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none;
+    transition: border-color .2s ease;
+    img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    &.is-active { border-color: #30378e; }
+  }
+
+  // ---- best-seller marquee ----
+  &__ticker {
+    margin: 18px -20px;                 // full-bleed across the card padding
+    overflow: hidden; background: #1fc16b;
+  }
+  &__ticker-track {
+    display: flex; width: max-content;
+    animation: qpack-ticker 22s linear infinite;
+  }
+  &__ticker-group { display: flex; flex: 0 0 auto; }
+  &__ticker-item {
+    display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px;
+    color: #e9f9f0; font-size: 13px; font-weight: 500; line-height: 1; white-space: nowrap;
+    i { font-size: 12px; color: #e9f9f0; }
+  }
+}
+@keyframes qpack-ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }   // two identical groups → seamless loop
+}
+
+// ---- product details ----
+.qpack__info {
+  display: flex; flex-direction: column; align-items: stretch;
+  gap: 12px; direction: rtl; padding-top: 4px;
+
+  // sold (right) + rating (left)
+  .qpack__status {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .qpack__sold {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 14px; color: #0a1f30; line-height: 1;
+    b { font-family: 'Poppins','GE SS Two',sans-serif; font-weight: 600; }
+    i { font-size: 15px; color: #fd7e14; }
+  }
+  .qpack__review {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 14px; color: #6c757d; line-height: 1;
+    i { font-size: 15px; color: #ffc62a; }
+    .qpack__rate b { font-family: 'Poppins','GE SS Two',sans-serif; font-weight: 600; color: #1fc16b; }
+    .qpack__rate-count { color: #a5a5a5; font-size: 12px; }
+  }
+
+  .qpack__cat { font-size: 14px; font-weight: 300; color: #91e6f7; line-height: 1; }
+  .qpack__name {
+    font-size: 20px; font-weight: 600; color: #0a1f30; line-height: 1.35; text-align: right;
     &:hover { color: #30378e; }
   }
-  &__sold {
-    flex: 0 0 auto; white-space: nowrap;
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 14px; font-weight: 500; color: #0a1f30; line-height: 1;
-    b { font-family: 'Poppins','GE SS Two',sans-serif; font-weight: 500; color: #30378e; }
-    i { font-size: 13px; color: #fd7e14; }
+
+  .qpack__price { display: flex; align-items: baseline; justify-content: flex-end; gap: 8px; }
+  .qpack__price-now {
+    font-family: 'Poppins','GE SS Two',sans-serif; font-size: 20px; font-weight: 600; color: #30378e; line-height: 1.4;
+  }
+  .qpack__price-old {
+    font-family: 'Poppins','GE SS Two',sans-serif; font-size: 15px; font-weight: 400; color: #a5a5a5;
+    text-decoration: line-through; line-height: 1.4;
   }
 
-  // price (sale on the right, struck original to its left)
-  &__price {
-    display: flex; align-items: baseline; justify-content: flex-end; gap: 7px;
-  }
-  &__price-now {
-    font-family: 'Poppins','GE SS Two',sans-serif;
-    font-size: 16px; font-weight: 600; color: #30378e; line-height: 1.6;
-  }
-  &__price-old {
-    font-family: 'Poppins','GE SS Two',sans-serif;
-    font-size: 15px; font-weight: 400; color: #a5a5a5; text-decoration: line-through; line-height: 1.6;
-  }
-
-  // spec chips (blue/50 bg) — right-aligned
-  &__chips { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px; }
-  &__chip {
+  // spec chips (blue/50), right-aligned
+  .qpack__tags { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
+  .qpack__tag {
     display: inline-flex; align-items: center; justify-content: center;
-    padding: 3px 10px; background: #e8fcff; color: #30378e; border-radius: 5px;
+    padding: 4px 12px; background: #e8fcff; color: #30378e; border-radius: 6px;
     font-family: 'Poppins','GE SS Two',sans-serif; font-size: 14px; font-weight: 300; white-space: nowrap;
   }
 
-  // ---- actions: quantity stepper (right) + add-to-cart (left) ----
-  &__actions {
-    display: flex; flex-direction: row; gap: 12px; align-items: stretch; margin-top: 8px;
-  }
-  &__qty {
-    flex: 0 0 auto;
+  // actions: quantity (right) + add-to-cart fills (left)
+  .qpack__actions { display: flex; flex-direction: row; gap: 12px; align-items: stretch; margin-top: 6px; }
+  .qpack__qty {
+    flex: 0 0 auto; direction: ltr;                 // reads [−] 1 [+]
     display: inline-flex; align-items: center; justify-content: center; gap: 14px;
-    padding: 0 12px; min-height: 44px;
-    background: #fff; border: 1px solid #e9ecef; border-radius: 8px;
+    padding: 0 12px; min-height: 52px;
+    background: #fff; border: 1px solid #e9ecef; border-radius: 10px;
   }
-  &__qnum {
-    font-family: 'Poppins','GE SS Two',sans-serif; font-size: 14px; font-weight: 500;
+  .qpack__qnum {
+    font-family: 'Poppins','GE SS Two',sans-serif; font-size: 15px; font-weight: 600;
     color: #30378e; min-width: 18px; text-align: center;
   }
-  // CSS-drawn +/- so no icon-font dependency (matches the thin Figma glyphs)
-  &__q {
-    position: relative; flex: 0 0 auto; width: 16px; align-self: stretch;
+  .qpack__q {
+    position: relative; flex: 0 0 auto; width: 18px; align-self: stretch;
     background: none; border: 0; padding: 0; cursor: pointer;
     -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none;
-    &::before {                          // horizontal bar (both − and +)
+    &::before {
       content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       width: 12px; height: 2px; border-radius: 2px; background: #0a1f30;
     }
-    &--plus::after {                     // vertical bar (only +)
+    &--plus::after {
       content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
       width: 2px; height: 12px; border-radius: 2px; background: #0a1f30;
     }
   }
-  &__add {
-    flex: 1 1 auto; min-width: 0; min-height: 44px;
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    background: #30378e; border: 1px solid #30378e; color: #fff; border-radius: 9px;
-    font-family: 'GE SS Two',sans-serif; font-size: 14px; font-weight: 500; cursor: pointer;
+  .qpack__add {
+    flex: 1 1 auto; min-width: 0; min-height: 52px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: #30378e; border: 1px solid #30378e; color: #fff; border-radius: 12px;
+    font-family: 'GE SS Two',sans-serif; font-size: 16px; font-weight: 500; cursor: pointer;
     -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none;
     transition: background-color .2s ease, color .2s ease, border-color .2s ease;
-    i { font-size: 14px; }
-    @media (hover: hover) {
-      &:hover { background: #91e6f7; border-color: #91e6f7; color: #30378e; }
-    }
+    i { font-size: 16px; }
+    @media (hover: hover) { &:hover { background: #91e6f7; border-color: #91e6f7; color: #30378e; } }
   }
-}
-
-// ---- tablet (769–1280) ----
-@media (min-width: 769px) and (max-width: 1280px) {
-  .qpack .container { padding-inline: 40px; }
-  .qpack-card { flex-basis: 400px; max-width: 400px; }
 }
 
 // ---- mobile (<=768) ----
 @media (max-width: 768px) {
   .qpack { padding-block: 8px; }
   .qpack .container { padding-inline: 15px; }
-  .qpack__head { margin-bottom: 20px; }
+  .qpack__head { margin-bottom: 18px; }
   .qpack__title { font-size: 24px; line-height: 30px; }
   .qpack__subtitle { font-size: 14px; line-height: 20px; }
 
-  .qpack__track { gap: 14px; }
-  .qpack-card {
-    flex-basis: 86%; max-width: 340px; padding: 14px; border-radius: 18px;
-  }
-  .qpack-card__body { gap: 8px; padding-block: 14px 0; }
-  .qpack-card__name { font-size: 14px; }
-  .qpack-card__sold { font-size: 12px; }
+  .qpack__card { border-radius: 20px; padding: 14px; }
+  .qpack__ticker { margin-inline: -14px; }
+  .qpack__slide { aspect-ratio: 1 / 1; }
+  .qpack__thumb { width: 54px; height: 54px; }
+
+  .qpack__info .qpack__name { font-size: 17px; }
+  .qpack__info .qpack__price-now { font-size: 18px; }
+  .qpack__info .qpack__add { font-size: 14px; min-height: 48px; }
+  .qpack__info .qpack__qty { min-height: 48px; }
 }
