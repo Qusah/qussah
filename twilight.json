@@ -831,6 +831,54 @@
             ]
         },
         {
+            "key": "45b43c1d-de31-40aa-ba2f-a7efb80f23d1",
+            "title": {
+                "en": "Qissa Package",
+                "ar": "البكج الشامل"
+            },
+            "icon": "sicon-box-bankers",
+            "path": "home.qissa-package",
+            "fields": [
+                {
+                    "id": "heading",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Title",
+                        "ar": "العنوان"
+                    },
+                    "value": "البكج الشامل"
+                },
+                {
+                    "id": "subheading",
+                    "type": "string",
+                    "format": "textarea",
+                    "label": {
+                        "en": "Subtitle",
+                        "ar": "النص الفرعي"
+                    },
+                    "value": "مجموعة قصة الشاملة لتوفير أكبر"
+                },
+                {
+                    "id": "products",
+                    "type": "items",
+                    "icon": "sicon-keyboard_arrow_down",
+                    "label": "المنتجات",
+                    "format": "dropdown-list",
+                    "description": null,
+                    "selected": [],
+                    "options": [],
+                    "required": true,
+                    "multichoice": true,
+                    "source": "products",
+                    "searchable": true,
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "value": []
+                }
+            ]
+        },
+        {
             "key": "5fdf1f78-22c1-4eef-9180-48c976f4f553",
             "title": {
                 "en": "All Qusah Products",

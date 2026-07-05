@@ -1,0 +1,204 @@
+{#
+| Variable             | Type      | Description                                     |
+|----------------------|-----------|-------------------------------------------------|
+| component            | object    | merchant settings from twilight.json            |
+| component.heading    | string    | section title (e.g. "البكج الشامل")             |
+| component.subheading | string    | section subtitle                                |
+| component.products   | Product[] | merchant-selected package products              |
+| position             | int       | sorting block                                   |
+
+"البكج الشامل" — a centered title + a brave-style horizontal slider (drag to
+scroll + arrows + snap) of large package product cards. Each card shows the
+product image (discount badge + best-seller ribbon), the name + sold count,
+sale/original price, spec chips (product.subtitle split on the Arabic comma),
+a quantity stepper and an add-to-cart button. All data is dynamic Salla data.
+#}
+<section class="s-block qpack" id="qpack-{{ position }}">
+    <div class="container">
+
+        {# centered heading #}
+        <div class="qpack__head">
+            {% if component.heading %}<h2 class="qpack__title">{{ component.heading }}</h2>{% endif %}
+            {% if component.subheading %}<p class="qpack__subtitle">{{ component.subheading }}</p>{% endif %}
+        </div>
+
+        {# slider #}
+        <div class="qpack__slider" data-qpack>
+            <div class="qpack__track" data-qpack-track>
+                {% for product in component.products %}
+                    <article class="qpack-card">
+
+                        {# media: product image + discount badge + best-seller ribbon.
+                           The "خصم X%" label is computed in JS from the prices below
+                           (falls back to the promotion title / "تخفيض" if it can't). #}
+                        <a class="qpack-card__media" href="{{ product.url }}">
+                            {% if product.is_on_sale %}
+                                <span class="qpack-card__badge" data-qpack-badge
+                                      data-regular="{{ product.regular_price }}" data-sale="{{ product.sale_price }}">{{ product.promotion_title|default(trans('blocks.qissa.sale')) }}</span>
+                            {% endif %}
+                            <img class="qpack-card__img" src="{{ product.image.url|default(product.images[0].url) }}" alt="{{ product.name }}" loading="lazy"/>
+                            <span class="qpack-card__ribbon" aria-hidden="true">
+                                {% for i in 1..12 %}<span class="qpack-card__ribbon-item"><i class="sicon-star"></i>الأكثر مبيعاً</span>{% endfor %}
+                            </span>
+                        </a>
+
+                        {# body #}
+                        <div class="qpack-card__body">
+
+                            {# name (right) + sold count (left) #}
+                            <div class="qpack-card__row">
+                                <a class="qpack-card__name" href="{{ product.url }}">{{ product.name }}</a>
+                                {% if product.sold_quantity %}
+                                    <span class="qpack-card__sold">
+                                        <i class="sicon-fire"></i>
+                                        تم شراءه <b>{{ product.sold_quantity }}</b> مرة
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            {# price #}
+                            <div class="qpack-card__price">
+                                {% if product.is_on_sale %}
+                                    <b class="qpack-card__price-now">{{ product.sale_price|money }}</b>
+                                    <s class="qpack-card__price-old">{{ product.regular_price|money }}</s>
+                                {% else %}
+                                    <b class="qpack-card__price-now">{{ product.price|money }}</b>
+                                {% endif %}
+                            </div>
+
+                            {# spec chips — built from product.subtitle, split on the Arabic comma "،" #}
+                            {% if product.subtitle %}
+                                <div class="qpack-card__chips" data-qpack-chips="{{ product.subtitle }}"></div>
+                            {% endif %}
+
+                            {# quantity stepper (right) + add-to-cart (left) #}
+                            <div class="qpack-card__actions">
+                                <div class="qpack-card__qty" data-qpack-qty>
+                                    <button type="button" class="qpack-card__q qpack-card__q--minus" data-qpack-dec aria-label="إنقاص الكمية"></button>
+                                    <span class="qpack-card__qnum" data-qpack-num>1</span>
+                                    <button type="button" class="qpack-card__q qpack-card__q--plus" data-qpack-inc aria-label="زيادة الكمية"></button>
+                                </div>
+                                <button type="button" class="qpack-card__add" data-qpack-add data-id="{{ product.id }}">
+                                    <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
+                                    <i class="sicon-shopping-bag"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+
+            {# nav arrows — shown only when the track overflows. RTL: left arrow advances. #}
+            <div class="qpack__nav" data-qpack-nav hidden>
+                <button type="button" class="qpack__nav-btn is-primary" data-qpack-fwd aria-label="التالي"><i class="sicon-arrow-left"></i></button>
+                <button type="button" class="qpack__nav-btn" data-qpack-back aria-label="السابق"><i class="sicon-arrow-right"></i></button>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script>
+(function () {
+  document.querySelectorAll('.qpack').forEach(function (sec) {
+    var track = sec.querySelector('[data-qpack-track]');
+    if (!track) { return; }
+
+    // discount badge: show "خصم X%" when the prices give a clean percentage,
+    // otherwise keep the server-rendered fallback (promotion title / "تخفيض").
+    sec.querySelectorAll('[data-qpack-badge]').forEach(function (badge) {
+      var reg = parseFloat(badge.getAttribute('data-regular'));
+      var sale = parseFloat(badge.getAttribute('data-sale'));
+      if (reg > 0 && sale >= 0 && sale < reg) {
+        badge.textContent = 'خصم ' + Math.floor((1 - sale / reg) * 100) + '%';
+      }
+    });
+
+    // spec chips: split each product's subtitle on the Arabic comma "،"
+    sec.querySelectorAll('[data-qpack-chips]').forEach(function (box) {
+      (box.getAttribute('data-qpack-chips') || '').split('،').forEach(function (part) {
+        var t = part.trim();
+        if (!t) { return; }
+        var chip = document.createElement('span');
+        chip.className = 'qpack-card__chip';
+        chip.textContent = t;
+        box.appendChild(chip);
+      });
+    });
+
+    // quantity steppers (min 1)
+    sec.querySelectorAll('[data-qpack-qty]').forEach(function (qty) {
+      var num = qty.querySelector('[data-qpack-num]');
+      var get = function () { return Math.max(1, parseInt(num.textContent, 10) || 1); };
+      var dec = qty.querySelector('[data-qpack-dec]');
+      var inc = qty.querySelector('[data-qpack-inc]');
+      if (dec) { dec.addEventListener('click', function () { num.textContent = Math.max(1, get() - 1); }); }
+      if (inc) { inc.addEventListener('click', function () { num.textContent = get() + 1; }); }
+    });
+
+    // add to cart using the card's chosen quantity
+    sec.querySelectorAll('[data-qpack-add]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-id');
+        var card = btn.closest('.qpack-card');
+        var numEl = card ? card.querySelector('[data-qpack-num]') : null;
+        var q = numEl ? Math.max(1, parseInt(numEl.textContent, 10) || 1) : 1;
+        if (window.salla && salla.cart) { salla.cart.addItem({ id: id, quantity: q }); }
+      });
+    });
+
+    // slider — arrows + drag; center the cards when they all fit
+    var nav  = sec.querySelector('[data-qpack-nav]');
+    var fwd  = sec.querySelector('[data-qpack-fwd]');   // left arrow → next (RTL)
+    var back = sec.querySelector('[data-qpack-back]');  // right arrow → previous
+    var cards = Array.prototype.slice.call(track.querySelectorAll('.qpack-card'));
+
+    function overflowing() { return track.scrollWidth - track.clientWidth > 2; }
+    function refresh() {
+      var ov = overflowing();
+      track.classList.toggle('is-centered', !ov);
+      if (nav) { nav.hidden = !ov; }
+    }
+    refresh();
+    window.addEventListener('resize', refresh, { passive: true });
+    window.addEventListener('load', refresh);
+
+    // which card is currently centered (physical coords → RTL-safe)
+    function current() {
+      var r = track.getBoundingClientRect(), mid = r.left + r.width / 2, best = 0, bd = Infinity;
+      cards.forEach(function (c, i) {
+        var cr = c.getBoundingClientRect(), cc = cr.left + cr.width / 2, d = Math.abs(cc - mid);
+        if (d < bd) { bd = d; best = i; }
+      });
+      return best;
+    }
+    function go(i) {
+      i = Math.max(0, Math.min(cards.length - 1, i));
+      cards[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+    if (fwd)  { fwd.addEventListener('click', function () { go(current() + 1); }); }
+    if (back) { back.addEventListener('click', function () { go(current() - 1); }); }
+
+    // brave-style drag-to-scroll (pointer devices)
+    var down = false, sx = 0, sl = 0, moved = false;
+    track.addEventListener('mousedown', function (e) {
+      down = true; moved = false; sx = e.pageX; sl = track.scrollLeft;
+      track.classList.add('is-grabbing');
+    });
+    track.addEventListener('mousemove', function (e) {
+      if (!down) { return; }
+      var dx = e.pageX - sx;
+      if (Math.abs(dx) > 3) { moved = true; }
+      track.scrollLeft = sl - dx;
+    });
+    var end = function () { down = false; track.classList.remove('is-grabbing'); };
+    track.addEventListener('mouseup', end);
+    track.addEventListener('mouseleave', end);
+    // swallow the click that ends a drag so it doesn't follow the card link
+    track.addEventListener('click', function (e) {
+      if (moved) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+  });
+})();
+</script>
