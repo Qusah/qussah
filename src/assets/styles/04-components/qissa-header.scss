@@ -20,6 +20,7 @@ body, main, #app { background: transparent; }
   > .container:last-of-type {
     position: relative;
     z-index: 50;
+    transition: padding .5s ease;   // eases to full-bleed when pinned
   }
 
   // ---- top bar ----
@@ -138,9 +139,12 @@ body, main, #app { background: transparent; }
 .qheader-space { height: 0; transition: height .5s ease; }
 
 .qheader.is-stuck {
+  // pinned bar breaks out to the full viewport width and goes flat (no radius)
+  > .container:last-of-type { padding-inline: 0; }
   // desktop compaction: 90px → 76px (delta 14px, matched by the spacer below)
   .qheader-nav {
     height: 76px;
+    border-radius: 0;
     box-shadow: 0 6px 22px rgba(10, 31, 48, .18);
   }
   .qheader-logo img { width: 84px; }
