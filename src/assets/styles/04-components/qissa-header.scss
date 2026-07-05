@@ -8,7 +8,7 @@ body, main, #app { background: transparent; }
   font-family: 'GE SS Two', sans-serif;
   color: #fff;
   padding-top: 40px;   // push the whole header (top bar + nav) down from the page top
-  transition: background-color .25s ease, box-shadow .25s ease;
+  transition: background-color .5s ease, box-shadow .5s ease;
 
   // full-bleed edges aligned to the hero (hero = margin 0 50px, no max-width)
   .container { max-width: none; margin-inline: auto; padding-inline: 50px; }
@@ -123,11 +123,29 @@ body, main, #app { background: transparent; }
   }
 }
 
-// ---- pinned/sticky state on scroll ----
+// ---- pinned/sticky state on scroll (brave-shop behaviour, navy design) ----
 // JS (header.twig) pulls the header up by the utility-bar height so that bar
 // scrolls off and only the nav stays pinned; .is-stuck is added once it locks.
-.qheader-nav { transition: background-color .25s ease; }
-.qheader.is-stuck { box-shadow: 0 6px 22px rgba(10, 31, 48, .18); }
+// On pin the navy bar eases (0.5s) into a slightly more compact bar and a
+// spacer grows by the exact height lost, so the page content never jumps.
+.qheader-nav {
+  transition: height .5s ease, padding .5s ease, background-color .5s ease,
+              box-shadow .5s ease, border-radius .5s ease;
+}
+.qheader-logo img { transition: width .5s ease, filter .5s ease; }
+
+// compensating spacer — 0 at rest, grows to the compaction delta when pinned
+.qheader-space { height: 0; transition: height .5s ease; }
+
+.qheader.is-stuck {
+  // desktop compaction: 90px → 76px (delta 14px, matched by the spacer below)
+  .qheader-nav {
+    height: 76px;
+    box-shadow: 0 6px 22px rgba(10, 31, 48, .18);
+  }
+  .qheader-logo img { width: 84px; }
+  & + .qheader-space { height: 14px; }
+}
 
 // ---- SOLID variant (all pages, home included) ----
 // Navy rounded nav bar with a bottom margin. Same on the homepage now —
@@ -210,6 +228,12 @@ body, main, #app { background: transparent; }
   }
 
   .qheader--solid > .container:last-of-type { margin-bottom: 0; }
+
+  // mobile/tablet compaction: 70px → 62px (delta 8px). Override min-height so
+  // the bar can actually shrink, and match the spacer to the 8px delta.
+  .qheader.is-stuck .qheader-nav { height: 62px; min-height: 62px; }
+  .qheader.is-stuck .qheader-logo img { width: 68px; }
+  .qheader.is-stuck + .qheader-space { height: 8px; }
 }
 
 // very small phones - keep the controls compact without changing layout.
