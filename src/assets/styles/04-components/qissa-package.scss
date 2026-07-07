@@ -114,6 +114,7 @@
   &__ticker {
     margin: 18px -20px;                 // full-bleed across the card padding
     overflow: hidden; background: #1fc16b;
+    direction: ltr;                     // left-anchor the track (RTL parent anchors max-content off-screen → gaps)
   }
   &__ticker-track {
     display: flex; width: max-content;
@@ -121,6 +122,7 @@
   }
   &__ticker-group { display: flex; flex: 0 0 auto; }
   &__ticker-item {
+    direction: rtl;                                        // keep the star on the right of the Arabic text
     display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px;
     color: #e9f9f0; font-size: 13px; font-weight: 500; line-height: 1; white-space: nowrap;
     i { font-size: 12px; color: #e9f9f0; }
