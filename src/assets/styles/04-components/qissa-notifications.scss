@@ -1,0 +1,37 @@
+// ====================================================================
+// Qissa Notifications — custom empty state for the account notifications
+// page. Salla's <salla-notifications> renders its own .s-notifications-no-content
+// placeholder when empty; the page JS hides that and shows .qnotify-empty.
+// Styling matches the theme's cart/listing empty state (design system).
+// ====================================================================
+
+.qnotify-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; width: 100%; padding: 56px 20px; min-height: 360px;
+  font-family: 'GE SS Two', sans-serif;
+
+  &[hidden] { display: none; }
+
+  &__icon {
+    display: inline-flex; margin-bottom: 24px;
+    svg { width: 135px; height: 135px; }
+  }
+  &__title { font-size: 30px; font-weight: 600; color: #0a1f30; margin: 0 0 8px; }
+  &__sub   { font-size: 16px; font-weight: 300; color: #6c757d; margin: 0 0 24px; max-width: 420px; }
+  &__btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 48px; padding: 0 32px; border-radius: 999px;
+    background: #30378e; color: #fff; font-size: 16px; font-weight: 600;
+    transition: background .2s ease, transform .15s ease;
+    &:hover  { background: #262c72; color: #fff; }
+    &:active { transform: scale(.98); }
+  }
+}
+
+@media (max-width: 768px) {
+  .qnotify-empty          { padding: 40px 16px; min-height: 300px; }
+  .qnotify-empty__icon svg { width: 110px; height: 110px; }
+  .qnotify-empty__title    { font-size: 24px; }
+  .qnotify-empty__sub      { font-size: 14px; }
+  .qnotify-empty__btn      { height: 44px; padding: 0 26px; font-size: 15px; }
+}

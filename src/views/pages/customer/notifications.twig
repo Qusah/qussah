@@ -17,7 +17,36 @@
 {% block inner_content %}
 	{% hook 'customer:notifications.items.start' %}
 
-	<salla-notifications></salla-notifications>
+	<div class="qnotify">
+		<salla-notifications></salla-notifications>
+
+		{# Custom empty state — shown when Salla renders its .s-notifications-no-content
+		   placeholder (see the JS below). Matches the theme's cart/listing empty state. #}
+		<div class="qnotify-empty" data-qnotify-empty hidden>
+			<span class="qnotify-empty__icon">{% include 'components.partials.empty-notifications' %}</span>
+			<h2 class="qnotify-empty__title">{{ trans('blocks.header.no_notifications') }}</h2>
+			<p class="qnotify-empty__sub">ستصلك هنا كل التحديثات عن طلباتك وأحدث العروض.</p>
+			<a href="{{ link('/') }}" class="qnotify-empty__btn">{{ trans('common.elements.back_home') }}</a>
+		</div>
+	</div>
 
 	{% hook 'customer:notifications.items.end' %}
+
+	<script>
+	(function () {
+		var host = document.querySelector('.qnotify salla-notifications');
+		var custom = document.querySelector('.qnotify [data-qnotify-empty]');
+		if (!host || !custom) { return; }
+		var root = host.shadowRoot || host;
+		function sync() {
+			var placeholder = root.querySelector('.s-notifications-no-content');
+			if (placeholder) { placeholder.style.display = 'none'; custom.hidden = false; }
+			else if (root.querySelector('.s-notifications-wrapper')) { custom.hidden = true; }
+		}
+		try { new MutationObserver(sync).observe(root, { childList: true, subtree: true }); } catch (e) {}
+		sync();
+		setTimeout(sync, 500);
+		setTimeout(sync, 1500);
+	})();
+	</script>
 {% endblock %}
