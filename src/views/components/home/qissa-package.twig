@@ -176,13 +176,15 @@ with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
     if (main) {
       var slides = Array.prototype.slice.call(main.querySelectorAll('.qpack__slide'));
       var thumbBtns = thumbs ? Array.prototype.slice.call(thumbs.querySelectorAll('.qpack__thumb')) : [];
-      var idx = 0;
+      var idx = 0, lock = false, lockT, settleT, raf;
 
       // center an element within its OWN scroll container (RTL-safe, no page jump)
       var centerIn = function (container, el) {
         if (!container || !el) { return; }
         var cr = container.getBoundingClientRect(), er = el.getBoundingClientRect();
-        container.scrollBy({ left: (er.left + er.width / 2) - (cr.left + cr.width / 2), behavior: 'smooth' });
+        var delta = (er.left + er.width / 2) - (cr.left + cr.width / 2);
+        if (Math.abs(delta) < 2) { return; }                 // already centered → don't nudge (avoids jitter)
+        container.scrollBy({ left: delta, behavior: 'smooth' });
       };
       var setActive = function (i) {
         thumbBtns.forEach(function (b, k) { b.classList.toggle('is-active', k === i); });
@@ -198,9 +200,11 @@ with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
       };
       var go = function (i) {
         idx = Math.max(0, Math.min(slides.length - 1, i));
+        lock = true;                        // ignore the scroll events our own animation fires
         centerIn(main, slides[idx]);        // move the main image
-        centerIn(thumbs, thumbBtns[idx]);   // bring the matching thumb into view
-        setActive(idx);                     // highlight it
+        centerIn(thumbs, thumbBtns[idx]);   // bring the matching thumb into view (once)
+        setActive(idx);
+        clearTimeout(lockT); lockT = setTimeout(function () { lock = false; }, 450);
       };
 
       thumbBtns.forEach(function (btn, i) { btn.addEventListener('click', function () { go(i); }); });
@@ -209,11 +213,18 @@ with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
       if (next) { next.addEventListener('click', function () { go(idx + 1); }); }
       if (prev) { prev.addEventListener('click', function () { go(idx - 1); }); }
 
-      // manual swipe/scroll of the main image → keep idx + active thumb in sync
-      var raf;
+      // user swipe/drag of the main image → highlight live, but re-center the thumb
+      // only AFTER scrolling settles (debounced), and never during our own animation
       main.addEventListener('scroll', function () {
         if (raf) { cancelAnimationFrame(raf); }
-        raf = requestAnimationFrame(function () { idx = current(); setActive(idx); centerIn(thumbs, thumbBtns[idx]); });
+        raf = requestAnimationFrame(function () {
+          var i = current();
+          setActive(i);
+          if (lock) { return; }
+          idx = i;
+          clearTimeout(settleT);
+          settleT = setTimeout(function () { centerIn(thumbs, thumbBtns[idx]); }, 140);
+        });
       }, { passive: true });
 
       // brave-style drag-to-scroll on the main image (pointer devices)

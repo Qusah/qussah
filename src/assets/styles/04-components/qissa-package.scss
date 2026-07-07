@@ -97,11 +97,10 @@
   &__thumbs {
     display: flex; gap: 12px; margin-top: 14px;
     overflow-x: auto; scrollbar-width: none; padding-block: 2px;
-    scroll-snap-type: x proximity;
     &::-webkit-scrollbar { display: none; }
   }
   &__thumb {
-    flex: 0 0 30%; aspect-ratio: 4 / 3; padding: 0; scroll-snap-align: start;
+    flex: 0 0 30%; aspect-ratio: 4 / 3; padding: 0;
     border-radius: 16px; overflow: hidden; cursor: pointer;
     background: #fff9ec; border: 1px solid #eef1f6;
     -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none;
