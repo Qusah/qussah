@@ -30,33 +30,39 @@ with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
 
             {# ---- image gallery ---- #}
             <div class="qpack__gallery">
+                <div class="qpack__stage">
+                    {% if product.is_on_sale %}
+                        <span class="qpack__badge" data-qpack-badge
+                              data-regular="{{ product.regular_price }}" data-sale="{{ product.sale_price }}">{{ product.promotion_title|default(trans('blocks.qissa.sale')) }}</span>
+                    {% endif %}
 
-                {% if product.is_on_sale %}
-                    <span class="qpack__badge" data-qpack-badge
-                          data-regular="{{ product.regular_price }}" data-sale="{{ product.sale_price }}">{{ product.promotion_title|default(trans('blocks.qissa.sale')) }}</span>
-                {% endif %}
+                    <button type="button" class="qpack__wish" data-id="{{ product.id }}"
+                            onclick="salla.wishlist.toggle('{{ product.id }}')" aria-label="{{ trans('blocks.qissa.wishlist') }}">
+                        <i class="sicon-heart"></i>
+                    </button>
 
-                <button type="button" class="qpack__wish" data-id="{{ product.id }}"
-                        onclick="salla.wishlist.toggle('{{ product.id }}')" aria-label="{{ trans('blocks.qissa.wishlist') }}">
-                    <i class="sicon-heart"></i>
-                </button>
-
-                {# main image slider (swipeable) #}
-                <div class="qpack__main" data-qpack-main>
-                    {% if images|length %}
-                        {% for img in images %}
-                            <a class="qpack__slide" href="{{ product.url }}" data-qpack-slide="{{ loop.index0 }}">
-                                <img src="{{ img.url }}" alt="{{ img.alt|default(product.name) }}" loading="lazy"/>
+                    {# main image slider (swipeable) #}
+                    <div class="qpack__main" data-qpack-main>
+                        {% if images|length %}
+                            {% for img in images %}
+                                <a class="qpack__slide" href="{{ product.url }}" data-qpack-slide="{{ loop.index0 }}">
+                                    <img src="{{ img.url }}" alt="{{ img.alt|default(product.name) }}" loading="lazy"/>
+                                </a>
+                            {% endfor %}
+                        {% else %}
+                            <a class="qpack__slide" href="{{ product.url }}" data-qpack-slide="0">
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy"/>
                             </a>
-                        {% endfor %}
-                    {% else %}
-                        <a class="qpack__slide" href="{{ product.url }}" data-qpack-slide="0">
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy"/>
-                        </a>
+                        {% endif %}
+                    </div>
+
+                    {% if images|length > 1 %}
+                        <button type="button" class="qpack__arrow qpack__arrow--next" data-qpack-next aria-label="التالي"><i class="sicon-arrow-left"></i></button>
+                        <button type="button" class="qpack__arrow qpack__arrow--prev" data-qpack-prev aria-label="السابق"><i class="sicon-arrow-right"></i></button>
                     {% endif %}
                 </div>
 
-                {# thumbnails #}
+                {# thumbnails — brave-style cards #}
                 {% if images|length > 1 %}
                     <div class="qpack__thumbs" data-qpack-thumbs>
                         {% for img in images %}
@@ -175,25 +181,32 @@ with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
       var setActive = function (i) {
         thumbBtns.forEach(function (b, k) { b.classList.toggle('is-active', k === i); });
       };
-      // thumb click → bring that image into view
-      thumbBtns.forEach(function (btn, i) {
-        btn.addEventListener('click', function () {
-          if (slides[i]) { slides[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); }
-          setActive(i);
+      // index of the image currently centered in the main viewport (RTL-safe)
+      var current = function () {
+        var r = main.getBoundingClientRect(), mid = r.left + r.width / 2, best = 0, bd = Infinity;
+        slides.forEach(function (s, k) {
+          var sr = s.getBoundingClientRect(), c = sr.left + sr.width / 2, d = Math.abs(c - mid);
+          if (d < bd) { bd = d; best = k; }
         });
-      });
+        return best;
+      };
+      var go = function (i) {
+        i = Math.max(0, Math.min(slides.length - 1, i));
+        if (slides[i]) { slides[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); }
+        setActive(i);
+      };
+      // thumb click → bring that image into view
+      thumbBtns.forEach(function (btn, i) { btn.addEventListener('click', function () { go(i); }); });
+      // overlay arrows (RTL: next = arrow-left = higher index)
+      var prev = card.querySelector('[data-qpack-prev]');
+      var next = card.querySelector('[data-qpack-next]');
+      if (next) { next.addEventListener('click', function () { go(current() + 1); }); }
+      if (prev) { prev.addEventListener('click', function () { go(current() - 1); }); }
       // main scroll → highlight the centered image's thumb
       var raf;
       main.addEventListener('scroll', function () {
         if (raf) { cancelAnimationFrame(raf); }
-        raf = requestAnimationFrame(function () {
-          var r = main.getBoundingClientRect(), mid = r.left + r.width / 2, best = 0, bd = Infinity;
-          slides.forEach(function (s, k) {
-            var sr = s.getBoundingClientRect(), c = sr.left + sr.width / 2, d = Math.abs(c - mid);
-            if (d < bd) { bd = d; best = k; }
-          });
-          setActive(best);
-        });
+        raf = requestAnimationFrame(function () { setActive(current()); });
       }, { passive: true });
 
       // brave-style drag-to-scroll on the main image (pointer devices)

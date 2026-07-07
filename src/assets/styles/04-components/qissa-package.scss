@@ -36,6 +36,21 @@
 
   // ---- gallery ----
   &__gallery { position: relative; }
+  &__stage { position: relative; }
+  // overlay prev/next arrows on the main image (brave-style)
+  &__arrow {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255, 255, 255, .94); border: 1px solid #eef1f6; color: #30378e; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(10, 31, 48, .12);
+    -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+    i { font-size: 15px; }
+    &--prev { right: 12px; }
+    &--next { left: 12px; }
+    @media (hover: hover) { &:hover { background: #30378e; border-color: #30378e; color: #fff; } }
+  }
 
   // discount badge — red tag, top-left, right-pointing tail
   &__badge {
@@ -78,20 +93,21 @@
     img { width: 100%; height: 100%; object-fit: contain; display: block; }
   }
 
-  // thumbnail strip
+  // thumbnail strip — brave-style cards (peek + horizontal scroll)
   &__thumbs {
-    display: flex; gap: 10px; margin-top: 12px;
+    display: flex; gap: 12px; margin-top: 14px;
     overflow-x: auto; scrollbar-width: none; padding-block: 2px;
+    scroll-snap-type: x proximity;
     &::-webkit-scrollbar { display: none; }
   }
   &__thumb {
-    flex: 0 0 auto; width: 64px; height: 64px; padding: 0;
-    border-radius: 12px; overflow: hidden; cursor: pointer;
-    background: #fff9ec; border: 2px solid transparent;
+    flex: 0 0 30%; aspect-ratio: 4 / 3; padding: 0; scroll-snap-align: start;
+    border-radius: 16px; overflow: hidden; cursor: pointer;
+    background: #fff9ec; border: 1px solid #eef1f6;
     -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none;
-    transition: border-color .2s ease;
+    transition: border-color .2s ease, box-shadow .2s ease;
     img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    &.is-active { border-color: #30378e; }
+    &.is-active { border: 2px solid #30378e; box-shadow: 0 6px 16px rgba(48, 55, 142, .14); }
   }
 
   // ---- best-seller marquee ----
@@ -165,13 +181,14 @@
   .qpack__actions { display: flex; flex-direction: row; gap: 12px; align-items: stretch; margin-top: 6px; }
   .qpack__qty {
     flex: 0 0 auto; direction: ltr;                 // reads [−] 1 [+]
-    display: inline-flex; align-items: center; justify-content: center; gap: 14px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 12px;
     padding: 0 12px; min-height: 52px;
     background: #fff; border: 1px solid #e9ecef; border-radius: 10px;
   }
   .qpack__qnum {
     font-family: 'Poppins','GE SS Two',sans-serif; font-size: 15px; font-weight: 600;
-    color: #30378e; min-width: 18px; text-align: center;
+    color: #30378e; min-width: 22px; text-align: center;
+    padding-inline: 12px; border-inline: 1px solid #e9ecef;   // Figma: │ 1 │ divider lines
   }
   .qpack__q {
     position: relative; flex: 0 0 auto; width: 18px; align-self: stretch;
@@ -209,7 +226,8 @@
   .qpack__card { border-radius: 20px; padding: 14px; }
   .qpack__ticker { margin-inline: -14px; }
   .qpack__slide { aspect-ratio: 1 / 1; }
-  .qpack__thumb { width: 54px; height: 54px; }
+  .qpack__thumb { flex-basis: 42%; }
+  .qpack__arrow { width: 36px; height: 36px; }
 
   .qpack__info .qpack__name { font-size: 17px; }
   .qpack__info .qpack__price-now { font-size: 18px; }
