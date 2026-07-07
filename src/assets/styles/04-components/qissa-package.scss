@@ -117,7 +117,7 @@
   }
   &__ticker-track {
     display: flex; width: max-content;
-    animation: qpack-ticker 22s linear infinite;
+    animation: qpack-ticker 22s linear infinite reverse;   // reverse → scrolls to the RIGHT, seamless & infinite
   }
   &__ticker-group { display: flex; flex: 0 0 auto; }
   &__ticker-item {
