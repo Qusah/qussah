@@ -36,8 +36,7 @@ with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
                               data-regular="{{ product.regular_price }}" data-sale="{{ product.sale_price }}">{{ product.promotion_title|default(trans('blocks.qissa.sale')) }}</span>
                     {% endif %}
 
-                    <button type="button" class="qpack__wish" data-id="{{ product.id }}"
-                            onclick="salla.wishlist.toggle('{{ product.id }}')" aria-label="{{ trans('blocks.qissa.wishlist') }}">
+                    <button type="button" class="qpack__wish" data-qpack-wish data-id="{{ product.id }}" aria-label="{{ trans('blocks.qissa.wishlist') }}">
                         <i class="sicon-heart"></i>
                     </button>
 
@@ -177,7 +176,14 @@ with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
     if (main) {
       var slides = Array.prototype.slice.call(main.querySelectorAll('.qpack__slide'));
       var thumbBtns = thumbs ? Array.prototype.slice.call(thumbs.querySelectorAll('.qpack__thumb')) : [];
+      var idx = 0;
 
+      // center an element within its OWN scroll container (RTL-safe, no page jump)
+      var centerIn = function (container, el) {
+        if (!container || !el) { return; }
+        var cr = container.getBoundingClientRect(), er = el.getBoundingClientRect();
+        container.scrollBy({ left: (er.left + er.width / 2) - (cr.left + cr.width / 2), behavior: 'smooth' });
+      };
       var setActive = function (i) {
         thumbBtns.forEach(function (b, k) { b.classList.toggle('is-active', k === i); });
       };
@@ -191,22 +197,23 @@ with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
         return best;
       };
       var go = function (i) {
-        i = Math.max(0, Math.min(slides.length - 1, i));
-        if (slides[i]) { slides[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); }
-        setActive(i);
+        idx = Math.max(0, Math.min(slides.length - 1, i));
+        centerIn(main, slides[idx]);        // move the main image
+        centerIn(thumbs, thumbBtns[idx]);   // bring the matching thumb into view
+        setActive(idx);                     // highlight it
       };
-      // thumb click → bring that image into view
+
       thumbBtns.forEach(function (btn, i) { btn.addEventListener('click', function () { go(i); }); });
-      // overlay arrows (RTL: next = arrow-left = higher index)
       var prev = card.querySelector('[data-qpack-prev]');
-      var next = card.querySelector('[data-qpack-next]');
-      if (next) { next.addEventListener('click', function () { go(current() + 1); }); }
-      if (prev) { prev.addEventListener('click', function () { go(current() - 1); }); }
-      // main scroll → highlight the centered image's thumb
+      var next = card.querySelector('[data-qpack-next]');   // RTL: next = arrow-left = higher index
+      if (next) { next.addEventListener('click', function () { go(idx + 1); }); }
+      if (prev) { prev.addEventListener('click', function () { go(idx - 1); }); }
+
+      // manual swipe/scroll of the main image → keep idx + active thumb in sync
       var raf;
       main.addEventListener('scroll', function () {
         if (raf) { cancelAnimationFrame(raf); }
-        raf = requestAnimationFrame(function () { setActive(current()); });
+        raf = requestAnimationFrame(function () { idx = current(); setActive(idx); centerIn(thumbs, thumbBtns[idx]); });
       }, { passive: true });
 
       // brave-style drag-to-scroll on the main image (pointer devices)
@@ -217,6 +224,26 @@ with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
       main.addEventListener('mouseup', endDrag);
       main.addEventListener('mouseleave', endDrag);
       main.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+    }
+
+    // wishlist heart — toggle + live state sync (mirrors the theme's wishlist.js)
+    var wish = card.querySelector('[data-qpack-wish]');
+    if (wish) {
+      var pid = wish.getAttribute('data-id');
+      var mark = function (a) { wish.classList.toggle('is-added', !!a); };
+      wish.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (window.salla && salla.wishlist) { salla.wishlist.toggle(pid); }
+      });
+      var syncWish = function () {
+        if (!(window.salla && salla.wishlist)) { return; }
+        try { mark((salla.storage.get('salla::wishlist', []) || []).map(String).indexOf(String(pid)) > -1); } catch (e) {}
+        if (salla.wishlist.event) {
+          salla.wishlist.event.onAdded(function (ev, id) { if (String(id) === String(pid)) { mark(true); } });
+          salla.wishlist.event.onRemoved(function (res, id) { if (String(id) === String(pid)) { mark(false); } });
+        }
+      };
+      if (window.salla && salla.onReady) { salla.onReady(syncWish); } else { document.addEventListener('DOMContentLoaded', syncWish); }
     }
 
     // quantity stepper (min 1)
