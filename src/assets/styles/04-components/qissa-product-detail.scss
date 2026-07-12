@@ -2790,3 +2790,186 @@
 body.qpd-has-sticky {
   padding-bottom: 76px;
 }
+
+// ====================================================================
+// Layout update (wireframe): mirror the page so the GALLERY is on the LEFT
+// and the product INFO on the RIGHT, and pull the customer reviews out of
+// the bottom tabs to sit directly UNDER the gallery in one left column.
+// Appended last so these win over the earlier column/order rules.
+//
+// Breakpoints follow the row's actual direction seam (Tailwind md = 768px:
+// .qpd__row is a column ≤767 and a row ≥768) rather than the file's usual
+// 769/768 split — that keeps iPad-portrait (exactly 768px) from breaking.
+//   ≥768:  row = [ .qpd__left (gallery → reviews) | .qpd__info ]
+//   ≤767:  .qpd__left unwraps → stack is gallery → info (buy box) → reviews
+// ====================================================================
+@media (min-width: 768px) {
+  .qpd {
+    &__row {
+      align-items: flex-start;
+    }
+
+    // LEFT column: gallery stacked over the reviews
+    &__left {
+      order: 1; // LEFT
+      width: 50%;
+      flex: 0 0 50%;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+    &__left .qpd__gallery {
+      order: 0; // gallery on top of the reviews
+      width: 100% !important; // fill the left column (override the old 50%)
+      flex: 0 0 auto;
+      margin: 0 !important;
+      position: static !important; // no longer sticky — it scrolls with the reviews
+      top: auto !important;
+    }
+    &__left .qpd__reviews {
+      order: 1; // reviews beneath the gallery
+      width: 100%;
+    }
+
+    // RIGHT column: info stays sticky so it follows the long reviews list
+    &__info {
+      order: 2; // RIGHT
+      width: 50%;
+      flex: 0 0 50%;
+    }
+  }
+}
+
+// Mobile (≤767, where .qpd__row is a column): unwrap the left column so the
+// reviews fall BELOW the buy box instead of between the gallery and price.
+@media (max-width: 767px) {
+  .qpd__left {
+    display: contents;
+  }
+  .qpd__reviews {
+    order: 2; // gallery(0) → info(1) → reviews(2)
+    width: 100%;
+    margin-top: 24px;
+  }
+}
+
+// ====================================================================
+// Customer reviews block (salla-comments) restyled for its new home in the
+// left column — mirrors the look the reviews had inside .qpd-tabs.
+// ====================================================================
+.qpd__reviews {
+  font-family: "GE SS Two", sans-serif;
+  direction: rtl;
+  width: 100%;
+
+  &-title {
+    margin: 0 0 16px;
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 30px;
+    color: #0a1f30;
+    text-align: right;
+  }
+
+  // strip salla-comments' default full-width grey band → inline panel
+  salla-comments .s-comments-product {
+    background: transparent !important;
+    padding: 0 !important;
+  }
+  salla-comments .s-comments-container {
+    padding: 0 !important;
+    max-width: none !important;
+  }
+
+  .s-comments {
+    direction: rtl;
+    &-list-wrapper,
+    &-body {
+      gap: 24px;
+    }
+  }
+
+  // rating summary / add-comment → bordered Figma cards
+  .s-comments-rating,
+  .s-comments-add {
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 16px;
+    background: #fff;
+  }
+  .s-comments-rating-average {
+    font-size: 20px;
+    color: #0a1f30;
+    font-weight: 500;
+  }
+  .s-comments-rating-count {
+    font-size: 14px;
+    color: #6c757d;
+  }
+
+  // single comment row
+  .s-comments-item {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 16px;
+    &-user-info-name {
+      font-size: 16px;
+      color: #0a1f30;
+      font-weight: 500;
+    }
+    &-date {
+      font-size: 13px;
+      color: #6c757d;
+    }
+    &-content,
+    &-text {
+      font-size: 14px;
+      color: #6c757d;
+      line-height: 20px;
+    }
+    &-user-avatar img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  }
+
+  // textarea + publish button
+  .s-comments-add textarea,
+  .s-comments-form textarea {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 14px 16px;
+    min-height: 110px;
+    font-size: 12px;
+    color: #6c757d;
+  }
+  .s-comments-add button,
+  .s-comments-form button[type="submit"] {
+    background: #30378e;
+    color: #fff;
+    border-radius: 12px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: 500;
+    width: 100%;
+  }
+
+  // "عرض المزيد" load-more
+  .s-comments-load-more {
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 16px;
+    color: #0a1f30;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 767px) {
+  .qpd__reviews-title {
+    font-size: 18px;
+    line-height: 24px;
+  }
+}

@@ -101,7 +101,11 @@
 
     <div class="container container--product-details qpd">
         <div class="qpd__row flex flex-col items-start md:flex-row" id="product-{{ product.id }}">
-            <div class="sidebar qpd__gallery md:sticky top-24 w-full md:!w-2/4 rtl:ml-8 ltr:mr-8 mb-5 md:mb-0 overflow-hidden shrink-0">
+            {# LEFT column: gallery on top + customer reviews stacked directly
+               beneath it (wireframe). On mobile this wrapper unwraps
+               (display:contents) so the stack becomes gallery → buy box → reviews. #}
+            <div class="qpd__left w-full shrink-0">
+            <div class="sidebar qpd__gallery w-full mb-5 md:mb-0 overflow-hidden">
                 {% set has_many_images = product.images|length > 1 %}
                 <salla-slider
                         id="details-slider-{{ product.id }}"
@@ -224,6 +228,20 @@
                     {% endif %}
                 </salla-slider>
             </div>
+
+            {# Customer reviews — moved out of the bottom tabs to sit directly
+               under the gallery in the LEFT column (wireframe). #}
+            <div class="qpd__reviews">
+                <h2 class="qpd__reviews-title">تقييمات المنتج</h2>
+                {#
+                    Hook: product.single.before_customer_reviews
+                    Fires before the customer reviews/comments section.
+                    Use this hook to inject content above the reviews block.
+                #}
+                <div class="s-blocks-wrapper s-before-reviews">{% hook 'product.single.before_customer_reviews' %}</div>
+                <salla-comments item-id="{{product.id}}" type="product"></salla-comments>
+            </div>
+            </div>{# /.qpd__left #}
 
             {# Share buttons (gallery + info column) → native share sheet, with
                clipboard / prompt fallback. Bound on DOM ready so both exist. #}
@@ -714,14 +732,12 @@
         <salla-offer></salla-offer>
     </div>
 
-    {# ===== Figma tabs: تفاصيل المنتج / تقييمات المنتج ===== #}
+    {# ===== Product details section (تفاصيل المنتج). Reviews were moved up into
+         the left column, under the gallery, so only the details remain here. ===== #}
     <div class="container qpd-tabs" id="qpd-tabs">
         <div class="qpd-tabs__nav" role="tablist">
             <button type="button" class="qpd-tabs__tab is-active" data-qpd-tab="details" role="tab" aria-selected="true">
                 تفاصيل المنتج
-            </button>
-            <button type="button" class="qpd-tabs__tab" data-qpd-tab="reviews" role="tab" aria-selected="false">
-                تقييمات المنتج
             </button>
         </div>
 
@@ -731,38 +747,7 @@
                 {{ product.description|raw }}
             </article>
         </div>
-
-        {# Tab: reviews #}
-        <div class="qpd-tabs__panel" data-qpd-panel="reviews" role="tabpanel">
-            {#
-                Hook: product.single.before_customer_reviews
-                Fires before the customer reviews/comments section.
-                Use this hook to inject content between the product info and the reviews block.
-            #}
-            <div class="s-blocks-wrapper s-before-reviews">{% hook 'product.single.before_customer_reviews' %}</div>
-            <salla-comments item-id="{{product.id}}" type="product"></salla-comments>
-        </div>
     </div>
-
-    <script>
-        (function () {
-            var root = document.getElementById('qpd-tabs');
-            if (!root) return;
-            root.querySelectorAll('.qpd-tabs__tab').forEach(function (tab) {
-                tab.addEventListener('click', function () {
-                    var key = tab.getAttribute('data-qpd-tab');
-                    root.querySelectorAll('.qpd-tabs__tab').forEach(function (t) {
-                        var on = t === tab;
-                        t.classList.toggle('is-active', on);
-                        t.setAttribute('aria-selected', on ? 'true' : 'false');
-                    });
-                    root.querySelectorAll('.qpd-tabs__panel').forEach(function (p) {
-                        p.classList.toggle('is-active', p.getAttribute('data-qpd-panel') === key);
-                    });
-                });
-            });
-        })();
-    </script>
 
     {#
         Hook: product.single.before_product_recommendations
