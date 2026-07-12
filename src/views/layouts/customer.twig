@@ -28,6 +28,14 @@
                 <div class="hidden lg:block {{ is_page('customer.wishlist') ? 'qwishlist-sidebar-menu' : '' }}">
                     <salla-user-menu inline></salla-user-menu>
                 </div>
+                {# Mobile-only sign out: the account menu above (which holds logout) is
+                   desktop-only, so logged-in customers need a direct sign-out on small
+                   screens. Uses Salla's own auth logout. #}
+                <button type="button" onclick="salla.auth.logout()"
+                    class="lg:hidden flex items-center justify-center gap-2 w-full mt-6 py-3.5 rounded-md bg-gray-50 border border-gray-200 text-red-600 font-bold">
+                    <i class="sicon-logout"></i>
+                    <span>{{ trans('blocks.qissa.logout') }}</span>
+                </button>
             </nav>
             <div class="main-content w-full flex-1 lg:pt-10 {{ is_page('customer.wishlist') ? 'qwishlist-main' : 'max-w-3xl' }}">
                 {% block inner_title %}
