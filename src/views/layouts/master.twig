@@ -173,5 +173,82 @@
   (window.salla && salla.onReady) ? salla.onReady(init) : document.addEventListener('DOMContentLoaded', init);
 })();
 </script>
+
+{# Scroll-reveal: fade + slide home sections and product cards into view as the
+   visitor scrolls. Progressive enhancement — runs only when IntersectionObserver
+   is available and the visitor hasn't asked to reduce motion. Elements already in
+   view on first paint are shown immediately (keeps the hero / LCP untouched), and
+   only opacity/transform animate, so nothing shifts layout (CLS-safe). #}
+<script>
+(function () {
+  if (!('IntersectionObserver' in window)) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var VISIBLE_ON_LOAD = 0.85;            // top 85% of the viewport counts as "already seen"
+  var STAGGER = 80, STAGGER_MAX = 320;   // ms cascade between cards in the same grid
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('is-in');
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
+
+  function reveal(el, delay) {
+    if (el.dataset.qr) return;            // already handled
+    el.dataset.qr = '1';
+    // Visible on first paint → show at once, never hide (protects hero / LCP).
+    if (el.getBoundingClientRect().top < window.innerHeight * VISIBLE_ON_LOAD) return;
+    if (delay) el.style.setProperty('--qreveal-delay', Math.min(delay, STAGGER_MAX) + 'ms');
+    el.classList.add('qreveal');
+    io.observe(el);
+  }
+
+  function scan() {
+    var main = document.getElementById('main-content');
+    if (!main) return;
+
+    // Top-level home sections (skip the hero, and any .s-block nested inside
+    // another so a section reveals as one block, not twice).
+    main.querySelectorAll('.s-block').forEach(function (sec) {
+      if (sec.classList.contains('qissa-hero')) return;
+      if (sec.parentElement && sec.parentElement.closest('.s-block')) return;
+      reveal(sec, 0);
+    });
+
+    // Standalone product cards (listing / search / related). Cards inside an
+    // .s-block already ride in with their section, so skip those.
+    var byParent = new Map();
+    main.querySelectorAll('custom-salla-product-card, salla-product-card').forEach(function (card) {
+      if (card.dataset.qr || card.closest('.s-block')) return;
+      var i = byParent.get(card.parentElement) || 0;
+      byParent.set(card.parentElement, i + 1);
+      reveal(card, i * STAGGER);
+    });
+  }
+
+  var pending = false;
+  function schedule() {
+    if (pending) return;
+    pending = true;
+    (window.requestAnimationFrame || window.setTimeout)(function () { pending = false; scan(); });
+  }
+
+  function boot() {
+    document.documentElement.classList.add('q-reveal-on');
+    scan();
+    // Catch product cards Salla renders client-side (e.g. category / search grids).
+    if ('MutationObserver' in window) {
+      new MutationObserver(schedule).observe(
+        document.getElementById('main-content') || document.body,
+        { childList: true, subtree: true }
+      );
+    }
+  }
+
+  (window.salla && salla.onReady) ? salla.onReady(boot) : document.addEventListener('DOMContentLoaded', boot);
+})();
+</script>
 </body>
 </html>

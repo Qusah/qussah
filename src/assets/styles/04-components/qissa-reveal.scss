@@ -1,0 +1,28 @@
+/* ==========================================================================
+   Scroll reveal
+   Home sections and product cards fade + slide up as they enter the viewport.
+
+   Progressive enhancement: the hidden state applies ONLY when JS has added
+   `.q-reveal-on` to <html>, ONLY on screen, and ONLY when the visitor allows
+   motion. So no-JS, print, and reduced-motion visitors always get the full,
+   visible content. Elements already in view on first paint (e.g. the hero)
+   are never given `.qreveal` by the script, keeping LCP untouched. Only
+   opacity/transform animate, so there is no layout shift (CLS-safe).
+   ========================================================================== */
+@media screen and (prefers-reduced-motion: no-preference) {
+  html.q-reveal-on .qreveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity .7s cubic-bezier(.22, .61, .36, 1),
+      transform .7s cubic-bezier(.22, .61, .36, 1);
+    transition-delay: var(--qreveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+
+  html.q-reveal-on .qreveal.is-in {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+}
