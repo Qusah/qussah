@@ -46,14 +46,13 @@
                 <div class="qlist__grid">
                     {% for product in component.products %}
                         <article class="qprod" data-price="{{ product.is_on_sale ? product.sale_price : product.price }}">
-                            <a href="{{ product.url }}" class="qprod__img">
-                                {% if product.is_on_sale and product.promotion_title %}
-                                    <span class="qprod__badge">{{ product.promotion_title }}</span>
-                                {% elseif product.is_on_sale %}
-                                    <span class="qprod__badge">{{ trans('blocks.qissa.sale') }}</span>
-                                {% endif %}
-                                <img src="{{ product.image.url|default(product.images[0].url) }}" alt="{{ product.name }}" loading="lazy"/>
-                            </a>
+                            {% set badge_text = null %}
+                            {% if product.is_on_sale and product.promotion_title %}
+                                {% set badge_text = product.promotion_title %}
+                            {% elseif product.is_on_sale %}
+                                {% set badge_text = trans('blocks.qissa.sale') %}
+                            {% endif %}
+                            {% include 'components.partials.qprod-image' with { product: product, badge_text: badge_text } %}
                             <div class="qprod__body">
                                 <div class="qprod__info">
                                     {% if product.brand.name %}<span class="qprod__cat">{{ product.brand.name }}</span>{% endif %}

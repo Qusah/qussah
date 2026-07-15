@@ -6,6 +6,46 @@ window.fslightbox = Lightbox;
 class Home extends BasePage {
     onReady() {
         this.initFeaturedTabs();
+        this.initCardCarousels();
+    }
+
+    /**
+     * Swipe carousel + dot indicators for the hand-built qprod grid cards
+     * (qissa-products / qissa-all-products / qissa-listing). The reusable
+     * <custom-salla-product-card> wires its own carousel, so those are skipped.
+     * Native scroll-snap owns the swipe; here we only sync the active dot and
+     * let a dot tap glide to its slide.
+     */
+    initCardCarousels() {
+        document.querySelectorAll('.qpc-carousel[data-qpc]').forEach((car) => {
+            if (car.closest('custom-salla-product-card') || car.dataset.qpcReady) return;
+            car.dataset.qpcReady = '1';
+
+            const slides = Array.from(car.querySelectorAll('.qpc-slide'));
+            const dotsWrap = car.parentElement && car.parentElement.querySelector('.qpc-dots');
+            const dots = dotsWrap ? Array.from(dotsWrap.querySelectorAll('.qpc-dot')) : [];
+            if (slides.length < 2 || !dots.length) return;
+
+            const activate = (i) => dots.forEach((d, di) => d.classList.toggle('is-active', di === i));
+
+            if ('IntersectionObserver' in window) {
+                const io = new IntersectionObserver((entries) => {
+                    entries.forEach((e) => {
+                        if (e.isIntersecting) activate(slides.indexOf(e.target));
+                    });
+                }, { root: car, threshold: 0.6 });
+                slides.forEach((s) => io.observe(s));
+            }
+
+            dots.forEach((dot) => {
+                dot.addEventListener('click', (ev) => {
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    const i = Number(dot.dataset.i) || 0;
+                    slides[i] && slides[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                });
+            });
+        });
     }
 
     /**

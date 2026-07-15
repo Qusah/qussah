@@ -40,15 +40,14 @@ Cards reuse the shared .qprod card (identical to "منتجات مميزة").
             <div class="qallprods__grid">
                 {% for product in component.products %}
                     <article class="qprod">
-                        {# image + discount badge #}
-                        <a href="{{ product.url }}" class="qprod__img">
-                            {% if product.is_on_sale and product.promotion_title %}
-                                <span class="qprod__badge">{{ product.promotion_title }}</span>
-                            {% elseif product.is_on_sale %}
-                                <span class="qprod__badge">{{ trans('blocks.qissa.sale') }}</span>
-                            {% endif %}
-                            <img src="{{ product.image.url|default(product.images[0].url) }}" alt="{{ product.name }}" loading="lazy"/>
-                        </a>
+                        {# image + discount badge (swipe carousel when multi-image) #}
+                        {% set badge_text = null %}
+                        {% if product.is_on_sale and product.promotion_title %}
+                            {% set badge_text = product.promotion_title %}
+                        {% elseif product.is_on_sale %}
+                            {% set badge_text = trans('blocks.qissa.sale') %}
+                        {% endif %}
+                        {% include 'components.partials.qprod-image' with { product: product, badge_text: badge_text } %}
 
                         {# info #}
                         <div class="qprod__info">

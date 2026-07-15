@@ -1,0 +1,54 @@
+{#
+  Reusable product image area for the hand-built qprod grid cards
+  (qissa-products / qissa-all-products / qissa-listing).
+
+  Renders a swipe carousel (native CSS scroll-snap + dot indicators) when the
+  product has more than one photo, otherwise a single linked image — identical
+  markup to the original single-image card, so nothing changes for products
+  with one image. Reads Salla dynamic data only.
+
+  Params:
+    product      Product   required
+    img_class    string    wrapper class (default 'qprod__img')
+    badge_text   string    optional discount/promotion label
+    badge_class  string    badge class (default 'qprod__badge')
+
+  Wired by initCardCarousels() in assets/js/home.js.
+#}
+{% set img_class = img_class|default('qprod__img') %}
+{% set badge_class = badge_class|default('qprod__badge') %}
+
+{# collect real photos only — skip videos / 3D models a card can't play #}
+{% set slides = [] %}
+{% for im in product.images %}
+    {% if im.url and not im.video_url and im.type != 'video' %}
+        {% set slides = slides|merge([im]) %}
+    {% endif %}
+{% endfor %}
+{% if slides is empty %}
+    {% set slides = [{ 'url': product.image.url, 'alt': product.name }] %}
+{% endif %}
+{% set slides = slides|slice(0, 6) %}
+
+{% if slides|length > 1 %}
+    <div class="{{ img_class }}" data-qpc-media>
+        {% if badge_text %}<span class="{{ badge_class }}">{{ badge_text }}</span>{% endif %}
+        <div class="qpc-carousel" data-qpc>
+            {% for im in slides %}
+                <a href="{{ product.url }}" class="qpc-slide" aria-label="{{ product.name }}">
+                    <img src="{{ im.url }}" alt="{{ im.alt|default(product.name) }}" loading="lazy"/>
+                </a>
+            {% endfor %}
+        </div>
+        <div class="qpc-dots" aria-hidden="true">
+            {% for im in slides %}
+                <button type="button" class="qpc-dot{{ loop.first ? ' is-active' : '' }}" data-i="{{ loop.index0 }}" aria-label="{{ loop.index }}"></button>
+            {% endfor %}
+        </div>
+    </div>
+{% else %}
+    <a href="{{ product.url }}" class="{{ img_class }}">
+        {% if badge_text %}<span class="{{ badge_class }}">{{ badge_text }}</span>{% endif %}
+        <img src="{{ slides[0].url|default(product.image.url) }}" alt="{{ product.name }}" loading="lazy"/>
+    </a>
+{% endif %}
