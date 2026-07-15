@@ -382,6 +382,8 @@
   display: block;
   scroll-snap-align: center;
   scroll-snap-stop: always;
+  -webkit-user-drag: none;            // don't let the link start a native drag
+  user-select: none;
 
   img {
     width: 100%;

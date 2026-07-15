@@ -66,6 +66,10 @@ export function enhanceCarousel(carousel) {
   });
 
   // ---- mouse drag-to-swipe (touch already swipes natively) ----
+  // Links and images are natively draggable; that native drag would preempt our
+  // pointer scroll, so cancel it inside the carousel.
+  carousel.addEventListener('dragstart', (e) => e.preventDefault());
+
   let down = false;
   let moved = false;
   let suppressClick = false;
@@ -78,9 +82,8 @@ export function enhanceCarousel(carousel) {
     moved = false;
     startX = e.clientX;
     startLeft = carousel.scrollLeft;
-    if (carousel.setPointerCapture) {
-      try { carousel.setPointerCapture(e.pointerId); } catch (_) {}
-    }
+    // NOTE: no setPointerCapture here — capturing the pointer makes the trailing
+    // click fire on the carousel instead of the link, which blocks navigation.
   });
 
   carousel.addEventListener('pointermove', (e) => {

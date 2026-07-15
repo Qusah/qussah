@@ -35,8 +35,8 @@
         {% if badge_text %}<span class="{{ badge_class }}">{{ badge_text }}</span>{% endif %}
         <div class="qpc-carousel" data-qpc>
             {% for im in slides %}
-                <a href="{{ product.url }}" class="qpc-slide" aria-label="{{ product.name }}">
-                    <img src="{{ im.url }}" alt="{{ im.alt|default(product.name) }}" loading="lazy"/>
+                <a href="{{ product.url }}" class="qpc-slide" aria-label="{{ product.name }}" draggable="false">
+                    <img src="{{ im.url }}" alt="{{ im.alt|default(product.name) }}" loading="lazy" draggable="false"/>
                 </a>
             {% endfor %}
         </div>

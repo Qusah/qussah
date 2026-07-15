@@ -247,7 +247,7 @@ class ProductCard extends HTMLElement {
     }
 
     const slides = photos
-      .map(img => `<a href="${href}" aria-label="${aria}" class="qpc-slide">${this.buildCardImg(img)}</a>`)
+      .map(img => `<a href="${href}" aria-label="${aria}" class="qpc-slide" draggable="false">${this.buildCardImg(img)}</a>`)
       .join('');
 
     return `<div class="qpc-carousel" data-qpc>${slides}</div>`;
