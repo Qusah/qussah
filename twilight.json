@@ -1826,6 +1826,129 @@
             ]
         },
         {
+            "key": "88de8a0f-167c-434a-bde7-9240372e4b4b",
+            "title": {
+                "en": "Qissa Influencer Reviews",
+                "ar": "آراء المؤثرين"
+            },
+            "icon": "sicon-play",
+            "path": "home.qissa-video-reviews",
+            "fields": [
+                {
+                    "id": "title_highlight",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Highlighted word",
+                        "ar": "الكلمة المميزة"
+                    },
+                    "value": "آراء المؤثرين"
+                },
+                {
+                    "id": "title",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Title",
+                        "ar": "العنوان"
+                    },
+                    "value": " عن قصة"
+                },
+                {
+                    "id": "subtitle",
+                    "type": "string",
+                    "format": "textarea",
+                    "label": {
+                        "en": "Subtitle",
+                        "ar": "النص الفرعي"
+                    },
+                    "value": "شاهد تجارب المؤثرين مع منتجات قصة"
+                },
+                {
+                    "id": "items",
+                    "type": "collection",
+                    "format": "collection",
+                    "required": true,
+                    "minLength": 1,
+                    "maxLength": 12,
+                    "label": null,
+                    "item_label": "مراجعة",
+                    "value": [
+                        {
+                            "items.name": "مؤثر قصة",
+                            "items.handle": "@qusah"
+                        },
+                        {
+                            "items.name": "مؤثر قصة",
+                            "items.handle": "@qusah"
+                        },
+                        {
+                            "items.name": "مؤثر قصة",
+                            "items.handle": "@qusah"
+                        },
+                        {
+                            "items.name": "مؤثر قصة",
+                            "items.handle": "@qusah"
+                        }
+                    ],
+                    "fields": [
+                        {
+                            "type": "string",
+                            "icon": "sicon-link",
+                            "label": "رابط الفيديو",
+                            "id": "items.video",
+                            "value": null,
+                            "required": false,
+                            "format": "text",
+                            "placeholder": "https://... (mp4/webm أو يوتيوب/شورتس)",
+                            "description": "رابط ملف مباشر (mp4/webm) أو رابط يوتيوب/شورتس"
+                        },
+                        {
+                            "type": "string",
+                            "icon": "sicon-image",
+                            "label": "الصورة المصغّرة",
+                            "id": "items.poster",
+                            "value": null,
+                            "required": false,
+                            "format": "image",
+                            "description": "صورة الغلاف قبل التشغيل — يفضّل عمودية بنسبة 9:16"
+                        },
+                        {
+                            "type": "string",
+                            "icon": "sicon-format-text-alt",
+                            "label": "اسم المؤثر",
+                            "id": "items.name",
+                            "value": null,
+                            "required": false,
+                            "format": "text",
+                            "multilanguage": true,
+                            "placeholder": "اسم المؤثر"
+                        },
+                        {
+                            "type": "string",
+                            "icon": "sicon-format-text-alt",
+                            "label": "المعرف / الحساب",
+                            "id": "items.handle",
+                            "value": null,
+                            "required": false,
+                            "format": "text",
+                            "placeholder": "@username"
+                        },
+                        {
+                            "type": "string",
+                            "icon": "sicon-image",
+                            "label": "صورة المؤثر",
+                            "id": "items.avatar",
+                            "value": null,
+                            "required": false,
+                            "format": "image",
+                            "description": "اختياري"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "key": "d35bcf84-d62a-443a-ba4b-04cf38c298dd",
             "title": {
                 "en": "Qissa Trust Badges",

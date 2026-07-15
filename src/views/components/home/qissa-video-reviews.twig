@@ -1,0 +1,206 @@
+{#
+| Variable                  | Type         | Description                                        |
+|---------------------------|--------------|----------------------------------------------------|
+| component                 | object       | merchant settings from twilight.json               |
+| component.title_highlight | string       | highlighted heading word(s) (royal blue)           |
+| component.title           | string       | heading rest                                       |
+| component.subtitle        | string       | subheading                                         |
+| component.items           | Collection[] | video reviews: video, poster, name, handle, avatar |
+| position                  | int          | sorting block                                      |
+
+Influencer video reviews (reference: moziwash.com). A horizontal, drag/swipe
+carousel of vertical (9:16) video cards. Each card shows a poster + play button;
+tapping plays the video in place (YouTube/Shorts -> iframe, direct file -> <video>),
+reusing the theme's existing ytId() convention (qissa-feature-banner / qissa-media).
+Touch scrolls natively; desktop adds mouse drag + edge arrows. Lightweight — no libs,
+players are built on demand, one plays at a time.
+#}
+<section class="s-block qvr" id="qvr-{{ position }}">
+    <div class="container">
+        <div class="qvr__box">
+
+            {# centered title #}
+            <div class="qvr__head">
+                <h2 class="qvr__title">
+                    <span class="qvr__title-hl">{{ component.title_highlight }}</span> {{ component.title }}
+                </h2>
+                {% if component.subtitle %}
+                    <p class="qvr__subtitle">{{ component.subtitle }}</p>
+                {% endif %}
+            </div>
+
+            {# carousel #}
+            <div class="qvr__viewport">
+                <button type="button" class="qvr__arrow qvr__arrow--prev" aria-label="السابق">
+                    <i class="sicon-arrow-left"></i>
+                </button>
+
+                <div class="qvr__track" data-qvr-track>
+                    {% for index, item in component.items %}
+                        <article class="qvr__card">
+                            <div class="qvr__media{{ item.video ? ' is-playable' : '' }}"
+                                 {% if item.video %}data-qvr-video="{{ item.video }}"{% endif %}
+                                 {% if item.video %}role="button" tabindex="0" aria-label="تشغيل الفيديو"{% endif %}>
+                                {% if item.poster %}
+                                    <img class="qvr__poster" src="{{ item.poster }}"
+                                         alt="{{ item.name|default(store.name) }}" loading="lazy"/>
+                                {% endif %}
+
+                                {% if item.video %}
+                                    <span class="qvr__play" aria-hidden="true">
+                                        <span class="qvr__play-tri"></span>
+                                    </span>
+                                {% endif %}
+
+                                {% if item.name or item.handle %}
+                                    <div class="qvr__meta">
+                                        {% if item.avatar %}
+                                            <span class="qvr__avatar">
+                                                <img src="{{ item.avatar }}" alt="{{ item.name|default('') }}"
+                                                     width="40" height="40" loading="lazy"/>
+                                            </span>
+                                        {% endif %}
+                                        <span class="qvr__meta-text">
+                                            {% if item.name %}<span class="qvr__name">{{ item.name }}</span>{% endif %}
+                                            {% if item.handle %}<span class="qvr__handle">{{ item.handle }}</span>{% endif %}
+                                        </span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+
+                <button type="button" class="qvr__arrow qvr__arrow--next" aria-label="التالي">
+                    <i class="sicon-arrow-right"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script>
+(function () {
+  // YouTube / Shorts -> id, matching the theme's other video blocks.
+  function ytId(u) {
+    if (!u) { return null; }
+    var m = u.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/))([\w-]{11})/);
+    if (m) { return m[1]; }
+    return /^[\w-]{11}$/.test(u) ? u : null;
+  }
+
+  function buildPlayer(url) {
+    var id = ytId(url), el;
+    if (id) {
+      el = document.createElement('iframe');
+      el.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0&playsinline=1';
+      el.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen');
+      el.setAttribute('allowfullscreen', '');
+      el.setAttribute('title', 'video');
+    } else {
+      el = document.createElement('video');
+      el.src = url;
+      el.controls = true;
+      el.autoplay = true;
+      el.playsInline = true;
+    }
+    el.className = 'qvr__player';
+    return el;
+  }
+
+  document.querySelectorAll('.qvr').forEach(function (sec) {
+    if (sec.dataset.qvrInit) { return; }
+    sec.dataset.qvrInit = '1';
+
+    var track = sec.querySelector('[data-qvr-track]');
+    var prev = sec.querySelector('.qvr__arrow--prev');
+    var next = sec.querySelector('.qvr__arrow--next');
+
+    // ---- inline video playback (one active card at a time) ----
+    function play(media) {
+      if (media.dataset.qvrPlaying) { return; }
+      var url = (media.getAttribute('data-qvr-video') || '').trim();
+      if (!url) { return; }
+      // stop any other playing card
+      sec.querySelectorAll('.qvr__media[data-qvr-playing]').forEach(function (m) {
+        var p = m.querySelector('.qvr__player');
+        if (p) { p.remove(); }
+        delete m.dataset.qvrPlaying;
+        m.classList.remove('is-playing');
+      });
+      media.appendChild(buildPlayer(url));
+      media.dataset.qvrPlaying = '1';
+      media.classList.add('is-playing');
+    }
+
+    sec.querySelectorAll('.qvr__media[data-qvr-video]').forEach(function (media) {
+      media.addEventListener('click', function () {
+        if (track && track.dataset.qvrDragged) { return; }  // ignore the click that ends a drag
+        play(media);
+      });
+      media.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); play(media); }
+      });
+    });
+
+    if (!track) { return; }
+
+    // ---- edge arrows (desktop) ----
+    function step() {
+      var card = track.querySelector('.qvr__card');
+      var gap = parseInt(getComputedStyle(track).columnGap || getComputedStyle(track).gap || '16', 10) || 16;
+      return card ? card.getBoundingClientRect().width + gap : track.clientWidth;
+    }
+    function update() {
+      var cards = track.querySelectorAll('.qvr__card');
+      if (!cards.length || !prev || !next) { return; }
+      var r = track.getBoundingClientRect();
+      var left = Infinity, right = -Infinity;
+      cards.forEach(function (c) {
+        var b = c.getBoundingClientRect();
+        left = Math.min(left, b.left);
+        right = Math.max(right, b.right);
+      });
+      prev.disabled = left >= r.left - 1;      // nothing more to the left
+      next.disabled = right <= r.right + 1;    // nothing more to the right
+    }
+    if (prev) { prev.addEventListener('click', function () { track.scrollBy({ left: -step(), behavior: 'smooth' }); }); }
+    if (next) { next.addEventListener('click', function () { track.scrollBy({ left: step(), behavior: 'smooth' }); }); }
+    track.addEventListener('scroll', function () { requestAnimationFrame(update); });
+    window.addEventListener('resize', update);
+    update();
+
+    // ---- mouse drag-to-scroll (touch scrolls natively) ----
+    var down = false, moved = false, startX = 0, startLeft = 0;
+    track.addEventListener('pointerdown', function (e) {
+      if (e.pointerType !== 'mouse') { return; }
+      down = true; moved = false;
+      startX = e.clientX; startLeft = track.scrollLeft;
+      delete track.dataset.qvrDragged;
+    });
+    track.addEventListener('pointermove', function (e) {
+      if (!down) { return; }
+      var dx = e.clientX - startX;
+      if (!moved && Math.abs(dx) < 6) { return; }
+      moved = true;
+      track.classList.add('is-dragging');
+      track.scrollLeft = startLeft - dx;
+      e.preventDefault();
+    });
+    function end() {
+      if (!down) { return; }
+      down = false;
+      if (moved) {
+        track.classList.remove('is-dragging');
+        track.dataset.qvrDragged = '1';               // suppress the trailing click
+        setTimeout(function () { delete track.dataset.qvrDragged; }, 0);
+      }
+    }
+    track.addEventListener('pointerup', end);
+    track.addEventListener('pointercancel', end);
+    track.addEventListener('pointerleave', end);
+    track.addEventListener('dragstart', function (e) { e.preventDefault(); });
+  });
+})();
+</script>

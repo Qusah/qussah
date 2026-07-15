@@ -1,0 +1,250 @@
+// ====================================================================
+// Qissa Influencer Video Reviews — horizontal carousel of vertical (9:16)
+// video cards (reference: moziwash.com). Native scroll-snap + momentum for a
+// premium, natural feel; desktop adds mouse drag + edge arrows. Brand palette.
+// ====================================================================
+.qvr {
+  font-family: "GE SS Two", sans-serif;
+  padding-block: 24px;
+
+  &__box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 40px 0;
+    background: linear-gradient(180deg, #f0fcff 0%, #ffffff 100%);
+    border-radius: 40px;
+  }
+
+  // ---- centered title (matches the other qissa sections) ----
+  &__head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    padding-inline: 20px;
+  }
+  &__title {
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 38px;
+    letter-spacing: -0.2px;
+    color: #0a1f30;
+    margin: 0;
+  }
+  &__title-hl { color: #30378e; }          // Figma royal-blue
+  &__subtitle {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 25px;
+    color: #6c757d;
+    width: 620px;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  // ---- carousel viewport (holds the track + the two edge arrows) ----
+  &__viewport {
+    position: relative;
+    width: 100%;
+  }
+
+  // horizontal, snap-scrolling track
+  &__track {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    padding: 6px 50px;                      // room so first/last clear the arrows
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x proximity;         // gentle = natural, not rigid
+    scroll-behavior: smooth;
+    scroll-padding-inline: 50px;
+    -webkit-overflow-scrolling: touch;     // momentum on iOS
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;                 // Firefox
+    cursor: grab;
+    &::-webkit-scrollbar { display: none; }  // WebKit
+
+    &.is-dragging {
+      cursor: grabbing;
+      scroll-snap-type: none;
+      scroll-behavior: auto;
+    }
+  }
+
+  &__card {
+    flex: 0 0 auto;
+    width: 264px;
+    scroll-snap-align: start;
+  }
+
+  // ---- vertical 9:16 media ----
+  &__media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    border-radius: 22px;
+    overflow: hidden;
+    background: #0a1f30;                    // shows while the poster loads
+    box-shadow: 0 10px 30px rgba(10, 31, 48, 0.12);
+
+    &.is-playable { cursor: pointer; }
+    &:focus-visible { outline: 3px solid #30378e; outline-offset: 2px; }
+  }
+
+  &__poster,
+  &__player {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 0;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  // subtle darken so the play button + name read on any thumbnail
+  &__media.is-playable::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(10, 31, 48, 0) 45%, rgba(10, 31, 48, 0.55) 100%);
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  &__media.is-playing::after { opacity: 0; }
+
+  // ---- play button overlay ----
+  &__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 62px;
+    height: 62px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 6px 18px rgba(10, 31, 48, 0.28);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    pointer-events: none;                  // clicks belong to the media
+  }
+  &__play-tri {
+    width: 0;
+    height: 0;
+    margin-inline-start: 4px;              // optically center the triangle
+    border-block: 11px solid transparent;
+    border-inline-start: 18px solid #30378e;   // RTL-safe: points into the video
+  }
+  &__media.is-playable:hover &__play {
+    transform: translate(-50%, -50%) scale(1.08);
+    background: #ffffff;
+  }
+  &__media.is-playing &__play { display: none; }
+
+  // ---- influencer name / handle (bottom overlay) ----
+  &__meta {
+    position: absolute;
+    inset-inline: 12px;
+    bottom: 12px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: opacity 0.25s ease;
+  }
+  &__media.is-playing &__meta { opacity: 0; pointer-events: none; }
+  &__avatar {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    img { width: 100%; height: 100%; object-fit: cover; }
+  }
+  &__meta-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    text-align: start;
+  }
+  &__name {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+  &__handle {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+  // ---- edge arrows (desktop) ----
+  &__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #daeff7;
+    border-radius: 999px;
+    background: #fff;
+    color: #30378e;
+    box-shadow: 0 4px 14px rgba(10, 31, 48, 0.12);
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+    i { font-size: 18px; line-height: 1; }
+
+    &--prev { left: 4px; }
+    &--next { right: 4px; }
+
+    &:hover:not(:disabled) { background: #30378e; color: #fff; border-color: #30378e; }
+    &:disabled { opacity: 0; pointer-events: none; }
+  }
+}
+
+// ---- mobile (428): peek the next card, swipe-first, no arrows ----
+@media (max-width: 768px) {
+  .qvr {
+    padding-block: 8px;
+
+    &__box {
+      padding: 28px 0 20px;
+      border-radius: 28px;
+      gap: 18px;
+    }
+    &__title { font-size: 24px; line-height: 30px; }
+    &__subtitle { font-size: 14px; line-height: 20px; width: 100%; }
+
+    &__track {
+      gap: 12px;
+      padding: 4px 15px;
+      scroll-padding-inline: 15px;
+    }
+    &__card { width: 62vw; max-width: 280px; }
+    &__media { border-radius: 18px; }
+    &__play { width: 54px; height: 54px; }
+    &__arrow { display: none; }            // touch swipe only
+  }
+}
