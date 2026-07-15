@@ -35,10 +35,14 @@ function snapNearest(carousel, slides) {
 }
 
 export function enhanceCarousel(carousel) {
-  if (!carousel || carousel.dataset.qpcReady) return;
+  // Guard on a JS property (NOT a data-attribute): salla-products-list clones the
+  // card DOM after render, and cloneNode copies attributes but not expando
+  // properties. So a clone (which lost its listeners) is re-wired, while a live
+  // element is never wired twice — even across separate webpack bundles.
+  if (!carousel || carousel._qpcEnhanced) return;
   const slides = Array.from(carousel.querySelectorAll('.qpc-slide'));
   if (slides.length < 2) return;
-  carousel.dataset.qpcReady = '1';
+  carousel._qpcEnhanced = true;
 
   // Dots live as a sibling under the same positioned wrapper.
   const wrap = carousel.parentElement;
@@ -124,4 +128,38 @@ export function enhanceCarousel(carousel) {
 export function enhanceCarousels(root) {
   const scope = root || document;
   scope.querySelectorAll('.qpc-carousel[data-qpc]').forEach(enhanceCarousel);
+}
+
+let observerStarted = false;
+
+// Enhance existing carousels AND keep watching for ones inserted later.
+// salla-products-list renders/replaces/clones cards after page load (filters,
+// sorting, infinite scroll, pagination), so a one-shot pass isn't enough. The
+// _qpcEnhanced guard keeps re-scans cheap. Call once per page (from app.js).
+export function autoEnhanceCarousels() {
+  const run = () => enhanceCarousels(document);
+  run();
+
+  if (observerStarted || typeof MutationObserver === 'undefined' || !document.body) return;
+  observerStarted = true;
+
+  let scheduled = false;
+  const schedule = () => {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(() => { scheduled = false; run(); });
+  };
+
+  const hasCarousel = (node) =>
+    node.nodeType === 1 &&
+    ((node.matches && node.matches('.qpc-carousel[data-qpc]')) ||
+     (node.querySelector && node.querySelector('.qpc-carousel[data-qpc]')));
+
+  new MutationObserver((mutations) => {
+    for (const m of mutations) {
+      for (const node of m.addedNodes) {
+        if (hasCarousel(node)) { schedule(); return; }
+      }
+    }
+  }).observe(document.body, { childList: true, subtree: true });
 }

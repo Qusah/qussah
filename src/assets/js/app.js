@@ -3,6 +3,7 @@ import Swal from 'sweetalert2';
 import Anime from './partials/anime';
 import initTootTip from './partials/tooltip';
 import AppHelpers from "./app-helpers";
+import { autoEnhanceCarousels } from "./partials/card-carousel";
 
 class App extends AppHelpers {
   constructor() {
@@ -32,6 +33,10 @@ class App extends AppHelpers {
 
     initTootTip();
     this.loadModalImgOnclick();
+
+    // Product-card image carousels: wire on every page and keep watching for
+    // cards that salla-products-list adds/replaces (filters, sorting, paging).
+    autoEnhanceCarousels();
 
     salla.comment.event.onAdded(() => window.location.reload());
 
