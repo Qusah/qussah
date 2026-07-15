@@ -339,3 +339,83 @@
     }
   }
 }
+
+// ====================================================================
+// Product-card image carousel : swipe through a
+// product's photos straight from the card, with dot indicators.
+// Native CSS scroll-snap = smooth, GPU-accelerated, no JS animation lib.
+// Applies to every card variant that uses .s-product-card-image
+// (the fullImage hero variant keeps its single overlay image).
+// ====================================================================
+.s-product-card-image {
+  position: relative;                  // anchor for dots + badge
+
+  // the horizontal, snap-scrolling track that holds one photo per slide
+  .qpc-carousel {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; // momentum swipe on iOS
+    overscroll-behavior-x: contain;    // don't rubber-band the page
+    scrollbar-width: none;             // Firefox
+    &::-webkit-scrollbar { display: none; }   // WebKit
+  }
+
+  .qpc-slide {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    display: block;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;            // the scroller owns drag; tap still navigates
+      -webkit-user-drag: none;
+      user-select: none;
+    }
+    img.s-product-card-image-contain { object-fit: contain; }
+  }
+
+  // ---- dot indicators (bottom-center of the image) ----
+  .qpc-dots {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 8px;
+    z-index: 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    pointer-events: none;              // taps pass through except on the dots
+  }
+
+  .qpc-dot {
+    pointer-events: auto;
+    width: 6px;
+    height: 6px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 2px rgba(10, 31, 48, 0.35);
+    cursor: pointer;
+    transition: width 0.25s ease, background-color 0.25s ease;
+
+    &.is-active {
+      width: 18px;
+      background: #30378e;             // Figma royal-blue
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .s-product-card-image .qpc-dots { bottom: 6px; }
+}

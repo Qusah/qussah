@@ -196,6 +196,101 @@ class ProductCard extends HTMLElement {
     .replace(/>/g, "&gt;");
   }
 
+  // ---- Image carousel -----------------------------------------------------
+  // Collect the product photos shown in the card slider. Skips videos / 3D
+  // models (a card can't play them) and always falls back to the primary image
+  // so single-image products render exactly as before. Capped for page speed.
+  getCardImages() {
+    const MAX = 6;
+    const primaryUrl = this.product?.image?.url;
+    const list = Array.isArray(this.product?.images) ? this.product.images : [];
+
+    let photos = list.filter(im =>
+      im && im.url && !im.video_url && !im.three_d_image_url && im.type !== 'video');
+
+    // Keep the primary image first so the LCP slide matches the old markup.
+    if (primaryUrl && photos.length) {
+      photos.sort((a, b) => (b.url === primaryUrl) - (a.url === primaryUrl));
+    }
+
+    if (!photos.length) {
+      const primary = primaryUrl
+        ? this.product.image
+        : (this.product?.thumbnail ? { url: this.product.thumbnail, alt: this.product?.name } : null);
+      photos = primary ? [primary] : [{ url: this.placeholder || '', alt: this.product?.name }];
+    }
+
+    // De-dupe by url, preserve order, cap the count.
+    const seen = new Set();
+    return photos.filter(p => !seen.has(p.url) && seen.add(p.url)).slice(0, MAX);
+  }
+
+  buildCardImg(img) {
+    const url = img?.url || this.placeholder || '';
+    const fit = salla.url.is_placeholder(url)
+      ? 'contain'
+      : (this.fitImageHeight ? this.fitImageHeight : 'cover');
+    const alt = this.escapeHTML(img?.alt || this.product?.name || '');
+    return `<img class="s-product-card-image-${fit}" src="${url}" alt="${alt}" loading="lazy" />`;
+  }
+
+  // Media inside .s-product-card-image: a single <a><img> as before, or a
+  // native scroll-snap swipe carousel when the product has multiple photos.
+  getCardMedia() {
+    const photos = this.cardPhotos || (this.cardPhotos = this.getCardImages());
+    const href = this.product?.url;
+    const aria = this.escapeHTML(this.product?.image?.alt || this.product?.name || '');
+
+    if (photos.length < 2) {
+      return `<a href="${href}" aria-label="${aria}">${this.buildCardImg(photos[0] || this.product?.image)}</a>`;
+    }
+
+    const slides = photos
+      .map(img => `<a href="${href}" aria-label="${aria}" class="qpc-slide">${this.buildCardImg(img)}</a>`)
+      .join('');
+
+    return `<div class="qpc-carousel" data-qpc>${slides}</div>`;
+  }
+
+  getCarouselDots() {
+    const count = (this.cardPhotos || (this.cardPhotos = this.getCardImages())).length;
+    if (count < 2) return '';
+    let dots = '';
+    for (let i = 0; i < count; i++) {
+      dots += `<button type="button" class="qpc-dot${i === 0 ? ' is-active' : ''}" data-i="${i}" aria-label="${i + 1}"></button>`;
+    }
+    return `<div class="qpc-dots" aria-hidden="true">${dots}</div>`;
+  }
+
+  // Sync the active dot to the centered slide and let dot taps glide to a slide.
+  initCarousels() {
+    const car = this.querySelector('[data-qpc]');
+    if (!car) return;
+    const slides = Array.from(car.querySelectorAll('.qpc-slide'));
+    const dots = Array.from(this.querySelectorAll('.qpc-dot'));
+    if (slides.length < 2 || !dots.length) return;
+
+    const activate = (i) => dots.forEach((d, di) => d.classList.toggle('is-active', di === i));
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) activate(slides.indexOf(e.target));
+        });
+      }, { root: car, threshold: 0.6 });
+      slides.forEach((s) => io.observe(s));
+    }
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const i = Number(dot.dataset.i) || 0;
+        slides[i]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      });
+    });
+  }
+
   render(){
     this.classList.add('s-product-card-entry'); 
     this.setAttribute('id', this.product.id);
@@ -217,21 +312,27 @@ class ProductCard extends HTMLElement {
     this.chips = (this.isPlainVertical && this.product?.subtitle)
       ? String(this.product.subtitle).split('،').map(c => c.trim()).filter(Boolean)
       : [];
+    // Recompute the card photos for this render (translation reloads re-render).
+    this.cardPhotos = this.getCardImages();
       this.innerHTML = `
         <div class="${!this.fullImage ? 's-product-card-image' : 's-product-card-image-full'}">
-          <a href="${this.product?.url}" aria-label="${this.escapeHTML(this.product?.image?.alt || this.product.name)}">
-           <img 
-              class="s-product-card-image-${salla.url.is_placeholder(this.product?.image?.url)
-                ? 'contain'
-                : this.fitImageHeight
-                ? this.fitImageHeight
-                : 'cover'}"
-              src="${this.product?.image?.url || this.product?.thumbnail || this.placeholder || ''}"
-              alt="${this.escapeHTML(this.product?.image?.alt || this.product.name)}"
-              loading="lazy"
-            />
-            ${!this.fullImage && !this.minimal ? this.getProductBadge() : ''}
-          </a>
+          ${this.fullImage
+            ? `<a href="${this.product?.url}" aria-label="${this.escapeHTML(this.product?.image?.alt || this.product.name)}">
+                 <img
+                    class="s-product-card-image-${salla.url.is_placeholder(this.product?.image?.url)
+                      ? 'contain'
+                      : this.fitImageHeight
+                      ? this.fitImageHeight
+                      : 'cover'}"
+                    src="${this.product?.image?.url || this.product?.thumbnail || this.placeholder || ''}"
+                    alt="${this.escapeHTML(this.product?.image?.alt || this.product.name)}"
+                    loading="lazy"
+                  />
+               </a>`
+            : `${this.getCardMedia()}
+               ${!this.minimal ? this.getProductBadge() : ''}
+               ${this.getCarouselDots()}`
+          }
           ${this.fullImage ? `<a href="${this.product?.url}" aria-label=${this.product.name} class="s-product-card-overlay"></a>`:''}
           ${(!this.horizontal && !this.fullImage && !this.isPlainVertical) || (this.isPlainVertical && this.hideAddBtn) ?
             `<button type="button"
@@ -356,6 +457,9 @@ class ProductCard extends HTMLElement {
           app.toggleElementClassIf(btn, 'pulse-anime', 'un-favorited', () => willBeAdded);
         });
       });
+
+      // Wire the image swipe carousel + dot indicators (multi-image products).
+      this.initCarousels();
     }
 }
 

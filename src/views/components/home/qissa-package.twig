@@ -9,7 +9,7 @@
 | component.marquee_text| string    | marquee label (default "الأكثر مبيعًا")            |
 | position              | int       | sorting block                                      |
 
-"المجموعة الشاملة" — a single featured product shown brave-style: a swipeable
+"المجموعة الشاملة" — a single featured product showna swipeable
 image gallery (big main image + thumbnail strip), an optional best-seller
 marquee, then the product details (sold count, rating, name, price, spec chips)
 with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
@@ -61,7 +61,7 @@ with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
                     {% endif %}
                 </div>
 
-                {# thumbnails — brave-style cards #}
+         
                 {% if images|length > 1 %}
                     <div class="qpack__thumbs" data-qpack-thumbs>
                         {% for img in images %}
@@ -227,7 +227,7 @@ with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
         });
       }, { passive: true });
 
-      // brave-style drag-to-scroll on the main image (pointer devices)
+      
       var down = false, sx = 0, sl = 0, moved = false;
       main.addEventListener('mousedown', function (e) { down = true; moved = false; sx = e.pageX; sl = main.scrollLeft; main.classList.add('is-grabbing'); });
       main.addEventListener('mousemove', function (e) { if (!down) { return; } var dx = e.pageX - sx; if (Math.abs(dx) > 3) { moved = true; } main.scrollLeft = sl - dx; });

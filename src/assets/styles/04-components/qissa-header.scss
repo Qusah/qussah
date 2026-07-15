@@ -124,7 +124,7 @@ body, main, #app { background: transparent; }
   }
 }
 
-// ---- pinned/sticky state on scroll (brave-shop behaviour, navy design) ----
+// ---- pinned/sticky state on scroll 
 // JS (header.twig) pulls the header up by the utility-bar height so that bar
 // scrolls off and only the nav stays pinned; .is-stuck is added once it locks.
 // On pin the navy bar eases (0.5s) into a slightly more compact bar and a

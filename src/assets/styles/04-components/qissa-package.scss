@@ -1,5 +1,5 @@
 // ====================================================================
-// Qissa Package — "المجموعة الشاملة" (brave-style single-product showcase)
+// Qissa Package — "المجموعة الشاملة" 
 // Centered title + a swipeable image gallery (big main image + thumbnail
 // strip), an optional best-seller marquee, then the product details
 // (sold count, rating, name, price, spec chips) + quantity & add-to-cart.
@@ -37,7 +37,7 @@
   // ---- gallery ----
   &__gallery { position: relative; }
   &__stage { position: relative; }
-  // overlay prev/next arrows on the main image (brave-style)
+  // overlay prev/next arrows on the main image 
   &__arrow {
     position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
     display: inline-flex; align-items: center; justify-content: center;
@@ -93,7 +93,7 @@
     img { width: 100%; height: 100%; object-fit: cover; display: block; }
   }
 
-  // thumbnail strip — brave-style cards (peek + horizontal scroll)
+  // thumbnail strip (peek + horizontal scroll)
   &__thumbs {
     display: flex; gap: 12px; margin-top: 14px;
     overflow-x: auto; scrollbar-width: none; padding-block: 2px;
