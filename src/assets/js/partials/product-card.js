@@ -1,4 +1,5 @@
 import BasePage from '../base-page';
+import { enhanceCarousels } from './card-carousel';
 class ProductCard extends HTMLElement {
   constructor(){
     super()
@@ -262,33 +263,9 @@ class ProductCard extends HTMLElement {
     return `<div class="qpc-dots" aria-hidden="true">${dots}</div>`;
   }
 
-  // Sync the active dot to the centered slide and let dot taps glide to a slide.
+  // Dot sync + tap-to-glide + desktop mouse drag (shared with the homepage grids).
   initCarousels() {
-    const car = this.querySelector('[data-qpc]');
-    if (!car) return;
-    const slides = Array.from(car.querySelectorAll('.qpc-slide'));
-    const dots = Array.from(this.querySelectorAll('.qpc-dot'));
-    if (slides.length < 2 || !dots.length) return;
-
-    const activate = (i) => dots.forEach((d, di) => d.classList.toggle('is-active', di === i));
-
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) activate(slides.indexOf(e.target));
-        });
-      }, { root: car, threshold: 0.6 });
-      slides.forEach((s) => io.observe(s));
-    }
-
-    dots.forEach((dot) => {
-      dot.addEventListener('click', (ev) => {
-        ev.preventDefault();
-        ev.stopPropagation();
-        const i = Number(dot.dataset.i) || 0;
-        slides[i]?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-      });
-    });
+    enhanceCarousels(this);
   }
 
   render(){

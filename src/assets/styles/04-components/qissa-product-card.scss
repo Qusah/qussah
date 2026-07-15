@@ -364,7 +364,15 @@
   -webkit-overflow-scrolling: touch;   // momentum swipe on iOS
   overscroll-behavior-x: contain;      // don't rubber-band the page
   scrollbar-width: none;               // Firefox
+  cursor: grab;                        // affordance for desktop mouse drag
   &::-webkit-scrollbar { display: none; }   // WebKit
+
+  // while a mouse drag is in progress: free scrolling, grabbing cursor
+  &.is-dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
+    scroll-behavior: auto;             // follow the pointer 1:1, no smoothing lag
+  }
 }
 
 .qpc-slide {
