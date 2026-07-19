@@ -902,6 +902,369 @@
             ]
         },
         {
+            "key": "20dbf092-ba3c-4145-b712-96608270c2b9",
+            "title": {
+                "en": "Dual Product Hero",
+                "ar": "منتجان مميزان (تصميم البكج)"
+            },
+            "icon": "sicon-box-bankers",
+            "path": "home.qissa-dual-hero",
+            "fields": [
+                {
+                    "id": "heading",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Title",
+                        "ar": "العنوان"
+                    },
+                    "value": "منتجان مميزان"
+                },
+                {
+                    "id": "subheading",
+                    "type": "string",
+                    "format": "textarea",
+                    "label": {
+                        "en": "Subtitle",
+                        "ar": "النص الفرعي"
+                    },
+                    "value": "اختر من أفضل منتجات قصة"
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_image",
+                    "format": "switch",
+                    "icon": "sicon-image",
+                    "label": {
+                        "en": "Show image gallery",
+                        "ar": "إظهار معرض الصور"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_thumbnails",
+                    "format": "switch",
+                    "icon": "sicon-grid",
+                    "label": {
+                        "en": "Show thumbnails",
+                        "ar": "إظهار الصور المصغرة"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_badge",
+                    "format": "switch",
+                    "icon": "sicon-discount",
+                    "label": {
+                        "en": "Show discount badge",
+                        "ar": "إظهار شارة الخصم"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_wishlist",
+                    "format": "switch",
+                    "icon": "sicon-heart",
+                    "label": {
+                        "en": "Show wishlist button",
+                        "ar": "إظهار زر المفضلة"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_marquee",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Show \"best seller\" scrolling banner",
+                        "ar": "إظهار شريط الأكثر مبيعًا المتحرك"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "marquee_text",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Scrolling banner text",
+                        "ar": "نص الشريط المتحرك"
+                    },
+                    "value": "الأكثر مبيعًا"
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_sold",
+                    "format": "switch",
+                    "icon": "sicon-fire",
+                    "label": {
+                        "en": "Show sold count",
+                        "ar": "إظهار عدد المبيعات"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_rating",
+                    "format": "switch",
+                    "icon": "sicon-star",
+                    "label": {
+                        "en": "Show rating",
+                        "ar": "إظهار التقييم"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_brand",
+                    "format": "switch",
+                    "icon": "sicon-tag",
+                    "label": {
+                        "en": "Show brand",
+                        "ar": "إظهار العلامة التجارية"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_price",
+                    "format": "switch",
+                    "icon": "sicon-dollar-sign",
+                    "label": {
+                        "en": "Show price",
+                        "ar": "إظهار السعر"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_chips",
+                    "format": "switch",
+                    "icon": "sicon-list",
+                    "label": {
+                        "en": "Show spec chips",
+                        "ar": "إظهار مواصفات المنتج"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_qty",
+                    "format": "switch",
+                    "icon": "sicon-plus-circle",
+                    "label": {
+                        "en": "Show quantity stepper",
+                        "ar": "إظهار محدد الكمية"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_add",
+                    "format": "switch",
+                    "icon": "sicon-shopping-bag",
+                    "label": {
+                        "en": "Show add-to-cart button",
+                        "ar": "إظهار زر الإضافة للسلة"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "products",
+                    "type": "items",
+                    "icon": "sicon-keyboard_arrow_down",
+                    "label": "المنتجان",
+                    "format": "dropdown-list",
+                    "description": null,
+                    "selected": [],
+                    "options": [],
+                    "required": true,
+                    "multichoice": true,
+                    "source": "products",
+                    "searchable": true,
+                    "maxLength": 2,
+                    "minLength": 2,
+                    "value": []
+                }
+            ]
+        },
+        {
+            "key": "51e4feb8-dcae-4a98-a942-463da528cc69",
+            "title": {
+                "en": "Dual Product Standard",
+                "ar": "منتجان (تصميم البطاقة القياسية)"
+            },
+            "icon": "sicon-bag-shopping",
+            "path": "home.qissa-dual-standard",
+            "fields": [
+                {
+                    "id": "title_highlight",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Highlighted word",
+                        "ar": "الكلمة المميزة"
+                    },
+                    "value": "منتجان"
+                },
+                {
+                    "id": "title",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Title",
+                        "ar": "العنوان"
+                    },
+                    "value": "مختاران من قصة"
+                },
+                {
+                    "id": "subtitle",
+                    "type": "string",
+                    "format": "textarea",
+                    "label": {
+                        "en": "Subtitle",
+                        "ar": "النص الفرعي"
+                    },
+                    "value": "تسوق أبرز منتجاتنا المختارة"
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_image",
+                    "format": "switch",
+                    "icon": "sicon-image",
+                    "label": {
+                        "en": "Show image",
+                        "ar": "إظهار الصورة"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_badge",
+                    "format": "switch",
+                    "icon": "sicon-discount",
+                    "label": {
+                        "en": "Show discount badge",
+                        "ar": "إظهار شارة الخصم"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_brand",
+                    "format": "switch",
+                    "icon": "sicon-tag",
+                    "label": {
+                        "en": "Show brand",
+                        "ar": "إظهار العلامة التجارية"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_chips",
+                    "format": "switch",
+                    "icon": "sicon-list",
+                    "label": {
+                        "en": "Show spec chips",
+                        "ar": "إظهار مواصفات المنتج"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_price",
+                    "format": "switch",
+                    "icon": "sicon-dollar-sign",
+                    "label": {
+                        "en": "Show price",
+                        "ar": "إظهار السعر"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_add",
+                    "format": "switch",
+                    "icon": "sicon-shopping-bag",
+                    "label": {
+                        "en": "Show add-to-cart button",
+                        "ar": "إظهار زر الإضافة للسلة"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_wishlist",
+                    "format": "switch",
+                    "icon": "sicon-heart",
+                    "label": {
+                        "en": "Show wishlist button",
+                        "ar": "إظهار زر المفضلة"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "products",
+                    "type": "items",
+                    "icon": "sicon-keyboard_arrow_down",
+                    "label": "المنتجان",
+                    "format": "dropdown-list",
+                    "description": null,
+                    "selected": [],
+                    "options": [],
+                    "required": true,
+                    "multichoice": true,
+                    "source": "products",
+                    "searchable": true,
+                    "maxLength": 2,
+                    "minLength": 2,
+                    "value": []
+                }
+            ]
+        },
+        {
             "key": "5fdf1f78-22c1-4eef-9180-48c976f4f553",
             "title": {
                 "en": "All Qusah Products",

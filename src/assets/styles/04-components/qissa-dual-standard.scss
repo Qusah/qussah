@@ -1,0 +1,50 @@
+// ====================================================================
+// Qissa Dual Standard — two Standard product cards side-by-side.
+// Reuses the .qprod card built for "خصيصاً من قصة" (qissa-products)
+// and only adds the section wrapper, a centered heading and a 2-up grid.
+// ====================================================================
+
+.qdstd {
+  font-family: 'GE SS Two', sans-serif;
+  padding-block: 24px;
+
+  .container { max-width: none; padding-inline: 50px; }
+
+  // ---- centered heading ----
+  &__head {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 8px; text-align: center; margin-bottom: 30px;
+  }
+  &__title {
+    font-size: 32px; font-weight: 500; line-height: 38px;
+    letter-spacing: -0.2px; color: #0a1f30; margin: 0;
+  }
+  &__title-hl { color: #30378e; }
+  &__subtitle {
+    font-size: 16px; font-weight: 300; line-height: 25px;
+    color: #6c757d; max-width: 554px; margin: 0;
+  }
+
+  // ---- 2-up grid ----
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 16px;
+    row-gap: 24px;
+    width: 100%;
+    direction: rtl;
+  }
+
+  // reused .qprod card already handles its own internals; keep it shrinkable
+  &__card { min-width: 0; }
+}
+
+// ---- mobile (<=768): stay 2-up (small cards fit, matches qprods grid) ----
+@media (max-width: 768px) {
+  .qdstd { padding-block: 8px; }
+  .qdstd .container { padding-inline: 15px; }
+  .qdstd__head { margin-bottom: 18px; }
+  .qdstd__title { font-size: 24px; line-height: 30px; }
+  .qdstd__subtitle { font-size: 14px; line-height: 20px; }
+  .qdstd__grid { column-gap: 8px; row-gap: 10px; }
+}
