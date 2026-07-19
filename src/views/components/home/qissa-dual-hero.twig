@@ -5,8 +5,7 @@
 | component.heading      | string    | section title                                      |
 | component.subheading   | string    | section subtitle                                   |
 | component.products     | Product[] | the TWO selected products (first two are used)     |
-| component.show_image   | bool      | show the main image gallery                        |
-| component.show_thumbnails | bool   | show the thumbnail strip                            |
+| component.show_thumbnails | bool   | show the extra gallery thumbnails (main image always shown) |
 | component.show_badge   | bool      | show the discount badge                            |
 | component.show_wishlist| bool      | show the wishlist heart                            |
 | component.show_marquee | bool      | show the "best seller" scrolling banner            |
@@ -42,53 +41,51 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
                 {% set images = product.images|default([]) %}
                 <div class="qpack__card qdhero__card" data-qpack>
 
-                    {# ---- image gallery ---- #}
-                    {% if component.show_image %}
-                        <div class="qpack__gallery">
-                            <div class="qpack__stage">
-                                {% if component.show_badge and product.is_on_sale %}
-                                    <span class="qpack__badge" data-qpack-badge
-                                          data-regular="{{ product.regular_price }}" data-sale="{{ product.sale_price }}">{{ product.promotion_title|default(trans('blocks.qissa.sale')) }}</span>
-                                {% endif %}
+                    {# ---- image gallery (main image always shown; thumbnails toggleable) ---- #}
+                    <div class="qpack__gallery">
+                        <div class="qpack__stage">
+                            {% if component.show_badge and product.is_on_sale %}
+                                <span class="qpack__badge" data-qpack-badge
+                                      data-regular="{{ product.regular_price }}" data-sale="{{ product.sale_price }}">{{ product.promotion_title|default(trans('blocks.qissa.sale')) }}</span>
+                            {% endif %}
 
-                                {% if component.show_wishlist %}
-                                    <button type="button" class="qpack__wish" data-qpack-wish data-id="{{ product.id }}" aria-label="{{ trans('blocks.qissa.wishlist') }}">
-                                        <i class="sicon-heart"></i>
-                                    </button>
-                                {% endif %}
+                            {% if component.show_wishlist %}
+                                <button type="button" class="qpack__wish" data-qpack-wish data-id="{{ product.id }}" aria-label="{{ trans('blocks.qissa.wishlist') }}">
+                                    <i class="sicon-heart"></i>
+                                </button>
+                            {% endif %}
 
-                                {# main image slider (swipeable) #}
-                                <div class="qpack__main" data-qpack-main>
-                                    {% if images|length %}
-                                        {% for img in images %}
-                                            <a class="qpack__slide" href="{{ product.url }}" data-qpack-slide="{{ loop.index0 }}">
-                                                <img src="{{ img.url }}" alt="{{ img.alt|default(product.name) }}" loading="lazy"/>
-                                            </a>
-                                        {% endfor %}
-                                    {% else %}
-                                        <a class="qpack__slide" href="{{ product.url }}" data-qpack-slide="0">
-                                            <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy"/>
+                            {# main image slider (swipeable) #}
+                            <div class="qpack__main" data-qpack-main>
+                                {% if images|length %}
+                                    {% for img in images %}
+                                        <a class="qpack__slide" href="{{ product.url }}" data-qpack-slide="{{ loop.index0 }}">
+                                            <img src="{{ img.url }}" alt="{{ img.alt|default(product.name) }}" loading="lazy"/>
                                         </a>
-                                    {% endif %}
-                                </div>
-
-                                {% if images|length > 1 %}
-                                    <button type="button" class="qpack__arrow qpack__arrow--next" data-qpack-next aria-label="التالي"><i class="sicon-arrow-left"></i></button>
-                                    <button type="button" class="qpack__arrow qpack__arrow--prev" data-qpack-prev aria-label="السابق"><i class="sicon-arrow-right"></i></button>
+                                    {% endfor %}
+                                {% else %}
+                                    <a class="qpack__slide" href="{{ product.url }}" data-qpack-slide="0">
+                                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy"/>
+                                    </a>
                                 {% endif %}
                             </div>
 
-                            {% if component.show_thumbnails and images|length > 1 %}
-                                <div class="qpack__thumbs" data-qpack-thumbs>
-                                    {% for img in images %}
-                                        <button type="button" class="qpack__thumb {{ loop.first ? 'is-active' : '' }}" data-qpack-thumb="{{ loop.index0 }}" aria-label="صورة {{ loop.index }}">
-                                            <img src="{{ img.url }}" alt="{{ img.alt|default(product.name) }}" loading="lazy"/>
-                                        </button>
-                                    {% endfor %}
-                                </div>
+                            {% if images|length > 1 %}
+                                <button type="button" class="qpack__arrow qpack__arrow--next" data-qpack-next aria-label="التالي"><i class="sicon-arrow-left"></i></button>
+                                <button type="button" class="qpack__arrow qpack__arrow--prev" data-qpack-prev aria-label="السابق"><i class="sicon-arrow-right"></i></button>
                             {% endif %}
                         </div>
-                    {% endif %}
+
+                        {% if component.show_thumbnails and images|length > 1 %}
+                            <div class="qpack__thumbs" data-qpack-thumbs>
+                                {% for img in images %}
+                                    <button type="button" class="qpack__thumb {{ loop.first ? 'is-active' : '' }}" data-qpack-thumb="{{ loop.index0 }}" aria-label="صورة {{ loop.index }}">
+                                        <img src="{{ img.url }}" alt="{{ img.alt|default(product.name) }}" loading="lazy"/>
+                                    </button>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
 
                     {# ---- best-seller marquee (merchant-toggled scrolling banner) ---- #}
                     {% if component.show_marquee %}

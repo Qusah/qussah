@@ -6,7 +6,6 @@
 | component.title_highlight | string    | highlighted heading word(s) (royal blue)        |
 | component.subtitle        | string    | subheading                                      |
 | component.products        | Product[] | the TWO selected products (first two are used)  |
-| component.show_image      | bool      | show the product image                          |
 | component.show_badge      | bool      | show the sale/discount badge on the image       |
 | component.show_brand      | bool      | show the brand/category line                    |
 | component.show_chips      | bool      | show the spec chips                             |
@@ -39,18 +38,16 @@ initCardCarousels() in home.js.
         <div class="qdstd__grid">
             {% for product in component.products|slice(0, 2) %}
                 <article class="qprod qdstd__card">
-                    {# image + discount badge (swipe carousel when multi-image) #}
-                    {% if component.show_image %}
-                        {% set badge_text = null %}
-                        {% if component.show_badge %}
-                            {% if product.is_on_sale and product.promotion_title %}
-                                {% set badge_text = product.promotion_title %}
-                            {% elseif product.is_on_sale %}
-                                {% set badge_text = trans('blocks.qissa.sale') %}
-                            {% endif %}
+                    {# image + discount badge (main image always shown; swipe carousel when multi-image) #}
+                    {% set badge_text = null %}
+                    {% if component.show_badge %}
+                        {% if product.is_on_sale and product.promotion_title %}
+                            {% set badge_text = product.promotion_title %}
+                        {% elseif product.is_on_sale %}
+                            {% set badge_text = trans('blocks.qissa.sale') %}
                         {% endif %}
-                        {% include 'components.partials.qprod-image' with { product: product, badge_text: badge_text } %}
                     {% endif %}
+                    {% include 'components.partials.qprod-image' with { product: product, badge_text: badge_text } %}
 
                     {# info #}
                     <div class="qprod__info">

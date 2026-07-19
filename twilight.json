@@ -932,19 +932,6 @@
                 },
                 {
                     "type": "boolean",
-                    "id": "show_image",
-                    "format": "switch",
-                    "icon": "sicon-image",
-                    "label": {
-                        "en": "Show image gallery",
-                        "ar": "إظهار معرض الصور"
-                    },
-                    "required": false,
-                    "value": true,
-                    "selected": true
-                },
-                {
-                    "type": "boolean",
                     "id": "show_thumbnails",
                     "format": "switch",
                     "icon": "sicon-grid",
@@ -1153,19 +1140,6 @@
                         "ar": "النص الفرعي"
                     },
                     "value": "تسوق أبرز منتجاتنا المختارة"
-                },
-                {
-                    "type": "boolean",
-                    "id": "show_image",
-                    "format": "switch",
-                    "icon": "sicon-image",
-                    "label": {
-                        "en": "Show image",
-                        "ar": "إظهار الصورة"
-                    },
-                    "required": false,
-                    "value": true,
-                    "selected": true
                 },
                 {
                     "type": "boolean",
