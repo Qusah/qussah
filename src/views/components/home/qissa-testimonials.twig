@@ -5,18 +5,20 @@
 | component.title_highlight | string | highlighted heading word(s) (royal blue) |
 | component.title           | string | heading rest                             |
 | component.subtitle        | string | subheading                               |
-| component.count           | int    | how many reviews to show (default 6)     |
+| component.count           | int    | how many reviews to show (default 9)     |
+| component.items           | Collection[] | fallback reviews (name, role, text, stars, avatar) |
 | position                  | int    | sorting block                            |
 
-Figma: desktop 6036:1129 (1440) — right title + cards (no arrows).
+Figma: desktop 6036:1129 (1440) — right title + cards.
        mobile  6036:21971 (428) — gradient box, centered title, swipe carousel + prev/next arrows.
 
 REAL customer reviews: cards are populated client-side from the store's reviews
-(salla.api `reviews` · type=store) into the qtcard design below. The section hides
-itself when the store has no reviews. Stars use the project ★/☆ glyphs; quote uses
-the theme inline quote-open SVG.
+(salla.api `reviews` · type=store) into the qtcard design below. When the store has
+NO reviews, the merchant-entered fallback (component.items, rendered server-side)
+stays; when the store has neither, the section removes itself. Stars use the project
+★/☆ glyphs; quote uses the theme inline quote-open SVG.
 #}
-<section class="s-block qtest is-loading" id="qtest-{{ position }}" data-qtest data-count="{{ component.count|default(9) }}">
+<section class="s-block qtest{% if not component.items|length %} is-loading{% endif %}" id="qtest-{{ position }}" data-qtest data-count="{{ component.count|default(9) }}">
     <div class="container">
         <div class="qtest__box">
 
@@ -30,8 +32,35 @@ the theme inline quote-open SVG.
                 {% endif %}
             </div>
 
-            {# cards: 3-col grid (desktop) / swipe carousel (mobile) — filled from real reviews #}
-            <div class="qtest__row" data-qtest-row></div>
+            {# cards: swipe carousel. Real store reviews load here on the client;
+               the merchant-entered fallback below shows when the store has none. #}
+            <div class="qtest__row" data-qtest-row>
+                {% for item in component.items %}
+                    <article class="qtcard">
+                        <div class="qtcard__top">
+                            <span class="qtcard__quote" aria-hidden="true">
+                                <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M8 12v-5.333c0-0.737-0.596-1.333-1.333-1.333-3.676 0-6.667 2.991-6.667 6.667v8c0 3.676 2.991 6.667 6.667 6.667h1.333c3.676 0 6.667-2.991 6.667-6.667v-1.333c0-3.676-2.991-6.667-6.667-6.667zM12 20c0 2.205-1.795 4-4 4h-1.333c-2.205 0-4-1.795-4-4v-8c0-1.739 1.115-3.221 2.667-3.772v5.105c0 0.737 0.596 1.333 1.333 1.333h1.333c2.205 0 4 1.795 4 4zM25.333 12v-5.333c0-0.737-0.596-1.333-1.333-1.333-3.676 0-6.667 2.991-6.667 6.667v8c0 3.676 2.991 6.667 6.667 6.667h1.333c3.676 0 6.667-2.991 6.667-6.667v-1.333c0-3.676-2.991-6.667-6.667-6.667zM29.333 20c0 2.205-1.795 4-4 4h-1.333c-2.205 0-4-1.795-4-4v-8c0-1.739 1.115-3.221 2.667-3.772v5.105c0 0.737 0.596 1.333 1.333 1.333h1.333c2.205 0 4 1.795 4 4z"></path></svg>
+                            </span>
+                            {% set stars = item.stars|default(5) %}
+                            <span class="qtcard__rating" aria-label="{{ stars }}/5">
+                                {% for i in 1..5 %}<span class="qtcard__star {{ i <= stars ? 'is-on' : 'is-off' }}">{{ i <= stars ? '★' : '☆' }}</span>{% endfor %}
+                            </span>
+                        </div>
+                        {% if item.text %}<p class="qtcard__text">{{ item.text }}</p>{% endif %}
+                        <div class="qtcard__user">
+                            <div class="qtcard__name">
+                                {% if item.name %}<span class="qtcard__name-main">{{ item.name }}</span>{% endif %}
+                                {% if item.role %}<span class="qtcard__name-role">{{ item.role }}</span>{% endif %}
+                            </div>
+                            {% if item.avatar %}
+                                <span class="qtcard__avatar"><img src="{{ item.avatar }}" alt="{{ item.name|default('') }}" width="40" height="40" loading="lazy"/></span>
+                            {% else %}
+                                <span class="qtcard__avatar qtcard__avatar--initial">{{ item.name|default('★')|slice(0, 1) }}</span>
+                            {% endif %}
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
 
             {# footer: "view all reviews" link + carousel arrows #}
             <div class="qtest__foot">
@@ -135,21 +164,31 @@ the theme inline quote-open SVG.
     update();
   }
 
+  // reveal the section (real reviews or the server-rendered fallback), or drop it
+  // entirely when there is nothing to show
+  function finalize(sec, row) {
+    if (row && row.querySelector('.qtcard')) {
+      sec.classList.remove('is-loading');
+      initArrows(sec);
+    } else {
+      sec.remove();
+    }
+  }
+
   function load(sec) {
     var row = sec.querySelector('[data-qtest-row]');
     var count = parseInt(sec.getAttribute('data-count'), 10) || 9;
-    if (!row || !(window.salla && salla.api && salla.api.request)) { sec.remove(); return; }
+    if (!row) { return; }
+    if (!(window.salla && salla.api && salla.api.request)) { finalize(sec, row); return; }  // keep fallback if any
 
     salla.api.request('reviews', { params: { type: 'store' } }, 'get')
       .then(function (resp) {
         var data = (resp && resp.data) ? resp.data : [];
         data = data.filter(function (r) { return toText(r.content || r.text || ''); }).slice(0, count);
-        if (!data.length) { sec.remove(); return; }              // no real reviews → don't show an empty section
-        row.innerHTML = data.map(cardHtml).join('');
-        sec.classList.remove('is-loading');
-        initArrows(sec);
+        if (data.length) { row.innerHTML = data.map(cardHtml).join(''); }   // real reviews replace the fallback
+        finalize(sec, row);                                                 // otherwise the fallback stays
       })
-      .catch(function () { sec.remove(); });
+      .catch(function () { finalize(sec, row); });                          // API error → keep the fallback
   }
 
   function boot() { sections.forEach(load); }

@@ -2067,6 +2067,90 @@
                     "value": 9,
                     "minimum": 1,
                     "maximum": 30
+                },
+                {
+                    "id": "items",
+                    "key": "2bb58935-a2b4-4d86-af9f-9531d6af008b",
+                    "type": "collection",
+                    "format": "collection",
+                    "label": "آراء بديلة (عند عدم وجود تقييمات)",
+                    "description": "تُعرض هذه الآراء فقط عندما لا توجد تقييمات حقيقية للمتجر. أضف بعض الآراء هنا كي لا يظهر القسم فارغًا.",
+                    "labelHTML": null,
+                    "item_label": "رأي",
+                    "icon": "sicon-list-add",
+                    "value": [],
+                    "fields": [
+                        {
+                            "id": "items.name",
+                            "key": "e71231c7-ea10-4e84-bfac-ba2130ee3bc6",
+                            "type": "string",
+                            "format": "text",
+                            "label": "اسم العميل",
+                            "description": null,
+                            "labelHTML": null,
+                            "placeholder": "اسم العميل",
+                            "icon": "sicon-format-text-alt",
+                            "value": null,
+                            "multilanguage": false,
+                            "required": false
+                        },
+                        {
+                            "id": "items.role",
+                            "key": "66423a29-7851-4af3-89aa-367a171b701c",
+                            "type": "string",
+                            "format": "text",
+                            "label": "المسمى / المكان",
+                            "description": null,
+                            "labelHTML": null,
+                            "placeholder": "المسمى الوظيفي أو المكان",
+                            "icon": "sicon-format-text-alt",
+                            "value": null,
+                            "multilanguage": false,
+                            "required": false
+                        },
+                        {
+                            "id": "items.text",
+                            "key": "51e3de71-13fc-43e1-a689-d2c6c0a5d849",
+                            "type": "string",
+                            "format": "textarea",
+                            "label": "نص الرأي",
+                            "description": null,
+                            "labelHTML": null,
+                            "placeholder": "نص الرأي",
+                            "icon": "sicon-format-text-alt",
+                            "value": null,
+                            "multilanguage": true,
+                            "required": false
+                        },
+                        {
+                            "id": "items.stars",
+                            "key": "f60a28f3-e0dc-4702-9f38-ebd6e987d6bf",
+                            "type": "number",
+                            "format": "integer",
+                            "label": "عدد النجوم",
+                            "description": null,
+                            "labelHTML": "من 1 إلى 5",
+                            "placeholder": "القيمة",
+                            "icon": "sicon-pencil-ruler",
+                            "value": 5,
+                            "required": false,
+                            "minimum": 1,
+                            "maximum": 5
+                        },
+                        {
+                            "id": "items.avatar",
+                            "key": "a44e0ca6-5eaa-477a-8e5c-372689fd9583",
+                            "type": "string",
+                            "format": "image",
+                            "label": "صورة العميل",
+                            "description": "المقاس المناسب للصورة هو 40*40 بكسل",
+                            "labelHTML": null,
+                            "placeholder": "e.g. https://hostname.com/image.png",
+                            "icon": "sicon-image",
+                            "value": null,
+                            "required": false
+                        }
+                    ]
                 }
             ]
         },
