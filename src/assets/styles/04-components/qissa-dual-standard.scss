@@ -26,22 +26,23 @@
   }
 
   // ---- 2-up grid ----
-  // Capped + centered: two standard cards, not two full-width banners. Without
-  // the cap each card stretches to ~half the page while .qprod__img keeps its
-  // narrow-grid 228px height → a 2:1 landscape box that crops the image.
+  // Capped + centered: two compact standard cards, not two full-width banners.
+  // Without the cap each card stretches to ~half the page while .qprod__img
+  // keeps its narrow-grid 228px height → a 2:1 landscape box that crops the image.
   &__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     column-gap: 16px;
     row-gap: 24px;
     width: 100%;
-    max-width: 1040px;
+    max-width: 720px;
     margin-inline: auto;
     direction: rtl;
   }
 
-  // reused .qprod card already handles its own internals; keep it shrinkable
-  &__card { min-width: 0; }
+  // reused .qprod card already handles its own internals; keep it shrinkable +
+  // capped so each card stays a normal product-card size.
+  &__card { min-width: 0; max-width: 352px; margin-inline: auto; width: 100%; }
 
   // Square image box (matches Salla's square product images + the hero card's
   // square slides) instead of the fixed 228px band → square images fill with
