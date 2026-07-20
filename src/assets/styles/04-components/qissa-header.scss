@@ -77,12 +77,9 @@ body, main, #app { background: transparent; }
     }
   }
 
-  // Desktop cart = centered label only. The total is a mobile-only pill
-  // (Figma node 6345:7289), so hide it here; the mobile block reveals it.
+  // cart CTA "إتمام الطلب" — centered label beside the icon (desktop + mobile).
   .qheader-act--cart .qheader-act__txt { justify-content: center; }
   .qheader-act--cart .qheader-act__txt b { font-size: 13px; color: #fff; }
-  .qheader-act__total { display: none; }
-  .qheader-act__lbl-cta { display: none; }   // "إتمام الطلب" — mobile pill only
 
   // pill menu (Figma px-25 py-15)
   .qheader-menu {
@@ -215,18 +212,12 @@ body, main, #app { background: transparent; }
   .qheader .qheader-actions { order: 1; gap: 20px; direction: rtl; }
   .qheader .qheader-act { gap: 7px; }
   .qheader .qheader-act--account { display: none; }               // profile → sidebar
+  // mobile CTA pill: icon on the right, centered "إتمام الطلب" on the left (no price).
+  .qheader .qheader-act--cart { flex-direction: row-reverse; }
   .qheader .qheader-act--cart .qheader-act__txt {
-    display: flex; align-items: flex-end; line-height: 1.15;
+    display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.15;
   }
-  .qheader .qheader-act--cart .qheader-act__txt b { font-size: 12px; font-weight: 300; color: #fff; }
-  // mobile shows the "إتمام الطلب" CTA label instead of the desktop cart label
-  .qheader .qheader-act--cart .qheader-act__lbl { display: none; }
-  .qheader .qheader-act--cart .qheader-act__lbl-cta { display: inline; }
-  .qheader .qheader-act--cart .qheader-act__total {
-    display: block;
-    font-family: 'Poppins', 'GE SS Two', sans-serif;
-    font-size: 13px; font-weight: 600; color: #fff; line-height: 1.3; white-space: nowrap;
-  }
+  .qheader .qheader-act--cart .qheader-act__txt b { font-size: 13px; font-weight: 500; color: #fff; white-space: nowrap; }
   .qheader .qheader-act__ic { width: 36px; height: 36px; }
 
   .qheader .qheader-brand { order: 3; direction: rtl; }
