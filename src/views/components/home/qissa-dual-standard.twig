@@ -1,0 +1,104 @@
+{#
+| Variable                  | Type      | Description                                     |
+|---------------------------|-----------|-------------------------------------------------|
+| component                 | object    | merchant settings from twilight.json            |
+| component.title           | string    | heading first part                              |
+| component.title_highlight | string    | highlighted heading word(s) (royal blue)        |
+| component.subtitle        | string    | subheading                                      |
+| component.products        | Product[] | the TWO selected products (first two are used)  |
+| component.show_badge      | bool      | show the sale/discount badge on the image       |
+| component.show_brand      | bool      | show the brand/category line                    |
+| component.show_chips      | bool      | show the spec chips                             |
+| component.show_price      | bool      | show the price                                  |
+| component.show_add        | bool      | show the add-to-cart button                     |
+| component.show_wishlist   | bool      | show the wishlist (like) button                 |
+| position                  | int       | sorting block                                   |
+
+Two products shown side-by-side using the Standard Product Card design (reuses the
+.qprod card + the qprod-image partial built for "خصيصاً من قصة"). Every element is
+merchant-toggleable. Dynamic Salla data only — the image carousel auto-wires via
+initCardCarousels() in home.js.
+#}
+<section class="s-block qdstd" id="qdstd-{{ position }}">
+    <div class="container">
+
+        {# centered heading #}
+        {% if component.title or component.title_highlight or component.subtitle %}
+            <div class="qdstd__head">
+                <h2 class="qdstd__title">
+                    <span class="qdstd__title-hl">{{ component.title_highlight }}</span> {{ component.title }}
+                </h2>
+                {% if component.subtitle %}
+                    <p class="qdstd__subtitle">{{ component.subtitle }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if component.products|length %}
+        <div class="qdstd__grid">
+            {% for product in component.products|slice(0, 2) %}
+                <article class="qprod qdstd__card">
+                    {# image + discount badge (main image always shown; swipe carousel when multi-image) #}
+                    {% set badge_text = null %}
+                    {% if component.show_badge %}
+                        {% if product.is_on_sale and product.promotion_title %}
+                            {% set badge_text = product.promotion_title %}
+                        {% elseif product.is_on_sale %}
+                            {% set badge_text = trans('blocks.qissa.sale') %}
+                        {% endif %}
+                    {% endif %}
+                    {% include 'components.partials.qprod-image' with { product: product, badge_text: badge_text } %}
+
+                    {# info #}
+                    <div class="qprod__info">
+                        {% if component.show_brand and product.brand.name %}
+                            <span class="qprod__cat">{{ product.brand.name }}</span>
+                        {% endif %}
+                        <a href="{{ product.url }}" class="qprod__name">{{ product.name }}</a>
+
+                        {# spec chips (from product subtitle, split on the Arabic comma ، ) #}
+                        {% if component.show_chips and product.subtitle %}
+                            <div class="qprod__chips">
+                                {% for chip in product.subtitle|split('،') %}
+                                    {% if chip|trim %}<span class="qprod__chip">{{ chip|trim }}</span>{% endif %}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        {# price #}
+                        {% if component.show_price %}
+                            <div class="qprod__price">
+                                {% if product.is_on_sale %}
+                                    <b class="qprod__price-now">{{ product.sale_price|money }}</b>
+                                    <s class="qprod__price-old">{{ product.regular_price|money }}</s>
+                                {% else %}
+                                    <b class="qprod__price-now">{{ product.price|money }}</b>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {# buttons — like LEFT, add-to-cart fills RIGHT #}
+                    {% if component.show_add or component.show_wishlist %}
+                        <div class="qprod__btns">
+                            {% if component.show_wishlist %}
+                                <button class="qprod__like" data-id="{{ product.id }}" onclick="salla.wishlist.toggle('{{ product.id }}')" aria-label="المفضلة">
+                                    <i class="sicon-heart"></i>
+                                </button>
+                            {% endif %}
+                            {% if component.show_add %}
+                                <button class="qprod__add" type="button"
+                                    onclick="salla.cart.addItem({ id: '{{ product.id }}', quantity: 1 })">
+                                    <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
+                                    <i class="sicon-shopping-bag"></i>
+                                </button>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    </div>
+</section>

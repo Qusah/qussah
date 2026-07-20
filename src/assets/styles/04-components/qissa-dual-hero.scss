@@ -1,0 +1,63 @@
+// ====================================================================
+// Qissa Dual Hero — two Product Hero cards side-by-side.
+// Reuses the .qpack__* card internals built for "البكج الشامل"
+// (gallery, marquee, details) and only adds: the section wrapper,
+// a centered heading, a 2-up grid, and a card-width override so each
+// hero card fills its grid column instead of the single-card 680px cap.
+// Import order: this file is loaded AFTER qissa-package, so the width
+// override below wins on equal specificity.
+// ====================================================================
+
+.qdhero {
+  font-family: 'GE SS Two', sans-serif;
+  padding-block: 24px;
+
+  .container { max-width: none; padding-inline: 50px; }
+
+  // ---- centered heading ----
+  &__head {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 12px; text-align: center; margin-bottom: 28px;
+  }
+  &__title {
+    font-size: 32px; font-weight: 700; line-height: 38px;
+    letter-spacing: -0.2px; color: #0a1f30; margin: 0;
+  }
+  &__subtitle {
+    font-size: 16px; font-weight: 300; line-height: 24px;
+    color: #6c757d; margin: 0;
+  }
+
+  // ---- 2-up grid ----
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    align-items: start;
+    width: 100%;
+    direction: rtl;
+  }
+
+  // each hero card fills its column (override the single-card centering cap)
+  &__card {
+    max-width: none;
+    margin-inline: 0;
+    width: 100%;
+    min-width: 0;   // grid item: allow shrink below content (no RTL edge cut)
+  }
+}
+
+// ---- tablet: stack to one column ----
+@media (max-width: 900px) {
+  .qdhero__grid { grid-template-columns: 1fr; }
+}
+
+// ---- mobile (<=768): stacked, tightened to match qpack mobile ----
+@media (max-width: 768px) {
+  .qdhero { padding-block: 8px; }
+  .qdhero .container { padding-inline: 15px; }
+  .qdhero__head { margin-bottom: 18px; }
+  .qdhero__title { font-size: 24px; line-height: 30px; }
+  .qdhero__subtitle { font-size: 14px; line-height: 20px; }
+  .qdhero__grid { gap: 16px; }
+}
