@@ -28,20 +28,25 @@
     color: #6c757d; margin: 0;
   }
 
-  // ---- 2-up grid ----
+  // ---- 2-up grid (capped + centered) ----
+  // Without a cap each card stretched to ~half the full page → an enormous
+  // square gallery. Cap the pair so the two hero cards stay a comfortable size.
   &__grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 24px;
     align-items: start;
     width: 100%;
+    max-width: 880px;
+    margin-inline: auto;
     direction: rtl;
   }
 
-  // each hero card fills its column (override the single-card centering cap)
+  // cap each card to a sensible hero width; margin-auto keeps it centered when
+  // the grid collapses to a single column on tablet/mobile.
   &__card {
-    max-width: none;
-    margin-inline: 0;
+    max-width: 428px;
+    margin-inline: auto;
     width: 100%;
     min-width: 0;   // grid item: allow shrink below content (no RTL edge cut)
   }
