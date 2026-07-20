@@ -1,18 +1,22 @@
 {#
-| Variable                  | Type           | Description                              |
-|---------------------------|----------------|------------------------------------------|
-| component                 | object         | merchant settings from twilight.json     |
-| component.title_highlight | string         | highlighted heading word(s) (royal blue) |
-| component.title           | string         | heading rest                             |
-| component.subtitle        | string         | subheading                               |
-| component.items           | Collection[]   | testimonials (name, role, text, stars, avatar) |
-| position                  | int            | sorting block                            |
+| Variable                  | Type   | Description                              |
+|---------------------------|--------|------------------------------------------|
+| component                 | object | merchant settings from twilight.json     |
+| component.title_highlight | string | highlighted heading word(s) (royal blue) |
+| component.title           | string | heading rest                             |
+| component.subtitle        | string | subheading                               |
+| component.count           | int    | how many reviews to show (default 6)     |
+| position                  | int    | sorting block                            |
 
-Figma: desktop 6036:1129 (1440) — right title + 3 static cards (no arrows).
+Figma: desktop 6036:1129 (1440) — right title + cards (no arrows).
        mobile  6036:21971 (428) — gradient box, centered title, swipe carousel + prev/next arrows.
-Stars use the project ★/☆ glyph approach; quote uses the theme's inline quote-open SVG.
+
+REAL customer reviews: cards are populated client-side from the store's reviews
+(salla.api `reviews` · type=store) into the qtcard design below. The section hides
+itself when the store has no reviews. Stars use the project ★/☆ glyphs; quote uses
+the theme inline quote-open SVG.
 #}
-<section class="s-block qtest" id="qtest-{{ position }}">
+<section class="s-block qtest is-loading" id="qtest-{{ position }}" data-qtest data-count="{{ component.count|default(9) }}">
     <div class="container">
         <div class="qtest__box">
 
@@ -26,50 +30,23 @@ Stars use the project ★/☆ glyph approach; quote uses the theme's inline quot
                 {% endif %}
             </div>
 
-            {# cards: 3-col grid (desktop) / swipe carousel (mobile) #}
-            <div class="qtest__row">
-                {% for index, item in component.items %}
-                    <article class="qtcard">
-                        {# quote (left) + rating (right) #}
-                        <div class="qtcard__top">
-                            <span class="qtcard__quote" aria-hidden="true">
-                                <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M8 12v-5.333c0-0.737-0.596-1.333-1.333-1.333-3.676 0-6.667 2.991-6.667 6.667v8c0 3.676 2.991 6.667 6.667 6.667h1.333c3.676 0 6.667-2.991 6.667-6.667v-1.333c0-3.676-2.991-6.667-6.667-6.667zM12 20c0 2.205-1.795 4-4 4h-1.333c-2.205 0-4-1.795-4-4v-8c0-1.739 1.115-3.221 2.667-3.772v5.105c0 0.737 0.596 1.333 1.333 1.333h1.333c2.205 0 4 1.795 4 4zM25.333 12v-5.333c0-0.737-0.596-1.333-1.333-1.333-3.676 0-6.667 2.991-6.667 6.667v8c0 3.676 2.991 6.667 6.667 6.667h1.333c3.676 0 6.667-2.991 6.667-6.667v-1.333c0-3.676-2.991-6.667-6.667-6.667zM29.333 20c0 2.205-1.795 4-4 4h-1.333c-2.205 0-4-1.795-4-4v-8c0-1.739 1.115-3.221 2.667-3.772v5.105c0 0.737 0.596 1.333 1.333 1.333h1.333c2.205 0 4 1.795 4 4z"></path>
-                                </svg>
-                            </span>
-                            {% set stars = item.stars|default(5) %}
-                            <span class="qtcard__rating" aria-label="{{ stars }}/5">
-                                {% for i in 1..5 %}<span class="qtcard__star {{ i <= stars ? 'is-on' : 'is-off' }}">{{ i <= stars ? '★' : '☆' }}</span>{% endfor %}
-                            </span>
-                        </div>
+            {# cards: 3-col grid (desktop) / swipe carousel (mobile) — filled from real reviews #}
+            <div class="qtest__row" data-qtest-row></div>
 
-                        {# testimonial text #}
-                        {% if item.text %}<p class="qtcard__text">{{ item.text }}</p>{% endif %}
-
-                        {# user #}
-                        <div class="qtcard__user">
-                            <div class="qtcard__name">
-                                {% if item.name %}<span class="qtcard__name-main">{{ item.name }}</span>{% endif %}
-                                {% if item.role %}<span class="qtcard__name-role">{{ item.role }}</span>{% endif %}
-                            </div>
-                            {% if item.avatar %}
-                                <span class="qtcard__avatar">
-                                    <img src="{{ item.avatar }}" alt="{{ item.name|default('') }}" width="48" height="48" loading="lazy"/>
-                                </span>
-                            {% endif %}
-                        </div>
-                    </article>
-                {% endfor %}
-            </div>
-
-            {# nav arrows (mobile carousel only) #}
-            <div class="qtest__nav">
-                <button type="button" class="qtest__arrow qtest__arrow--prev" aria-label="السابق">
+            {# footer: "view all reviews" link + carousel arrows #}
+            <div class="qtest__foot">
+                <a class="qtest__all" href="{{ link('testimonials') }}">
+                    <span>عرض جميع التقييمات</span>
                     <i class="sicon-arrow-left"></i>
-                </button>
-                <button type="button" class="qtest__arrow qtest__arrow--next" aria-label="التالي">
-                    <i class="sicon-arrow-right"></i>
-                </button>
+                </a>
+                <div class="qtest__nav">
+                    <button type="button" class="qtest__arrow qtest__arrow--prev" aria-label="السابق">
+                        <i class="sicon-arrow-left"></i>
+                    </button>
+                    <button type="button" class="qtest__arrow qtest__arrow--next" aria-label="التالي">
+                        <i class="sicon-arrow-right"></i>
+                    </button>
+                </div>
             </div>
 
         </div>
@@ -77,35 +54,105 @@ Stars use the project ★/☆ glyph approach; quote uses the theme's inline quot
 </section>
 
 <script>
-(function(){
-  document.querySelectorAll('.qtest').forEach(function(sec){
+(function () {
+  var sections = document.querySelectorAll('.qtest[data-qtest]');
+  if (!sections.length) { return; }
+
+  var QUOTE_SVG = '<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M8 12v-5.333c0-0.737-0.596-1.333-1.333-1.333-3.676 0-6.667 2.991-6.667 6.667v8c0 3.676 2.991 6.667 6.667 6.667h1.333c3.676 0 6.667-2.991 6.667-6.667v-1.333c0-3.676-2.991-6.667-6.667-6.667zM12 20c0 2.205-1.795 4-4 4h-1.333c-2.205 0-4-1.795-4-4v-8c0-1.739 1.115-3.221 2.667-3.772v5.105c0 0.737 0.596 1.333 1.333 1.333h1.333c2.205 0 4 1.795 4 4zM25.333 12v-5.333c0-0.737-0.596-1.333-1.333-1.333-3.676 0-6.667 2.991-6.667 6.667v8c0 3.676 2.991 6.667 6.667 6.667h1.333c3.676 0 6.667-2.991 6.667-6.667v-1.333c0-3.676-2.991-6.667-6.667-6.667zM29.333 20c0 2.205-1.795 4-4 4h-1.333c-2.205 0-4-1.795-4-4v-8c0-1.739 1.115-3.221 2.667-3.772v5.105c0 0.737 0.596 1.333 1.333 1.333h1.333c2.205 0 4 1.795 4 4z"></path></svg>';
+
+  // escape user-generated strings before injecting as HTML
+  function esc(s) { var d = document.createElement('div'); d.textContent = (s == null ? '' : String(s)); return d.innerHTML; }
+  // review content may arrive as HTML → take its plain text only
+  function toText(html) { var d = document.createElement('div'); d.innerHTML = (html == null ? '' : String(html)); return (d.textContent || d.innerText || '').trim(); }
+
+  function starsHtml(n) {
+    n = Math.max(0, Math.min(5, Math.round(Number(n) || 0)));
+    var out = '';
+    for (var i = 1; i <= 5; i++) {
+      out += '<span class="qtcard__star ' + (i <= n ? 'is-on' : 'is-off') + '">' + (i <= n ? '★' : '☆') + '</span>';
+    }
+    return out;
+  }
+
+  function fmtDate(created) {
+    var s = created && created.date ? created.date : created;
+    if (!s || typeof s !== 'string') { return ''; }
+    var p = s.split(' ')[0].split('-');
+    if (p.length < 3) { return ''; }
+    return parseInt(p[2], 10) + '/' + parseInt(p[1], 10) + '/' + parseInt(p[0], 10);
+  }
+
+  function cardHtml(r) {
+    var name = r.name || 'عميل';
+    var text = toText(r.content || r.text || '');
+    var rating = r.rating || r.stars || 0;
+    var date = fmtDate(r.created_at);
+    var avatar = r.avatar
+      ? '<span class="qtcard__avatar"><img src="' + esc(r.avatar) + '" alt="' + esc(name) + '" width="40" height="40" loading="lazy"/></span>'
+      : '<span class="qtcard__avatar qtcard__avatar--initial">' + esc((name.trim().charAt(0) || '★')) + '</span>';
+
+    return '' +
+      '<article class="qtcard">' +
+        '<div class="qtcard__top">' +
+          '<span class="qtcard__quote" aria-hidden="true">' + QUOTE_SVG + '</span>' +
+          '<span class="qtcard__rating" aria-label="' + rating + '/5">' + starsHtml(rating) + '</span>' +
+        '</div>' +
+        (text ? '<p class="qtcard__text">' + esc(text) + '</p>' : '') +
+        '<div class="qtcard__user">' +
+          '<div class="qtcard__name">' +
+            '<span class="qtcard__name-main">' + esc(name) + '</span>' +
+            (date ? '<span class="qtcard__name-role">' + esc(date) + '</span>' : '') +
+          '</div>' +
+          avatar +
+        '</div>' +
+      '</article>';
+  }
+
+  // mobile swipe carousel arrows (same behaviour as the old static markup)
+  function initArrows(sec) {
     var row = sec.querySelector('.qtest__row');
     var prev = sec.querySelector('.qtest__arrow--prev');
     var next = sec.querySelector('.qtest__arrow--next');
-    if(!row || !prev || !next) return;
-    function step(){
+    if (!row || !prev || !next) { return; }
+    function step() {
       var card = row.querySelector('.qtcard');
       var gap = parseInt(getComputedStyle(row).columnGap || getComputedStyle(row).gap || '20', 10) || 20;
       return card ? card.getBoundingClientRect().width + gap : row.clientWidth;
     }
-    // disable an arrow when there is no card left to reveal in that direction
-    function update(){
+    function update() {
       var cards = row.querySelectorAll('.qtcard');
-      if(!cards.length) return;
+      if (!cards.length) { return; }
       var r = row.getBoundingClientRect();
       var first = cards[0].getBoundingClientRect();
       var last = cards[cards.length - 1].getBoundingClientRect();
-      var leftEdge = Math.min(first.left, last.left);
-      var rightEdge = Math.max(first.right, last.right);
-      prev.disabled = leftEdge >= r.left - 1;     // arrow-left: nothing more to the left
-      next.disabled = rightEdge <= r.right + 1;   // arrow-right: nothing more to the right
+      prev.disabled = Math.min(first.left, last.left) >= r.left - 1;
+      next.disabled = Math.max(first.right, last.right) <= r.right + 1;
     }
-    // scroll in the direction each arrow points (left arrow → left, right arrow → right)
-    prev.addEventListener('click', function(){ row.scrollBy({ left: -step(), behavior: 'smooth' }); });
-    next.addEventListener('click', function(){ row.scrollBy({ left: step(), behavior: 'smooth' }); });
-    row.addEventListener('scroll', function(){ requestAnimationFrame(update); });
+    prev.addEventListener('click', function () { row.scrollBy({ left: -step(), behavior: 'smooth' }); });
+    next.addEventListener('click', function () { row.scrollBy({ left: step(), behavior: 'smooth' }); });
+    row.addEventListener('scroll', function () { requestAnimationFrame(update); });
     window.addEventListener('resize', update);
     update();
-  });
+  }
+
+  function load(sec) {
+    var row = sec.querySelector('[data-qtest-row]');
+    var count = parseInt(sec.getAttribute('data-count'), 10) || 9;
+    if (!row || !(window.salla && salla.api && salla.api.request)) { sec.remove(); return; }
+
+    salla.api.request('reviews', { params: { type: 'store' } }, 'get')
+      .then(function (resp) {
+        var data = (resp && resp.data) ? resp.data : [];
+        data = data.filter(function (r) { return toText(r.content || r.text || ''); }).slice(0, count);
+        if (!data.length) { sec.remove(); return; }              // no real reviews → don't show an empty section
+        row.innerHTML = data.map(cardHtml).join('');
+        sec.classList.remove('is-loading');
+        initArrows(sec);
+      })
+      .catch(function () { sec.remove(); });
+  }
+
+  function boot() { sections.forEach(load); }
+  if (window.salla && salla.onReady) { salla.onReady(boot); } else { document.addEventListener('DOMContentLoaded', boot); }
 })();
 </script>

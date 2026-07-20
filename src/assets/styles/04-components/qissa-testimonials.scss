@@ -10,11 +10,15 @@
   font-family: 'GE SS Two', sans-serif;
   padding-block: 24px;
 
+  // hidden until real reviews are fetched & rendered (the class is removed on
+  // success; the section removes itself entirely when the store has no reviews)
+  &.is-loading { display: none; }
+
   .container { max-width: none; padding-inline: 80px; }
 
   &__box {
     display: flex; flex-direction: column; align-items: flex-end;
-    gap: 32px;
+    gap: 24px;
   }
 
   // ---- title (right-aligned, RTL) ----
@@ -32,20 +36,44 @@
     font-size: 16px; font-weight: 300; line-height: 24px; color: #6c757d; margin: 0;
   }
 
-  // ---- cards: 3-col grid (desktop) ----
+  // ---- cards: horizontal swipe carousel (3 per view on desktop) ----
   &__row {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 24px; width: 100%; direction: rtl;
+    display: flex; direction: rtl;
+    gap: 24px; width: 100%;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    padding: 12px 2px;                       // room so card shadows aren't clipped
+    &::-webkit-scrollbar { display: none; }
   }
 
-  // ---- nav arrows (mobile carousel only) ----
-  &__nav { display: none; }
+  // ---- footer: "view all" link (right) + prev/next arrows (left) ----
+  &__foot {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; direction: rtl; gap: 16px; margin-top: 4px;
+  }
+  &__all {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 15px; font-weight: 500; color: #30378e; line-height: 1;
+    transition: color .2s ease;
+    i { font-size: 14px; }
+    &:hover { color: #172951; }
+  }
+  &__nav { display: flex; direction: ltr; gap: 8px; }
+  &__arrow {
+    width: 44px; height: 44px; border-radius: 30px; padding: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 1px solid transparent; transition: opacity .2s ease;
+    i { font-size: 16px; }
+    &:disabled { opacity: .35; cursor: default; }
+  }
+  &__arrow--prev { background: #30378e; border-color: #30378e; color: #fff; }
+  &__arrow--next { background: #daeff7; border-color: #daeff7; color: #0a1f30; }
 }
 
 // ---- single testimonial card ----
 .qtcard {
   display: flex; flex-direction: column; align-items: flex-start;  // right in RTL
-  gap: 16px; padding: 24px;
+  gap: 12px; padding: 18px;
   // Figma card decoration (Vector 3): soft cyan glow fading to white.
   // The glow alternates by card order — odd cards bottom-LEFT, even cards top-LEFT.
   background:
@@ -54,8 +82,18 @@
       rgba(145, 230, 247, .12) 30%,
       rgba(145, 230, 247, 0) 58%),
     #ffffff;
-  border: 1px solid #eee; border-radius: 12px;
+  border: 1px solid #e6ebf2; border-radius: 12px;
   direction: rtl; text-align: right; overflow: hidden;
+
+  // carousel item — 3 cards per view on desktop
+  flex: 0 0 calc((100% - 48px) / 3); max-width: calc((100% - 48px) / 3);
+  scroll-snap-align: start;
+  // UX: lift the card off the light background with a soft shadow + hover
+  box-shadow: 0 6px 22px rgba(23, 41, 81, .07);
+  transition: box-shadow .2s ease, transform .2s ease;
+  @media (hover: hover) {
+    &:hover { box-shadow: 0 12px 30px rgba(23, 41, 81, .12); transform: translateY(-2px); }
+  }
 
   // even (middle) card moves the glow to the TOP-LEFT
   &:nth-child(even) {
@@ -75,16 +113,18 @@
   }
   &__quote {
     flex: 0 0 auto; line-height: 0;
-    svg { width: 32px; height: 32px; display: block; fill: #e6e9ee; }
+    svg { width: 22px; height: 22px; display: block; fill: #d7dce4; }   // smaller, subtle
   }
   // rating — RTL so filled stars sit on the right (Figma)
   &__rating { direction: rtl; display: inline-flex; gap: 2px; }
-  &__star { font-size: 13px; line-height: 1; color: #f5b50a; }
+  &__star { font-size: 12px; line-height: 1; color: #f5b50a; }
 
-  // testimonial text
+  // testimonial text — the primary element, larger than the name
   &__text {
-    font-size: 16px; font-weight: 300; line-height: 25px; color: #6c757d;
+    font-size: 15px; font-weight: 400; line-height: 24px; color: #4b5563;
     width: 100%; margin: 0; text-align: right;
+    // clamp long reviews so cards stay compact and uniform
+    display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
   }
 
   // user — name block (right) + avatar (far right)
@@ -96,12 +136,15 @@
     flex: 1 1 auto; min-width: 0;
     display: flex; flex-direction: column; align-items: flex-end; text-align: right;
   }
-  &__name-main { font-size: 18px; font-weight: 500; line-height: 25px; color: #172951; width: 100%; }
-  &__name-role { font-size: 14px; font-weight: 300; line-height: normal; color: #30378e; width: 100%; }
+  &__name-main { font-size: 14px; font-weight: 600; line-height: 20px; color: #172951; width: 100%; }
+  &__name-role { font-size: 12px; font-weight: 300; line-height: normal; color: #30378e; width: 100%; }
   &__avatar {
-    flex: 0 0 48px; width: 48px; height: 48px;
+    flex: 0 0 40px; width: 40px; height: 40px;
     border-radius: 50%; overflow: hidden; background: #daeff7;
+    display: inline-flex; align-items: center; justify-content: center;
     img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    // fallback when a review has no avatar → the customer's initial
+    &--initial { color: #30378e; font-weight: 600; font-size: 15px; }
   }
 }
 
@@ -111,7 +154,8 @@
 // ====================================================================
 @media (min-width: 769px) and (max-width: 1024px) {
   .qtest .container { padding-inline: 40px; }
-  .qtest__row { grid-template-columns: repeat(2, 1fr); }
+  // 2 cards per view
+  .qtcard { flex-basis: calc((100% - 24px) / 2); max-width: calc((100% - 24px) / 2); }
 }
 
 // ====================================================================
@@ -132,25 +176,12 @@
   .qtest__title { font-size: 24px; line-height: 30px; letter-spacing: -0.15px; }  // H5
   .qtest__subtitle { font-size: 16px; line-height: 24px; }
 
-  // cards become a horizontal swipe carousel
-  .qtest__row {
-    display: flex; grid-template-columns: none;
-    overflow-x: auto; scroll-snap-type: x mandatory;
-    gap: 20px; padding-bottom: 4px;
-    -webkit-overflow-scrolling: touch; scrollbar-width: none;
-  }
-  .qtest__row::-webkit-scrollbar { display: none; }
+  // one card per view (with a peek of the next)
+  .qtest__row { gap: 20px; }
   .qtcard { flex: 0 0 85%; max-width: 85%; scroll-snap-align: center; }
 
-  // prev/next arrows — direction:ltr keeps Figma order (royal arrow-left, then baby arrow-right)
-  .qtest__nav { display: flex; direction: ltr; gap: 8px; justify-content: center; }
-  .qtest__arrow {
-    width: 46px; height: 46px; border-radius: 30px; padding: 8px;
-    display: inline-flex; align-items: center; justify-content: center;
-    cursor: pointer; border: 1px solid transparent;
-    i { font-size: 16px; }
-    &:disabled { opacity: .35; cursor: default; }
-  }
-  .qtest__arrow--prev { background: #30378e; border-color: #30378e; color: #fff; }
-  .qtest__arrow--next { background: #daeff7; border-color: #daeff7; color: #0a1f30; }
+  // footer stacks: centered arrows above the "view all" link
+  .qtest__foot { flex-direction: column-reverse; align-items: center; gap: 14px; }
+  .qtest__nav { justify-content: center; }
+  .qtest__arrow { width: 46px; height: 46px; }
 }
