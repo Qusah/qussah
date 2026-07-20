@@ -29,7 +29,7 @@ The play button plays the merchant video in place (direct file → <video>, YouT
 
             {# play button (Figma node 6036:1112) — functional when a video is set #}
             {% if component.video_url %}
-                <button type="button" class="qfbanner__play" aria-label="تشغيل الفيديو">
+                <button type="button" class="qfbanner__play" aria-label="{{ trans('blocks.qissa.play_video') }}">
                     <span class="qfbanner__play-tri"></span>
                 </button>
             {% elseif component.image %}

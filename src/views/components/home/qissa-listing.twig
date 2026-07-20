@@ -32,10 +32,10 @@
                             <span>{{ trans('blocks.qissa.filter') }}</span>
                         </button>
                         {% endif %}
-                        <button type="button" class="qlist__tool qlist__tool--view" data-qview="list" aria-label="عرض قائمة">
+                        <button type="button" class="qlist__tool qlist__tool--view" data-qview="list" aria-label="{{ trans('blocks.qissa.list_view') }}">
                             <i class="sicon-list"></i>
                         </button>
-                        <button type="button" class="qlist__tool qlist__tool--view is-active" data-qview="grid" aria-label="عرض شبكي">
+                        <button type="button" class="qlist__tool qlist__tool--view is-active" data-qview="grid" aria-label="{{ trans('blocks.qissa.grid_view') }}">
                             <i class="sicon-grid"></i>
                         </button>
                     </div>
@@ -74,7 +74,7 @@
                                     </div>
                                 </div>
                                 <div class="qprod__btns">
-                                    <button class="qprod__like" data-id="{{ product.id }}" onclick="salla.wishlist.toggle({{ product.id }})" aria-label="المفضلة">
+                                    <button class="qprod__like" data-id="{{ product.id }}" onclick="salla.wishlist.toggle({{ product.id }})" aria-label="{{ trans('blocks.qissa.wishlist') }}">
                                         <i class="sicon-heart"></i>
                                     </button>
                                     <button class="qprod__add" type="button"
@@ -190,8 +190,8 @@
             sortBtn.addEventListener('click', function () {
                 asc = !asc;
                 sortValue.textContent = asc
-                    ? (salla.lang.get('blocks.qissa.sort_low_high') || 'من الأقل إلى الأعلى')
-                    : (salla.lang.get('blocks.qissa.sort_high_low') || 'من الأعلى إلى الأقل');
+                    ? salla.lang.get('blocks.qissa.sort_low_high')
+                    : salla.lang.get('blocks.qissa.sort_high_low');
                 sortBtn.classList.toggle('is-asc', asc);
                 sortCards();
             });

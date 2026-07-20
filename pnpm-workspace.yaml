@@ -9,6 +9,11 @@ minimumReleaseAgeExclude:
   - '@salla.sa/twilight-components@2.14.478'
   - '@salla.sa/twilight-tailwind-theme@2.14.478'
   - '@salla.sa/twilight@2.14.478'
+  - '@salla.sa/applepay@2.14.507'
+  - '@salla.sa/base@2.14.507'
+  - '@salla.sa/twilight-components@2.14.507'
+  - '@salla.sa/twilight-tailwind-theme@2.14.507'
+  - '@salla.sa/twilight@2.14.507'
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - bufferutil

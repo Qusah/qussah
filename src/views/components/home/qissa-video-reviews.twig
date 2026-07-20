@@ -31,7 +31,7 @@ players are built on demand, one plays at a time.
 
             {# carousel #}
             <div class="qvr__viewport">
-                <button type="button" class="qvr__arrow qvr__arrow--prev" aria-label="السابق">
+                <button type="button" class="qvr__arrow qvr__arrow--prev" aria-label="{{ trans('blocks.qissa.prev') }}">
                     <i class="sicon-arrow-left"></i>
                 </button>
 
@@ -40,7 +40,7 @@ players are built on demand, one plays at a time.
                         <article class="qvr__card">
                             <div class="qvr__media{{ item.video ? ' is-playable' : '' }}"
                                  {% if item.video %}data-qvr-video="{{ item.video }}"{% endif %}
-                                 {% if item.video %}role="button" tabindex="0" aria-label="تشغيل الفيديو"{% endif %}>
+                                 {% if item.video %}role="button" tabindex="0" aria-label="{{ trans('blocks.qissa.play_video') }}"{% endif %}>
                                 {% if item.poster %}
                                     <img class="qvr__poster" src="{{ item.poster }}"
                                          alt="{{ item.name|default(store.name) }}" loading="lazy"/>
@@ -71,7 +71,7 @@ players are built on demand, one plays at a time.
                     {% endfor %}
                 </div>
 
-                <button type="button" class="qvr__arrow qvr__arrow--next" aria-label="التالي">
+                <button type="button" class="qvr__arrow qvr__arrow--next" aria-label="{{ trans('blocks.qissa.next') }}">
                     <i class="sicon-arrow-right"></i>
                 </button>
             </div>

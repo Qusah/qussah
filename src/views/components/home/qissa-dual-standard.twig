@@ -82,7 +82,7 @@ initCardCarousels() in home.js.
                     {% if component.show_add or component.show_wishlist %}
                         <div class="qprod__btns">
                             {% if component.show_wishlist %}
-                                <button class="qprod__like" data-id="{{ product.id }}" onclick="salla.wishlist.toggle('{{ product.id }}')" aria-label="المفضلة">
+                                <button class="qprod__like" data-id="{{ product.id }}" onclick="salla.wishlist.toggle('{{ product.id }}')" aria-label="{{ trans('blocks.qissa.wishlist') }}">
                                     <i class="sicon-heart"></i>
                                 </button>
                             {% endif %}

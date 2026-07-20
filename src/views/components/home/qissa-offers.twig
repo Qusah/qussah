@@ -73,7 +73,7 @@
 
                             {# buttons — like LEFT, add-to-cart fills RIGHT #}
                             <div class="qoffer__btns">
-                                <button class="qoffer__like" data-id="{{ product.id }}" onclick="salla.wishlist.toggle({{ product.id }})" aria-label="المفضلة">
+                                <button class="qoffer__like" data-id="{{ product.id }}" onclick="salla.wishlist.toggle({{ product.id }})" aria-label="{{ trans('blocks.qissa.wishlist') }}">
                                     <i class="sicon-heart"></i>
                                 </button>
                                 <button class="qoffer__add" type="button"
@@ -98,10 +98,10 @@
             {# mobile carousel nav (Figma node 6036:21602) — hidden on desktop.
                RTL: products flow right→left, so the LEFT (primary) arrow advances. #}
             <div class="qoffers__nav" data-qoffers-nav>
-                <button type="button" class="qoffers__nav-btn is-primary" data-qoffers-fwd aria-label="التالي">
+                <button type="button" class="qoffers__nav-btn is-primary" data-qoffers-fwd aria-label="{{ trans('blocks.qissa.next') }}">
                     <i class="sicon-arrow-left"></i>
                 </button>
-                <button type="button" class="qoffers__nav-btn" data-qoffers-back aria-label="السابق">
+                <button type="button" class="qoffers__nav-btn" data-qoffers-back aria-label="{{ trans('blocks.qissa.prev') }}">
                     <i class="sicon-arrow-right"></i>
                 </button>
             </div>

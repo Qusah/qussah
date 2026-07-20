@@ -65,14 +65,14 @@ stays; when the store has neither, the section removes itself. Stars use the pro
             {# footer: "view all reviews" link + carousel arrows #}
             <div class="qtest__foot">
                 <a class="qtest__all" href="{{ link('testimonials') }}">
-                    <span>عرض جميع التقييمات</span>
+                    <span>{{ trans('blocks.qissa.view_all_reviews') }}</span>
                     <i class="sicon-arrow-left"></i>
                 </a>
                 <div class="qtest__nav">
-                    <button type="button" class="qtest__arrow qtest__arrow--prev" aria-label="السابق">
+                    <button type="button" class="qtest__arrow qtest__arrow--prev" aria-label="{{ trans('blocks.qissa.prev') }}">
                         <i class="sicon-arrow-left"></i>
                     </button>
-                    <button type="button" class="qtest__arrow qtest__arrow--next" aria-label="التالي">
+                    <button type="button" class="qtest__arrow qtest__arrow--next" aria-label="{{ trans('blocks.qissa.next') }}">
                         <i class="sicon-arrow-right"></i>
                     </button>
                 </div>
@@ -112,7 +112,7 @@ stays; when the store has neither, the section removes itself. Stars use the pro
   }
 
   function cardHtml(r) {
-    var name = r.name || 'عميل';
+    var name = r.name || salla.lang.get('blocks.qissa.customer');
     var text = toText(r.content || r.text || '');
     var rating = r.rating || r.stars || 0;
     var date = fmtDate(r.created_at);

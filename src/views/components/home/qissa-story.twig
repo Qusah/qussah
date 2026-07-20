@@ -11,7 +11,7 @@
 | component.image_left    | string | decorative product image (bleeds from the left)            |
 | position                | int    | sorting block                                              |
 #}
-{% set heading = component.heading|default('قصتنا بدأت من بيتك في متجر قصة، نؤمن أن النظافة ليست مجرد عادة  بل هي جزء من راحة البيت وسعادة الأسرة. انطلقنا عام 2020 بهدف واضح: نوصّل لك منتجات النظافة المنزلية بأعلى جودة، وأفضل سعر، مباشرةً من المصنع إلى باب بيتك.') %}
+{% set heading = component.heading|default(trans('blocks.qissa.story_heading')) %}
 {# wrap each merchant-supplied phrase in a royal-blue highlight span #}
 {% set heading_html = heading|e('html') %}
 {% for phrase in component.highlights|default('')|split('،') %}

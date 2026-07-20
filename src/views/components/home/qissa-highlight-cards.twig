@@ -46,7 +46,7 @@ Heterogeneous cards (not a collection). Glows are CSS gradients; photos are imag
             <article class="qhcard qhcard--shop">
                 {% if component.shop_logo %}
                     <div class="qhcard__shop-logo">
-                        <img src="{{ component.shop_logo }}" alt="قصة" loading="lazy"/>
+                        <img src="{{ component.shop_logo }}" alt="{{ store.name }}" loading="lazy"/>
                     </div>
                 {% endif %}
                 <div class="qhcard__shop-body">

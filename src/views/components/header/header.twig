@@ -60,7 +60,7 @@
           <a href="{{ link('/profile') }}" class="qheader-act qheader-act--account">
             <span class="qheader-act__txt">
               <b>{{ trans('blocks.qissa.welcome') }}</b>
-              <em>{{ user.first_name|default('حسابي') }}</em>
+              <em>{{ user.first_name|default(trans('blocks.qissa.my_account')) }}</em>
             </span>
             <span class="qheader-act__ic"><i class="sicon-user"></i></span>
           </a>
@@ -84,7 +84,7 @@
 
       {# logo (right) + hamburger (mobile only) #}
       <div class="qheader-brand">
-        <button type="button" class="qheader-burger" aria-label="القائمة" aria-expanded="false" data-qburger>
+        <button type="button" class="qheader-burger" aria-label="{{ trans('blocks.qissa.menu') }}" aria-expanded="false" data-qburger>
           <i class="sicon-menu"></i>
         </button>
         <a class="qheader-logo" href="{{ store.url }}">
@@ -104,11 +104,11 @@
    Kept OUTSIDE <header> so it is fully independent of the navbar/header. #}
 <div class="qside" data-qside hidden>
   <div class="qside__overlay" data-qside-close></div>
-  <aside class="qside__panel" role="dialog" aria-modal="true" aria-label="القائمة">
+  <aside class="qside__panel" role="dialog" aria-modal="true" aria-label="{{ trans('blocks.qissa.menu') }}">
 
     <div class="qside__header">
       <span class="qside__title">{{ trans('blocks.qissa.menu') }}</span>
-      <button type="button" class="qside__close" aria-label="إغلاق القائمة" data-qside-close>
+      <button type="button" class="qside__close" aria-label="{{ trans('blocks.qissa.close_menu') }}" data-qside-close>
         <i class="sicon-cancel"></i>
       </button>
     </div>

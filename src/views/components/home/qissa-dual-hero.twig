@@ -71,15 +71,15 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
                             </div>
 
                             {% if images|length > 1 %}
-                                <button type="button" class="qpack__arrow qpack__arrow--next" data-qpack-next aria-label="التالي"><i class="sicon-arrow-left"></i></button>
-                                <button type="button" class="qpack__arrow qpack__arrow--prev" data-qpack-prev aria-label="السابق"><i class="sicon-arrow-right"></i></button>
+                                <button type="button" class="qpack__arrow qpack__arrow--next" data-qpack-next aria-label="{{ trans('blocks.qissa.next') }}"><i class="sicon-arrow-left"></i></button>
+                                <button type="button" class="qpack__arrow qpack__arrow--prev" data-qpack-prev aria-label="{{ trans('blocks.qissa.prev') }}"><i class="sicon-arrow-right"></i></button>
                             {% endif %}
                         </div>
 
                         {% if component.show_thumbnails and images|length > 1 %}
                             <div class="qpack__thumbs" data-qpack-thumbs>
                                 {% for img in images %}
-                                    <button type="button" class="qpack__thumb {{ loop.first ? 'is-active' : '' }}" data-qpack-thumb="{{ loop.index0 }}" aria-label="صورة {{ loop.index }}">
+                                    <button type="button" class="qpack__thumb {{ loop.first ? 'is-active' : '' }}" data-qpack-thumb="{{ loop.index0 }}" aria-label="{{ trans('blocks.qissa.image') }} {{ loop.index }}">
                                         <img src="{{ img.url }}" alt="{{ img.alt|default(product.name) }}" loading="lazy"/>
                                     </button>
                                 {% endfor %}
@@ -93,7 +93,7 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
                             <div class="qpack__ticker-track">
                                 {% for group in 1..2 %}
                                     <div class="qpack__ticker-group">
-                                        {% for i in 1..14 %}<span class="qpack__ticker-item"><i class="sicon-star"></i>{{ component.marquee_text|default('الأكثر مبيعًا') }}</span>{% endfor %}
+                                        {% for i in 1..14 %}<span class="qpack__ticker-item"><i class="sicon-star"></i>{{ component.marquee_text|default(trans('blocks.qissa.best_seller')) }}</span>{% endfor %}
                                     </div>
                                 {% endfor %}
                             </div>
@@ -108,14 +108,14 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
                                 {% if component.show_sold and product.sold_quantity %}
                                     <span class="qpack__sold">
                                         <i class="sicon-fire"></i>
-                                        <span>مباع <b>{{ product.sold_quantity }}</b> مرة</span>
+                                        <span>{{ trans('blocks.qissa.sold') }} <b>{{ product.sold_quantity }}</b> {{ trans('blocks.qissa.times') }}</span>
                                     </span>
                                 {% endif %}
                                 {% if component.show_rating and product.rating and product.rating.count %}
                                     <span class="qpack__review">
                                         <i class="sicon-star"></i>
-                                        <span class="qpack__rate">تم تقييمه <b>{{ product.rating.stars }}</b></span>
-                                        <span class="qpack__rate-count">{{ product.rating.count }} تقييم</span>
+                                        <span class="qpack__rate">{{ trans('blocks.qissa.rated') }} <b>{{ product.rating.stars }}</b></span>
+                                        <span class="qpack__rate-count">{{ product.rating.count }} {{ trans('blocks.qissa.review_word') }}</span>
                                     </span>
                                 {% endif %}
                             </div>
@@ -145,9 +145,9 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
                             <div class="qpack__actions">
                                 {% if component.show_qty %}
                                     <div class="qpack__qty" data-qpack-qty>
-                                        <button type="button" class="qpack__q qpack__q--minus" data-qpack-dec aria-label="إنقاص الكمية"></button>
+                                        <button type="button" class="qpack__q qpack__q--minus" data-qpack-dec aria-label="{{ trans('blocks.qissa.decrease_qty') }}"></button>
                                         <span class="qpack__qnum" data-qpack-num>1</span>
-                                        <button type="button" class="qpack__q qpack__q--plus" data-qpack-inc aria-label="زيادة الكمية"></button>
+                                        <button type="button" class="qpack__q qpack__q--plus" data-qpack-inc aria-label="{{ trans('blocks.qissa.increase_qty') }}"></button>
                                     </div>
                                 {% endif %}
                                 {% if component.show_add %}
@@ -182,7 +182,7 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
       var reg = parseFloat(badge.getAttribute('data-regular'));
       var sale = parseFloat(badge.getAttribute('data-sale'));
       if (reg > 0 && sale >= 0 && sale < reg) {
-        badge.textContent = 'خصم ' + Math.floor((1 - sale / reg) * 100) + '%';
+        badge.textContent = salla.lang.get('blocks.qissa.sale') + ' ' + Math.floor((1 - sale / reg) * 100) + '%';
       }
     }
 

@@ -102,7 +102,7 @@
 
       {# VAT badge (always) + number (dynamic; falls back to the store VAT) — Figma 6036:1419 #}
       <div class="qissa-footer-bottom__tax">
-        <img class="qissa-footer-bottom__tax-badge" src="{{ 'images/payments/zatca-badge.jpg' | asset }}" alt="ضريبة القيمة المضافة" loading="lazy"/>
+        <img class="qissa-footer-bottom__tax-badge" src="{{ 'images/payments/zatca-badge.jpg' | asset }}" alt="{{ trans('blocks.qissa.tax_alt') }}" loading="lazy"/>
         <span class="qissa-footer-bottom__tax-num">{{ trans('blocks.qissa.tax_number_label') }} <span dir="ltr">{{ store.settings.tax.number|default('546987552') }}</span></span>
       </div>
 

@@ -77,9 +77,9 @@ handling is PENDING a real, safe mechanism — no fake backend flow is wired her
     <div class="qfnews-congrats" data-qfnews-congrats hidden>
         <div class="qfnews-congrats__box" role="dialog" aria-modal="true" aria-labelledby="qfnews-congrats-title-{{ position }}">
             <div class="qfnews-congrats__emoji" aria-hidden="true">🎉</div>
-            <h3 class="qfnews-congrats__title" id="qfnews-congrats-title-{{ position }}">تم اشتراكك بنجاح!</h3>
-            <p class="qfnews-congrats__text">شكراً لانضمامك إلى نشرة قصة البريدية. سنوافيك بأحدث العروض والمنتجات أولاً بأول.</p>
-            <button type="button" class="qfnews-congrats__btn" data-qfnews-close>رائع، شكراً</button>
+            <h3 class="qfnews-congrats__title" id="qfnews-congrats-title-{{ position }}">{{ trans('blocks.qissa.newsletter_success_title') }}</h3>
+            <p class="qfnews-congrats__text">{{ trans('blocks.qissa.newsletter_success_text') }}</p>
+            <button type="button" class="qfnews-congrats__btn" data-qfnews-close>{{ trans('blocks.qissa.newsletter_success_btn') }}</button>
         </div>
     </div>
 
