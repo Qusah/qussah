@@ -35,4 +35,46 @@
           </div>
       </div>
     {% endif %}
+
+    {% if page.type != 'customised' %}
+    <script>
+    (function () {
+      // Store policy pages use plain <p> for section headings (no <h> tags), so
+      // tag those headings here and style them via .qpolicy-heading (qusah-overrides).
+      // Update these two lists if the policy page id or its heading texts change.
+      var POLICY_PAGE_IDS = ['510446325'];                          // return/replacement policy
+      var HEADINGS = ['ضمان الجودة', 'متطلبات الخدمة', 'المسؤولية'];
+
+      function isPolicyPage() {
+        return POLICY_PAGE_IDS.some(function (id) {
+          return location.href.indexOf(id) !== -1
+              || document.querySelector('salla-comments[item-id="' + id + '"]');
+        });
+      }
+
+      function style() {
+        if (!isPolicyPage()) { return true; }                       // not this page → stop
+        var entry = document.querySelector('.content--single-page .content-entry');
+        if (!entry) { return false; }
+        if (entry.dataset.styled) { return true; }
+        var wrap = entry.closest('.content--single-page');
+        if (wrap) { wrap.classList.add('qpolicy-page'); }
+        var tagged = 0;
+        entry.querySelectorAll('p').forEach(function (p) {
+          var txt = p.textContent.trim();
+          if (HEADINGS.indexOf(txt) !== -1) { p.classList.add('qpolicy-heading'); tagged++; }
+          else if (txt === '') { p.classList.add('qpolicy-spacer'); }
+          else { p.classList.add('qpolicy-body'); }
+        });
+        if (tagged) { entry.dataset.styled = '1'; return true; }
+        return false;
+      }
+
+      if (!style()) {
+        var mo = new MutationObserver(function () { if (style()) { mo.disconnect(); } });
+        mo.observe(document.body, { childList: true, subtree: true });
+      }
+    })();
+    </script>
+    {% endif %}
 {% endblock %}

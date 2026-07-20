@@ -88,3 +88,17 @@ body, body *, .qprod__price-now, .qprod__price-old,
 [class*="price"], [class*="qcart"], [class*="total"] {
   font-family: 'WesternDigits', "GE SS Two", "GE SS", Tahoma, sans-serif !important;
 }
+
+/* ---- CMS single-page: heading treatment ----
+   The store's policy pages use plain <p> for section headings (no <h> tags),
+   so page-single.twig tags them (.qpolicy-heading) and this styles them. */
+.content--single-page .content-entry p.qpolicy-heading {
+  background: #f8fafc;
+  border-right: 4px solid #1e2a52;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin: 18px 0 10px;
+  color: #1e2a52;
+  font-size: 18px;
+  font-weight: 700;
+}

@@ -61,7 +61,7 @@ body, main, #app { background: transparent; }
   .qheader-actions { display: flex; align-items: center; gap: 20px; }
   .qheader-act {
     display: flex; flex-direction: row-reverse; align-items: center; gap: 6px;   // icon on the right (RTL lead), title on the left
-    &__txt { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; }
+    &__txt { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.2; }  // RTL start = right → hugs the icon (which sits on the right after row-reverse)
     &__txt b { font-size: 12px; font-weight: 300; color: #e8fcff; }
     &__txt em { font-size: 13px; font-weight: 300; font-style: normal; color: #fff; }
     &__ic {

@@ -19,6 +19,7 @@ class App extends AppHelpers {
       this.initiateStickyMenu();
     }
     this.initAddToCart();
+    this.hookGuestWishlist();
     this.initiateDropdowns();
     this.initiateModals();
     this.initiateCollapse();
@@ -298,6 +299,47 @@ isElementLoaded(selector){
 
     salla.cart.event.onItemAdded((response, prodId) => {
       app.element('salla-cart-summary').animateToCart(app.element(`#product-${prodId} img`));
+    });
+  }
+
+  /**
+   * Guests can't favorite: keep every heart empty and open the login modal on
+   * a favorite attempt instead of failing with a "must login" error toast.
+   */
+  hookGuestWishlist() {
+    if (!(salla.config && salla.wishlist && salla.wishlist.event)) return;
+    const isGuest = () => !!(salla.config.isGuest && salla.config.isGuest());
+
+    // strip the "wishlisted" state from every heart while logged out (guards
+    // against stale storage marking a heart red for a guest)
+    const stripHearts = () => {
+      if (!isGuest()) return;
+      document.querySelectorAll('.qprod__like[wishlisted], .qoffer__like[wishlisted], .s-product-card-wishlist-btn[wishlisted]').forEach(btn => {
+        btn.removeAttribute('wishlisted');
+        btn.setAttribute('aria-pressed', 'false');
+      });
+    };
+    stripHearts();
+    new MutationObserver(stripHearts).observe(document.body, {
+      subtree: true, attributes: true, attributeFilter: ['wishlisted']
+    });
+
+    // intercept a guest's click on a heart (capture phase) BEFORE the inline
+    // onclick runs → open the login modal, so wishlist.toggle never fires and
+    // no "must login" toast appears
+    document.addEventListener('click', (e) => {
+      if (!isGuest()) return;
+      const btn = e.target.closest('[onclick*="wishlist.toggle"]');
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+      salla.event.dispatch('login::open');
+    }, true);
+
+    // backup for component-based hearts that don't use an inline onclick
+    salla.wishlist.event.onAdditionFailed(() => {
+      stripHearts();
+      if (isGuest()) salla.event.dispatch('login::open');
     });
   }
 }

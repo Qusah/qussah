@@ -62,6 +62,15 @@
     width: 100%;
     direction: rtl;
   }
+
+  // fewer than 4 products → center them instead of stretching across the row
+  &__grid:not(:has(> .qprod:nth-child(4))) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    > .qprod { flex: 0 1 280px; max-width: 320px; }
+  }
 }
 
 // ---- single product card (Figma node 102:2408) ----
