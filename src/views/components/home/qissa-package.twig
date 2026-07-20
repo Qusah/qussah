@@ -153,7 +153,11 @@ with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
       var reg = parseFloat(badge.getAttribute('data-regular'));
       var sale = parseFloat(badge.getAttribute('data-sale'));
       if (reg > 0 && sale >= 0 && sale < reg) {
-        badge.textContent = salla.lang.get('blocks.qissa.sale') + ' ' + Math.floor((1 - sale / reg) * 100) + '%';
+        // Append the computed discount % to the server-rendered (already
+        // translated) badge label. Reading salla.lang.get() here would return
+        // the raw key, because lang messages aren't loaded yet at parse time.
+        var lbl = (badge.textContent || '').trim();
+        if (!/%$/.test(lbl)) { badge.textContent = lbl + ' ' + Math.floor((1 - sale / reg) * 100) + '%'; }
       }
     }
 
