@@ -278,6 +278,19 @@ isElementLoaded(selector){
    * they can be from any page, especially when mega-menu is enabled
    */
   initAddToCart() {
+    // Seed cart count/total from Salla's client-side storage. The header is
+    // server-rendered (and may be full-page cached), so its inline count can be
+    // stale/0 — reading the live stored value fixes it on first paint, before
+    // any onUpdated event fires.
+    const seedCount = salla.storage.get('cart.summary.count');
+    if (seedCount != null) {
+      document.querySelectorAll('[data-cart-count]').forEach(el => el.innerText = salla.helpers.number(seedCount));
+    }
+    const seedTotal = salla.storage.get('cart.summary.total');
+    if (seedTotal != null) {
+      document.querySelectorAll('[data-cart-total]').forEach(el => el.innerHTML = salla.money(seedTotal));
+    }
+
     salla.cart.event.onUpdated(summary => {
       document.querySelectorAll('[data-cart-total]').forEach(el => el.innerHTML = salla.money(summary.total));
       document.querySelectorAll('[data-cart-count]').forEach(el => el.innerText = salla.helpers.number(summary.count));

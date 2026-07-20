@@ -47,17 +47,21 @@
         </div>
         <a href="{{ link('/cart') }}" class="qheader-act qheader-act--cart">
           <span class="qheader-act__txt">
-            <b>{{ trans('blocks.qissa.cart_label') }}</b>
+            <b>
+              <span class="qheader-act__lbl">{{ trans('blocks.qissa.cart_label') }}</span>
+              <span class="qheader-act__lbl-cta">{{ trans('blocks.qissa.checkout_cta') }}</span>
+            </b>
+            <em class="qheader-act__total" data-cart-total></em>
           </span>
           <span class="qheader-act__ic">
             <i class="sicon-shopping-bag"></i>
-            <span class="qheader-act__badge">{{ cart.items_count|default(0) }}</span>
+            <span class="qheader-act__badge" data-cart-count>{{ cart.items_count|default(0) }}</span>
           </span>
         </a>
         {# account: real login state — show the customer's name when logged in,
            otherwise open Salla's login modal (<salla-login-modal> in master). #}
         {% if user.type == 'user' %}
-          <a href="{{ link('/profile') }}" class="qheader-act">
+          <a href="{{ link('/profile') }}" class="qheader-act qheader-act--account">
             <span class="qheader-act__txt">
               <b>{{ trans('blocks.qissa.welcome') }}</b>
               <em>{{ user.first_name|default('حسابي') }}</em>
@@ -65,7 +69,7 @@
             <span class="qheader-act__ic"><i class="sicon-user"></i></span>
           </a>
         {% else %}
-          <a href="#" onclick="event.preventDefault(); salla.event.dispatch('login::open')" class="qheader-act">
+          <a href="#" onclick="event.preventDefault(); salla.event.dispatch('login::open')" class="qheader-act qheader-act--account">
             <span class="qheader-act__txt">
               <b>{{ trans('blocks.qissa.welcome') }}</b>
               <em>{{ trans('blocks.qissa.login') }}</em>
@@ -112,6 +116,25 @@
         <i class="sicon-cancel"></i>
       </button>
     </div>
+
+    {# account — relocated here from the header on mobile #}
+    {% if user.type == 'user' %}
+      <a class="qside__account" href="{{ link('/profile') }}">
+        <span class="qside__account-ic"><i class="sicon-user"></i></span>
+        <span class="qside__account-txt">
+          <b>{{ trans('blocks.qissa.welcome') }}</b>
+          <em>{{ user.first_name|default(trans('blocks.qissa.account')) }}</em>
+        </span>
+      </a>
+    {% else %}
+      <a class="qside__account" href="#" onclick="event.preventDefault(); salla.event.dispatch('login::open')">
+        <span class="qside__account-ic"><i class="sicon-user"></i></span>
+        <span class="qside__account-txt">
+          <b>{{ trans('blocks.qissa.welcome') }}</b>
+          <em>{{ trans('blocks.qissa.login') }}</em>
+        </span>
+      </a>
+    {% endif %}
 
     {# primary links — same destinations as the desktop nav #}
     <nav class="qside__nav">
@@ -195,7 +218,7 @@
     };
     burger.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); openSide(); });
     side.querySelectorAll('[data-qside-close]').forEach(function(el){ el.addEventListener('click', closeSide); });
-    side.querySelectorAll('.qside__nav a, .qside__secondary a').forEach(function(a){ a.addEventListener('click', closeSide); });
+    side.querySelectorAll('.qside__nav a, .qside__secondary a, .qside__account').forEach(function(a){ a.addEventListener('click', closeSide); });
     document.addEventListener('keydown', function(e){
       if ((e.key === 'Escape' || e.key === 'Esc') && side.classList.contains('is-open')) closeSide();
     });
