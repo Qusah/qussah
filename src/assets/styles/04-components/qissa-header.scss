@@ -60,7 +60,7 @@ body, main, #app { background: transparent; }
   // cart + profile (smaller)
   .qheader-actions { display: flex; align-items: center; gap: 20px; }
   .qheader-act {
-    display: flex; align-items: center; gap: 6px;
+    display: flex; flex-direction: row-reverse; align-items: center; gap: 6px;   // icon on the right (RTL lead), title on the left
     &__txt { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; }
     &__txt b { font-size: 12px; font-weight: 300; color: #e8fcff; }
     &__txt em { font-size: 13px; font-weight: 300; font-style: normal; color: #fff; }
@@ -212,8 +212,8 @@ body, main, #app { background: transparent; }
   .qheader .qheader-actions { order: 1; gap: 20px; direction: rtl; }
   .qheader .qheader-act { gap: 7px; }
   .qheader .qheader-act--account { display: none; }               // profile → sidebar
-  // mobile CTA pill: icon on the right, centered "إتمام الطلب" on the left (no price).
-  .qheader .qheader-act--cart { flex-direction: row-reverse; }
+  // mobile CTA pill: centered "إتمام الطلب" (no price); the icon/title reversal
+  // comes from the base .qheader-act rule.
   .qheader .qheader-act--cart .qheader-act__txt {
     display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.15;
   }
