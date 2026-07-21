@@ -21,6 +21,8 @@ initCardCarousels() in home.js.
 #}
 <section class="s-block qdstd" id="qdstd-{{ position }}">
     <div class="container">
+        {# gradient box (same shell as "خصيصاً من قصة") so the white cards read as cards #}
+        <div class="qdstd__box">
 
         {# centered heading #}
         {% if component.title or component.title_highlight or component.subtitle %}
@@ -100,5 +102,6 @@ initCardCarousels() in home.js.
         </div>
         {% endif %}
 
+        </div>{# /qdstd__box #}
     </div>
 </section>

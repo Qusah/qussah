@@ -33,7 +33,8 @@ with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
                 <div class="qpack__stage">
                     {% if product.is_on_sale %}
                         <span class="qpack__badge" data-qpack-badge
-                              data-regular="{{ product.regular_price }}" data-sale="{{ product.sale_price }}">{{ product.promotion_title|default(trans('blocks.qissa.sale')) }}</span>
+                              data-regular="{{ product.regular_price }}" data-sale="{{ product.sale_price }}"
+                              data-discount-label="{{ trans('blocks.qissa.sale') }}">{{ product.promotion_title|default(trans('blocks.qissa.sale')) }}</span>
                     {% endif %}
 
                     <button type="button" class="qpack__wish" data-qpack-wish data-id="{{ product.id }}" aria-label="{{ trans('blocks.qissa.wishlist') }}">
@@ -147,17 +148,20 @@ with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
 (function () {
   document.querySelectorAll('.qpack [data-qpack]').forEach(function (card) {
 
-    // discount badge → "خصم X%" (falls back to the server-rendered label)
+    // discount badge → "<promo label> · خصم X%"  (just "خصم X%" when the merchant
+    // set no promotion title, i.e. the label already IS the word خصم)
     var badge = card.querySelector('[data-qpack-badge]');
     if (badge) {
       var reg = parseFloat(badge.getAttribute('data-regular'));
       var sale = parseFloat(badge.getAttribute('data-sale'));
       if (reg > 0 && sale >= 0 && sale < reg) {
-        // Append the computed discount % to the server-rendered (already
-        // translated) badge label. Reading salla.lang.get() here would return
-        // the raw key, because lang messages aren't loaded yet at parse time.
-        var lbl = (badge.textContent || '').trim();
-        if (!/%$/.test(lbl)) { badge.textContent = lbl + ' ' + Math.floor((1 - sale / reg) * 100) + '%'; }
+        // Both label and word are server-rendered (already translated). Reading
+        // salla.lang.get() here would return the raw key, because lang messages
+        // aren't loaded yet at parse time.
+        var word = (badge.getAttribute('data-discount-label') || '').trim();
+        var lbl  = (badge.textContent || '').trim();
+        var off  = (word ? word + ' ' : '') + Math.floor((1 - sale / reg) * 100) + '%';
+        if (!/%$/.test(lbl)) { badge.textContent = (lbl && lbl !== word ? lbl + ' · ' : '') + off; }
       }
     }
 

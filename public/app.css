@@ -29918,13 +29918,24 @@ body.qside-open {
   padding-left: 50px;
   padding-right: 50px;
 }
+.qdstd__box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  padding: 50px;
+  background: linear-gradient(180deg, #daeff7 0%, #ffffff 100%);
+  border-radius: 50px;
+}
+.qdstd__box:not(:has(> *)) {
+  display: none;
+}
 .qdstd__head {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
   text-align: center;
-  margin-bottom: 30px;
 }
 .qdstd__title {
   font-size: 32px;
@@ -29982,8 +29993,10 @@ body.qside-open {
     padding-left: 15px;
     padding-right: 15px;
   }
-  .qdstd__head {
-    margin-bottom: 18px;
+  .qdstd__box {
+    padding: 30px 10px 20px;
+    border-radius: 30px;
+    gap: 20px;
   }
   .qdstd__title {
     font-size: 24px;
@@ -30550,7 +30563,7 @@ body.qside-open {
 }
 .qpack__card {
   width: 100%;
-  max-width: 680px;
+  max-width: 600px;
   margin-left: auto;
   margin-right: auto;
   display: flex;
@@ -30856,7 +30869,7 @@ body.qside-open {
 .qpack__info .qpack__price {
   display: flex;
   align-items: baseline;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 8px;
 }
 .qpack__info .qpack__price-now {
@@ -30879,7 +30892,7 @@ body.qside-open {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 10px;
 }
 .qpack__info .qpack__tag {

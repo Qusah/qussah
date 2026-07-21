@@ -27,7 +27,7 @@
 
   // ---- the showcase card ----
   &__card {
-    width: 100%; max-width: 680px; margin-inline: auto;
+    width: 100%; max-width: 600px; margin-inline: auto;   // slightly tighter hero card
     display: flex; flex-direction: column;
     background: #fff; border-radius: 24px; padding: 20px;
     box-shadow: 0 14px 40px rgba(23, 41, 81, .10);
@@ -161,7 +161,8 @@
     &:hover { color: #30378e; }
   }
 
-  .qpack__price { display: flex; align-items: baseline; justify-content: flex-end; gap: 8px; }
+  // RTL: flex-start = visual RIGHT (flex-end would push the price to the left)
+  .qpack__price { display: flex; align-items: baseline; justify-content: flex-start; gap: 8px; }
   .qpack__price-now {
     font-family: 'Poppins','GE SS Two',sans-serif; font-size: 20px; font-weight: 600; color: #30378e; line-height: 1.4;
   }
@@ -170,8 +171,8 @@
     text-decoration: line-through; line-height: 1.4;
   }
 
-  // spec chips (blue/50), right-aligned
-  .qpack__tags { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px; }
+  // spec chips (blue/50), right-aligned — RTL: flex-start = visual RIGHT
+  .qpack__tags { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 10px; }
   .qpack__tag {
     display: inline-flex; align-items: center; justify-content: center;
     padding: 4px 12px; background: #e8fcff; color: #30378e; border-radius: 6px;

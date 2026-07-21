@@ -13,7 +13,9 @@ Figma: desktop 6036:1129 (1440) — right title + cards.
        mobile  6036:21971 (428) — gradient box, centered title, swipe carousel + prev/next arrows.
 
 REAL customer reviews: cards are populated client-side from the store's reviews
-(salla.api `reviews` · type=store) into the qtcard design below. When the store has
+(salla.api `reviews` · type=store) into the qtcard design below. Most store reviews are
+stars-only with no written comment, so the JS pages through the endpoint (per_page/page)
+and keeps only reviews that have text, until it has `count` of them. When the store has
 NO reviews, the merchant-entered fallback (component.items, rendered server-side)
 stays; when the store has neither, the section removes itself. Stars use the project
 ★/☆ glyphs; quote uses the theme inline quote-open SVG.
@@ -175,20 +177,47 @@ stays; when the store has neither, the section removes itself. Stars use the pro
     }
   }
 
+  // most store reviews are stars-only (no written comment) and can't fill a card, so ask for
+  // a large page and walk the pagination until we have enough reviews that DO have text
+  var PER_PAGE = 50;
+  var MAX_PAGES = 6;
+
+  function hasNextPage(resp) {
+    var p = (resp && resp.pagination) || {};
+    if (p.links && typeof p.links === 'object' && p.links.next) { return true; }
+    var current = p.currentPage || p.current_page || 0;
+    var total = p.totalPages || p.total_pages || 0;
+    return !!(current && total && current < total);
+  }
+
   function load(sec) {
     var row = sec.querySelector('[data-qtest-row]');
     var count = parseInt(sec.getAttribute('data-count'), 10) || 9;
     if (!row) { return; }
     if (!(window.salla && salla.api && salla.api.request)) { finalize(sec, row); return; }  // keep fallback if any
 
-    salla.api.request('reviews', { params: { type: 'store' } }, 'get')
-      .then(function (resp) {
-        var data = (resp && resp.data) ? resp.data : [];
-        data = data.filter(function (r) { return toText(r.content || r.text || ''); }).slice(0, count);
-        if (data.length) { row.innerHTML = data.map(cardHtml).join(''); }   // real reviews replace the fallback
-        finalize(sec, row);                                                 // otherwise the fallback stays
-      })
-      .catch(function () { finalize(sec, row); });                          // API error → keep the fallback
+    var reviews = [];
+
+    function done() {
+      if (reviews.length) { row.innerHTML = reviews.slice(0, count).map(cardHtml).join(''); }  // real reviews replace the fallback
+      finalize(sec, row);                                                                     // otherwise the fallback stays
+    }
+
+    function loadPage(page) {
+      salla.api.request('reviews', { params: { type: 'store', per_page: PER_PAGE, page: page } }, 'get')
+        .then(function (resp) {
+          var data = (resp && resp.data) ? resp.data : [];
+          reviews = reviews.concat(data.filter(function (r) { return toText(r.content || r.text || ''); }));
+          if (reviews.length < count && data.length && page < MAX_PAGES && hasNextPage(resp)) {
+            loadPage(page + 1);                                             // not enough written reviews yet → next page
+          } else {
+            done();
+          }
+        })
+        .catch(done);                                                       // API error → keep what we have / the fallback
+    }
+
+    loadPage(1);
   }
 
   function boot() { sections.forEach(load); }

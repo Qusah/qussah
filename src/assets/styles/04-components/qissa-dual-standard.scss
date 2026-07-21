@@ -10,10 +10,24 @@
 
   .container { max-width: none; padding-inline: 50px; }
 
+  // ---- gradient box ----
+  // Same shell as .qprods__box ("خصيصاً من قصة"): the .qprod cards are white, so
+  // without it they'd sit invisibly on the white page.
+  &__box {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 30px;
+    padding: 50px;
+    background: linear-gradient(180deg, #daeff7 0%, #ffffff 100%);
+    border-radius: 50px;
+
+    // no heading and no products picked yet → don't paint an empty slab
+    &:not(:has(> *)) { display: none; }
+  }
+
   // ---- centered heading ----
   &__head {
     display: flex; flex-direction: column; align-items: center;
-    gap: 8px; text-align: center; margin-bottom: 30px;
+    gap: 8px; text-align: center;
   }
   &__title {
     font-size: 32px; font-weight: 500; line-height: 38px;
@@ -58,7 +72,7 @@
 @media (max-width: 768px) {
   .qdstd { padding-block: 8px; }
   .qdstd .container { padding-inline: 15px; }
-  .qdstd__head { margin-bottom: 18px; }
+  .qdstd__box { padding: 30px 10px 20px; border-radius: 30px; gap: 20px; }
   .qdstd__title { font-size: 24px; line-height: 30px; }
   .qdstd__subtitle { font-size: 14px; line-height: 20px; }
   .qdstd__grid { column-gap: 8px; row-gap: 10px; }
