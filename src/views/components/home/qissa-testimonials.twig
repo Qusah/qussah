@@ -38,6 +38,9 @@ stays; when the store has neither, the section removes itself. Stars use the pro
                the merchant-entered fallback below shows when the store has none. #}
             <div class="qtest__row" data-qtest-row>
                 {% for item in component.items %}
+                    {# an empty collection row would render as a ghost card (5 default stars,
+                       no name, no text) — only render rows the merchant actually filled in #}
+                    {% if item.text or item.name %}
                     <article class="qtcard">
                         <div class="qtcard__top">
                             <span class="qtcard__quote" aria-hidden="true">
@@ -61,6 +64,7 @@ stays; when the store has neither, the section removes itself. Stars use the pro
                             {% endif %}
                         </div>
                     </article>
+                    {% endif %}
                 {% endfor %}
             </div>
 
@@ -177,9 +181,11 @@ stays; when the store has neither, the section removes itself. Stars use the pro
     }
   }
 
-  // most store reviews are stars-only (no written comment) and can't fill a card, so ask for
-  // a large page and walk the pagination until we have enough reviews that DO have text
-  var PER_PAGE = 50;
+  // Most store reviews are stars-only (no written comment) and can't fill a card, so ask for
+  // a large page and walk the pagination until we have enough reviews that DO have text.
+  // The endpoint may refuse the extra params, so page 1 always falls back to the bare
+  // request (the one release 2 shipped) before we give up on real reviews.
+  var PER_PAGE = 30;
   var MAX_PAGES = 6;
 
   function hasNextPage(resp) {
@@ -190,31 +196,76 @@ stays; when the store has neither, the section removes itself. Stars use the pro
     return !!(current && total && current < total);
   }
 
+  // never throws: the SDK validates params and can reject OR throw synchronously, and a
+  // synchronous throw would skip .catch() entirely and leave the section unfinalized
+  function ask(params) {
+    try {
+      var p = salla.api.request('reviews', { params: params }, 'get');
+      return (p && typeof p.then === 'function') ? p : Promise.reject(new Error('no promise'));
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  }
+  function rows(resp) { return (resp && Array.isArray(resp.data)) ? resp.data : []; }
+  function written(r) { return toText(r.content || r.text || ''); }
+  function key(r) { return (r.name || '') + '|' + fmtDate(r.created_at) + '|' + toText(r.content || r.text || '').slice(0, 40); }
+
   function load(sec) {
     var row = sec.querySelector('[data-qtest-row]');
     var count = parseInt(sec.getAttribute('data-count'), 10) || 9;
     if (!row) { return; }
     if (!(window.salla && salla.api && salla.api.request)) { finalize(sec, row); return; }  // keep fallback if any
 
-    var reviews = [];
+    var reviews = [], seen = {}, bareTried = false;
+
+    // keep the written reviews we haven't already got. Returns how many rows on this page
+    // were NEW (written or not): 0 means the endpoint ignored `page` and handed back the
+    // same rows, so the loop stops instead of repeating cards. A page that is genuinely
+    // all stars-only still counts as progress and we move on to the next one.
+    function collect(data) {
+      var fresh = 0;
+      data.forEach(function (r) {
+        var k = key(r);
+        if (seen[k]) { return; }
+        seen[k] = 1; fresh++;
+        if (written(r)) { reviews.push(r); }
+      });
+      return fresh;
+    }
 
     function done() {
       if (reviews.length) { row.innerHTML = reviews.slice(0, count).map(cardHtml).join(''); }  // real reviews replace the fallback
       finalize(sec, row);                                                                     // otherwise the fallback stays
     }
 
+    // the plain call — no per_page, no page. Known to work; returns one short page.
+    function bare() {
+      bareTried = true;
+      ask({ type: 'store' })
+        .then(function (resp) { collect(rows(resp)); done(); })
+        .catch(done);
+    }
+
     function loadPage(page) {
-      salla.api.request('reviews', { params: { type: 'store', per_page: PER_PAGE, page: page } }, 'get')
+      var params = { type: 'store', per_page: PER_PAGE };
+      if (page > 1) { params.page = page; }
+      ask(params)
         .then(function (resp) {
-          var data = (resp && resp.data) ? resp.data : [];
-          reviews = reviews.concat(data.filter(function (r) { return toText(r.content || r.text || ''); }));
-          if (reviews.length < count && data.length && page < MAX_PAGES && hasNextPage(resp)) {
+          var data = rows(resp);
+          // page 1 empty with our params → the endpoint likely ignored/refused them
+          if (page === 1 && !data.length && !bareTried) { bare(); return; }
+          var fresh = collect(data);
+          if (fresh && reviews.length < count && page < MAX_PAGES && hasNextPage(resp)) {
             loadPage(page + 1);                                             // not enough written reviews yet → next page
           } else {
             done();
           }
         })
-        .catch(done);                                                       // API error → keep what we have / the fallback
+        .catch(function (e) {
+          if (window.console) { console.warn('[qtest] reviews page ' + page + ' failed', e); }
+          if (page === 1 && !bareTried) { bare(); return; }                 // params rejected → retry without them
+          done();                                                           // later page failed → keep what we have
+        });
     }
 
     loadPage(1);
