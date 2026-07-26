@@ -221,7 +221,11 @@
   }
 
   // buttons row — like LEFT (50px), add-to-cart fills RIGHT
+  // margin-top:auto pins the row to the card BOTTOM so it lines up across cards
+  // regardless of title length / chips presence (the grid stretches cards to
+  // equal height, so the extra space collapses above the buttons, not below).
   &__btns {
+    margin-top: auto;
     display: flex;
     flex-direction: row;
     direction: ltr;
