@@ -64,6 +64,9 @@
   // ---- CTA button ----
   &__btn {
     display: inline-flex;
+    direction: ltr;               // lay children L→R so the arrow sits on the LEFT
+                                  // and the cart on the RIGHT (DOM order: arrow · text · cart).
+                                  // Without this the button inherits page RTL and flips them.
     align-self: flex-end;         // right side in RTL
     margin-inline-start: auto;    // push to the right
     margin-inline-end: 0;
