@@ -102,8 +102,13 @@
   }
 
   // discount badge — unified red tag (Figma 102:2413 / 107:12598), left-pointing folded tail
+  // z-index is load-bearing: the badge is emitted BEFORE .qpc-carousel in
+  // qprod-image.twig, and .qpc-slide is position:relative — two positioned
+  // elements at z-index:auto paint in tree order, so without this the slides
+  // cover the badge on every multi-image product. Matches .qpack__badge.
   &__badge {
     position: absolute;
+    z-index: 3;
     top: 16px;
     left: 16px;
     height: 30px;

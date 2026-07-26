@@ -80,6 +80,10 @@ body, main, #app { background: transparent; }
   // cart CTA "إتمام الطلب" — centered label beside the icon (desktop + mobile).
   .qheader-act--cart .qheader-act__txt { justify-content: center; }
   .qheader-act--cart .qheader-act__txt b { font-size: 13px; color: #fff; }
+  // PM: reveal the "إتمام الطلب" label only when the cart has items. The `is-empty`
+  // modifier is set server-side from cart.items_count and kept in sync live by JS
+  // (see app.js initAddToCart → syncCartCta), so it survives a full-page-cached header.
+  .qheader-act--cart.is-empty .qheader-act__txt { display: none; }
 
   // pill menu (Figma px-25 py-15)
   .qheader-menu {

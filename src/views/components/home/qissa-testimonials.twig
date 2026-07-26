@@ -183,8 +183,14 @@ stays; when the store has neither, the section removes itself. Stars use the pro
 
   // Most store reviews are stars-only (no written comment) and can't fill a card, so ask for
   // a large page and walk the pagination until we have enough reviews that DO have text.
-  // The endpoint may refuse the extra params, so page 1 always falls back to the bare
-  // request (the one release 2 shipped) before we give up on real reviews.
+  //
+  // Measured on the live store (2026-07-22, 3780 store reviews) — both params are honoured:
+  //   {type:store}                  → 5 rows,  1 written  (perPage defaults to 5 → release 2's bug)
+  //   {type:store, per_page:30}     → 30 rows, 5 written
+  //   {type:store, per_page:30, page:2} → 30 rows, 7 written, different rows
+  // i.e. only ~17% of reviews carry text, and pagination.links.next is always present.
+  // per_page:30 is the value verified against the API; the bare-request fallback below stays
+  // for stores/versions that refuse it.
   var PER_PAGE = 30;
   var MAX_PAGES = 6;
 

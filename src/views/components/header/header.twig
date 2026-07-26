@@ -45,7 +45,7 @@
             <i slot="icon" class="header-btn__icon icon sicon-shopping-bag"></i>
           </salla-cart-summary>
         </div>
-        <a href="{{ link('/cart') }}" class="qheader-act qheader-act--cart">
+        <a href="{{ link('/cart') }}" class="qheader-act qheader-act--cart{{ (cart.items_count|default(0) > 0) ? '' : ' is-empty' }}">
           <span class="qheader-act__txt">
             <b>{{ trans('blocks.qissa.checkout_cta') }}</b>
           </span>

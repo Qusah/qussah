@@ -283,9 +283,18 @@ isElementLoaded(selector){
     // server-rendered (and may be full-page cached), so its inline count can be
     // stale/0 — reading the live stored value fixes it on first paint, before
     // any onUpdated event fires.
+    // PM: the header "إتمام الطلب" label is shown only when the cart has items.
+    // Toggle `is-empty` on the cart CTA from the live count so it stays correct
+    // even when the server-rendered header was full-page cached with a stale/0 count.
+    const syncCartCta = count => {
+      const empty = !(Number(count) > 0);
+      document.querySelectorAll('.qheader-act--cart').forEach(el => el.classList.toggle('is-empty', empty));
+    };
+
     const seedCount = salla.storage.get('cart.summary.count');
     if (seedCount != null) {
       document.querySelectorAll('[data-cart-count]').forEach(el => el.innerText = salla.helpers.number(seedCount));
+      syncCartCta(seedCount);
     }
     const seedTotal = salla.storage.get('cart.summary.total');
     if (seedTotal != null) {
@@ -295,6 +304,7 @@ isElementLoaded(selector){
     salla.cart.event.onUpdated(summary => {
       document.querySelectorAll('[data-cart-total]').forEach(el => el.innerHTML = salla.money(summary.total));
       document.querySelectorAll('[data-cart-count]').forEach(el => el.innerText = salla.helpers.number(summary.count));
+      syncCartCta(summary.count);
     });
 
     salla.cart.event.onItemAdded((response, prodId) => {
