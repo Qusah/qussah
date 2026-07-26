@@ -664,19 +664,38 @@
                         // the first (sale block), which can hold a 0 from a misconfigured offer.
                         return els[els.length - 1] || null;
                     }
+                    // The <salla-quantity-input> renders a real <input name="quantity"> (its
+                    // actual form field). Grab it whether the component is light- or shadow-DOM.
+                    function qtyField() {
+                        if (mainQty) { return mainQty; }
+                        if (!mainQtyC) { return null; }
+                        return mainQtyC.querySelector('.s-quantity-input-input')
+                            || (mainQtyC.shadowRoot && mainQtyC.shadowRoot.querySelector('.s-quantity-input-input'))
+                            || null;
+                    }
                     function getQty() {
-                        var v = mainQty ? parseInt(mainQty.value, 10)
-                              : (mainQtyC ? parseInt(mainQtyC.value, 10) : parseInt(qtyVal ? qtyVal.textContent : '1', 10));
+                        var f = qtyField();
+                        var v = f ? parseInt(f.value, 10)
+                              : (qtyVal ? parseInt(qtyVal.textContent, 10) : NaN);
                         return (v && v > 0) ? v : 1;
                     }
                     function setQty(n) {
                         n = Math.max(1, n);
                         if (qtyVal) { qtyVal.textContent = n; }
-                        if (mainQtyC) { try { mainQtyC.value = n; mainQtyC.setAttribute('value', n); } catch (e) {} }
-                        if (mainQty) {
-                            mainQty.value = n;
-                            mainQty.dispatchEvent(new Event('input',  { bubbles: true }));
-                            mainQty.dispatchEvent(new Event('change', { bubbles: true }));
+                        // Update the real form field synchronously so a form submit reads it NOW.
+                        // (Setting the component's .value / [value] does nothing — it has no value
+                        // prop and only reads [value] once at init; the inner input's own oninput
+                        // handler calls the component's setValue, keeping its state in sync.)
+                        var f = qtyField();
+                        if (f) {
+                            f.value = n;
+                            f.dispatchEvent(new Event('input',  { bubbles: true }));
+                            f.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                        // Belt & suspenders: also drive the component's public API (covers a
+                        // shadow-DOM build where the inner input isn't reachable above).
+                        if (mainQtyC && typeof mainQtyC.setValue === 'function') {
+                            try { mainQtyC.setValue(n); } catch (e) {}
                         }
                     }
                     function sync() {
@@ -694,6 +713,11 @@
                     var addBtn = sticky.querySelector('[data-qpd-sticky-add]');
                     if (addBtn && mainAdd) {
                         addBtn.addEventListener('click', function () {
+                            // push the sticky's chosen quantity onto the real quantity field
+                            // (synchronously, so the click stays a user gesture), then trigger
+                            // the actual add-to-cart button so ALL its logic runs — stock,
+                            // options, required shipping, pre-order, notify-when-available, etc.
+                            if (qtyVal) { setQty(Math.max(1, parseInt(qtyVal.textContent, 10) || 1)); }
                             (mainAdd.querySelector('.s-button-element') || mainAdd).click();
                         });
                     }
