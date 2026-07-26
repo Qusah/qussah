@@ -89,18 +89,20 @@
   }
   &__slide {
     flex: 0 0 100%; scroll-snap-align: center;
-    display: block; aspect-ratio: 1 / 1;   // square = matches Salla's square images (fills width)
+    display: block; aspect-ratio: 4 / 3;   // shorter hero (was 1/1) — trims the empty
+                                           // margin around the centered product so the
+                                           // buy box sits higher and cuts page scroll.
     img { width: 100%; height: 100%; object-fit: cover; display: block; }
   }
 
   // thumbnail strip (peek + horizontal scroll)
   &__thumbs {
-    display: flex; gap: 12px; margin-top: 14px;
+    display: flex; gap: 12px; margin-top: 10px;
     overflow-x: auto; scrollbar-width: none; padding-block: 2px;
     &::-webkit-scrollbar { display: none; }
   }
   &__thumb {
-    flex: 0 0 30%; aspect-ratio: 4 / 3; padding: 0;
+    flex: 0 0 24%; aspect-ratio: 4 / 3; padding: 0;   // slightly smaller thumbs
     border-radius: 16px; overflow: hidden; cursor: pointer;
     background: #fff9ec; border: 1px solid #eef1f6;
     -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none;
@@ -227,8 +229,8 @@
 
   .qpack__card { border-radius: 20px; padding: 14px; }
   .qpack__ticker { margin-inline: -14px; }
-  .qpack__slide { aspect-ratio: 1 / 1; }
-  .qpack__thumb { flex-basis: 42%; }
+  .qpack__slide { aspect-ratio: 4 / 3; }   // shorter hero on mobile → less scrolling
+  .qpack__thumb { flex-basis: 34%; }       // slightly smaller thumbs
   .qpack__arrow { width: 36px; height: 36px; }
 
   .qpack__info .qpack__name { font-size: 17px; }
