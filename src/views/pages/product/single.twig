@@ -549,18 +549,13 @@
                     {% endif %}
 
                     {# Figma price + quantity row #}
-                    {# Guard: treat it as "on sale" only when is_on_sale AND the sale price is
-                       a real, non-zero value. A misconfigured offer can report is_on_sale=true
-                       with sale_price=0, which would otherwise render the price as 0 — fall back
-                       to the normal price instead. #}
-                    {% set has_real_sale = product.is_on_sale and product.sale_price > 0 %}
                     <section class="sticky-product-bar qpd__buybar">
                             <div class="qpd__price price-wrapper">
-                                <div class="{{ has_real_sale ? '' : 'hidden' }} price_is_on_sale qpd__price-sale">
+                                <div class="{{ product.is_on_sale ? '' : 'hidden' }} price_is_on_sale qpd__price-sale">
                                     <span class="total-price qpd__price-now">{{product.sale_price|money}}</span>
                                     <span class="before-price qpd__price-old">{{product.regular_price|money}}</span>
                                 </div>
-                                <div class="starting-or-normal-price {{ has_real_sale ? 'hidden' : '' }}">
+                                <div class="starting-or-normal-price {{ product.is_on_sale ? 'hidden' : '' }}">
                                     {% if product.starting_price %}
                                         <span class="starting-price-title qpd__price-from">{{ trans('pages.products.starting_price') }}</span>
                                     {% endif %}
@@ -625,7 +620,7 @@
                 <div class="qpd-sticky" data-qpd-sticky hidden>
                     <div class="qpd-sticky__inner">
                         <span class="qpd-sticky__price" data-qpd-sticky-price>
-                            {{ has_real_sale ? (product.sale_price|money) : ((product.starting_price ?: product.price)|money) }}
+                            {{ product.is_on_sale ? (product.sale_price|money) : ((product.starting_price ?: product.price)|money) }}
                         </span>
                         {% if not (product.is_hidden_quantity or product.type == 'booking') %}
                         <div class="qpd-sticky__qty">
