@@ -34,6 +34,8 @@ body, main, #app { background: transparent; }
     a, span { color: #fff; }
     a:hover { color: #daeff7; }
     i { font-size: 14px; }
+    // language/currency here is a static display, not a selector
+    .qheader-lang { cursor: default; }
   }
   .qheader-sep { width: 1px; height: 12px; background: rgba(255,255,255,.4); }
 
@@ -393,7 +395,9 @@ body, main, #app { background: transparent; }
     }
   }
 
-  // language / currency / location row
+  // language / currency / location — STATIC, read-only info (NOT selectors).
+  // Muted labels with an info icon, no button fill / no pointer, so users don't
+  // read them as tappable controls (there's nothing to switch — Arabic / SAR only).
   &__meta {
     display: flex;
     gap: 16px;
@@ -403,15 +407,20 @@ body, main, #app { background: transparent; }
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 8px 16px;
-      background: #f8f8f8;
-      border-radius: 4px;
-      color: #333;
-      font-size: 14px;
+      gap: 6px;
+      padding: 6px 8px;
+      color: #6c757d;              // muted grey → informational, not actionable
+      font-size: 13px;
       white-space: nowrap;
+      cursor: default;            // no pointer affordance (desktop)
     }
-    &-sep { width: 1px; height: 16px; background: #d0d0d0; }
+    &-icon {
+      flex: 0 0 auto;
+      width: 15px; height: 15px;
+      font-size: 15px;
+      color: #9aa1ab;
+    }
+    &-sep { width: 1px; height: 14px; background: #d0d0d0; }
   }
 
   // contact area (icon at the right edge, text to its left)

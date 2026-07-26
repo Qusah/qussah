@@ -145,10 +145,19 @@
       <a href="{{ link('/wishlist') }}">{{ trans('blocks.qissa.wishlist') }}</a>
     </nav>
 
-    {# language / currency / location row #}
+    {# language / currency / location — STATIC read-only info (not selectors).
+       Styled as muted labels with an info icon so they don't look tappable. #}
     <div class="qside__meta">
-      <span class="qside__meta-box">{{ trans('blocks.qissa.city_riyadh') }}</span>
+      <span class="qside__meta-box">
+        <i class="sicon-location qside__meta-icon" aria-hidden="true"></i>
+        {{ trans('blocks.qissa.city_riyadh') }}
+      </span>
       <span class="qside__meta-box qside__meta-lang">
+        <svg class="qside__meta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M3 12h18"/>
+          <path d="M12 3c2.6 2.9 2.6 15.1 0 18M12 3c-2.6 2.9-2.6 15.1 0 18"/>
+        </svg>
         <span>{{ trans('blocks.qissa.currency_sar') }}</span>
         <span class="qside__meta-sep"></span>
         <span>{{ trans('blocks.qissa.lang_arabic') }}</span>
