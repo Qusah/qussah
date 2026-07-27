@@ -528,7 +528,16 @@
     color: #6c757d;
     margin-inline-end: 6px;
   }
-  &__price-sale {
+  // NOTE: `.qpd__price-sale` deliberately has NO `display` rule — the flex row lives
+  // on the inner `&__price-sale-row` instead.
+  // Both the Twig guard (has_real_sale) and product.js hide the sale block by adding
+  // `hidden`, but this file compiles after Tailwind's utilities, so any `display`
+  // declared on `.qpd__price-sale` wins on source order at equal specificity and pins
+  // the block open — which is what made every product WITHOUT a discount render its
+  // 0 sale_price beside the real one. Qualifying the selector (`&.hidden`,
+  // `&:not(.hidden)`) fixes the cascade but trips a rule-merging bug in the CSS
+  // minifier that sprays this class across ~73 unrelated selectors (+8KB in app.css).
+  &__price-sale-row {
     display: inline-flex;
     align-items: baseline;
     gap: 8px;

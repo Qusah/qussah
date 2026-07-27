@@ -558,9 +558,14 @@
                     {% set has_real_sale = product.is_on_sale and product.sale_price %}
                     <section class="sticky-product-bar qpd__buybar">
                             <div class="qpd__price price-wrapper">
+                                {# The flex row sits on the inner span, never on .qpd__price-sale itself —
+                                   a `display` rule there would out-rank the `hidden` class this block is
+                                   hidden with. See the note in qissa-product-detail.scss. #}
                                 <div class="{{ has_real_sale ? '' : 'hidden' }} price_is_on_sale qpd__price-sale">
-                                    <span class="total-price qpd__price-now">{{product.sale_price|money}}</span>
-                                    <span class="before-price qpd__price-old">{{product.regular_price|money}}</span>
+                                    <span class="qpd__price-sale-row">
+                                        <span class="total-price qpd__price-now">{{product.sale_price|money}}</span>
+                                        <span class="before-price qpd__price-old">{{product.regular_price|money}}</span>
+                                    </span>
                                 </div>
                                 <div class="starting-or-normal-price {{ has_real_sale ? 'hidden' : '' }}">
                                     {% if product.starting_price %}
