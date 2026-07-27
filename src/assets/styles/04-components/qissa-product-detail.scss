@@ -683,39 +683,38 @@
   margin-top: 32px;
   margin-bottom: 40px;
 
-  &__nav {
-    display: flex;
-    justify-content: flex-start; // RTL: flex-start = RIGHT (Figma)
-    gap: 0;
+  // Details and reviews stack in source order; the tablist/__nav/__tab rules were
+  // removed with the tab interface.
+  &__section + &__section {
+    margin-top: 40px;
   }
-  &__tab {
-    min-width: 165px;
-    padding: 16px;
-    border: none;
-    border-radius: 10px 10px 0 0;
-    background: #f3fafd;
-    color: #6c757d;
-    font-size: 16px;
+
+  // Section headings replace the removed tab buttons. Values match this page's other
+  // section titles (.qpd__title / .qpd-viewed__title) rather than a new scale.
+  &__heading {
+    margin: 0 0 16px;
+    text-align: right;
+    direction: rtl;
+    font-size: 32px;
     font-weight: 500;
-    cursor: pointer;
-    transition:
-      background 0.15s,
-      color 0.15s;
-    &.is-active {
-      background: #30378e;
-      color: #fff;
+    line-height: 38px;
+    letter-spacing: -0.2px;
+    color: #0a1f30;
+
+    @media (max-width: 768px) {
+      font-size: 24px;
+      line-height: 30px;
     }
   }
 
+  // No `display` here on purpose — a <div> is block already, and an explicit
+  // display declaration is what trips the minifier rule-merging bug (see the
+  // &__price-sale note above).
   &__panel {
-    display: none;
     border: 1px solid #eee;
     border-radius: 0 15px 15px 15px;
     padding: 16px;
     background: #fff;
-    &.is-active {
-      display: block;
-    }
   }
 
   // details tab text
@@ -848,10 +847,6 @@
 
   @media (max-width: 768px) {
     padding-inline: 15px;
-    &__tab {
-      min-width: 0;
-      flex: 1;
-    }
   }
 }
 

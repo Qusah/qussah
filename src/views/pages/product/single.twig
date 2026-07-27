@@ -752,55 +752,34 @@
         <salla-offer></salla-offer>
     </div>
 
-    {# ===== Figma tabs: تفاصيل المنتج / تقييمات المنتج ===== #}
+    {# ===== تفاصيل المنتج ثم تقييمات المنتج — stacked, no tabs =====
+       The tab interface was removed so reviews are visible without interaction.
+       `.qpd-tabs` is kept as the wrapper CLASS on purpose: the Figma restyle of
+       <salla-comments> in qissa-product-detail.scss is nested under it, and dropping
+       the class would revert the reviews block to Salla's default full-width band. #}
     <div class="container qpd-tabs" id="qpd-tabs">
-        <div class="qpd-tabs__nav" role="tablist">
-            <button type="button" class="qpd-tabs__tab is-active" data-qpd-tab="details" role="tab" aria-selected="true">
-                {{ trans('blocks.qissa.product_details') }}
-            </button>
-            <button type="button" class="qpd-tabs__tab" data-qpd-tab="reviews" role="tab" aria-selected="false">
-                {{ trans('blocks.qissa.product_reviews') }}
-            </button>
-        </div>
+        <section class="qpd-tabs__section">
+            <h2 class="qpd-tabs__heading">{{ trans('blocks.qissa.product_details') }}</h2>
+            <div class="qpd-tabs__panel">
+                <article class="qpd-tabs__desc">
+                    {{ product.description|raw }}
+                </article>
+            </div>
+        </section>
 
-        {# Tab: details #}
-        <div class="qpd-tabs__panel is-active" data-qpd-panel="details" role="tabpanel">
-            <article class="qpd-tabs__desc">
-                {{ product.description|raw }}
-            </article>
-        </div>
-
-        {# Tab: reviews #}
-        <div class="qpd-tabs__panel" data-qpd-panel="reviews" role="tabpanel">
-            {#
-                Hook: product.single.before_customer_reviews
-                Fires before the customer reviews/comments section.
-                Use this hook to inject content between the product info and the reviews block.
-            #}
-            <div class="s-blocks-wrapper s-before-reviews">{% hook 'product.single.before_customer_reviews' %}</div>
-            <salla-comments item-id="{{product.id}}" type="product"></salla-comments>
-        </div>
+        <section class="qpd-tabs__section">
+            <h2 class="qpd-tabs__heading">{{ trans('blocks.qissa.product_reviews') }}</h2>
+            <div class="qpd-tabs__panel">
+                {#
+                    Hook: product.single.before_customer_reviews
+                    Fires before the customer reviews/comments section.
+                    Use this hook to inject content between the product info and the reviews block.
+                #}
+                <div class="s-blocks-wrapper s-before-reviews">{% hook 'product.single.before_customer_reviews' %}</div>
+                <salla-comments item-id="{{product.id}}" type="product"></salla-comments>
+            </div>
+        </section>
     </div>
-
-    <script>
-        (function () {
-            var root = document.getElementById('qpd-tabs');
-            if (!root) return;
-            root.querySelectorAll('.qpd-tabs__tab').forEach(function (tab) {
-                tab.addEventListener('click', function () {
-                    var key = tab.getAttribute('data-qpd-tab');
-                    root.querySelectorAll('.qpd-tabs__tab').forEach(function (t) {
-                        var on = t === tab;
-                        t.classList.toggle('is-active', on);
-                        t.setAttribute('aria-selected', on ? 'true' : 'false');
-                    });
-                    root.querySelectorAll('.qpd-tabs__panel').forEach(function (p) {
-                        p.classList.toggle('is-active', p.getAttribute('data-qpd-panel') === key);
-                    });
-                });
-            });
-        })();
-    </script>
 
     {#
         Hook: product.single.before_product_recommendations
