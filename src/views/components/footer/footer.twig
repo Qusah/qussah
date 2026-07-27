@@ -99,15 +99,19 @@
        field, so the official company name is a theme setting the merchant fills in
        (Theme settings → الاسم الرسمي للمنشأة). Both are hidden while empty. #}
     {% set legal_entity_name = theme.settings.get('legal_entity_name', '') %}
-    {% if legal_entity_name or store.settings.commercial_number %}
+    {# Falls back to the store's registered CR while store.settings.commercial_number is
+       empty in the Salla dashboard — same |default() convention the VAT number uses
+       below. Populate السجل التجاري in the dashboard and the live value wins automatically. #}
+    {% set commercial_number = store.settings.commercial_number|default('7021220244') %}
+    {% if legal_entity_name or commercial_number %}
       <div class="qissa-footer-trust">
         {% if legal_entity_name %}
           <span class="qissa-footer-trust__item">{{ legal_entity_name }}</span>
         {% endif %}
-        {% if store.settings.commercial_number %}
+        {% if commercial_number %}
           <span class="qissa-footer-trust__item">
             {{ trans('blocks.qissa.cr_number_label') }}
-            <span dir="ltr">{{ store.settings.commercial_number }}</span>
+            <span dir="ltr">{{ commercial_number }}</span>
           </span>
         {% endif %}
       </div>
@@ -123,7 +127,7 @@
       {# VAT badge (always) + number (dynamic; falls back to the store VAT) — Figma 6036:1419 #}
       <div class="qissa-footer-bottom__tax">
         <img class="qissa-footer-bottom__tax-badge" src="{{ 'images/payments/zatca-badge.jpg' | asset }}" alt="{{ trans('blocks.qissa.tax_alt') }}" loading="lazy"/>
-        <span class="qissa-footer-bottom__tax-num">{{ trans('blocks.qissa.tax_number_label') }} <span dir="ltr">{{ store.settings.tax.number|default('546987552') }}</span></span>
+        <span class="qissa-footer-bottom__tax-num">{{ trans('blocks.qissa.tax_number_label') }} <span dir="ltr">{{ store.settings.tax.number|default('311345967400003') }}</span></span>
       </div>
 
       {# payment methods + Saudi Business Center badge (LEFT on desktop / TOP on mobile).
