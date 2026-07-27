@@ -152,6 +152,20 @@
             "selected": false
         },
         {
+            "type": "string",
+            "icon": "sicon-shop",
+            "label": "الاسم الرسمي للمنشأة (يظهر في التذييل)",
+            "multilanguage": false,
+            "id": "legal_entity_name",
+            "required": false,
+            "format": "text",
+            "description": "الاسم النظامي للمنشأة كما في السجل التجاري. اتركه فارغاً لإخفائه.",
+            "placeholder": "مثال: شركة قصة للتجارة",
+            "minLength": 0,
+            "maxLength": 200,
+            "value": ""
+        },
+        {
             "type": "static",
             "id": "static-line5",
             "format": "line"

@@ -93,6 +93,26 @@
 
   {# bottom bar — Figma desktop 6036:1409 / mobile 6036:22227 #}
   <div class="container">
+
+    {# Trust line above the bottom pill — legal entity name + commercial registration.
+       CR is dynamic (store.settings.commercial_number). Salla exposes NO legal-entity
+       field, so the official company name is a theme setting the merchant fills in
+       (Theme settings → الاسم الرسمي للمنشأة). Both are hidden while empty. #}
+    {% set legal_entity_name = theme.settings.get('legal_entity_name', '') %}
+    {% if legal_entity_name or store.settings.commercial_number %}
+      <div class="qissa-footer-trust">
+        {% if legal_entity_name %}
+          <span class="qissa-footer-trust__item">{{ legal_entity_name }}</span>
+        {% endif %}
+        {% if store.settings.commercial_number %}
+          <span class="qissa-footer-trust__item">
+            {{ trans('blocks.qissa.cr_number_label') }}
+            <span dir="ltr">{{ store.settings.commercial_number }}</span>
+          </span>
+        {% endif %}
+      </div>
+    {% endif %}
+
     <div class="qissa-footer-bottom">
 
       {# copyright (RIGHT on desktop / BOTTOM on mobile) #}
@@ -106,12 +126,16 @@
         <span class="qissa-footer-bottom__tax-num">{{ trans('blocks.qissa.tax_number_label') }} <span dir="ltr">{{ store.settings.tax.number|default('546987552') }}</span></span>
       </div>
 
-      {# payment methods (LEFT on desktop / TOP on mobile) — Figma logos, local assets #}
+      {# payment methods + Saudi Business Center badge (LEFT on desktop / TOP on mobile).
+         <salla-payments> renders the merchant's ACTUALLY enabled methods from
+         store.settings.payments, plus the SBC certificate badge from
+         store.settings.certificate.id (linked to the official
+         eauthenticate.saudibusiness.gov.sa certificate page) and the Made-in-KSA mark.
+         This replaces the previous hard-coded mada/PayPal/Mastercard/Visa images, which
+         could advertise a method the store does not actually accept. Each rendered
+         <li> keeps the Figma white rounded box via .s-payments-list-item in footer.scss. #}
       <div class="qissa-footer-bottom__payments">
-        <span class="qissa-footer-bottom__pay"><img src="{{ 'images/payments/mada.png' | asset }}" alt="mada" loading="lazy"/></span>
-        <span class="qissa-footer-bottom__pay"><img src="{{ 'images/payments/paypal.png' | asset }}" alt="PayPal" loading="lazy"/></span>
-        <span class="qissa-footer-bottom__pay"><img src="{{ 'images/payments/mastercard.png' | asset }}" alt="Mastercard" loading="lazy"/></span>
-        <span class="qissa-footer-bottom__pay qissa-footer-bottom__pay--visa"><img src="{{ 'images/payments/visa.png' | asset }}" alt="Visa" loading="lazy"/></span>
+        <salla-payments></salla-payments>
       </div>
 
     </div>
