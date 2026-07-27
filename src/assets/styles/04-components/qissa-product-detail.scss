@@ -547,6 +547,42 @@
     font-weight: 700;
   }
 
+  // ===== accepted payment methods strip (under the buy buttons) =====
+  // Markup comes from <salla-payments>, so the inner selectors are Salla's
+  // (.s-payments-list / .s-payments-list-item) and are scoped under this block.
+  &__payments {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  &__payments-label {
+    color: #6c757d;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  &__payments .s-payments-list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  &__payments .s-payments-list-item {
+    display: block;
+    margin: 0;
+    img {
+      display: block;
+      width: auto;
+      height: 28px;
+      object-fit: contain;
+    }
+  }
+
   // qty stepper — row 1, LEFT column
   &__qty {
     grid-area: qty;

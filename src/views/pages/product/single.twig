@@ -622,6 +622,17 @@
                                 {{ trans('blocks.qissa.add_to_cart') }}
                             </salla-add-product-button>
                         </div>
+
+                        {# Accepted payment methods — trust strip directly under the buy buttons.
+                           <salla-payments> renders the methods the merchant ACTUALLY has enabled,
+                           read from store.settings.payments (Apple Pay, mada, Tabby, Tamara, COD…),
+                           with logos served from Salla's CDN. Nothing is hard-coded, so toggling a
+                           method in the dashboard is reflected here with no theme change.
+                           `sbc` / `made-in-ksa` are excluded — those trust badges live in the footer. #}
+                        <div class="qpd__payments">
+                            <span class="qpd__payments-label">{{ trans('blocks.qissa.payment_methods') }}</span>
+                            <salla-payments exclude='["sbc","made-in-ksa"]'></salla-payments>
+                        </div>
                     </section>
                     {% if product.is_giftable %}
                         <salla-gifting class="mt-5" widget-subtitle="{{ gifting_intro }}" product-id="{{ product.id }}" {{ product.is_require_shipping ? 'physical-products' : ''  }}></salla-gifting>
