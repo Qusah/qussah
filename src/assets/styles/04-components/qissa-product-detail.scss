@@ -2730,7 +2730,10 @@
   inset-inline: 0;
   bottom: 0;
   z-index: 90;
+  // Opaque on purpose — this bar sits over live page content. Never let it
+  // become transparent (that is exactly what broke the native Twilight bar).
   background: #fff;
+  border-top: 1px solid #eef2f7;
   box-shadow: 0 -2px 16px rgba(10, 31, 48, 0.12);
   padding: 10px 16px;
   padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
@@ -2826,7 +2829,45 @@
   }
 }
 
-// leave room so the fixed bar never hides the last of the page content
-body.qpd-has-sticky {
-  padding-bottom: 76px;
+// ====================================================================
+// Bottom reserve + neutralising Twilight's own pinned bar.
+//
+// `sticky_add_to_cart` (ON by default) puts `is-sticky-product-bar` on
+// <body>, and product.scss then pins `.sticky-product-bar` to the
+// viewport bottom at <=640px with a shadow but NO background, plus a
+// 7rem body reserve. The buy bar no longer carries that class (see the
+// note in product/single.twig), so the reserve is now dead weight and
+// the pin rule matches nothing.
+//
+// Both rules below out-specify product.scss on purpose: app.scss
+// imports product.scss AFTER this file, so source order favours it.
+// ====================================================================
+
+// Belt and braces: if `.sticky-product-bar` ever reappears on this
+// section (Salla-side markup, a stale cached template), keep it inline
+// rather than letting it float transparently over the page.
+@media (max-width: 640px) {
+  body.is-sticky-product-bar .qpd section.sticky-product-bar {
+    position: static;
+    inset: auto;
+    z-index: auto;
+    width: auto;
+    transform: none;
+    opacity: 1;
+    box-shadow: none;
+    transition: none;
+  }
+}
+
+// reclaim the 7rem gap upstream reserved for a bar that is no longer pinned
+body.is-sticky-product-bar.product-single {
+  padding-bottom: 0;
+}
+
+// leave room so the floating bar never hides the last of the page content.
+// --qpd-sticky-h is measured by the script in product/single.twig; the 76px
+// fallback covers the frame before the first measurement lands.
+body.qpd-has-sticky,
+body.is-sticky-product-bar.product-single.qpd-has-sticky {
+  padding-bottom: var(--qpd-sticky-h, 76px);
 }

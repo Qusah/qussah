@@ -124,7 +124,16 @@
         {{ trans('blocks.qissa.copyright') }} <span class="qissa-footer-bottom__year">{{ "now"|date("Y") }}</span>
       </p>
 
-      {# VAT badge (always) + number (dynamic; falls back to the store VAT) — Figma 6036:1419 #}
+      {# VAT badge (always) + number (dynamic; falls back to the store VAT) — Figma 6036:1419
+
+         The two footer identifiers are DIFFERENT numbers with different labels — do not
+         swap them (this line was mislabelled "الرقم التجاري" once already):
+           · السجل التجاري / CR No.  → cr_number_label  + store.settings.commercial_number
+                                        (trust line above)
+           · الرقم الضريبي / Tax no. → tax_number_label + store.settings.tax.number
+                                        (here, beside the ZATCA badge)
+         The ZATCA badge only makes sense next to the VAT number, so this label stays
+         الرقم الضريبي. #}
       <div class="qissa-footer-bottom__tax">
         <img class="qissa-footer-bottom__tax-badge" src="{{ 'images/payments/zatca-badge.jpg' | asset }}" alt="{{ trans('blocks.qissa.tax_alt') }}" loading="lazy"/>
         <span class="qissa-footer-bottom__tax-num">{{ trans('blocks.qissa.tax_number_label') }} <span dir="ltr">{{ store.settings.tax.number|default('311345967400003') }}</span></span>

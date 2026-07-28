@@ -81,7 +81,7 @@ iframe.tawk-widget {
 }
 
 
-.is-sticky-product-bar{ 
+.is-sticky-product-bar{
   &.product-single{
     [id^="gb-widget"],
     iframe.tawk-widget,
@@ -89,5 +89,17 @@ iframe.tawk-widget {
     iframe.tawk-widget{
       bottom: 70px !important;
     }
+  }
+}
+
+// The Qussah product page draws its own floating add-to-cart bar
+// (`.qpd-sticky`, toggled by `.qpd-has-sticky` on <body>). Lift the chat
+// bubbles clear of it while it is up — otherwise WhatsApp/GetButton land on
+// top of the buy buttons. --qpd-sticky-h is the measured bar height.
+body.qpd-has-sticky{
+  [id^="gb-widget"],
+  iframe.tawk-widget,
+  #fb-root .fb_dialog iframe[data-testid="bubble_iframe"]{
+    bottom: calc(var(--qpd-sticky-h, 76px) + 12px) !important;
   }
 }

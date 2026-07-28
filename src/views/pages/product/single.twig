@@ -556,7 +556,15 @@
                        Salla's server-side Twig render (blanks the page). Mirrors the
                        `product.is_on_sale and product.promotion_title` idiom in qissa-all-products. #}
                     {% set has_real_sale = product.is_on_sale and product.sale_price %}
-                    <section class="sticky-product-bar qpd__buybar">
+                    {# Deliberately NOT `.sticky-product-bar`: that class makes Twilight pin this
+                       whole section to the viewport bottom at <=640px whenever the merchant has
+                       `sticky_add_to_cart` on (it is on by default). That upstream rule declares
+                       no background, and `.qpd__buybar` clears padding/background anyway, so the
+                       controls + payments strip floated transparently over the page content. It
+                       also kept this section permanently in-viewport, which starved the
+                       IntersectionObserver below and stopped `.qpd-sticky` ever appearing.
+                       The Qussah floating bar (`.qpd-sticky`) owns that behaviour instead. #}
+                    <section class="qpd__buybar">
                             <div class="qpd__price price-wrapper">
                                 {# The flex row sits on the inner span, never on .qpd__price-sale itself —
                                    a `display` rule there would out-rank the `hidden` class this block is
@@ -602,7 +610,7 @@
                                     {{product.is_require_shipping ? 'required-shipping' : ''}}
                                     {{product.has_preorder_campaign ? 'has-pre-order' : ''}}
                                     amount="{{ product.base_currency_price }}"
-                                    class="qpd__btn qpd__btn--cart sticky-product-bar__btn"
+                                    class="qpd__btn qpd__btn--cart"
                                     product-status="{{ product.status }}"
                                     product-type="{{ product.type }}"
                                     product-id="{{ product.id }}"
@@ -743,7 +751,13 @@
                     function setVisible(v) {
                         sticky.classList.toggle('is-visible', v);
                         document.body.classList.toggle('qpd-has-sticky', v);
-                        if (v) { sync(); }
+                        if (v) {
+                            sync();
+                            // publish the real bar height so the body reserve (and the chat
+                            // bubbles) clear it exactly — the bar grows with the safe-area
+                            // inset and with long price strings, so a fixed guess under-reserves.
+                            document.documentElement.style.setProperty('--qpd-sticky-h', sticky.offsetHeight + 'px');
+                        }
                     }
                     if ('IntersectionObserver' in window) {
                         new IntersectionObserver(function (e) {
