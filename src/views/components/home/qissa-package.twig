@@ -126,15 +126,21 @@ with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
 
                 {# quantity stepper (right) + add-to-cart fills (left) #}
                 <div class="qpack__actions">
-                    <div class="qpack__qty" data-qpack-qty>
-                        <button type="button" class="qpack__q qpack__q--minus" data-qpack-dec aria-label="{{ trans('blocks.qissa.decrease_qty') }}"></button>
-                        <span class="qpack__qnum" data-qpack-num>1</span>
-                        <button type="button" class="qpack__q qpack__q--plus" data-qpack-inc aria-label="{{ trans('blocks.qissa.increase_qty') }}"></button>
-                    </div>
-                    <button type="button" class="qpack__add" data-qpack-add data-id="{{ product.id }}">
-                        <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
-                        <i class="sicon-shopping-bag"></i>
-                    </button>
+                    {% if product.is_out_of_stock %}
+                        <button type="button" class="qpack__add qpack__add--oos" disabled>
+                            <span>{{ trans('blocks.qissa.out_of_stock') }}</span>
+                        </button>
+                    {% else %}
+                        <div class="qpack__qty" data-qpack-qty>
+                            <button type="button" class="qpack__q qpack__q--minus" data-qpack-dec aria-label="{{ trans('blocks.qissa.decrease_qty') }}"></button>
+                            <span class="qpack__qnum" data-qpack-num>1</span>
+                            <button type="button" class="qpack__q qpack__q--plus" data-qpack-inc aria-label="{{ trans('blocks.qissa.increase_qty') }}"></button>
+                        </div>
+                        <button type="button" class="qpack__add" data-qpack-add data-id="{{ product.id }}">
+                            <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
+                            <i class="sicon-shopping-bag"></i>
+                        </button>
+                    {% endif %}
                 </div>
 
             </div>

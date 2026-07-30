@@ -258,6 +258,16 @@
       color: #30378e !important;
     }
   }
+  // out of stock — greyed out, no hover, not clickable
+  &__add--oos {
+    &,
+    &:hover {
+      background: #e6e7ef !important;
+      border-color: #e6e7ef !important;
+      color: #8a8fa8 !important;
+      cursor: not-allowed;
+    }
+  }
   &__like {
     flex: 0 0 50px;
     width: 50px;

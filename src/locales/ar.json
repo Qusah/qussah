@@ -8,6 +8,7 @@
     },
     "qissa": {
       "add_to_cart": "أضف للسلة",
+      "out_of_stock": "نفذت الكمية",
       "sale": "خصم",
       "view_all_products": "عرض كل المنتجات",
       "shop_all_products": "المزيد",

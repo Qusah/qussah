@@ -217,6 +217,11 @@
     i { font-size: 16px; }
     @media (hover: hover) { &:hover { background: #91e6f7; border-color: #91e6f7; color: #30378e; } }
   }
+  // out of stock — greyed out, no hover, not clickable
+  .qpack__add--oos {
+    background: #e6e7ef; border-color: #e6e7ef; color: #8a8fa8; cursor: not-allowed;
+    @media (hover: hover) { &:hover { background: #e6e7ef; border-color: #e6e7ef; color: #8a8fa8; } }
+  }
 }
 
 // ---- mobile (<=768) ----

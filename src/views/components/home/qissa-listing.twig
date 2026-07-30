@@ -77,11 +77,17 @@
                                     <button class="qprod__like" data-id="{{ product.id }}" onclick="salla.wishlist.toggle({{ product.id }})" aria-label="{{ trans('blocks.qissa.wishlist') }}">
                                         <i class="sicon-heart"></i>
                                     </button>
-                                    <button class="qprod__add" type="button"
-                                        onclick="salla.cart.addItem({ id: {{ product.id }}, quantity: 1 })">
-                                        <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
-                                        <i class="sicon-shopping-bag"></i>
-                                    </button>
+                                    {% if product.is_out_of_stock %}
+                                        <button class="qprod__add qprod__add--oos" type="button" disabled>
+                                            <span>{{ trans('blocks.qissa.out_of_stock') }}</span>
+                                        </button>
+                                    {% else %}
+                                        <button class="qprod__add" type="button"
+                                            onclick="salla.cart.addItem({ id: {{ product.id }}, quantity: 1 })">
+                                            <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
+                                            <i class="sicon-shopping-bag"></i>
+                                        </button>
+                                    {% endif %}
                                 </div>
                             </div>
                         </article>
