@@ -92,8 +92,10 @@ class Cart extends BasePage {
         // update each item data
         cartData.items?.forEach(item => this.updateItemInfo(item));
 
-        app.subTotal.innerHTML = salla.money(cartData.sub_total);
-        if(app.taxAmount) 
+        // These summary rows are only present in themes that render their own
+        // totals; on the cart page <salla-cart-summary-card> owns them instead.
+        if (app.subTotal) app.subTotal.innerHTML = salla.money(cartData.sub_total);
+        if(app.taxAmount)
           app.taxAmount.innerHTML = salla.money(cartData.tax_amount);
         if (app.orderOptionsTotal) app.orderOptionsTotal.innerHTML = salla.money(cartData.options_total);
         
@@ -101,8 +103,8 @@ class Cart extends BasePage {
             .toggleElementClassIf(app.shippingCost, 'has_shipping', 'hidden', () => !!cartData.real_shipping_cost && !cartData.free_shipping_bar?.has_free_shipping) 
             .toggleElementClassIf(app.freeShipping, 'has_free', 'hidden', () => !!cartData.free_shipping_bar);
 
-        app.totalDiscount.querySelector('b').innerHTML = '- ' + salla.money(cartData.total_discount);
-        app.shippingCost.querySelector('b').innerHTML = salla.money(cartData.real_shipping_cost);
+        if (app.totalDiscount) app.totalDiscount.querySelector('b').innerHTML = '- ' + salla.money(cartData.total_discount);
+        if (app.shippingCost) app.shippingCost.querySelector('b').innerHTML = salla.money(cartData.real_shipping_cost);
 
         if (!cartData.free_shipping_bar) {
             return;

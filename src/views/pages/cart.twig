@@ -195,70 +195,24 @@
                         <h2 class="qcart__summary-title">{{ trans('blocks.qissa.order_summary') }}</h2>
 
                         <div class="qcart__coupon">
+                            {% hook 'cart:coupon.start' %}
                             <salla-cart-coupons></salla-cart-coupons>
+                            {% hook 'cart:coupon.end' %}
                         </div>
 
-                        <div class="qcart__summary-row qcart__summary-row--subtotal">
-                            <span class="qcart__summary-label">{{ trans('blocks.qissa.subtotal') }}</span>
-                            <b id="sub-total" class="qcart__summary-value">{{ cart.sub_total|money }}</b>
-                        </div>
+                        {# Totals + checkout button. Salla's required cart summary
+                           component owns the numbers, form validation and submit.
+                           Desktop (>=1024px) it renders inline in this card and is
+                           restyled to the Figma summary in qissa-cart.scss; below
+                           1024px the component portals itself to <body> and becomes
+                           Salla's sticky bottom summary bar. #}
+                        {% hook 'cart:summary-card.start' %}
+                        <salla-cart-summary-card class="qcart__summary-card"></salla-cart-summary-card>
+                        {% hook 'cart:summary-card.end' %}
 
-                        {% if cart.options|length %}
-                          <div class="qcart__summary-row qcart__summary-row--aux hidden" aria-hidden="true">
-                            <span class="qcart__summary-label">{{ trans('pages.cart.order_options_total') }}</span>
-                            <b id="cart-options-total" class="qcart__summary-value">{{ cart.options_total|money }}</b>
-                          </div>
+                        {% if store.settings.tax.taxable_prices_enabled %}
+                            <p class="qcart__totals-taxnote">{{ trans('blocks.qissa.prices_include_tax') }} <span>*</span></p>
                         {% endif %}
-
-                        <div id="shipping-cost"
-                             class="qcart__summary-row qcart__summary-row--aux {{ cart.has_shipping ? '' : 'hidden' }}"
-                             aria-hidden="true">
-                            <span class="qcart__summary-label">{{ trans('pages.cart.shipping_cost') }}</span>
-                            <b class="qcart__summary-value">{{ cart.real_shipping_cost|money }}</b>
-                        </div>
-
-                        <!-- Salla-managed coupon/offer discount. Kept (so Salla keeps
-                             its amount in sync) but visually hidden — its value is folded
-                             into the combined discount row below. -->
-                        <div id="total-discount" class="qcart__summary-row qcart__summary-row--discount qcart__summary-row--salla-hidden {{ cart.total_discount ? '' : 'hidden' }}" aria-hidden="true">
-                            <span class="qcart__summary-label">{{ trans('blocks.qissa.discount') }}</span>
-                            <b class="qcart__summary-value">- {{ cart.total_discount|money }}</b>
-                        </div>
-
-                        <!-- Combined discount = product sale savings (regular − sale) +
-                             coupon discount. Computed in JS; hidden when both are zero.
-                             Inline display:none (the .qcart__summary-row flex beats .hidden). -->
-                        <div id="qcart-discount" class="qcart__summary-row qcart__summary-row--discount" style="display:none">
-                            <span class="qcart__summary-label">{{ trans('blocks.qissa.discount') }}</span>
-                            <b class="qcart__summary-value" id="qcart-discount-value">- 0</b>
-                        </div>
-
-                        {% if cart.tax_amount %}
-                            <div class="qcart__summary-row qcart__summary-row--aux hidden" aria-hidden="true">
-                                <span class="qcart__summary-label">{{ trans('pages.cart.VAT_tax_amount') }}</span>
-                                <b id="tax-amount" class="qcart__summary-value">{{ cart.tax_amount|money }}</b>
-                            </div>
-                        {% endif %}
-
-                        <div class="qcart__summary-divider" aria-hidden="true"></div>
-
-                        <div class="qcart__summary-total">
-                            <div class="qcart__summary-total-row">
-                                <span class="qcart__summary-total-label">{{ trans('blocks.qissa.total') }}</span>
-                                <b class="qcart__summary-total-value" data-cart-total>{{ cart.total|money }}</b>
-                            </div>
-
-                            {% if store.settings.tax.taxable_prices_enabled %}
-                                <p class="qcart__totals-taxnote">{{ trans('blocks.qissa.prices_include_tax') }} <span>*</span></p>
-                            {% endif %}
-                        </div>
-                        <div class="cart-submit-wrap">
-                            {% hook 'cart:submit.start' %}
-                            <salla-button id="cart-submit" loader-position="center" width="wide">
-                                {{ trans('pages.cart.complete_order') }}
-                            </salla-button>
-                            {% hook 'cart:submit.end' %}
-                        </div>
                         {% hook 'cart:summary.end' %}
                     </div>
 
@@ -270,30 +224,22 @@
     </div>
     </div>
 
-    {# Cart prices + discount, driven by Salla's numeric cart data (the same source
+    {# Per-item cart prices, driven by Salla's numeric cart data (the same source
        the mini-cart modal uses) rather than the DOM. Salla leaves a sale item's
        .item-total stale after a coupon, so reading the DOM is unreliable; the API
        gives the true per-item total. For each item we set the current price
-       (.item-total) and the struck regular price (.item-struck), then the summary:
-       المجموع = Σ regular, قيمة الخصم = regular − total, الإجمالى = total. #}
+       (.item-total) and the struck regular price (.item-struck).
+       The summary totals are owned by <salla-cart-summary-card>. #}
     <script>
         (function () {
-            var row = document.getElementById('qcart-discount');
-            var valEl = document.getElementById('qcart-discount-value');
-            var subTotalEl = document.getElementById('sub-total');
-            var totalEl = document.querySelector('[data-cart-total]');
-            if (!row || !valEl) { return; }
-
-            function round2(n) { return Math.round(n * 100) / 100; }
             function money(n) {
                 return (window.salla && typeof salla.money === 'function')
                     ? salla.money(n)
-                    : (Number(n).toFixed(2) + ' ر.س');
+                    : String(n);
             }
 
             function apply(cart) {
                 if (!cart || !cart.items) { return; }
-                var regularSubtotal = 0;
 
                 cart.items.forEach(function (it) {
                     var qty = it.quantity || 1;
@@ -306,7 +252,6 @@
                         Number(it.price) || 0
                     );
                     var regularLine = unit > 0 ? unit * qty : current;
-                    regularSubtotal += regularLine;
 
                     var form = document.getElementById('item-' + it.id);
                     if (!form) { return; }
@@ -329,21 +274,6 @@
                         }
                     }
                 });
-
-                regularSubtotal = round2(regularSubtotal);
-                var total = round2(Number(cart.total) || 0);
-                var discount = (total > 0 && regularSubtotal > total + 0.01) ? round2(regularSubtotal - total) : 0;
-
-                if (subTotalEl && regularSubtotal > 0) { subTotalEl.innerHTML = money(regularSubtotal); }
-                if (totalEl && total > 0) { totalEl.innerHTML = money(total); }
-
-                // inline display wins over the .qcart__summary-row flex rule
-                if (discount > 0.0001) {
-                    valEl.innerHTML = '- ' + money(discount);
-                    row.style.display = 'flex';
-                } else {
-                    row.style.display = 'none';
-                }
             }
 
             function refresh() {

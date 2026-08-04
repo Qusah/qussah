@@ -63,8 +63,12 @@
 
             {% hook 'thank-you:items.end' %}
         </div>
+
+        {# Split shipment tracking — self-hides for single-shipment orders #}
+        <salla-order-shipments class="block mb-6 md:mb-8 empty:hidden"></salla-order-shipments>
+
         <salla-next-order-coupon></salla-next-order-coupon>
-        
+
         <salla-order-branch></salla-order-branch>
 
         <div class="lg:flex rtl:space-x-reverse lg:space-x-8">

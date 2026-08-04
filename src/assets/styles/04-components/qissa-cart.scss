@@ -529,6 +529,197 @@
     }
   }
 
+  // ================================================================
+  // SALLA CART SUMMARY CARD  (<salla-cart-summary-card>)
+  // Required Twilight component — owns the totals, the cart-form
+  // validation and the checkout submit.
+  //
+  // Desktop (>=1024px) it renders inline inside .qcart__totals, so it is
+  // restyled here to the Figma summary rows. Below 1024px the component
+  // portals itself out to <body> (fixed bottom bar + sheet), leaving this
+  // .qcart scope entirely — so mobile keeps Salla's stock bar untouched
+  // and none of the rules below can reach it.
+  // ================================================================
+  .qcart__summary-card {
+    display: block;
+    width: 100%;
+    // card chrome already comes from .qcart__totals
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+    position: static;
+
+    .s-cart-summary-card-sheet-wrap,
+    .s-cart-summary-card-sheet {
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
+      position: static;
+      transform: none !important;   // beats the component's inline sheet transform
+      width: 100%;
+    }
+
+    .s-cart-summary-card-sheet {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    // the theme prints "ملخص الطلب" above the coupon field (Figma order)
+    .s-cart-summary-card-sheet-header { display: none; }
+
+    // ---- totals rows -> .qcart__summary-row ----
+    .s-cart-summary-card-line {
+      align-items: flex-start;
+      display: flex;
+      gap: 24px;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+
+      > span {
+        color: $g600;
+        flex: 1 1 auto;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 25px;
+        min-width: 0;
+        text-align: right;
+      }
+
+      > b {
+        color: $ink;
+        flex: 0 0 auto;
+        font-family: 'Poppins', 'GE SS Two', sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 25px;
+        white-space: nowrap;
+      }
+    }
+
+    .s-cart-summary-card-line--discount {
+      > span,
+      > b { color: $red; }
+    }
+
+    // ---- final-total bar -> .qcart__summary-divider + .qcart__summary-total ----
+    .s-cart-summary-card-bar {
+      align-items: center;
+      background: transparent;
+      border: 0;
+      border-top: 1px solid #d7e6ee;
+      box-shadow: none;
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      min-height: 28px;
+      padding: 16px 0 0;
+      position: static;
+      width: 100%;
+    }
+
+    .s-cart-summary-card-bar-label {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .s-cart-summary-card-bar-label-main {
+      align-items: baseline;
+      display: flex;
+      gap: 8px;
+    }
+
+    .s-cart-summary-card-bar-label-text {
+      color: $ink;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 25px;
+      text-align: right;
+    }
+
+    .s-cart-summary-card-bar-count {
+      color: $g500;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 20px;
+    }
+
+    // the theme renders its own tax note under the card
+    .s-cart-summary-card-bar-label-sub { display: none; }
+
+    .s-cart-summary-card-bar-totals {
+      align-items: flex-end;
+      display: flex;
+      flex: 0 0 auto;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .s-cart-summary-card-bar-totals-row {
+      align-items: baseline;
+      display: flex;
+      gap: 8px;
+    }
+
+    .s-cart-summary-card-bar-original {
+      color: $g500;
+      font-family: 'Poppins', 'GE SS Two', sans-serif;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 25px;
+    }
+
+    .s-cart-summary-card-bar-total {
+      color: $navy;
+      font-family: 'Poppins', 'GE SS Two', sans-serif;
+      font-size: 25px;
+      font-weight: 600;
+      line-height: 28px;
+      white-space: nowrap;
+    }
+
+    .s-cart-summary-card-bar-savings-badge {
+      align-items: center;
+      color: $red;
+      display: flex;
+      font-size: 14px;
+      font-weight: 500;
+      gap: 4px;
+      line-height: 20px;
+    }
+
+    // ---- checkout button -> same treatment as #cart-submit ----
+    .s-cart-summary-card-action {
+      margin-top: 16px;
+      padding: 0;
+      width: 100%;
+    }
+
+    #s-cart-summary-card-submit {
+      display: block;
+      width: 100%;
+
+      &::part(base),
+      .s-button-element {
+        background: $navy;
+        border: 1px solid $navy;
+        border-radius: 12px;
+        color: #fff;
+        font-family: 'GE SS Two', sans-serif;
+        font-size: 16px;
+        font-weight: 500;
+        height: 56px;
+        line-height: 24px;
+        padding: 16px;
+        width: 100%;
+      }
+    }
+  }
+
   @media (min-width: 768px) {
     .qcart__totals { gap: 20px; }
     .qcart__summary-title {
