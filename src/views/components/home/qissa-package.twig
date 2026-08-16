@@ -153,6 +153,11 @@ with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
 <script>
 (function () {
   document.querySelectorAll('.qpack [data-qpack]').forEach(function (card) {
+    // Init guard — same as qissa-dual-hero. The selector is global, so with two
+    // Package blocks on one page each block's copy of this script reaches BOTH
+    // cards; without the guard every card got its chips appended twice.
+    if (card.hasAttribute('data-qpack-init')) { return; }
+    card.setAttribute('data-qpack-init', '');
 
     // discount badge → "<promo label> · خصم X%"  (just "خصم X%" when the merchant
     // set no promotion title, i.e. the label already IS the word خصم)
