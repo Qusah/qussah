@@ -1523,32 +1523,68 @@
                     "value": "/products"
                 },
                 {
-                    "id": "pos_x",
-                    "type": "number",
-                    "format": "integer",
-                    "icon": "sicon-pencil-ruler",
+                    "id": "button_position",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "source": "Manual",
                     "label": {
-                        "en": "Button horizontal position (% from the right)",
-                        "ar": "موضع الزر أفقياً (٪ من اليمين)"
+                        "en": "Button position on the image",
+                        "ar": "مكان الزر على الصورة"
                     },
-                    "description": "٠ = ملاصق لليمين، ٥٠ = المنتصف، ١٠٠ = ملاصق لليسار",
-                    "value": 50,
-                    "minimum": 0,
-                    "maximum": 100
-                },
-                {
-                    "id": "pos_y",
-                    "type": "number",
-                    "format": "integer",
-                    "icon": "sicon-pencil-ruler",
-                    "label": {
-                        "en": "Button vertical position (% from the top)",
-                        "ar": "موضع الزر عمودياً (٪ من الأعلى)"
-                    },
-                    "description": "٠ = ملاصق للأعلى، ٥٠ = المنتصف، ١٠٠ = ملاصق للأسفل",
-                    "value": 80,
-                    "minimum": 0,
-                    "maximum": 100
+                    "selected": [
+                        {
+                            "label": "أسفل - المنتصف",
+                            "value": "bottom-center",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000008"
+                        }
+                    ],
+                    "options": [
+                        {
+                            "label": "أعلى - يمين",
+                            "value": "top-right",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000001"
+                        },
+                        {
+                            "label": "أعلى - المنتصف",
+                            "value": "top-center",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000002"
+                        },
+                        {
+                            "label": "أعلى - يسار",
+                            "value": "top-left",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000003"
+                        },
+                        {
+                            "label": "الوسط - يمين",
+                            "value": "center-right",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000004"
+                        },
+                        {
+                            "label": "الوسط - المنتصف",
+                            "value": "center-center",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000005"
+                        },
+                        {
+                            "label": "الوسط - يسار",
+                            "value": "center-left",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000006"
+                        },
+                        {
+                            "label": "أسفل - يمين",
+                            "value": "bottom-right",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000007"
+                        },
+                        {
+                            "label": "أسفل - المنتصف",
+                            "value": "bottom-center",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000008"
+                        },
+                        {
+                            "label": "أسفل - يسار",
+                            "value": "bottom-left",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000009"
+                        }
+                    ]
                 }
             ]
         },

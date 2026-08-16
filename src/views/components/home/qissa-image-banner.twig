@@ -7,31 +7,22 @@
 | component.show_cta        | bool   | overlay a button on the image                  |
 | component.button_text     | string | CTA label                                      |
 | component.button_url      | string | CTA link                                       |
-| component.pos_x           | int    | button spot, % from the RIGHT edge (0–100)     |
-| component.pos_y           | int    | button spot, % from the TOP edge (0–100)       |
+| component.button_position | mixed  | one of 9 grid slots, e.g. "bottom-center"      |
 | position                  | int    | sorting block                                  |
 
 Same card footprint as qissa-video-banner (uncapped container, 50px gutters,
 30px radius) but the uploaded image IS the banner — no text column, no panel
-background. The only optional chrome is one CTA, placed freely by percentage.
+background. The only optional chrome is one CTA, placed on a 3×3 grid.
 
-── The placement trick ──────────────────────────────────────────────────────
-`right: X%` alone would push the button outside the card as X grows (its own
-width isn't accounted for). Pairing it with `translate(X%, …)` — a shift of
-X% of the button's OWN size in the opposite sense — makes the scale absolute:
-0 = flush right, 50 = dead centre, 100 = flush left, whatever size the button
-is. Same for Y vertically. The overlay uses inset (not padding) so "flush"
-still keeps the card's breathing room: absolute % offsets resolve against the
-containing block's edges and would ignore padding entirely.
-
-Physical right/top on purpose — postcss downlevels logical properties assuming
-LTR, and the merchant-facing scale is "٪ من اليمين" regardless of direction.
+The overlay grid runs LTR on purpose: postcss-preset-env downlevels logical
+properties assuming LTR, so "يمين/يسار" are mapped to physical right/left in
+CSS. The button re-isolates its own RTL for the Arabic label.
 #}
 {% if component.image %}
-    {% set x = component.pos_x|default(50) %}
-    {% set y = component.pos_y|default(80) %}
-    {% set x = x > 100 ? 100 : (x < 0 ? 0 : x) %}
-    {% set y = y > 100 ? 100 : (y < 0 ? 0 : y) %}
+    {# dropdown-list values arrive as a list (and sometimes as option objects) —
+       unwrap to the plain slot string, matching how bareq handles the format #}
+    {% set pos = component.button_position is iterable ? component.button_position|first : component.button_position %}
+    {% set pos = pos.value|default(pos)|default('bottom-center') %}
 
     <section class="s-block qibanner" id="qibanner-{{ position }}">
         <div class="container">
@@ -42,10 +33,8 @@ LTR, and the merchant-facing scale is "٪ من اليمين" regardless of direc
                      loading="lazy"/>
 
                 {% if component.show_cta and component.button_text and component.button_url %}
-                    <div class="qibanner__overlay">
-                        <a class="qibanner__btn"
-                           href="{{ component.button_url }}"
-                           style="right: {{ x }}%; top: {{ y }}%; transform: translate({{ x }}%, -{{ y }}%);">{{ component.button_text }}</a>
+                    <div class="qibanner__overlay" data-pos="{{ pos }}">
+                        <a class="qibanner__btn" href="{{ component.button_url }}">{{ component.button_text }}</a>
                     </div>
                 {% endif %}
             </div>
