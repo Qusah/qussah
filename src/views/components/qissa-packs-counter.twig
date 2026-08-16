@@ -34,12 +34,13 @@
                     <span class="qpacks__display" data-qpacks-board aria-hidden="true"></span>
                     {# The store synced while the default still said عبوة, and Salla
                        persists synced values over new theme defaults forever after.
-                       Migrate exactly that stale string; anything else the merchant
-                       typed deliberately still wins. #}
+                       An exact-match migration is too fragile against whitespace
+                       variants of the stored string — so the word itself is simply
+                       banned from this bar: any عبوة becomes منديل, wherever it
+                       appears. Custom merchant text otherwise passes through. #}
                     {% set label = theme.settings.get('packs_counter_label', 'منديل بين أيدي عملائنا')|trim %}
-                    {% if label == 'عبوة بين أيدي عملائنا' or label == '' %}
-                        {% set label = 'منديل بين أيدي عملائنا' %}
-                    {% endif %}
+                    {% if label == '' %}{% set label = 'منديل بين أيدي عملائنا' %}{% endif %}
+                    {% set label = label|replace({'عبوة': 'منديل'}) %}
                     <span class="qpacks__label">{{ label }}</span>
                     <span class="qpacks__sr" data-qpacks-sr role="status" aria-live="polite"></span>
                 </div>
