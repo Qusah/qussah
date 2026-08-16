@@ -1461,6 +1461,134 @@
             ]
         },
         {
+            "key": "a9e89601-8422-49f6-acfe-5bbc525c7dd7",
+            "title": {
+                "en": "Qissa Image Banner",
+                "ar": "بانر قصة بصورة كاملة"
+            },
+            "icon": "sicon-image",
+            "path": "home.qissa-image-banner",
+            "fields": [
+                {
+                    "id": "image",
+                    "type": "string",
+                    "format": "image",
+                    "required": true,
+                    "label": {
+                        "en": "Banner image (fills the whole banner)",
+                        "ar": "صورة البانر (تملأ البانر بالكامل)"
+                    },
+                    "description": "الأبعاد المثالية عريضة بنسبة تقارب 21:9 — نفس مساحة بانر الفيديو"
+                },
+                {
+                    "id": "alt",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Image description (SEO / screen readers)",
+                        "ar": "وصف الصورة (لمحركات البحث وقارئات الشاشة)"
+                    },
+                    "value": null
+                },
+                {
+                    "id": "show_cta",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Show a button on the image",
+                        "ar": "إظهار زر فوق الصورة"
+                    },
+                    "value": false,
+                    "selected": false
+                },
+                {
+                    "id": "button_text",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Button Text",
+                        "ar": "نص الزر"
+                    },
+                    "value": "تسوق مع قصة"
+                },
+                {
+                    "id": "button_url",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Button URL",
+                        "ar": "رابط الزر"
+                    },
+                    "value": "/products"
+                },
+                {
+                    "id": "button_position",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "source": "Manual",
+                    "label": {
+                        "en": "Button position on the image",
+                        "ar": "مكان الزر على الصورة"
+                    },
+                    "selected": [
+                        {
+                            "label": "أسفل - المنتصف",
+                            "value": "bottom-center",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000008"
+                        }
+                    ],
+                    "options": [
+                        {
+                            "label": "أعلى - يمين",
+                            "value": "top-right",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000001"
+                        },
+                        {
+                            "label": "أعلى - المنتصف",
+                            "value": "top-center",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000002"
+                        },
+                        {
+                            "label": "أعلى - يسار",
+                            "value": "top-left",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000003"
+                        },
+                        {
+                            "label": "الوسط - يمين",
+                            "value": "center-right",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000004"
+                        },
+                        {
+                            "label": "الوسط - المنتصف",
+                            "value": "center-center",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000005"
+                        },
+                        {
+                            "label": "الوسط - يسار",
+                            "value": "center-left",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000006"
+                        },
+                        {
+                            "label": "أسفل - يمين",
+                            "value": "bottom-right",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000007"
+                        },
+                        {
+                            "label": "أسفل - المنتصف",
+                            "value": "bottom-center",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000008"
+                        },
+                        {
+                            "label": "أسفل - يسار",
+                            "value": "bottom-left",
+                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000009"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "key": "8d2d5f79-5f37-4dec-bda4-1aebf4083886",
             "title": {
                 "en": "Qissa Video Banner",

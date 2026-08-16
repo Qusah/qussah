@@ -1,0 +1,43 @@
+{#
+| Variable                  | Type   | Description                                    |
+|---------------------------|--------|------------------------------------------------|
+| component                 | object | merchant settings from twilight.json           |
+| component.image           | string | the banner — fills the whole card              |
+| component.alt             | string | image description for SEO / screen readers     |
+| component.show_cta        | bool   | overlay a button on the image                  |
+| component.button_text     | string | CTA label                                      |
+| component.button_url      | string | CTA link                                       |
+| component.button_position | mixed  | one of 9 grid slots, e.g. "bottom-center"      |
+| position                  | int    | sorting block                                  |
+
+Same card footprint as qissa-video-banner (uncapped container, 50px gutters,
+30px radius) but the uploaded image IS the banner — no text column, no panel
+background. The only optional chrome is one CTA, placed on a 3×3 grid.
+
+The overlay grid runs LTR on purpose: postcss-preset-env downlevels logical
+properties assuming LTR, so "يمين/يسار" are mapped to physical right/left in
+CSS. The button re-isolates its own RTL for the Arabic label.
+#}
+{% if component.image %}
+    {# dropdown-list values arrive as a list (and sometimes as option objects) —
+       unwrap to the plain slot string, matching how bareq handles the format #}
+    {% set pos = component.button_position is iterable ? component.button_position|first : component.button_position %}
+    {% set pos = pos.value|default(pos)|default('bottom-center') %}
+
+    <section class="s-block qibanner" id="qibanner-{{ position }}">
+        <div class="container">
+            <div class="qibanner__box">
+                <img class="qibanner__img"
+                     src="{{ component.image }}"
+                     alt="{{ component.alt|default(component.button_text)|default('') }}"
+                     loading="lazy"/>
+
+                {% if component.show_cta and component.button_text and component.button_url %}
+                    <div class="qibanner__overlay" data-pos="{{ pos }}">
+                        <a class="qibanner__btn" href="{{ component.button_url }}">{{ component.button_text }}</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endif %}
