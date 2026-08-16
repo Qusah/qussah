@@ -193,6 +193,26 @@
     };
   }
 
+  /* ── Notch pill on scroll ───────────────────────────────────────────── */
+  // Once the card scrolls off the top, only the board follows — a compact
+  // island pinned top-center (styles: .qpacks--stuck). The root keeps its
+  // measured height while the inner goes fixed, so the page never jumps and
+  // the observer's geometry stays stable (no stick/unstick flicker).
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      var e = entries[0];
+      // bottom < 0 ⇒ scrolled off the TOP — never stick while the card is
+      // still below the fold on a page that renders it late
+      if (!e.isIntersecting && e.boundingClientRect.bottom < 0) {
+        root.style.minHeight = root.offsetHeight + 'px';
+        root.classList.add('qpacks--stuck');
+      } else {
+        root.classList.remove('qpacks--stuck');
+        root.style.minHeight = '';
+      }
+    }).observe(root);
+  }
+
   // First paint decides everything: no number, no counter — but keep quietly
   // retrying so a transient pipeline boot doesn't blank the bar all session.
   (function boot() {
