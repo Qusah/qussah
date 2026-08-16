@@ -32,6 +32,20 @@ $qpacks-digits: (
      card) — the counter is another one of those cards, not a full-bleed strip */
   padding: 0.9rem 0 0.25rem;
 
+  /* Track the navbar's edges, not the default centered container — the header
+     pill runs on `max-width: none` with 50px gutters (15px ≤1150px), and the
+     card sits flush under it, so mismatched gutters read as off-balance */
+  .container {
+    max-width: none;
+    padding-inline: 50px;
+  }
+
+  @media (max-width: 1150px) {
+    .container {
+      padding-inline: 15px;
+    }
+  }
+
   &__inner {
     position: relative;
     overflow: hidden;
