@@ -203,7 +203,10 @@
   // while the inner goes fixed, so the page never jumps and the observer's
   // geometry stays stable (no stick/unstick flicker).
   if ('IntersectionObserver' in window) {
-    var header = document.querySelector('.qheader');
+    // Measure the visible dark bar, not the .qheader wrapper — the wrapper's
+    // box runs past the bar (child margins/spacers inside it), which left the
+    // notch floating with a strip of page between it and the navbar.
+    var header = document.querySelector('.qheader-nav') || document.querySelector('.qheader');
 
     var pinTop = function () {
       if (!root.classList.contains('qpacks--stuck')) return;
