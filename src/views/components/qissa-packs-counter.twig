@@ -32,7 +32,15 @@
             <div class="container">
                 <div class="qpacks__inner">
                     <span class="qpacks__display" data-qpacks-board aria-hidden="true"></span>
-                    <span class="qpacks__label">{{ theme.settings.get('packs_counter_label', 'منديل بين أيدي عملائنا') }}</span>
+                    {# The store synced while the default still said عبوة, and Salla
+                       persists synced values over new theme defaults forever after.
+                       Migrate exactly that stale string; anything else the merchant
+                       typed deliberately still wins. #}
+                    {% set label = theme.settings.get('packs_counter_label', 'منديل بين أيدي عملائنا')|trim %}
+                    {% if label == 'عبوة بين أيدي عملائنا' or label == '' %}
+                        {% set label = 'منديل بين أيدي عملائنا' %}
+                    {% endif %}
+                    <span class="qpacks__label">{{ label }}</span>
                     <span class="qpacks__sr" data-qpacks-sr role="status" aria-live="polite"></span>
                 </div>
             </div>

@@ -193,24 +193,42 @@
     };
   }
 
-  /* ── Notch pill on scroll ───────────────────────────────────────────── */
+  /* ── Notch on scroll ────────────────────────────────────────────────── */
   // Once the card scrolls off the top, only the board follows — a compact
-  // island pinned top-center (styles: .qpacks--stuck). The root keeps its
-  // measured height while the inner goes fixed, so the page never jumps and
-  // the observer's geometry stays stable (no stick/unstick flicker).
+  // notch hung off the sticky navbar's bottom edge (styles: .qpacks--stuck).
+  // The header is sticky at z 100 and compacts with a 0.5s transition when
+  // pinned, so the notch's top coordinate has to be MEASURED, not assumed:
+  // --qpacks-top tracks the navbar's live bottom edge, re-sampled after the
+  // compaction settles and on resize. The root keeps its measured height
+  // while the inner goes fixed, so the page never jumps and the observer's
+  // geometry stays stable (no stick/unstick flicker).
   if ('IntersectionObserver' in window) {
+    var header = document.querySelector('.qheader');
+
+    var pinTop = function () {
+      if (!root.classList.contains('qpacks--stuck')) return;
+      var edge = header ? Math.max(0, Math.round(header.getBoundingClientRect().bottom)) : 0;
+      root.style.setProperty('--qpacks-top', edge + 'px');
+    };
+
     new IntersectionObserver(function (entries) {
       var e = entries[0];
       // bottom < 0 ⇒ scrolled off the TOP — never stick while the card is
       // still below the fold on a page that renders it late
       if (!e.isIntersecting && e.boundingClientRect.bottom < 0) {
         root.style.minHeight = root.offsetHeight + 'px';
+        // Position before painting the class, or the notch flashes at 0
+        var edge = header ? Math.max(0, Math.round(header.getBoundingClientRect().bottom)) : 0;
+        root.style.setProperty('--qpacks-top', edge + 'px');
         root.classList.add('qpacks--stuck');
+        setTimeout(pinTop, 600);   // after the header's own 0.5s compaction
       } else {
         root.classList.remove('qpacks--stuck');
         root.style.minHeight = '';
       }
     }).observe(root);
+
+    window.addEventListener('resize', pinTop);
   }
 
   // First paint decides everything: no number, no counter — but keep quietly

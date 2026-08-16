@@ -262,32 +262,42 @@ $qpacks-digits: (
   }
 }
 
-/* ── Scrolled: the board detaches into a notch pill ─────────────────────────
-   Past the card, only the counter follows — a compact island pinned top-center,
-   dropping in with a slight overshoot. The in-flow card keeps its height (JS
-   pins min-height on the root) so the page never jumps under the reader. */
+/* ── Scrolled: the board detaches into a notch under the navbar ─────────────
+   Past the card, only the counter follows — a compact notch hung dead-center
+   off the pinned navbar's bottom edge, flat where it meets the bar and rounded
+   below, like a Dynamic Island sliding out from underneath.
+
+   The header is `sticky; z-index: 100` and goes full-bleed when pinned, so the
+   notch deliberately sits at z 90: during the drop it rises from BEHIND the
+   bar, which is what sells the "emerges from the notch" illusion. Its top
+   coordinate is measured by JS (--qpacks-top = the navbar's live bottom edge,
+   re-measured after the header's own 0.5s compaction transition).
+
+   The in-flow card keeps its height (JS pins min-height on the root) so the
+   page never jumps under the reader. */
 .qpacks--stuck {
   .qpacks__inner {
     position: fixed;
-    top: calc(env(safe-area-inset-top, 0px) + 10px);
+    /* -1px bites into the navbar so no hairline of page shows between them */
+    top: calc(var(--qpacks-top, 0px) - 1px);
     left: 50%;
-    z-index: 90;                      /* over the sticky header pill */
+    z-index: 90;                      /* beneath the navbar (100) on purpose */
     width: auto;
 
-    flex-direction: row;              /* pill: board only, label hidden */
+    flex-direction: row;              /* notch: board only, label hidden */
     gap: 0;
-    padding: 0.3rem 0.55rem;
-    border-radius: 9999px;
+    padding: 0.3rem 0.8rem 0.42rem;
+    border-radius: 0 0 20px 20px;     /* flat top against the bar, round below */
 
     box-shadow:
       inset 0 0 0 1px rgba(255, 255, 255, 0.09),
-      0 10px 30px -8px rgba(10, 17, 64, 0.65);
+      0 12px 26px -10px rgba(10, 17, 64, 0.6);
 
     transform: translateX(-50%);
     animation: qpacks-drop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
-  /* The island shows the number alone, small */
+  /* The notch shows the number alone, small */
   .qpacks__display {
     font-size: clamp(0.85rem, 1.6vw, 1.05rem);
     border-width: 2px;
@@ -300,7 +310,7 @@ $qpacks-digits: (
 }
 
 @keyframes qpacks-drop {
-  from { transform: translate(-50%, calc(-100% - 14px - env(safe-area-inset-top, 0px))); }
+  from { transform: translate(-50%, -110%); }   /* starts hidden behind the bar */
   to   { transform: translate(-50%, 0); }
 }
 
