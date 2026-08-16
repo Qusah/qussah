@@ -29,31 +29,20 @@
     object-fit: cover;
   }
 
-  // ── CTA placement grid ────────────────────────────────────────────
-  // LTR on purpose — the position values are physical (right = يمين), and
-  // postcss downlevels logical props assuming LTR, so physical mapping is
-  // the only spelling that survives the build unchanged.
+  // ── CTA placement frame ───────────────────────────────────────────
+  // The button is positioned by inline right/top percentages from the twig
+  // (paired with an own-size translate, so 0/50/100 mean flush/centre/flush).
+  // Breathing room is INSET here, not padding: absolute % offsets resolve
+  // against the containing block's edges and would ignore padding entirely.
   &__overlay {
-    direction: ltr;
     position: absolute;
-    inset: 0;
-    display: grid;
-    padding: 32px 40px;
-    pointer-events: none;                    // the image stays scrollable/clickable-through
-
-    &[data-pos='top-right']     { align-items: start;  justify-items: end; }
-    &[data-pos='top-center']    { align-items: start;  justify-items: center; }
-    &[data-pos='top-left']      { align-items: start;  justify-items: start; }
-    &[data-pos='center-right']  { align-items: center; justify-items: end; }
-    &[data-pos='center-center'] { align-items: center; justify-items: center; }
-    &[data-pos='center-left']   { align-items: center; justify-items: start; }
-    &[data-pos='bottom-right']  { align-items: end;    justify-items: end; }
-    &[data-pos='bottom-center'] { align-items: end;    justify-items: center; }
-    &[data-pos='bottom-left']   { align-items: end;    justify-items: start; }
+    inset: 32px 40px;
+    pointer-events: none;                    // the image stays clickable-through
   }
 
   &__btn {
-    direction: rtl;                          // Arabic label reads correctly again
+    position: absolute;
+    direction: rtl;                          // Arabic label reads correctly
     pointer-events: auto;                    // re-enable on the button itself
 
     display: inline-flex;
@@ -61,6 +50,7 @@
     gap: 10px;
     padding: 14px 32px;
     border-radius: 12px;                     // same radius as the video banner CTA
+    white-space: nowrap;
 
     background: #fff;
     color: #30378e;
@@ -68,11 +58,13 @@
     font-weight: 700;
 
     box-shadow: 0 10px 26px -10px rgba(10, 17, 64, 0.55);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: box-shadow 0.2s ease, filter 0.2s ease;
 
+    // No transform on hover — the inline placement transform would win the
+    // cascade anyway, so the lift lives in shadow + brightness instead
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 16px 32px -12px rgba(10, 17, 64, 0.65);
+      box-shadow: 0 16px 34px -12px rgba(10, 17, 64, 0.7);
+      filter: brightness(1.04);
       color: #30378e;
     }
   }
@@ -80,13 +72,13 @@
   // ── Breakpoints — track the video banner's shrink points ─────────
   @media (max-width: 1150px) {
     &__box { height: 400px; border-radius: 24px; }
-    &__overlay { padding: 24px 28px; }
+    &__overlay { inset: 24px 28px; }
   }
 
   @media (max-width: 768px) {
     .container { padding-inline: 15px; }
     &__box { height: 300px; border-radius: 20px; }
-    &__overlay { padding: 18px 20px; }
+    &__overlay { inset: 18px 20px; }
     &__btn { padding: 12px 24px; font-size: 14px; }
   }
 }
