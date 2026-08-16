@@ -37,14 +37,14 @@ importers:
         specifier: ^7.29.2
         version: 7.29.2(@babel/core@7.29.0)
       '@salla.sa/twilight':
-        specifier: ^2.14.533
-        version: 2.14.533(@jitsu/protocols@1.10.4)(@types/dlv@1.1.5)(webpack@5.107.1)
+        specifier: ^2.14.548
+        version: 2.14.548(@jitsu/protocols@1.10.4)(@types/dlv@1.1.5)(webpack@5.107.1)
       '@salla.sa/twilight-components':
-        specifier: ^2.14.533
-        version: 2.14.533(@jitsu/protocols@1.10.4)(@types/dlv@1.1.5)(lit@3.3.3)(webpack@5.107.1)
+        specifier: ^2.14.548
+        version: 2.14.548(@jitsu/protocols@1.10.4)(@types/dlv@1.1.5)(lit@3.3.3)(webpack@5.107.1)
       '@salla.sa/twilight-tailwind-theme':
-        specifier: ^2.14.533
-        version: 2.14.533
+        specifier: ^2.14.548
+        version: 2.14.548
       '@tailwindcss/forms':
         specifier: ^0.5.11
         version: 0.5.11(tailwindcss@3.4.19)
@@ -988,20 +988,23 @@ packages:
     resolution: {integrity: sha512-tmmZ3lQxAe/k/+rNnXQRawJ4NjxO2hqiOLTHvWchtGZULp4RyFeh6aU4XdOYBFe2KE1oShQTv4AblOs2iOrNnQ==}
     engines: {node: '>= 10.0.0'}
 
-  '@salla.sa/applepay@2.14.533':
-    resolution: {integrity: sha512-I+zB384uzyOM7mNIQfUbk5yApW3afl/MQg0Sv20HWqOKnq8SmaYVS55vTADa3QOzu92EWqE0zBD1MVJC+EzSJg==}
+  '@salla.sa/analytics@2.14.548':
+    resolution: {integrity: sha512-dgGtw1QEk6q7ljJYsy1zYMh8kWV4OwbtTzCiydh4JKX59yNCDc53iKmlYct/dqC1GgrFSeH7pJEy+zYsMlI0dA==}
 
-  '@salla.sa/base@2.14.533':
-    resolution: {integrity: sha512-MwLv7yg33dFwjiJgRRjMklGlkQIN0MXes/lxEkzLiojQRpyEnT11gIIOCFe8KA2pNvhDDs401zBlZ/0YeVtRcQ==}
+  '@salla.sa/applepay@2.14.548':
+    resolution: {integrity: sha512-rWazYmZlsPn4Ym2ikJsxstSTs+jNoFfkRtDG3/ahiPdhm/VWUE+slWZFA0mweKN2gDO/kDzD5hIF0FhF0B312w==}
 
-  '@salla.sa/twilight-components@2.14.533':
-    resolution: {integrity: sha512-n0cUANZWNI1td4mZVf+l5/QKrdPJhQ2SAU7bzf0LmEk1LpXrMXZanD66Svov42yXweY3A5YkatHOww2cHjzicw==}
+  '@salla.sa/base@2.14.548':
+    resolution: {integrity: sha512-MGIpKM5uQg2Zm6gTIOQMf26bQFtStIZygCGlGjfMidCCzep46l9JPPyXejauwmMKX1Ih58tdiBI8IjQlnlCqTA==}
 
-  '@salla.sa/twilight-tailwind-theme@2.14.533':
-    resolution: {integrity: sha512-3i8ccZOb5ddVOgIDLMEpOYddIldYLNgaqA6Wg2T+H48QNFLF5zi9gEoS4qsra4Okgvm7UDzAUt3tUHT8CJrZzg==}
+  '@salla.sa/twilight-components@2.14.548':
+    resolution: {integrity: sha512-cLlfl/c9b99HxxFP93LVHeyuh73dX/cI+3rON1P0aHFzLgwlX4VbnJu0RhUAut5O7TyknISe/CLbbQ1TfrMPVQ==}
 
-  '@salla.sa/twilight@2.14.533':
-    resolution: {integrity: sha512-sRYnPfoc67whYenfaPTDqVOJpa6PDBtQS5lauEBKvgk56WDED5RZS3XX1FHYGCmgv5LrQGLk8Dl7KyT51Jy7OQ==}
+  '@salla.sa/twilight-tailwind-theme@2.14.548':
+    resolution: {integrity: sha512-3Y3KsVl72TTBTb4swppBxjuO3x4brUz71inV/jCajTK5mdmVMpIvtiavhuii6HPxhe/18Uc4rD4pfH9wppjhbA==}
+
+  '@salla.sa/twilight@2.14.548':
+    resolution: {integrity: sha512-tSdZ/M0OTqdRnvzfVwBpw2gM9RJItITCIR2yicwf77uCeF2A5vZagkAEipq8isX5ec0H8wNFOn85dSNEmW7dPQ==}
     peerDependencies:
       webpack: ^4 || ^5
 
@@ -4064,25 +4067,32 @@ snapshots:
       '@parcel/watcher-win32-x64': 2.5.6
     optional: true
 
-  '@salla.sa/applepay@2.14.533':
+  '@salla.sa/analytics@2.14.548(@jitsu/protocols@1.10.4)(@types/dlv@1.1.5)':
+    dependencies:
+      '@jitsu/js': 1.10.4(@jitsu/protocols@1.10.4)(@types/dlv@1.1.5)
+    transitivePeerDependencies:
+      - '@jitsu/protocols'
+      - '@types/dlv'
+
+  '@salla.sa/applepay@2.14.548':
     dependencies:
       axios: 1.15.0
     transitivePeerDependencies:
       - debug
 
-  '@salla.sa/base@2.14.533':
+  '@salla.sa/base@2.14.548':
     dependencies:
       '@types/applepayjs': 14.0.9
       eventemitter2: 6.4.9
       lodash: 4.18.1
       store: 2.0.12
 
-  '@salla.sa/twilight-components@2.14.533(@jitsu/protocols@1.10.4)(@types/dlv@1.1.5)(lit@3.3.3)(webpack@5.107.1)':
+  '@salla.sa/twilight-components@2.14.548(@jitsu/protocols@1.10.4)(@types/dlv@1.1.5)(lit@3.3.3)(webpack@5.107.1)':
     dependencies:
       '@googlemaps/markerclusterer': 2.6.2
-      '@salla.sa/applepay': 2.14.533
-      '@salla.sa/twilight': 2.14.533(@jitsu/protocols@1.10.4)(@types/dlv@1.1.5)(webpack@5.107.1)
-      '@salla.sa/twilight-tailwind-theme': 2.14.533
+      '@salla.sa/applepay': 2.14.548
+      '@salla.sa/twilight': 2.14.548(@jitsu/protocols@1.10.4)(@types/dlv@1.1.5)(webpack@5.107.1)
+      '@salla.sa/twilight-tailwind-theme': 2.14.548
       '@salla.sa/ui-address-autocomplete-widget': 1.2.1
       '@salla.sa/ui-google-map-render': 1.2.1(@googlemaps/markerclusterer@2.6.2)(@salla.sa/ui-address-autocomplete-widget@1.2.1)(lit@3.3.3)
       '@types/node': 20.19.39
@@ -4110,12 +4120,13 @@ snapshots:
       - supports-color
       - webpack
 
-  '@salla.sa/twilight-tailwind-theme@2.14.533': {}
+  '@salla.sa/twilight-tailwind-theme@2.14.548': {}
 
-  '@salla.sa/twilight@2.14.533(@jitsu/protocols@1.10.4)(@types/dlv@1.1.5)(webpack@5.107.1)':
+  '@salla.sa/twilight@2.14.548(@jitsu/protocols@1.10.4)(@types/dlv@1.1.5)(webpack@5.107.1)':
     dependencies:
       '@jitsu/js': 1.10.4(@jitsu/protocols@1.10.4)(@types/dlv@1.1.5)
-      '@salla.sa/base': 2.14.533
+      '@salla.sa/analytics': 2.14.548(@jitsu/protocols@1.10.4)(@types/dlv@1.1.5)
+      '@salla.sa/base': 2.14.548
       axios: 1.15.0
       infinite-scroll: 4.0.1
       jwt-decode: 4.0.0
