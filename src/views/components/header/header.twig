@@ -97,6 +97,11 @@
   </div>
 </header>
 
+{# Live packs-sold counter — sits directly under the header on every page
+   except cart/checkout (the component gates itself). Toggle + endpoint +
+   label live in theme settings alongside the other header options. #}
+{% include 'components.qissa-packs-counter' %}
+
 
 <div class="qheader-space" aria-hidden="true"></div>
 

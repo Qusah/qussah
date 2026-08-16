@@ -1,0 +1,226 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Packs-sold counter — seven-segment board in a chrome bezel, under the header.
+   Design source: the campaign hero banner (LED digits on deep navy, silver
+   frame, one digit caught mid-roll). Markup: components/qissa-packs-counter.twig
+   Behaviour: js/partials/qissa-packs-counter.js
+
+   Everything inside the bezel is sized in em so one clamp() on the display
+   scales the whole board — segments, commas, roll distance — together.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+// Which segments light up per numeral. Canonical 7-seg lettering:
+//        ── a ──
+//       f       b
+//        ── g ──
+//       e       c
+//        ── d ──
+$qpacks-digits: (
+  0: (a, b, c, d, e, f),
+  1: (b, c),
+  2: (a, b, g, e, d),
+  3: (a, b, g, c, d),
+  4: (f, g, b, c),
+  5: (a, f, g, c, d),
+  6: (a, f, g, e, d, c),
+  7: (a, b, c),
+  8: (a, b, c, d, e, f, g),
+  9: (a, b, c, d, f, g),
+);
+
+.qpacks {
+  /* The wall the banner hangs on — deep navy, faint top light */
+  background:
+    radial-gradient(120% 180% at 50% -60%, #1a2765 0%, #101a4e 45%, #0a1140 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0.6rem 0;
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+  }
+
+  /* ── The framed display ──────────────────────────────────────────────── */
+  &__display {
+    /* Digits are a number: always LTR, even inside the RTL bar */
+    direction: ltr;
+    unicode-bidi: isolate;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 0.14em;
+
+    /* One knob scales the entire board */
+    font-size: clamp(1.05rem, 2.8vw, 1.6rem);
+
+    padding: 0.34em 0.5em;
+    border: 3px solid transparent;
+    border-radius: 0.55em;
+
+    /* Chrome bezel: panel gradient fills the padding-box, brushed-metal
+       gradient fills the border-box behind it */
+    background:
+      radial-gradient(130% 220% at 50% -30%, #1c2b70 0%, #111b55 45%, #0b123c 100%) padding-box,
+      linear-gradient(150deg, #f2f5f9 0%, #97a1ae 28%, #ffffff 50%, #6f7987 72%, #e6ebf1 100%) border-box;
+
+    box-shadow:
+      inset 0 0.35em 0.8em rgba(0, 0, 0, 0.55),   /* recessed panel */
+      inset 0 -0.12em 0.35em rgba(120, 150, 255, 0.08),
+      0 0.25em 0.9em rgba(0, 0, 0, 0.4);           /* frame off the wall */
+
+    position: relative;
+    overflow: hidden;
+
+    /* Glass sheen across the upper half of the panel */
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0 0 55% 0;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0));
+      border-radius: inherit;
+      pointer-events: none;
+    }
+  }
+
+  /* ── One digit position ──────────────────────────────────────────────── */
+  &__cell {
+    position: relative;
+    width: 0.62em;
+    height: 1em;
+    overflow: hidden;   /* the roll happens behind this window */
+  }
+
+  /* The strip that rolls. At rest: one glyph, translateY(0). Mid-roll the JS
+     stacks a second glyph and slides — -50% of the two-glyph strip is exactly
+     one cell, which is what puts "9 over 8" in the window like the banner. */
+  &__reel {
+    display: block;
+    will-change: transform;
+  }
+
+  &__glyph {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 1em;
+  }
+
+  /* ── Segment geometry ────────────────────────────────────────────────── */
+  &__seg {
+    position: absolute;
+    border-radius: 0.055em;
+    /* Unlit ghost — the faint "8" skeleton real LED boards show */
+    background: rgba(160, 190, 255, 0.07);
+
+    /* Horizontals */
+    &--a,
+    &--g,
+    &--d {
+      left: 0.08em;
+      right: 0.08em;
+      height: 0.11em;
+    }
+    &--a { top: 0; }
+    &--g { top: calc(50% - 0.055em); }
+    &--d { bottom: 0; }
+
+    /* Verticals */
+    &--f,
+    &--b,
+    &--e,
+    &--c {
+      width: 0.11em;
+      height: calc(50% - 0.115em);
+    }
+    &--f { left: 0;  top: 0.06em; }
+    &--b { right: 0; top: 0.06em; }
+    &--e { left: 0;  bottom: 0.06em; }
+    &--c { right: 0; bottom: 0.06em; }
+  }
+
+  /* ── Lighting: which segments burn per numeral ───────────────────────── */
+  @each $digit, $segs in $qpacks-digits {
+    &__glyph[data-d='#{$digit}'] {
+      @each $s in $segs {
+        .qpacks__seg--#{$s} {
+          background: #f2f8ff;
+          box-shadow:
+            0 0 0.07em rgba(210, 230, 255, 0.95),
+            0 0 0.28em rgba(130, 175, 255, 0.6),
+            0 0 0.55em rgba(80, 130, 255, 0.35);
+        }
+      }
+    }
+  }
+
+  /* ── Thousands separator — a lit comma block, baseline-hung ──────────── */
+  &__sep {
+    position: relative;
+    width: 0.2em;
+    height: 1em;
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: -0.03em;
+      left: 0.03em;
+      width: 0.13em;
+      height: 0.2em;
+      transform: skewX(-8deg);
+      border-radius: 0.05em 0.05em 0.08em 0.04em;
+      background: #f2f8ff;
+      box-shadow:
+        0 0 0.07em rgba(210, 230, 255, 0.95),
+        0 0 0.28em rgba(130, 175, 255, 0.6);
+    }
+  }
+
+  /* ── Label ───────────────────────────────────────────────────────────── */
+  &__label {
+    color: #fff;
+    font-weight: 700;
+    font-size: clamp(0.85rem, 2vw, 1.05rem);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.45);
+  }
+
+  /* Screen-reader value — the board itself is aria-hidden geometry */
+  &__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+/* ── Mobile: the banner look, stacked — big digits, tagline beneath ─────── */
+@media (max-width: 560px) {
+  .qpacks {
+    padding: 0.7rem 0 0.6rem;
+
+    &__inner {
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    /* vw-driven so the board owns the width of a small screen the way the
+       display owns the banner; floor keeps 320px legible, cap keeps 560px sane */
+    &__display {
+      font-size: clamp(1.15rem, 5vw, 1.5rem);
+    }
+
+    &__label {
+      font-size: 0.82rem;
+      opacity: 0.92;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qpacks__reel {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,41 @@
+{# Global "total packs sold" counter — a split-flap / seven-segment board in a
+   chrome bezel, directly under the header. Mirrors the campaign hero banner:
+   glowing LED digits on deep navy, digits mid-roll when the figure moves.
+
+   ── Where the number comes from ─────────────────────────────────────────────
+   The pipeline (salla-pipeline.onrender.com) owns the figure and already does
+   the packs maths — ordering 1 × a 32-pack product adds 32, not 1. The theme
+   renders `total` verbatim and never multiplies anything. Spec:
+   PACKS_COUNTER_SPEC.md + the pipeline's integration artifact.
+
+   ── Why nothing is server-rendered ──────────────────────────────────────────
+   A Twig-side figure would paint stale for every visitor served a cached page.
+   The bar ships `hidden`; qissa-packs-counter.js reveals it only once a real
+   number has arrived, so a dead endpoint leaves no empty chrome behind.
+
+   ── Accessibility split ─────────────────────────────────────────────────────
+   The board is pure glowing <span> geometry with no text, so it's aria-hidden;
+   the screen-reader value lives in the visually-hidden sibling instead. That
+   also keeps aria-live from re-announcing the Arabic label on every tick.
+
+   Included from header.twig (kept as its own file so the SSE wiring and the
+   segment styles stay out of the header markup). The cart/checkout exclusion
+   lives here so the rule travels with the component.
+#}
+{% set on_cart = page.slug starts with 'cart' or page.slug starts with 'checkout' %}
+
+{% if theme.settings.get('packs_counter_enabled', true) and not on_cart %}
+    {% set base = theme.settings.get('packs_counter_endpoint', 'https://salla-pipeline.onrender.com')|trim %}
+
+    {% if base %}
+        <div class="qpacks" data-qpacks data-endpoint="{{ base }}" hidden>
+            <div class="container">
+                <div class="qpacks__inner">
+                    <span class="qpacks__display" data-qpacks-board aria-hidden="true"></span>
+                    <span class="qpacks__label">{{ theme.settings.get('packs_counter_label', 'عبوة بين أيدي عملائنا') }}</span>
+                    <span class="qpacks__sr" data-qpacks-sr role="status" aria-live="polite"></span>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endif %}

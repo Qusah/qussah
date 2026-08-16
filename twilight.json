@@ -283,6 +283,39 @@
             "required": false,
             "value": false,
             "selected": false
+        },
+        {
+            "type": "boolean",
+            "icon": "sicon-chart",
+            "label": "عرض عداد العبوات المباعة أسفل الهيدر",
+            "description": "عداد مباشر لإجمالي العبوات المباعة يظهر في جميع الصفحات عدا السلة وإتمام الطلب",
+            "id": "packs_counter_enabled",
+            "format": "switch",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
+            "type": "string",
+            "icon": "sicon-link",
+            "label": "رابط خادم عداد العبوات",
+            "description": "عنوان الـ API الذي يزود العداد بالرقم. اتركه كما هو إلا عند تغيير الخادم",
+            "id": "packs_counter_endpoint",
+            "required": false,
+            "format": "text",
+            "placeholder": "https://salla-pipeline.onrender.com",
+            "value": "https://salla-pipeline.onrender.com"
+        },
+        {
+            "type": "string",
+            "icon": "sicon-edit",
+            "label": "النص المرافق لعداد العبوات",
+            "description": "العبارة التي تظهر بجانب الرقم",
+            "id": "packs_counter_label",
+            "required": false,
+            "format": "text",
+            "placeholder": "عبوة بين أيدي عملائنا",
+            "value": "عبوة بين أيدي عملائنا"
         }
     ],
     "components": [
