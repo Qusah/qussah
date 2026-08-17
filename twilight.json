@@ -1491,6 +1491,113 @@
                     "value": null
                 },
                 {
+                    "id": "fixed_height",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Use a fixed banner height",
+                        "ar": "تثبيت ارتفاع البانر"
+                    },
+                    "description": "افتراضياً يأخذ البانر أبعاد الصورة كاملة بدون أي قص. فعّل هذا الخيار لتوحيد الارتفاع — عندها سيتم قص الصورة، وتحدد من الخيار التالي الجزء الذي يبقى ظاهراً",
+                    "value": false,
+                    "selected": false
+                },
+                {
+                    "id": "height",
+                    "type": "number",
+                    "format": "integer",
+                    "icon": "sicon-pencil-ruler",
+                    "label": {
+                        "en": "Banner height (px, desktop)",
+                        "ar": "ارتفاع البانر (بكسل، للشاشات الكبيرة)"
+                    },
+                    "description": "يقل تلقائياً على الأجهزة الأصغر",
+                    "value": 490,
+                    "minimum": 150,
+                    "maximum": 900,
+                    "conditions": [
+                        {
+                            "id": "fixed_height",
+                            "operation": "=",
+                            "value": true
+                        }
+                    ]
+                },
+                {
+                    "id": "focus",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "source": "Manual",
+                    "icon": "sicon-crop",
+                    "label": {
+                        "en": "Which part of the image to keep",
+                        "ar": "الجزء الذي يبقى ظاهراً عند القص"
+                    },
+                    "description": "اختر الجزء المهم من الصورة حتى لا يُقص",
+                    "conditions": [
+                        {
+                            "id": "fixed_height",
+                            "operation": "=",
+                            "value": true
+                        }
+                    ],
+                    "selected": [
+                        {
+                            "label": "الوسط",
+                            "value": "center",
+                            "key": "c9a2f7e1-0002-4d31-8e01-000000000005"
+                        }
+                    ],
+                    "options": [
+                        {
+                            "label": "أعلى يمين",
+                            "value": "right top",
+                            "key": "c9a2f7e1-0002-4d31-8e01-000000000001"
+                        },
+                        {
+                            "label": "أعلى الوسط",
+                            "value": "center top",
+                            "key": "c9a2f7e1-0002-4d31-8e01-000000000002"
+                        },
+                        {
+                            "label": "أعلى يسار",
+                            "value": "left top",
+                            "key": "c9a2f7e1-0002-4d31-8e01-000000000003"
+                        },
+                        {
+                            "label": "يمين",
+                            "value": "right center",
+                            "key": "c9a2f7e1-0002-4d31-8e01-000000000004"
+                        },
+                        {
+                            "label": "الوسط",
+                            "value": "center",
+                            "key": "c9a2f7e1-0002-4d31-8e01-000000000005"
+                        },
+                        {
+                            "label": "يسار",
+                            "value": "left center",
+                            "key": "c9a2f7e1-0002-4d31-8e01-000000000006"
+                        },
+                        {
+                            "label": "أسفل يمين",
+                            "value": "right bottom",
+                            "key": "c9a2f7e1-0002-4d31-8e01-000000000007"
+                        },
+                        {
+                            "label": "أسفل الوسط",
+                            "value": "center bottom",
+                            "key": "c9a2f7e1-0002-4d31-8e01-000000000008"
+                        },
+                        {
+                            "label": "أسفل يسار",
+                            "value": "left bottom",
+                            "key": "c9a2f7e1-0002-4d31-8e01-000000000009"
+                        }
+                    ]
+                },
+                {
                     "id": "show_cta",
                     "type": "boolean",
                     "format": "switch",

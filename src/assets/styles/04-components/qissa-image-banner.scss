@@ -10,12 +10,15 @@
 
   .container { max-width: none; padding-inline: 50px; }
 
+  // DEFAULT — the card takes the uploaded image's own shape, so nothing is
+  // ever cropped. A 2.95:1 artwork in a card pinned to 2.65:1 lost ~5% off
+  // each side under `cover`, which ate the Arabic headline baked into the
+  // image. --qib-ratio is written by the twig from the real file dimensions
+  // when Salla exposes them; the fallback matches the video banner's shape
+  // so a card with no ratio still sits correctly in a layout beside one.
   &__box {
     position: relative;
-    // The video banner's height is set by its text column (90px paddings +
-    // heading). This card has no text column, so the equivalent height is
-    // pinned explicitly to keep the two banners interchangeable in a layout.
-    height: 490px;
+    aspect-ratio: var(--qib-ratio, 2.65);
     border-radius: 30px;
     overflow: hidden;
     background: #172951;                     // paints the frame while the image loads
@@ -26,7 +29,23 @@
     inset: 0;
     width: 100%;
     height: 100%;
+    // `contain` so the whole artwork is always visible in the default mode.
+    // With the box on the image's own ratio there is nothing to letterbox,
+    // so this only shows if the ratio is unknown and the fallback applies.
+    object-fit: contain;
+  }
+
+  // FIXED HEIGHT — merchant opts into a uniform card. Now the image must be
+  // cropped to fill, and --qib-focus decides WHICH part survives: the crop
+  // keeps the focal point in frame instead of always trimming the edges.
+  &--fixed &__box {
+    aspect-ratio: auto;
+    height: var(--qib-height, 490px);
+  }
+
+  &--fixed &__img {
     object-fit: cover;
+    object-position: var(--qib-focus, center);
   }
 
   // ── CTA placement grid ────────────────────────────────────────────
@@ -78,15 +97,20 @@
   }
 
   // ── Breakpoints — track the video banner's shrink points ─────────
+  // The height overrides apply ONLY in fixed mode. In the default mode the
+  // box follows the image's ratio at every width, so re-imposing a height
+  // here would reintroduce the cropping this change removes.
   @media (max-width: 1150px) {
-    &__box { height: 400px; border-radius: 24px; }
-    &__overlay { padding: 24px 28px; }
+    &__box { border-radius: 24px; }
+    &--fixed &__box { height: var(--qib-height-md, 400px); }
+    &__overlay { inset: 24px 28px; }
   }
 
   @media (max-width: 768px) {
     .container { padding-inline: 15px; }
-    &__box { height: 300px; border-radius: 20px; }
-    &__overlay { padding: 18px 20px; }
+    &__box { border-radius: 20px; }
+    &--fixed &__box { height: var(--qib-height-sm, 300px); }
+    &__overlay { inset: 18px 20px; }
     &__btn { padding: 12px 24px; font-size: 14px; }
   }
 }

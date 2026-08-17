@@ -4,15 +4,33 @@
 | component                 | object | merchant settings from twilight.json           |
 | component.image           | string | the banner — fills the whole card              |
 | component.alt             | string | image description for SEO / screen readers     |
+| component.fixed_height    | bool   | uniform card height instead of the image's shape |
+| component.height          | int    | desktop card height in px, when fixed           |
+| component.focus           | mixed  | which part survives the crop, when fixed        |
 | component.show_cta        | bool   | overlay a button on the image                  |
 | component.button_text     | string | CTA label                                      |
 | component.button_url      | string | CTA link                                       |
 | component.button_position | mixed  | one of 9 grid slots, e.g. "bottom-center"      |
 | position                  | int    | sorting block                                  |
 
-Same card footprint as qissa-video-banner (uncapped container, 50px gutters,
-30px radius) but the uploaded image IS the banner — no text column, no panel
-background. The only optional chrome is one CTA, placed on a 3×3 grid.
+The uploaded image IS the banner — no text column, no panel background. The
+only optional chrome is one CTA, placed on a 3×3 grid.
+
+── Two sizing modes ─────────────────────────────────────────────────────────
+DEFAULT: the card takes the artwork's own aspect ratio, so nothing is ever
+cropped. This is what a banner with text baked into the image needs — a fixed
+490px card against a 2.95:1 file trimmed ~5% off each side under `cover` and
+ate the Arabic headline.
+
+FIXED: the merchant wants every banner the same height regardless of upload.
+Cropping is then unavoidable, so `focus` chooses which part of the artwork
+survives instead of always trimming the edges.
+
+Salla hands `component.image` back as a bare URL with no dimensions, so the
+ratio cannot be known at render time — the inline script below reads it off
+the decoded image and writes it to --qib-ratio. `naturalWidth` is checked
+first because a cached image can already be complete before the load handler
+is attached, which would leave the card stuck on its fallback ratio forever.
 
 The overlay grid runs LTR on purpose: postcss-preset-env downlevels logical
 properties assuming LTR, so "يمين/يسار" are mapped to physical right/left in
@@ -24,9 +42,25 @@ CSS. The button re-isolates its own RTL for the Arabic label.
     {% set pos = component.button_position is iterable ? component.button_position|first : component.button_position %}
     {% set pos = pos.value|default(pos)|default('bottom-center') %}
 
-    <section class="s-block qibanner" id="qibanner-{{ position }}">
+    {% set focus_raw = component.focus is iterable ? component.focus|first : component.focus %}
+    {% set focus = focus_raw.value|default(focus_raw)|default('center') %}
+
+    {% set fixed = component.fixed_height %}
+
+    {% set css = '' %}
+    {% if fixed %}
+        {% set h = component.height|default(490) %}
+        {% set css = '--qib-height: ' ~ h ~ 'px;'
+                   ~ '--qib-height-md: ' ~ (h * 0.82)|round ~ 'px;'
+                   ~ '--qib-height-sm: ' ~ (h * 0.61)|round ~ 'px;'
+                   ~ '--qib-focus: ' ~ focus ~ ';' %}
+    {% endif %}
+
+    <section class="s-block qibanner{{ fixed ? ' qibanner--fixed' : '' }}"
+             id="qibanner-{{ position }}"
+             {% if css %}style="{{ css }}"{% endif %}>
         <div class="container">
-            <div class="qibanner__box">
+            <div class="qibanner__box"{% if not fixed %} data-qib-box{% endif %}>
                 <img class="qibanner__img"
                      src="{{ component.image }}"
                      alt="{{ component.alt|default(component.button_text)|default('') }}"
@@ -40,4 +74,25 @@ CSS. The button re-isolates its own RTL for the Arabic label.
             </div>
         </div>
     </section>
+
+    {% if not fixed %}
+        <script>
+        (function () {
+            var box = document.querySelector('#qibanner-{{ position }} [data-qib-box]');
+            if (!box) { return; }
+            var img = box.querySelector('.qibanner__img');
+            if (!img) { return; }
+
+            function applyRatio() {
+                if (!img.naturalWidth || !img.naturalHeight) { return; }
+                box.style.setProperty('--qib-ratio', img.naturalWidth / img.naturalHeight);
+            }
+
+            // A cached image may already be decoded before this runs, in which
+            // case 'load' never fires again — check up front, then listen.
+            if (img.complete) { applyRatio(); }
+            img.addEventListener('load', applyRatio);
+        }());
+        </script>
+    {% endif %}
 {% endif %}
