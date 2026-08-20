@@ -57,19 +57,31 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    {# VWO SmartCode — must stay first in head, before app.css, for anti-flicker to work. #}
-    <link rel="preconnect" href="https://edge.wingify.net"/>
-    <script type="text/javascript" data-cfasync="false">
-        window._wingify_code || (function() {
-            var account_id = 1261840,
-                version = 3.0,
-                settings_tolerance = 2000,
-                hide_element = 'body',
-                hide_element_style =
-                'opacity:0 !important;filter:alpha(opacity=0) !important;background:none !important;transition:none !important';
-            /* DO NOT EDIT BELOW THIS LINE */
-            var t=window,n=document;if(-1<n.URL.indexOf('__wingify_disable__')||t._wingify_code)return;var i=!1,o=n.currentScript,e={sT:settings_tolerance,hES:hide_element_style,hE:hide_element};try{e=Object.assign(e,JSON.parse(localStorage.getItem('_wingify_'+account_id+'_config')))}catch(e){}var code={script:o,nonce:o.nonce,settings_tolerance:function(){return e.sT},hide_element:function(){return performance.getEntriesByName('first-contentful-paint')[0]?'':e.hE},hide_element_style:function(){return'{'+e.hES+'}'},getVersion:function(){return version},finish:function(){var e;!i&&(i=!0,e=n.getElementById('_vis_opt_path_hides'))&&e.parentNode.removeChild(e)},finished:function(){return i},addScript:function(e){var t=n.createElement('script');t.src=e,o.nonce&&t.setAttribute('nonce',o.nonce),t.fetchPriority='high',n.head.appendChild(t)},init:function(){t._settings_timer=setTimeout(function(){code.finish()},this.settings_tolerance());var e=n.createElement('style');e.id='_vis_opt_path_hides',o.nonce&&e.setAttribute('nonce',o.nonce),e.textContent=this.hide_element()+this.hide_element_style(),n.head.appendChild(e),this.addScript('https://edge.wingify.net/tag/'+account_id+'.js')}};t._wingify_code=code;code.init();})();
-    </script>
+    {# GrowthBook SDK — replaced VWO (removed 20 Aug 2026) in its slot: this must
+       stay FIRST in head, before app.css. The auto-bundle ships its own
+       anti-flicker (it adds .gb-anti-flicker to <html> and clears it once
+       variations resolve, or after antiFlickerTimeout as a failsafe), so moving
+       it below the stylesheet reintroduces variant flicker and skews results.
+
+       The bundle self-initialises from these data-* attributes — do NOT also
+       construct a GrowthBook instance by hand, that yields two instances and
+       double-counted exposures. Per-page overrides go in window.growthbook_config
+       (set BEFORE this tag). `data-tracking` names the third-party trackers:
+       the GA4 tracker is called `gtag`, not `ga4`.
+
+       Deliberately NOT async/defer: the anti-flicker class is applied when this
+       script executes, so deferring it lets the control render first — the exact
+       flash it exists to prevent. #}
+    <link rel="preconnect" href="https://cdn.jsdelivr.net"/>
+    <link rel="preconnect" href="https://cdn.growthbook.io"/>
+    <script
+        data-cfasync="false"
+        data-api-host="https://cdn.growthbook.io"
+        data-client-key="sdk-VoWHkWuBrnHYYcfE"
+        data-tracking="gtag,gtm"
+        data-anti-flicker="true"
+        data-anti-flicker-timeout="2000"
+        src="https://cdn.jsdelivr.net/npm/@growthbook/growthbook@1.7.0/dist/bundles/auto.min.js"></script>
 
     {{ theme.settings.set('placeholder', 'images/placeholder.png') }}
 
