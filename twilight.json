@@ -1545,9 +1545,9 @@
                         "ar": "ارتفاع البانر (بكسل، للشاشات الكبيرة)"
                     },
                     "description": "يقل تلقائياً على الأجهزة الأصغر",
-                    "value": 490,
+                    "value": 560,
                     "minimum": 150,
-                    "maximum": 900,
+                    "maximum": 1000,
                     "conditions": [
                         {
                             "id": "fixed_height",

@@ -26,11 +26,11 @@ FIXED: the merchant wants every banner the same height regardless of upload.
 Cropping is then unavoidable, so `focus` chooses which part of the artwork
 survives instead of always trimming the edges.
 
-Salla hands `component.image` back as a bare URL with no dimensions, so the
-ratio cannot be known at render time — the inline script below reads it off
-the decoded image and writes it to --qib-ratio. `naturalWidth` is checked
-first because a cached image can already be complete before the load handler
-is attached, which would leave the card stuck on its fallback ratio forever.
+DEFAULT: the image is a normal flow item, so it sizes its own card — the
+banner is exactly as tall as the artwork, at any width. No ratio has to be
+known at render time, which is why there is no measuring script here: an
+earlier build guessed a fallback ratio and letterboxed every image that did
+not match it.
 
 The overlay grid runs LTR on purpose: postcss-preset-env downlevels logical
 properties assuming LTR, so "يمين/يسار" are mapped to physical right/left in
@@ -49,10 +49,10 @@ CSS. The button re-isolates its own RTL for the Arabic label.
 
     {% set css = '' %}
     {% if fixed %}
-        {% set h = component.height|default(490) %}
+        {% set h = component.height|default(560) %}
         {% set css = '--qib-height: ' ~ h ~ 'px;'
                    ~ '--qib-height-md: ' ~ (h * 0.82)|round ~ 'px;'
-                   ~ '--qib-height-sm: ' ~ (h * 0.61)|round ~ 'px;'
+                   ~ '--qib-height-sm: ' ~ (h * 0.68)|round ~ 'px;'
                    ~ '--qib-focus: ' ~ focus ~ ';' %}
     {% endif %}
 
@@ -60,7 +60,7 @@ CSS. The button re-isolates its own RTL for the Arabic label.
              id="qibanner-{{ position }}"
              {% if css %}style="{{ css }}"{% endif %}>
         <div class="container">
-            <div class="qibanner__box"{% if not fixed %} data-qib-box{% endif %}>
+            <div class="qibanner__box">
                 <img class="qibanner__img"
                      src="{{ component.image }}"
                      alt="{{ component.alt|default(component.button_text)|default('') }}"
@@ -75,24 +75,4 @@ CSS. The button re-isolates its own RTL for the Arabic label.
         </div>
     </section>
 
-    {% if not fixed %}
-        <script>
-        (function () {
-            var box = document.querySelector('#qibanner-{{ position }} [data-qib-box]');
-            if (!box) { return; }
-            var img = box.querySelector('.qibanner__img');
-            if (!img) { return; }
-
-            function applyRatio() {
-                if (!img.naturalWidth || !img.naturalHeight) { return; }
-                box.style.setProperty('--qib-ratio', img.naturalWidth / img.naturalHeight);
-            }
-
-            // A cached image may already be decoded before this runs, in which
-            // case 'load' never fires again — check up front, then listen.
-            if (img.complete) { applyRatio(); }
-            img.addEventListener('load', applyRatio);
-        }());
-        </script>
-    {% endif %}
 {% endif %}
