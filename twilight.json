@@ -1024,37 +1024,6 @@
                 },
                 {
                     "type": "boolean",
-                    "id": "autoplay",
-                    "format": "switch",
-                    "icon": "sicon-play",
-                    "label": {
-                        "en": "Auto-swipe (slider only)",
-                        "ar": "تمرير تلقائي (للمتحرك فقط)"
-                    },
-                    "description": {
-                        "en": "Advance the slider automatically. Ignored in grid layout, and always off for visitors who ask for reduced motion.",
-                        "ar": "ينتقل بين البكجات تلقائياً. لا يعمل مع الشبكة، ويتوقف لمن يفضّل تقليل الحركة."
-                    },
-                    "required": false,
-                    "value": false,
-                    "selected": false
-                },
-                {
-                    "type": "number",
-                    "id": "autoplay_seconds",
-                    "format": "number",
-                    "icon": "sicon-clock",
-                    "label": {
-                        "en": "Seconds between swipes",
-                        "ar": "عدد الثواني بين كل تمرير"
-                    },
-                    "required": false,
-                    "value": 5,
-                    "minimum": 1,
-                    "maximum": 30
-                },
-                {
-                    "type": "boolean",
                     "id": "show_badge",
                     "format": "switch",
                     "icon": "sicon-discount",

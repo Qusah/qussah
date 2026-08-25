@@ -37,14 +37,11 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
 
         {% if component.products|length %}
         {# Mobile layout is merchant-chosen (desktop is always the 2-up grid):
-           `slider` = one card plus a peek of the next, swipeable, with optional
-           autoplay; `grid` = both packs side by side, static. The mode rides on a
-           data attribute so CSS does the layout and JS only handles autoplay. #}
+           `slider` = one card plus a peek of the next, swipeable; `grid` = both
+           packs side by side, static. Pure CSS — the mode rides on a data
+           attribute and scroll-snap does the rest, no JS involved. #}
         {% set qdh_mobile = component.mobile_layout|default('slider') %}
-        {% set qdh_autoplay = qdh_mobile == 'slider' and component.autoplay %}
-        <div class="qdhero__grid"
-             data-qdh-mobile="{{ qdh_mobile }}"
-             {% if qdh_autoplay %}data-qdh-autoplay="{{ component.autoplay_seconds|default(5) }}"{% endif %}>
+        <div class="qdhero__grid" data-qdh-mobile="{{ qdh_mobile }}">
             {% for product in component.products|slice(0, 2) %}
                 {% set images = product.images|default([]) %}
                 <div class="qpack__card qdhero__card" data-qpack>
@@ -187,9 +184,7 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
 (function () {
   // Scoped to .qdhero so it never cross-binds with the single-product qissa-package
   // (.qpack) block. The init guard makes re-emitted scripts / multiple instances safe.
-  // Extracted so the autoplay loop can wire up its cloned cards too — a clone
-  // keeps every data-qpack hook, so without this its gallery arrows, stepper and
-  // add-to-cart would be inert.
+  // One card's worth of wiring: gallery, stepper, wishlist, add-to-cart.
   function initCard(card) {
     if (card.hasAttribute('data-qdhero-init')) { return; }
     card.setAttribute('data-qdhero-init', '');
@@ -343,83 +338,6 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
   }
 
   document.querySelectorAll('.qdhero [data-qpack]').forEach(initCard);
-
-  /* ---- mobile slider autoplay -------------------------------------------
-     Advances the CSS scroll-snap slider on a timer.
-
-     NO CLONING. An earlier build duplicated the cards to fake an infinite loop
-     and it was a mess: with only two products the copies sat at the same visual
-     spot, so re-centring swapped identical cards in place — the card looked like
-     it was flipping between two products while never actually moving. With two
-     items a loop is just A -> B -> A, and scrolling back to the start is honest
-     and stable.
-
-     A swipe pauses autoplay for 30s, then it resumes. Off entirely under
-     prefers-reduced-motion, and paused while the section is off-screen.
-     RTL-safe: scrollLeft runs negative in RTL, so direction comes from the
-     computed style rather than being assumed. */
-  document.querySelectorAll('.qdhero__grid[data-qdh-autoplay]').forEach(function (grid) {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    var RESUME_AFTER = 30000;
-
-    var seconds = parseFloat(grid.getAttribute('data-qdh-autoplay')) || 5;
-    if (seconds < 1) seconds = 1;
-
-    var rtl = getComputedStyle(grid).direction === 'rtl';
-    var timer = null, resumeTimer = null, touching = false;
-
-    /* desktop renders a static 2-up grid — nothing to advance */
-    function isSlider() { return grid.scrollWidth > grid.clientWidth + 1; }
-
-    function step() {
-      if (!isSlider() || touching) return;
-
-      var card = grid.querySelector('.qdhero__card');
-      var by = card ? card.offsetWidth + 12 : Math.round(grid.clientWidth * 0.82);
-      var pos = Math.abs(grid.scrollLeft);
-      var max = grid.scrollWidth - grid.clientWidth;
-      /* at the end, go back to the first card */
-      var next = (pos + by >= max - 4) ? 0 : pos + by;
-
-      grid.scrollTo({ left: rtl ? -next : next, behavior: 'smooth' });
-    }
-
-    function start() {
-      if (timer || resumeTimer || !isSlider()) return;
-      timer = setInterval(step, seconds * 1000);
-    }
-    function stop() {
-      if (timer) { clearInterval(timer); timer = null; }
-    }
-
-    /* a finger beats the timer for RESUME_AFTER, then autoplay comes back */
-    function holdOff() {
-      stop();
-      if (resumeTimer) clearTimeout(resumeTimer);
-      resumeTimer = setTimeout(function () { resumeTimer = null; start(); }, RESUME_AFTER);
-    }
-    grid.addEventListener('touchstart', function () {
-      touching = true;
-      holdOff();
-    }, { passive: true });
-    grid.addEventListener('touchend', function () {
-      /* momentum keeps scrolling after the finger lifts */
-      setTimeout(function () { touching = false; }, 300);
-    }, { passive: true });
-
-    window.addEventListener('resize', function () {
-      isSlider() ? start() : stop();
-    }, { passive: true });
-
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (entries) {
-        entries[0].isIntersecting ? start() : stop();
-      }, { threshold: 0.25 }).observe(grid);
-    } else {
-      start();
-    }
-  });
 
 })();
 </script>
