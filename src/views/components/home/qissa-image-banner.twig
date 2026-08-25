@@ -61,10 +61,19 @@ CSS. The button re-isolates its own RTL for the Arabic label.
              {% if css %}style="{{ css }}"{% endif %}>
         <div class="container">
             <div class="qibanner__box">
-                <img class="qibanner__img"
-                     src="{{ component.image }}"
-                     alt="{{ component.alt|default(component.button_text)|default('') }}"
-                     loading="lazy"/>
+                {# <picture> not two <img>s or a CSS swap: the browser picks ONE
+                   source and downloads only that, so a phone never pays for the
+                   wide desktop artwork. With no mobile upload the source is
+                   simply omitted and every screen gets the desktop image. #}
+                <picture>
+                    {% if component.image_mobile %}
+                        <source media="(max-width: 768px)" srcset="{{ component.image_mobile }}"/>
+                    {% endif %}
+                    <img class="qibanner__img"
+                         src="{{ component.image }}"
+                         alt="{{ component.alt|default(component.button_text)|default('') }}"
+                         loading="lazy"/>
+                </picture>
 
                 {% if component.show_cta and component.button_text and component.button_url %}
                     <div class="qibanner__overlay" data-pos="{{ pos }}">

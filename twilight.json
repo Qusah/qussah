@@ -1506,10 +1506,21 @@
                     "type": "string",
                     "format": "image",
                     "label": {
-                        "en": "Banner image (fills the whole banner)",
-                        "ar": "صورة البانر (تملأ البانر بالكامل)"
+                        "en": "Banner image (desktop)",
+                        "ar": "صورة البانر (سطح المكتب)"
                     },
-                    "description": "الأبعاد المثالية عريضة بنسبة تقارب 21:9 — نفس مساحة بانر الفيديو",
+                    "description": "الأبعاد المقترحة عريضة بنسبة تقارب 3:1 — يفضّل تصدير 2800×950 بكسل",
+                    "value": null
+                },
+                {
+                    "id": "image_mobile",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "en": "Mobile banner image (optional)",
+                        "ar": "صورة البانر للجوال (اختياري)"
+                    },
+                    "description": "اتركها فارغة لاستخدام نفس صورة سطح المكتب. الأبعاد المقترحة مربعة 1:1 أو طولية 4:5 — الصورة العريضة تظهر قصيرة جداً على الجوال",
                     "value": null
                 },
                 {
