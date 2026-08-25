@@ -36,7 +36,15 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
         {% endif %}
 
         {% if component.products|length %}
-        <div class="qdhero__grid">
+        {# Mobile layout is merchant-chosen (desktop is always the 2-up grid):
+           `slider` = one card plus a peek of the next, swipeable, with optional
+           autoplay; `grid` = both packs side by side, static. The mode rides on a
+           data attribute so CSS does the layout and JS only handles autoplay. #}
+        {% set qdh_mobile = component.mobile_layout|default('slider') %}
+        {% set qdh_autoplay = qdh_mobile == 'slider' and component.autoplay %}
+        <div class="qdhero__grid"
+             data-qdh-mobile="{{ qdh_mobile }}"
+             {% if qdh_autoplay %}data-qdh-autoplay="{{ component.autoplay_seconds|default(5) }}"{% endif %}>
             {% for product in component.products|slice(0, 2) %}
                 {% set images = product.images|default([]) %}
                 <div class="qpack__card qdhero__card" data-qpack>
@@ -319,6 +327,59 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
         var q = numEl ? Math.max(1, parseInt(numEl.textContent, 10) || 1) : 1;
         if (window.salla && salla.cart) { salla.cart.addItem({ id: id, quantity: q }); }
       });
+    }
+  });
+
+  /* ---- mobile slider autoplay -------------------------------------------
+     Only runs when the merchant picked slider mode AND switched autoplay on;
+     the swipe itself is CSS scroll-snap, so this just nudges scrollLeft.
+
+     Pauses on touch and when the section is off-screen, and gives up entirely
+     under prefers-reduced-motion — an auto-advancing carousel is exactly the
+     motion that rule exists for. RTL-safe: scrollLeft runs negative in RTL, so
+     the step direction is read off the computed direction rather than assumed. */
+  document.querySelectorAll('.qdhero__grid[data-qdh-autoplay]').forEach(function (grid) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var seconds = parseFloat(grid.getAttribute('data-qdh-autoplay')) || 5;
+    if (seconds < 1) seconds = 1;
+
+    var rtl = getComputedStyle(grid).direction === 'rtl';
+    var timer = null;
+    var paused = false;
+
+    function step() {
+      /* desktop is a static 2-up grid — nothing to scroll */
+      if (grid.scrollWidth <= grid.clientWidth + 1) return;
+
+      var card = grid.querySelector('.qdhero__card');
+      var by = card ? card.offsetWidth + 12 : grid.clientWidth * 0.82;
+      var pos = Math.abs(grid.scrollLeft);
+      var max = grid.scrollWidth - grid.clientWidth;
+
+      /* past the last card, wrap back to the start */
+      var next = (pos + by >= max - 2) ? 0 : pos + by;
+      grid.scrollTo({ left: rtl ? -next : next, behavior: 'smooth' });
+    }
+
+    function start() {
+      if (timer || paused) return;
+      timer = setInterval(step, seconds * 1000);
+    }
+    function stop() {
+      if (timer) { clearInterval(timer); timer = null; }
+    }
+
+    /* a finger on the carousel wins over the timer, permanently for that visit */
+    grid.addEventListener('touchstart', function () { paused = true; stop(); }, { passive: true });
+
+    /* don't animate a section nobody is looking at */
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        entries[0].isIntersecting ? start() : stop();
+      }, { threshold: 0.25 }).observe(grid);
+    } else {
+      start();
     }
   });
 })();

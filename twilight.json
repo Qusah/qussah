@@ -991,6 +991,69 @@
                     "selected": true
                 },
                 {
+                    "type": "string",
+                    "id": "mobile_layout",
+                    "format": "select",
+                    "icon": "sicon-mobile",
+                    "label": {
+                        "en": "Mobile layout",
+                        "ar": "شكل العرض على الجوال"
+                    },
+                    "description": {
+                        "en": "Slider shows one pack plus a peek of the next, swipeable. Grid shows both packs side by side. Desktop always shows both.",
+                        "ar": "المتحرك يعرض بكج وجزءاً من التالي مع إمكانية السحب. الشبكة تعرض البكجين بجانب بعضهما. سطح المكتب يعرض الاثنين دائماً."
+                    },
+                    "required": false,
+                    "value": "slider",
+                    "options": [
+                        {
+                            "value": "slider",
+                            "label": {
+                                "en": "Slider (card + peek)",
+                                "ar": "متحرك (بكج وجزء من التالي)"
+                            }
+                        },
+                        {
+                            "value": "grid",
+                            "label": {
+                                "en": "Grid (side by side)",
+                                "ar": "شبكة (بجانب بعضهما)"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "boolean",
+                    "id": "autoplay",
+                    "format": "switch",
+                    "icon": "sicon-play",
+                    "label": {
+                        "en": "Auto-swipe (slider only)",
+                        "ar": "تمرير تلقائي (للمتحرك فقط)"
+                    },
+                    "description": {
+                        "en": "Advance the slider automatically. Ignored in grid layout, and always off for visitors who ask for reduced motion.",
+                        "ar": "ينتقل بين البكجات تلقائياً. لا يعمل مع الشبكة، ويتوقف لمن يفضّل تقليل الحركة."
+                    },
+                    "required": false,
+                    "value": false,
+                    "selected": false
+                },
+                {
+                    "type": "number",
+                    "id": "autoplay_seconds",
+                    "format": "number",
+                    "icon": "sicon-clock",
+                    "label": {
+                        "en": "Seconds between swipes",
+                        "ar": "عدد الثواني بين كل تمرير"
+                    },
+                    "required": false,
+                    "value": 5,
+                    "minimum": 1,
+                    "maximum": 30
+                },
+                {
                     "type": "boolean",
                     "id": "show_badge",
                     "format": "switch",

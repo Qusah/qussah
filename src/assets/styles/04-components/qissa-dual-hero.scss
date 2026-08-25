@@ -57,7 +57,10 @@
   .qdhero__grid { grid-template-columns: 1fr; }
 }
 
-// ---- mobile (<=768): stacked, tightened to match qpack mobile ----
+// ---- mobile (<=768) ----
+//
+// Two merchant-chosen layouts, switched by [data-qdh-mobile] on the grid.
+// Desktop is untouched — everything here is inside the query.
 @media (max-width: 768px) {
   .qdhero { padding-block: 8px; }
   .qdhero .container { padding-inline: 15px; }
@@ -65,4 +68,73 @@
   .qdhero__title { font-size: 24px; line-height: 30px; }
   .qdhero__subtitle { font-size: 14px; line-height: 20px; }
   .qdhero__grid { gap: 16px; }
+
+  // The card caps at 428px for the desktop hero; on mobile both modes need it
+  // to fill whatever track it lands in, or the grid columns go uneven.
+  .qdhero__card { max-width: none; }
+
+  // ── SLIDER: one card + a peek of the next ──────────────────────────────
+  //
+  // Scroll-snap carousel, no JS for the swipe itself. The card is 82% of the
+  // container so ~18% of the neighbour shows and the row reads as swipeable.
+  // Negative margin + matching padding let the peeking card run to the screen
+  // edge while the first card still aligns with the page gutter.
+  .qdhero__grid[data-qdh-mobile='slider'] {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 82%;
+    gap: 12px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 15px;
+    margin-inline: -15px;
+    padding-inline: 15px;
+    padding-block-end: 4px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar { display: none; }
+
+    > .qdhero__card {
+      scroll-snap-align: start;
+      min-width: 0;
+    }
+  }
+
+  // ── GRID: both packs side by side, static ──────────────────────────────
+  //
+  // minmax(0, 1fr) not 1fr: the card's own content would otherwise force the
+  // track wider than half the screen and reintroduce horizontal scroll.
+  .qdhero__grid[data-qdh-mobile='grid'] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+
+    > .qdhero__card { min-width: 0; }
+
+    // Half the width means everything inside has to come down a step, while
+    // image, name, price and the essentials stay legible (the brief's list).
+    // No room at half width: the thumb strip and the gallery arrows go.
+    // Image, name, price and the essentials stay, per the brief.
+    .qpack__thumbs,
+    .qpack__arrow { display: none; }
+
+    .qpack__info { padding: 10px; }
+    .qpack__cat { font-size: 11px; }
+    .qpack__name { font-size: 14px; line-height: 20px; }
+    .qpack__price-now { font-size: 18px; line-height: 24px; }
+    .qpack__price-old { font-size: 12px; }
+    .qpack__badge { font-size: 10px; padding: 3px 8px; }
+    .qpack__sold,
+    .qpack__rate-count,
+    .qpack__review,
+    .qpack__status { font-size: 11px; }
+    .qpack__tags { gap: 4px; }
+    .qpack__tag { font-size: 11px; padding: 3px 8px; }
+    .qpack__add { font-size: 13px; padding-block: 10px; }
+
+    // stepper + add button stack rather than fighting for the same row
+    .qpack__actions { flex-wrap: wrap; gap: 8px; }
+    .qpack__qty { width: 100%; }
+  }
 }
