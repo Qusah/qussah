@@ -100,6 +100,17 @@
       scroll-snap-align: start;
       min-width: 0;
     }
+
+    // The pack card's own image gallery is ALSO an x-mandatory snap container.
+    // Nested on the same axis the two fight: dragging the slider drags the
+    // gallery, both try to snap, and the card visibly jiggles while the photo
+    // flips on its own. Inside the slider the gallery snaps proximity instead —
+    // still swipeable by finger, but it stops competing for the same gesture.
+    .qpack__main {
+      scroll-snap-type: x proximity;
+      overscroll-behavior-x: contain;
+      touch-action: pan-y pinch-zoom;
+    }
   }
 
   // ── GRID: both packs side by side, static ──────────────────────────────
