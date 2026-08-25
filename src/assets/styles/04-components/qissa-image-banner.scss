@@ -1,14 +1,13 @@
 // ====================================================================
-// Qissa Image Banner — the uploaded image IS the banner, and it sizes its
-// own card (no ratio guess, no letterboxing). Wide by design: 20px gutters
-// on desktop, full-bleed on mobile. One optional CTA on a 3×3 grid.
+// Qissa banners — one or more full-image banners in a slider.
+//
+// The image sizes its own card (no ratio guess, no letterboxing). Wide by
+// design: 20px gutters on desktop, full-bleed on mobile. Text and CTA sit on
+// a 3×3 placement grid, always stacked title → subtitle → button.
 // ====================================================================
 
 .qibanner {
-  font-family: 'GE SS Two', sans-serif;
-  // Was 24px. The brief asked for the banner to take more of the page and for
-  // the white space around it to come down, so the block rhythm tightens and
-  // the gutters shrink at every width (50px -> 20px desktop, 15px -> 0 mobile).
+  font-family: var(--qib-font, 'GE SS Two', sans-serif);
   padding-block: 12px;
 
   .container {
@@ -16,72 +15,116 @@
     padding-inline: 20px;
   }
 
-  // DEFAULT — the IMAGE decides the height. The image is a normal flow item
-  // (`width: 100%; height: auto`), so the card is exactly as tall as the
-  // artwork: nothing crops, and nothing letterboxes either.
-  //
-  // This replaces `aspect-ratio: var(--qib-ratio, 2.65)` + an absolutely
-  // positioned `object-fit: contain` image. That pairing is what produced the
-  // white space the brief is about: until JS measured the file, the box sat at
-  // the 2.65 fallback, and any artwork of a different shape got bars down the
-  // sides. Letting the image size the box removes the guess entirely.
-  &__box {
+  // ── viewport / track ────────────────────────────────────────────
+  &__viewport {
     position: relative;
     border-radius: 30px;
     overflow: hidden;
-    background: #172951;                     // paints the frame while the image loads
-    line-height: 0;                          // no inline-descender gap under the img
+    background: #172951;                     // paints the frame while images load
   }
 
-  // <picture> is inline by default — left as-is it adds a descender gap under
-  // the artwork and breaks the "card is exactly as tall as the image" rule.
-  &__box > picture {
-    display: block;
+  &__track {
+    display: flex;
+    // RTL: the first slide must sit on the RIGHT, which flex handles natively
+    // once the container direction is rtl — the JS mirrors the transform sign
+    // to match rather than fighting it.
+    transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+    will-change: transform;
   }
+
+  &__slide {
+    position: relative;
+    flex: 0 0 100%;
+    min-width: 0;
+    line-height: 0;                          // no descender gap under the img
+  }
+
+  // The image is a normal flow item, so the slide is exactly as tall as the
+  // artwork — nothing crops and nothing letterboxes.
+  &__slide > picture { display: block; }
 
   &__img {
     display: block;
     width: 100%;
-    height: auto;                            // the whole image, never a crop of it
+    height: auto;
     max-width: 100%;
   }
 
-  // FIXED HEIGHT — merchant opts into a uniform card. Now the image must be
-  // cropped to fill, and --qib-focus decides WHICH part survives: the crop
-  // keeps the focal point in frame instead of always trimming the edges.
-  &--fixed &__box {
-    height: var(--qib-height, 560px);
-  }
-
-  // In fixed mode the image goes back to filling a set box, so it must be
-  // absolutely positioned again — `height: auto` would overflow the card.
-  // The <picture> wrapper has to fill the box too, or the absolutely
-  // positioned img would resolve against a zero-height parent.
-  &--fixed &__box > picture {
+  // MULTI-SLIDE HEIGHT. Slides of different heights would make the block jump
+  // on every transition, so slide 1 sizes the viewport and the rest are laid
+  // over it. Their images then have to fill that box, which means cropping —
+  // unavoidable when several artworks share one frame.
+  &--multi &__slide:not(:first-child) {
     position: absolute;
     inset: 0;
+
+    > picture { position: absolute; inset: 0; }
+
+    .qibanner__img {
+      height: 100%;
+      object-fit: cover;
+    }
   }
+
+  // ── FADE mode ───────────────────────────────────────────────────
+  // Every slide stacked, cross-faded. The track never moves.
+  &--fade {
+    .qibanner__track { transition: none; transform: none !important; }
+
+    .qibanner__slide:not(:first-child) {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
+
+    .qibanner__slide:first-child { transition: opacity 0.5s ease; }
+
+    // first slide fades out only while another is showing
+    .qibanner__slide.is-active {
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 1;
+    }
+
+    &.qibanner--multi .qibanner__slide:first-child:not(.is-active) { opacity: 0; }
+  }
+
+  // ── FIXED HEIGHT — merchant pins one height, images crop ────────
+  &--fixed &__viewport { height: var(--qib-height, 560px); }
+  &--fixed &__track { height: 100%; }
+  &--fixed &__slide { height: 100%; }
+  &--fixed &__slide > picture { position: absolute; inset: 0; }
 
   &--fixed &__img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: var(--qib-focus, center);
   }
 
-  // ── CTA placement grid ────────────────────────────────────────────
+  // ── scrim — lifts text off a busy or light photo ────────────────
+  &__scrim {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    &[data-ov='light']  { background: linear-gradient(180deg, rgb(10 17 64 / 0%) 35%, rgb(10 17 64 / 45%) 100%); }
+    &[data-ov='medium'] { background: linear-gradient(180deg, rgb(10 17 64 / 10%) 20%, rgb(10 17 64 / 65%) 100%); }
+    &[data-ov='strong'] { background: rgb(10 17 64 / 55%); }
+  }
+
+  // ── content placement ───────────────────────────────────────────
   // LTR on purpose — the position values are physical (right = يمين), and
-  // postcss downlevels logical props assuming LTR, so physical mapping is
-  // the only spelling that survives the build unchanged.
+  // postcss downlevels logical props assuming LTR, so physical mapping is the
+  // only spelling that survives the build unchanged.
   &__overlay {
     direction: ltr;
     position: absolute;
     inset: 0;
     display: grid;
-    padding: 32px 40px;
-    pointer-events: none;                    // the image stays scrollable/clickable-through
+    padding: 40px 48px;
+    pointer-events: none;
 
     &[data-pos='top-right']     { align-items: start;  justify-items: end; }
     &[data-pos='top-center']    { align-items: start;  justify-items: center; }
@@ -92,55 +135,157 @@
     &[data-pos='bottom-right']  { align-items: end;    justify-items: end; }
     &[data-pos='bottom-center'] { align-items: end;    justify-items: center; }
     &[data-pos='bottom-left']   { align-items: end;    justify-items: start; }
+
+    // text alignment follows the chosen side
+    &[data-pos$='-right']  .qibanner__content { text-align: right; align-items: flex-end; }
+    &[data-pos$='-center'] .qibanner__content { text-align: center; align-items: center; }
+    &[data-pos$='-left']   .qibanner__content { text-align: left; align-items: flex-start; }
+  }
+
+  // A column, in this order, always: title → subtitle → button. The merchant
+  // chooses WHERE the stack sits, never the order inside it.
+  &__content {
+    direction: rtl;                          // Arabic reads correctly again
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 640px;
+    line-height: normal;
+    color: var(--qib-ink, #fff);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--qib-title, 44px);
+    font-weight: 700;
+    line-height: 1.25;
+    color: inherit;
+    text-shadow: 0 2px 18px rgb(10 17 64 / 35%);
+  }
+
+  &__sub {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.6;
+    color: inherit;
+    opacity: 0.92;
+    text-shadow: 0 2px 14px rgb(10 17 64 / 30%);
   }
 
   &__btn {
-    direction: rtl;                          // Arabic label reads correctly again
-    pointer-events: auto;                    // re-enable on the button itself
+    pointer-events: auto;
+    align-self: inherit;
 
     display: inline-flex;
     align-items: center;
     gap: 10px;
     padding: 14px 32px;
-    border-radius: 12px;                     // same radius as the video banner CTA
+    border-radius: 12px;
 
     background: #fff;
     color: #30378e;
     font-size: 16px;
     font-weight: 700;
 
-    box-shadow: 0 10px 26px -10px rgba(10, 17, 64, 0.55);
+    box-shadow: 0 10px 26px -10px rgb(10 17 64 / 55%);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 16px 32px -12px rgba(10, 17, 64, 0.65);
+      box-shadow: 0 16px 32px -12px rgb(10 17 64 / 65%);
       color: #30378e;
     }
   }
 
-  // ── Breakpoints ───────────────────────────────────────────────────
-  // The height overrides apply ONLY in fixed mode. In the default mode the
-  // image sizes the box at every width, so re-imposing a height here would
-  // reintroduce the cropping this change removes.
-  @media (max-width: 1150px) {
-    .container { padding-inline: 16px; }
-    &__box { border-radius: 24px; }
-    &--fixed &__box { height: var(--qib-height-md, 460px); }
-    &__overlay { inset: 24px 28px; }
+  // ── arrows ──────────────────────────────────────────────────────
+  &__arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+
+    background: rgb(255 255 255 / 90%);
+    color: #172951;
+    font-size: 18px;
+    box-shadow: 0 6px 18px -6px rgb(10 17 64 / 45%);
+    transition: background 0.2s ease, transform 0.2s ease;
+
+    &:hover { background: #fff; }
+
+    // physical sides: in RTL "prev" still lives on the right of the frame
+    &--prev { right: 16px; }
+    &--next { left: 16px; }
+
+    [dir='ltr'] &--prev { right: auto; left: 16px; }
+    [dir='ltr'] &--next { left: auto; right: 16px; }
   }
 
-  // MOBILE — full bleed. The brief's "تقليل المساحات البيضاء" is most visible
-  // here: the gutter and the corner radius both go, so the artwork runs edge to
-  // edge and uses the whole screen width.
+  // ── dots ────────────────────────────────────────────────────────
+  &__dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #c9cede;
+    transition: width 0.25s ease, background 0.25s ease;
+
+    &.is-active {
+      width: 26px;
+      border-radius: 999px;
+      background: #30378e;
+    }
+  }
+
+  // ── breakpoints ─────────────────────────────────────────────────
+  @media (max-width: 1150px) {
+    .container { padding-inline: 16px; }
+
+    &__viewport { border-radius: 24px; }
+    &--fixed &__viewport { height: var(--qib-height-md, 460px); }
+
+    &__overlay { padding: 28px 32px; }
+    &__title { font-size: clamp(24px, 4.4vw, var(--qib-title, 44px)); }
+    &__sub { font-size: 16px; }
+  }
+
+  // MOBILE — full bleed: the gutter and the radius both go, so the artwork
+  // uses the whole screen width.
   @media (max-width: 768px) {
     padding-block: 8px;
 
     .container { padding-inline: 0; }
 
-    &__box { border-radius: 0; }
-    &--fixed &__box { height: var(--qib-height-sm, 380px); }
-    &__overlay { inset: 18px 20px; }
+    &__viewport { border-radius: 0; }
+    &--fixed &__viewport { height: var(--qib-height-sm, 380px); }
+
+    &__overlay { padding: 20px; }
+    &__content { gap: 12px; max-width: none; }
+    &__title { font-size: clamp(20px, 6.2vw, 32px); }
+    &__sub { font-size: 14px; }
     &__btn { padding: 12px 24px; font-size: 14px; }
+
+    &__arrow { width: 36px; height: 36px; font-size: 15px; }
+    &__arrow--prev { right: 10px; }
+    &__arrow--next { left: 10px; }
+
+    &__dots { margin-top: 10px; }
+  }
+
+  // A visitor who asked for less motion gets no slide animation at all.
+  @media (prefers-reduced-motion: reduce) {
+    &__track { transition: none; }
+    &--fade &__slide { transition: none; }
   }
 }

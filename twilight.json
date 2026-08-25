@@ -1495,43 +1495,417 @@
         {
             "key": "a9e89601-8422-49f6-acfe-5bbc525c7dd7",
             "title": {
-                "en": "Qissa Image Banner",
-                "ar": "بانر قصة بصورة كاملة"
+                "en": "Qissa banners (slider)",
+                "ar": "بانرات قصة (شريط متحرك)"
             },
             "icon": "sicon-image",
             "path": "home.qissa-image-banner",
             "fields": [
                 {
-                    "id": "image",
-                    "type": "string",
-                    "format": "image",
+                    "id": "slides",
+                    "type": "collection",
+                    "format": "collection",
+                    "required": true,
+                    "minLength": 1,
+                    "maxLength": 10,
                     "label": {
-                        "en": "Banner image (desktop)",
-                        "ar": "صورة البانر (سطح المكتب)"
+                        "en": "Banners",
+                        "ar": "البانرات"
                     },
-                    "description": "الأبعاد المقترحة عريضة بنسبة تقارب 3:1 — يفضّل تصدير 2800×950 بكسل",
-                    "value": null
+                    "item_label": "بانر",
+                    "icon": "sicon-images",
+                    "description": "أضف بانر واحد أو أكثر. مع أكثر من بانر يتحول إلى شريط متحرك",
+                    "value": [],
+                    "fields": [
+                        {
+                            "type": "string",
+                            "format": "image",
+                            "icon": "sicon-image",
+                            "id": "slides.image",
+                            "label": "صورة البانر (سطح المكتب)",
+                            "description": "الأبعاد المقترحة 2800×950 بكسل",
+                            "value": null,
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "image",
+                            "icon": "sicon-mobile",
+                            "id": "slides.image_mobile",
+                            "label": "صورة البانر للجوال (اختياري)",
+                            "description": "اتركها فارغة لاستخدام صورة سطح المكتب. المقترح 860×860 أو 860×1075",
+                            "value": null,
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "text",
+                            "id": "slides.alt",
+                            "label": "وصف الصورة (SEO)",
+                            "value": null,
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "text",
+                            "icon": "sicon-text",
+                            "id": "slides.title",
+                            "label": "العنوان فوق الصورة",
+                            "value": null,
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "textarea",
+                            "id": "slides.subtitle",
+                            "label": "النص الفرعي",
+                            "value": null,
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "color",
+                            "id": "slides.text_color",
+                            "label": "لون النص",
+                            "value": "#ffffff",
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "text",
+                            "id": "slides.button_text",
+                            "label": "نص الزر",
+                            "value": null,
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "text",
+                            "id": "slides.button_url",
+                            "label": "رابط الزر",
+                            "value": null,
+                            "required": false
+                        },
+                        {
+                            "id": "slides.content_position",
+                            "type": "items",
+                            "format": "dropdown-list",
+                            "source": "Manual",
+                            "label": "مكان النص والزر",
+                            "description": "النص يظهر دائماً فوق الزر",
+                            "selected": [
+                                {
+                                    "label": "أسفل - المنتصف",
+                                    "value": "bottom-center",
+                                    "key": "00000000-0000-0000-0000-000051100008"
+                                }
+                            ],
+                            "options": [
+                                {
+                                    "label": "أعلى - يمين",
+                                    "value": "top-right",
+                                    "key": "00000000-0000-0000-0000-000051100001"
+                                },
+                                {
+                                    "label": "أعلى - المنتصف",
+                                    "value": "top-center",
+                                    "key": "00000000-0000-0000-0000-000051100002"
+                                },
+                                {
+                                    "label": "أعلى - يسار",
+                                    "value": "top-left",
+                                    "key": "00000000-0000-0000-0000-000051100003"
+                                },
+                                {
+                                    "label": "الوسط - يمين",
+                                    "value": "center-right",
+                                    "key": "00000000-0000-0000-0000-000051100004"
+                                },
+                                {
+                                    "label": "الوسط - المنتصف",
+                                    "value": "center-center",
+                                    "key": "00000000-0000-0000-0000-000051100005"
+                                },
+                                {
+                                    "label": "الوسط - يسار",
+                                    "value": "center-left",
+                                    "key": "00000000-0000-0000-0000-000051100006"
+                                },
+                                {
+                                    "label": "أسفل - يمين",
+                                    "value": "bottom-right",
+                                    "key": "00000000-0000-0000-0000-000051100007"
+                                },
+                                {
+                                    "label": "أسفل - المنتصف",
+                                    "value": "bottom-center",
+                                    "key": "00000000-0000-0000-0000-000051100008"
+                                },
+                                {
+                                    "label": "أسفل - يسار",
+                                    "value": "bottom-left",
+                                    "key": "00000000-0000-0000-0000-000051100009"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "slides.overlay",
+                            "type": "items",
+                            "format": "dropdown-list",
+                            "source": "Manual",
+                            "label": "تعتيم الصورة خلف النص",
+                            "description": "يحسّن وضوح النص فوق الصور الفاتحة",
+                            "selected": [
+                                {
+                                    "label": "خفيف",
+                                    "value": "light",
+                                    "key": "00000000-0000-0000-0000-000051100015"
+                                }
+                            ],
+                            "options": [
+                                {
+                                    "label": "بدون",
+                                    "value": "none",
+                                    "key": "00000000-0000-0000-0000-000051100014"
+                                },
+                                {
+                                    "label": "خفيف",
+                                    "value": "light",
+                                    "key": "00000000-0000-0000-0000-000051100015"
+                                },
+                                {
+                                    "label": "متوسط",
+                                    "value": "medium",
+                                    "key": "00000000-0000-0000-0000-000051100016"
+                                },
+                                {
+                                    "label": "قوي",
+                                    "value": "strong",
+                                    "key": "00000000-0000-0000-0000-000051100017"
+                                }
+                            ]
+                        }
+                    ]
                 },
                 {
-                    "id": "image_mobile",
-                    "type": "string",
-                    "format": "image",
-                    "label": {
-                        "en": "Mobile banner image (optional)",
-                        "ar": "صورة البانر للجوال (اختياري)"
-                    },
-                    "description": "اتركها فارغة لاستخدام نفس صورة سطح المكتب. الأبعاد المقترحة مربعة 1:1 أو طولية 4:5 — الصورة العريضة تظهر قصيرة جداً على الجوال",
-                    "value": null
+                    "id": "transition",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "source": "Manual",
+                    "icon": "sicon-move",
+                    "label": "حركة الانتقال",
+                    "selected": [
+                        {
+                            "label": "انزلاق",
+                            "value": "slide",
+                            "key": "00000000-0000-0000-0000-000051200001"
+                        }
+                    ],
+                    "options": [
+                        {
+                            "label": "انزلاق",
+                            "value": "slide",
+                            "key": "00000000-0000-0000-0000-000051200001"
+                        },
+                        {
+                            "label": "تلاشي",
+                            "value": "fade",
+                            "key": "00000000-0000-0000-0000-000051200002"
+                        }
+                    ]
                 },
                 {
-                    "id": "alt",
+                    "id": "autoplay",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-play",
+                    "label": {
+                        "en": "Auto-scroll banners",
+                        "ar": "تمرير تلقائي بين البانرات"
+                    },
+                    "description": "يتوقف عند لمس الشريط، ولا يعمل لمن يفضّل تقليل الحركة",
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "autoplay_seconds",
+                    "type": "number",
+                    "format": "integer",
+                    "icon": "sicon-clock",
+                    "label": {
+                        "en": "Seconds per banner",
+                        "ar": "عدد الثواني لكل بانر"
+                    },
+                    "value": 5,
+                    "minimum": 2,
+                    "maximum": 30,
+                    "conditions": [
+                        {
+                            "id": "autoplay",
+                            "operation": "=",
+                            "value": true
+                        }
+                    ]
+                },
+                {
+                    "id": "loop",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-refresh",
+                    "label": {
+                        "en": "Loop back to the first banner",
+                        "ar": "العودة للبانر الأول بعد الأخير"
+                    },
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "default_slide",
+                    "type": "number",
+                    "format": "integer",
+                    "icon": "sicon-flag",
+                    "label": {
+                        "en": "Banner shown first",
+                        "ar": "البانر الافتراضي عند فتح الصفحة"
+                    },
+                    "description": "رقم البانر في القائمة أعلاه — 1 هو الأول",
+                    "value": 1,
+                    "minimum": 1,
+                    "maximum": 10
+                },
+                {
+                    "id": "show_arrows",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-arrow-left",
+                    "label": {
+                        "en": "Show arrows",
+                        "ar": "إظهار أسهم التنقل"
+                    },
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "show_dots",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-more-horizontal",
+                    "label": {
+                        "en": "Show dots",
+                        "ar": "إظهار النقاط"
+                    },
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "font_family",
+                    "type": "items",
+                    "format": "dropdown-list",
+                    "source": "Manual",
+                    "icon": "sicon-text",
+                    "label": "خط النص فوق البانر",
+                    "description": "الخيارات من Google Fonts تُحمّل تلقائياً",
+                    "selected": [
+                        {
+                            "label": "خط الثيم (GE SS Two)",
+                            "value": "GE SS Two",
+                            "key": "00000000-0000-0000-0000-00005120001e"
+                        }
+                    ],
+                    "options": [
+                        {
+                            "label": "خط الثيم (GE SS Two)",
+                            "value": "GE SS Two",
+                            "key": "00000000-0000-0000-0000-00005120001e"
+                        },
+                        {
+                            "label": "خط المتجر",
+                            "value": "inherit",
+                            "key": "00000000-0000-0000-0000-00005120001f"
+                        },
+                        {
+                            "label": "Tajawal",
+                            "value": "Tajawal",
+                            "key": "00000000-0000-0000-0000-000051200020"
+                        },
+                        {
+                            "label": "Cairo",
+                            "value": "Cairo",
+                            "key": "00000000-0000-0000-0000-000051200021"
+                        },
+                        {
+                            "label": "Almarai",
+                            "value": "Almarai",
+                            "key": "00000000-0000-0000-0000-000051200022"
+                        },
+                        {
+                            "label": "IBM Plex Sans Arabic",
+                            "value": "IBM Plex Sans Arabic",
+                            "key": "00000000-0000-0000-0000-000051200023"
+                        },
+                        {
+                            "label": "Rubik",
+                            "value": "Rubik",
+                            "key": "00000000-0000-0000-0000-000051200024"
+                        },
+                        {
+                            "label": "خط مخصص (من الحقول أدناه)",
+                            "value": "custom",
+                            "key": "00000000-0000-0000-0000-000051200025"
+                        }
+                    ]
+                },
+                {
+                    "id": "font_google",
                     "type": "string",
                     "format": "text",
+                    "icon": "sicon-google",
                     "label": {
-                        "en": "Image description (SEO / screen readers)",
-                        "ar": "وصف الصورة (لمحركات البحث وقارئات الشاشة)"
+                        "en": "Google Font name",
+                        "ar": "اسم خط Google"
                     },
-                    "value": null
+                    "description": "اكتب اسم الخط كما هو في fonts.google.com — مثال: Noto Kufi Arabic",
+                    "value": null,
+                    "conditions": [
+                        {
+                            "id": "font_family",
+                            "operation": "=",
+                            "value": "custom"
+                        }
+                    ]
+                },
+                {
+                    "id": "font_url",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-link",
+                    "label": {
+                        "en": "Or a font file URL (.woff2)",
+                        "ar": "أو رابط ملف الخط (woff2.)"
+                    },
+                    "description": "ارفع الملف في مدير الملفات بسلة والصق الرابط هنا. له الأولوية على اسم Google",
+                    "value": null,
+                    "conditions": [
+                        {
+                            "id": "font_family",
+                            "operation": "=",
+                            "value": "custom"
+                        }
+                    ]
+                },
+                {
+                    "id": "title_size",
+                    "type": "number",
+                    "format": "integer",
+                    "icon": "sicon-pencil-ruler",
+                    "label": {
+                        "en": "Title size (px, desktop)",
+                        "ar": "حجم العنوان (بكسل، سطح المكتب)"
+                    },
+                    "description": "يقل تلقائياً على الجوال",
+                    "value": 44,
+                    "minimum": 16,
+                    "maximum": 96
                 },
                 {
                     "id": "fixed_height",
@@ -1637,102 +2011,6 @@
                             "label": "أسفل يسار",
                             "value": "left bottom",
                             "key": "c9a2f7e1-0002-4d31-8e01-000000000009"
-                        }
-                    ]
-                },
-                {
-                    "id": "show_cta",
-                    "type": "boolean",
-                    "format": "switch",
-                    "icon": "sicon-toggle-off",
-                    "label": {
-                        "en": "Show a button on the image",
-                        "ar": "إظهار زر فوق الصورة"
-                    },
-                    "value": false,
-                    "selected": false
-                },
-                {
-                    "id": "button_text",
-                    "type": "string",
-                    "format": "text",
-                    "label": {
-                        "en": "Button Text",
-                        "ar": "نص الزر"
-                    },
-                    "value": "تسوق مع قصة"
-                },
-                {
-                    "id": "button_url",
-                    "type": "string",
-                    "format": "text",
-                    "label": {
-                        "en": "Button URL",
-                        "ar": "رابط الزر"
-                    },
-                    "value": "/products"
-                },
-                {
-                    "id": "button_position",
-                    "type": "items",
-                    "format": "dropdown-list",
-                    "source": "Manual",
-                    "label": {
-                        "en": "Button position on the image",
-                        "ar": "مكان الزر على الصورة"
-                    },
-                    "selected": [
-                        {
-                            "label": "أسفل - المنتصف",
-                            "value": "bottom-center",
-                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000008"
-                        }
-                    ],
-                    "options": [
-                        {
-                            "label": "أعلى - يمين",
-                            "value": "top-right",
-                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000001"
-                        },
-                        {
-                            "label": "أعلى - المنتصف",
-                            "value": "top-center",
-                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000002"
-                        },
-                        {
-                            "label": "أعلى - يسار",
-                            "value": "top-left",
-                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000003"
-                        },
-                        {
-                            "label": "الوسط - يمين",
-                            "value": "center-right",
-                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000004"
-                        },
-                        {
-                            "label": "الوسط - المنتصف",
-                            "value": "center-center",
-                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000005"
-                        },
-                        {
-                            "label": "الوسط - يسار",
-                            "value": "center-left",
-                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000006"
-                        },
-                        {
-                            "label": "أسفل - يمين",
-                            "value": "bottom-right",
-                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000007"
-                        },
-                        {
-                            "label": "أسفل - المنتصف",
-                            "value": "bottom-center",
-                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000008"
-                        },
-                        {
-                            "label": "أسفل - يسار",
-                            "value": "bottom-left",
-                            "key": "b1f4c0d2-0001-4ab1-9c01-000000000009"
                         }
                     ]
                 }

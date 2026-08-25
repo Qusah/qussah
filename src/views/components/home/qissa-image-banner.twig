@@ -1,87 +1,183 @@
 {#
-| Variable                  | Type   | Description                                    |
-|---------------------------|--------|------------------------------------------------|
-| component                 | object | merchant settings from twilight.json           |
-| component.image           | string | the banner — fills the whole card              |
-| component.alt             | string | image description for SEO / screen readers     |
-| component.fixed_height    | bool   | uniform card height instead of the image's shape |
-| component.height          | int    | desktop card height in px, when fixed           |
-| component.focus           | mixed  | which part survives the crop, when fixed        |
-| component.show_cta        | bool   | overlay a button on the image                  |
-| component.button_text     | string | CTA label                                      |
-| component.button_url      | string | CTA link                                       |
-| component.button_position | mixed  | one of 9 grid slots, e.g. "bottom-center"      |
-| position                  | int    | sorting block                                  |
+| Variable                     | Type    | Description                                        |
+|------------------------------|---------|----------------------------------------------------|
+| component.slides             | array   | one entry per banner: image, text, button, position |
+| component.transition         | string  | slide \| fade                                       |
+| component.autoplay           | bool    | advance on a timer                                  |
+| component.autoplay_seconds   | int     | seconds per banner                                  |
+| component.loop               | bool    | wrap from the last banner back to the first         |
+| component.default_slide      | int     | 1-based index of the banner shown first             |
+| component.show_arrows/dots   | bool    | navigation chrome                                   |
+| component.font_family        | string  | theme font, a Google family, or `custom`            |
+| component.font_google        | string  | Google family name when font_family = custom        |
+| component.font_url           | string  | direct .woff2 URL — wins over font_google           |
+| component.title_size         | int     | desktop title size in px                            |
+| component.fixed_height/height/focus | mixed | uniform-height mode (crops, focus picks what stays) |
 
-The uploaded image IS the banner — no text column, no panel background. The
-only optional chrome is one CTA, placed on a 3×3 grid.
+Qissa banners — one or more full-image banners in a swipeable slider.
 
-── Two sizing modes ─────────────────────────────────────────────────────────
-DEFAULT: the card takes the artwork's own aspect ratio, so nothing is ever
-cropped. This is what a banner with text baked into the image needs — a fixed
-490px card against a 2.95:1 file trimmed ~5% off each side under `cover` and
-ate the Arabic headline.
+SIZING. The image sizes its own card: it is a normal flow item, so the banner
+is exactly as tall as the artwork and nothing letterboxes. With several slides
+they must share ONE height or the block would jump on every transition, so the
+tallest slide sets it (the others are absolutely positioned over that). Fixed
+mode instead pins a height and crops, with `focus` choosing what survives.
 
-FIXED: the merchant wants every banner the same height regardless of upload.
-Cropping is then unavoidable, so `focus` chooses which part of the artwork
-survives instead of always trimming the edges.
+TEXT ABOVE BUTTON, ALWAYS. The content stack is a column: title, subtitle, then
+the CTA — the merchant picks WHERE the stack sits, never the order inside it.
 
-DEFAULT: the image is a normal flow item, so it sizes its own card — the
-banner is exactly as tall as the artwork, at any width. No ratio has to be
-known at render time, which is why there is no measuring script here: an
-earlier build guessed a fallback ratio and letterboxed every image that did
-not match it.
+FONTS. Salla theme fields cannot upload a font file (there is no file format,
+only `image`), so custom fonts arrive one of two ways: a Google family name,
+which is fetched from fonts.googleapis.com, or a direct .woff2 URL the merchant
+hosts, which is registered with an inline @font-face. The URL wins when both
+are set.
 
 The overlay grid runs LTR on purpose: postcss-preset-env downlevels logical
-properties assuming LTR, so "يمين/يسار" are mapped to physical right/left in
-CSS. The button re-isolates its own RTL for the Arabic label.
+properties assuming LTR, so "يمين/يسار" map to physical right/left in CSS. The
+content re-isolates its own RTL for the Arabic text.
 #}
-{% if component.image %}
-    {# dropdown-list values arrive as a list (and sometimes as option objects) —
-       unwrap to the plain slot string, matching how bareq handles the format #}
-    {% set pos = component.button_position is iterable ? component.button_position|first : component.button_position %}
-    {% set pos = pos.value|default(pos)|default('bottom-center') %}
+
+{# Built with a loop, not |filter(s => s.image): `map` with an arrow function
+   has precedent in this theme but `filter` does not, and an unsupported Twig
+   construct blanks the entire block silently rather than erroring. #}
+{% set slides = [] %}
+{% for s in component.slides|default([]) %}
+    {% if s.image %}{% set slides = slides|merge([s]) %}{% endif %}
+{% endfor %}
+
+{% if slides|length %}
+
+    {% set fixed = component.fixed_height %}
+    {% set transition = component.transition is iterable ? component.transition|first : component.transition %}
+    {% set transition = transition.value|default(transition)|default('slide') %}
 
     {% set focus_raw = component.focus is iterable ? component.focus|first : component.focus %}
     {% set focus = focus_raw.value|default(focus_raw)|default('center') %}
 
-    {% set fixed = component.fixed_height %}
+    {# ---- typography -------------------------------------------------- #}
+    {% set fam_raw = component.font_family is iterable ? component.font_family|first : component.font_family %}
+    {% set fam = fam_raw.value|default(fam_raw)|default('GE SS Two') %}
+    {% set google = '' %}
+    {% set stack = "'GE SS Two', sans-serif" %}
 
-    {% set css = '' %}
+    {% if fam == 'custom' %}
+        {% if component.font_url %}
+            {% set stack = "'qib-custom', 'GE SS Two', sans-serif" %}
+        {% elseif component.font_google %}
+            {% set google = component.font_google %}
+            {% set stack = "'" ~ google ~ "', 'GE SS Two', sans-serif" %}
+        {% endif %}
+    {% elseif fam == 'inherit' %}
+        {% set stack = 'inherit' %}
+    {% elseif fam != 'GE SS Two' %}
+        {% set google = fam %}
+        {% set stack = "'" ~ fam ~ "', 'GE SS Two', sans-serif" %}
+    {% endif %}
+
+    {% set css = '--qib-font: ' ~ stack ~ ';'
+               ~ '--qib-title: ' ~ component.title_size|default(44) ~ 'px;' %}
     {% if fixed %}
         {% set h = component.height|default(560) %}
-        {% set css = '--qib-height: ' ~ h ~ 'px;'
+        {% set css = css ~ '--qib-height: ' ~ h ~ 'px;'
                    ~ '--qib-height-md: ' ~ (h * 0.82)|round ~ 'px;'
                    ~ '--qib-height-sm: ' ~ (h * 0.68)|round ~ 'px;'
                    ~ '--qib-focus: ' ~ focus ~ ';' %}
     {% endif %}
 
-    <section class="s-block qibanner{{ fixed ? ' qibanner--fixed' : '' }}"
-             id="qibanner-{{ position }}"
-             {% if css %}style="{{ css }}"{% endif %}>
-        <div class="container">
-            <div class="qibanner__box">
-                {# <picture> not two <img>s or a CSS swap: the browser picks ONE
-                   source and downloads only that, so a phone never pays for the
-                   wide desktop artwork. With no mobile upload the source is
-                   simply omitted and every screen gets the desktop image. #}
-                <picture>
-                    {% if component.image_mobile %}
-                        <source media="(max-width: 768px)" srcset="{{ component.image_mobile }}"/>
-                    {% endif %}
-                    <img class="qibanner__img"
-                         src="{{ component.image }}"
-                         alt="{{ component.alt|default(component.button_text)|default('') }}"
-                         loading="lazy"/>
-                </picture>
+    {% if google %}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet"
+              href="https://fonts.googleapis.com/css2?family={{ google|replace({' ': '+'}) }}:wght@400;700&display=swap">
+    {% elseif fam == 'custom' and component.font_url %}
+        <style>
+            @font-face {
+                font-family: 'qib-custom';
+                src: url('{{ component.font_url }}') format('woff2');
+                font-display: swap;
+            }
+        </style>
+    {% endif %}
 
-                {% if component.show_cta and component.button_text and component.button_url %}
-                    <div class="qibanner__overlay" data-pos="{{ pos }}">
-                        <a class="qibanner__btn" href="{{ component.button_url }}">{{ component.button_text }}</a>
-                    </div>
+    {% set start = component.default_slide|default(1) %}
+    {% set start = start > slides|length ? 1 : start %}
+
+    <section class="s-block qibanner{{ fixed ? ' qibanner--fixed' : '' }} qibanner--{{ transition }}{{ slides|length > 1 ? ' qibanner--multi' : '' }}"
+             id="qibanner-{{ position }}"
+             style="{{ css }}"
+             data-qib
+             {% if slides|length > 1 %}
+                 data-qib-start="{{ start - 1 }}"
+                 data-qib-loop="{{ component.loop|default(true) ? '1' : '0' }}"
+                 {% if component.autoplay %}data-qib-autoplay="{{ component.autoplay_seconds|default(5) }}"{% endif %}
+             {% endif %}>
+        <div class="container">
+            <div class="qibanner__viewport">
+                <div class="qibanner__track" data-qib-track>
+                    {% for slide in slides %}
+                        {% set pos_raw = slide.content_position is iterable ? slide.content_position|first : slide.content_position %}
+                        {% set pos = pos_raw.value|default(pos_raw)|default('bottom-center') %}
+                        {% set ov_raw = slide.overlay is iterable ? slide.overlay|first : slide.overlay %}
+                        {% set ov = ov_raw.value|default(ov_raw)|default('light') %}
+
+                        <div class="qibanner__slide{{ loop.index0 == (start - 1) ? ' is-active' : '' }}"
+                             data-qib-slide="{{ loop.index0 }}"
+                             {% if loop.index0 != (start - 1) %}aria-hidden="true"{% endif %}>
+
+                            {# <picture> so a phone downloads only the mobile file #}
+                            <picture>
+                                {% if slide.image_mobile %}
+                                    <source media="(max-width: 768px)" srcset="{{ slide.image_mobile }}"/>
+                                {% endif %}
+                                <img class="qibanner__img"
+                                     src="{{ slide.image }}"
+                                     alt="{{ slide.alt|default(slide.title)|default('') }}"
+                                     {% if loop.index0 == (start - 1) %}fetchpriority="high"{% else %}loading="lazy"{% endif %}/>
+                            </picture>
+
+                            {% if ov != 'none' %}
+                                <span class="qibanner__scrim" data-ov="{{ ov }}" aria-hidden="true"></span>
+                            {% endif %}
+
+                            {% if slide.title or slide.subtitle or (slide.button_text and slide.button_url) %}
+                                {# column: title, subtitle, THEN the button — the merchant
+                                   places the stack, never reorders what is inside it #}
+                                <div class="qibanner__overlay" data-pos="{{ pos }}">
+                                    <div class="qibanner__content"
+                                         {% if slide.text_color %}style="--qib-ink: {{ slide.text_color }}"{% endif %}>
+                                        {% if slide.title %}<h2 class="qibanner__title">{{ slide.title }}</h2>{% endif %}
+                                        {% if slide.subtitle %}<p class="qibanner__sub">{{ slide.subtitle }}</p>{% endif %}
+                                        {% if slide.button_text and slide.button_url %}
+                                            <a class="qibanner__btn" href="{{ slide.button_url }}">{{ slide.button_text }}</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if slides|length > 1 and component.show_arrows|default(true) %}
+                    <button type="button" class="qibanner__arrow qibanner__arrow--prev" data-qib-prev
+                            aria-label="{{ trans('blocks.qissa.prev')|default('السابق') }}">
+                        <i class="sicon-arrow-right"></i>
+                    </button>
+                    <button type="button" class="qibanner__arrow qibanner__arrow--next" data-qib-next
+                            aria-label="{{ trans('blocks.qissa.next')|default('التالي') }}">
+                        <i class="sicon-arrow-left"></i>
+                    </button>
                 {% endif %}
             </div>
+
+            {% if slides|length > 1 and component.show_dots|default(true) %}
+                <div class="qibanner__dots" data-qib-dots>
+                    {% for slide in slides %}
+                        <button type="button"
+                                class="qibanner__dot{{ loop.index0 == (start - 1) ? ' is-active' : '' }}"
+                                data-qib-dot="{{ loop.index0 }}"
+                                aria-label="{{ loop.index }}"></button>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
     </section>
-
 {% endif %}

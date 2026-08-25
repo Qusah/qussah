@@ -14,6 +14,7 @@ module.exports = {
         'product-card' : asset('js/partials/product-card.js'),
         'main-menu' : asset('js/partials/main-menu.js'),
         'qissa-packs-counter' : asset('js/partials/qissa-packs-counter.js'),
+        'qissa-image-banner' : asset('js/partials/qissa-image-banner.js'),
         'wishlist-card': asset('js/partials/wishlist-card.js'),
         'add-product-toast': asset('js/partials/add-product-toast.js'),
         'digital-files': asset('js/partials/digital-files.js'),
