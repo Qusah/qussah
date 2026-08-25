@@ -345,109 +345,48 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
   document.querySelectorAll('.qdhero [data-qpack]').forEach(initCard);
 
   /* ---- mobile slider autoplay -------------------------------------------
-     The swipe itself is CSS scroll-snap; this only advances it.
+     Advances the CSS scroll-snap slider on a timer.
 
-     INFINITE LOOP. The block renders exactly two products, so a plain carousel
-     hits the end after one step and has to jump back to 0 — visible, and it
-     reads as broken. Instead the cards are CLONED (2 -> 6) and the scroller is
-     parked on the middle copy: stepping forward always has somewhere to go, and
-     when it drifts past a copy boundary scrollLeft is silently re-centred with
-     snap + smooth OFF, so the seam is invisible. That is the "same original
-     swiping" continuing forever, in both directions, by finger or by timer.
+     NO CLONING. An earlier build duplicated the cards to fake an infinite loop
+     and it was a mess: with only two products the copies sat at the same visual
+     spot, so re-centring swapped identical cards in place — the card looked like
+     it was flipping between two products while never actually moving. With two
+     items a loop is just A -> B -> A, and scrolling back to the start is honest
+     and stable.
 
-     TOUCH. A swipe pauses the timer for 30s, then it resumes — not forever.
-
-     Off entirely under prefers-reduced-motion, and paused while off-screen.
-     RTL-safe: scrollLeft runs negative in RTL, so direction is read from the
-     computed style rather than assumed. */
+     A swipe pauses autoplay for 30s, then it resumes. Off entirely under
+     prefers-reduced-motion, and paused while the section is off-screen.
+     RTL-safe: scrollLeft runs negative in RTL, so direction comes from the
+     computed style rather than being assumed. */
   document.querySelectorAll('.qdhero__grid[data-qdh-autoplay]').forEach(function (grid) {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    var RESUME_AFTER = 30000;   /* how long a human swipe wins for */
-    var COPIES = 3;             /* original + 2 clones, we sit on the middle */
+    var RESUME_AFTER = 30000;
 
     var seconds = parseFloat(grid.getAttribute('data-qdh-autoplay')) || 5;
     if (seconds < 1) seconds = 1;
 
     var rtl = getComputedStyle(grid).direction === 'rtl';
-    var timer = null, resumeTimer = null, cloned = false, setWidth = 0;
-    /* animating: a programmatic smooth scroll is in flight — re-centring during
-       one is what produced the visible twitch. touching: a finger is on the
-       track; correcting under it fights the drag. */
-    var animating = false, animT = null, touching = false;
+    var timer = null, resumeTimer = null, touching = false;
 
-    function isSlider() {
-      /* desktop renders a static 2-up grid — nothing to loop */
-      return grid.scrollWidth > grid.clientWidth + 1;
-    }
-
-    function pos() { return Math.abs(grid.scrollLeft); }
-    function goTo(x, smooth) {
-      /* mandatory snap fights a programmatic scroll — iOS often drops it
-         entirely — so snapping is off for the whole move, both kinds. */
-      grid.style.scrollSnapType = 'none';
-      grid.scrollTo({ left: rtl ? -x : x, behavior: smooth ? 'smooth' : 'auto' });
-
-      if (smooth) {
-        animating = true;
-        if (animT) clearTimeout(animT);
-        /* no cross-browser "smooth scroll finished" event; 520ms clears the
-           longest real animation at this distance */
-        animT = setTimeout(function () {
-          animating = false;
-          grid.style.scrollSnapType = '';
-        }, 520);
-      } else {
-        /* two frames: one to apply the jump, one before snap re-engages —
-           restoring it too early re-animates the jump and shows the seam */
-        requestAnimationFrame(function () {
-          requestAnimationFrame(function () { grid.style.scrollSnapType = ''; });
-        });
-      }
-    }
-
-    /* build the loop: clone the real cards until there are COPIES sets */
-    function buildLoop() {
-      if (cloned || !isSlider()) return;
-      var originals = [].slice.call(grid.children);
-      if (!originals.length) return;
-
-      setWidth = grid.scrollWidth;
-      for (var c = 1; c < COPIES; c++) {
-        originals.forEach(function (el) {
-          var copy = el.cloneNode(true);
-          /* a clone is a real, working card — it must add to cart like the
-             original. Only the init flag and duplicate ids are stripped. */
-          copy.removeAttribute('data-qdhero-init');
-          copy.querySelectorAll('[id]').forEach(function (n) { n.removeAttribute('id'); });
-          grid.appendChild(copy);
-          if (copy.hasAttribute('data-qpack')) initCard(copy);
-          else copy.querySelectorAll('[data-qpack]').forEach(initCard);
-        });
-      }
-      cloned = true;
-      goTo(setWidth, false);   /* park on the middle copy */
-    }
-
-    /* whenever we drift outside the middle copy, shift back by one set */
-    function recentre() {
-      if (!cloned || !setWidth) return;
-      var x = pos();
-      if (x < setWidth * 0.5) goTo(x + setWidth, false);
-      else if (x > setWidth * 1.5) goTo(x - setWidth, false);
-    }
+    /* desktop renders a static 2-up grid — nothing to advance */
+    function isSlider() { return grid.scrollWidth > grid.clientWidth + 1; }
 
     function step() {
-      if (!isSlider() || touching || animating) return;
-      buildLoop();
+      if (!isSlider() || touching) return;
+
       var card = grid.querySelector('.qdhero__card');
-      var by = card ? card.offsetWidth + 12 : grid.clientWidth * 0.82;
-      goTo(pos() + by, true);
+      var by = card ? card.offsetWidth + 12 : Math.round(grid.clientWidth * 0.82);
+      var pos = Math.abs(grid.scrollLeft);
+      var max = grid.scrollWidth - grid.clientWidth;
+      /* at the end, go back to the first card */
+      var next = (pos + by >= max - 4) ? 0 : pos + by;
+
+      grid.scrollTo({ left: rtl ? -next : next, behavior: 'smooth' });
     }
 
     function start() {
       if (timer || resumeTimer || !isSlider()) return;
-      buildLoop();
       timer = setInterval(step, seconds * 1000);
     }
     function stop() {
@@ -465,30 +404,12 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
       holdOff();
     }, { passive: true });
     grid.addEventListener('touchend', function () {
-      /* momentum keeps scrolling after the finger lifts; let it finish */
+      /* momentum keeps scrolling after the finger lifts */
       setTimeout(function () { touching = false; }, 300);
     }, { passive: true });
-    grid.addEventListener('pointerdown', function (e) {
-      if (e.pointerType !== 'mouse') holdOff();
-    }, { passive: true });
 
-    /* Keep the seam invisible — but ONLY once everything has come to rest.
-       Re-centring at 120ms landed mid smooth-scroll and yanked the track (the
-       twitch). Now: never while a programmatic scroll is running, never while a
-       finger is down, and only after 260ms of genuine stillness. */
-    var settle = null;
-    grid.addEventListener('scroll', function () {
-      if (settle) clearTimeout(settle);
-      settle = setTimeout(function () {
-        if (animating || touching) { return; }
-        recentre();
-      }, 260);
-    }, { passive: true });
-
-    /* rebuild if the viewport crosses the desktop/mobile boundary */
     window.addEventListener('resize', function () {
-      if (!isSlider()) stop();
-      else start();
+      isSlider() ? start() : stop();
     }, { passive: true });
 
     if ('IntersectionObserver' in window) {
