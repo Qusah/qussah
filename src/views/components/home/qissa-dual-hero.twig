@@ -187,7 +187,10 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
 (function () {
   // Scoped to .qdhero so it never cross-binds with the single-product qissa-package
   // (.qpack) block. The init guard makes re-emitted scripts / multiple instances safe.
-  document.querySelectorAll('.qdhero [data-qpack]').forEach(function (card) {
+  // Extracted so the autoplay loop can wire up its cloned cards too — a clone
+  // keeps every data-qpack hook, so without this its gallery arrows, stepper and
+  // add-to-cart would be inert.
+  function initCard(card) {
     if (card.hasAttribute('data-qdhero-init')) { return; }
     card.setAttribute('data-qdhero-init', '');
 
@@ -328,52 +331,125 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
         if (window.salla && salla.cart) { salla.cart.addItem({ id: id, quantity: q }); }
       });
     }
-  });
+  }
+
+  document.querySelectorAll('.qdhero [data-qpack]').forEach(initCard);
 
   /* ---- mobile slider autoplay -------------------------------------------
-     Only runs when the merchant picked slider mode AND switched autoplay on;
-     the swipe itself is CSS scroll-snap, so this just nudges scrollLeft.
+     The swipe itself is CSS scroll-snap; this only advances it.
 
-     Pauses on touch and when the section is off-screen, and gives up entirely
-     under prefers-reduced-motion — an auto-advancing carousel is exactly the
-     motion that rule exists for. RTL-safe: scrollLeft runs negative in RTL, so
-     the step direction is read off the computed direction rather than assumed. */
+     INFINITE LOOP. The block renders exactly two products, so a plain carousel
+     hits the end after one step and has to jump back to 0 — visible, and it
+     reads as broken. Instead the cards are CLONED (2 -> 6) and the scroller is
+     parked on the middle copy: stepping forward always has somewhere to go, and
+     when it drifts past a copy boundary scrollLeft is silently re-centred with
+     snap + smooth OFF, so the seam is invisible. That is the "same original
+     swiping" continuing forever, in both directions, by finger or by timer.
+
+     TOUCH. A swipe pauses the timer for 30s, then it resumes — not forever.
+
+     Off entirely under prefers-reduced-motion, and paused while off-screen.
+     RTL-safe: scrollLeft runs negative in RTL, so direction is read from the
+     computed style rather than assumed. */
   document.querySelectorAll('.qdhero__grid[data-qdh-autoplay]').forEach(function (grid) {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var RESUME_AFTER = 30000;   /* how long a human swipe wins for */
+    var COPIES = 3;             /* original + 2 clones, we sit on the middle */
 
     var seconds = parseFloat(grid.getAttribute('data-qdh-autoplay')) || 5;
     if (seconds < 1) seconds = 1;
 
     var rtl = getComputedStyle(grid).direction === 'rtl';
-    var timer = null;
-    var paused = false;
+    var timer = null, resumeTimer = null, cloned = false, setWidth = 0;
+
+    function isSlider() {
+      /* desktop renders a static 2-up grid — nothing to loop */
+      return grid.scrollWidth > grid.clientWidth + 1;
+    }
+
+    function pos() { return Math.abs(grid.scrollLeft); }
+    function goTo(x, smooth) {
+      grid.style.scrollSnapType = smooth ? '' : 'none';
+      grid.scrollTo({ left: rtl ? -x : x, behavior: smooth ? 'smooth' : 'auto' });
+      if (!smooth) {
+        /* restore snapping after the browser has applied the jump */
+        requestAnimationFrame(function () { grid.style.scrollSnapType = ''; });
+      }
+    }
+
+    /* build the loop: clone the real cards until there are COPIES sets */
+    function buildLoop() {
+      if (cloned || !isSlider()) return;
+      var originals = [].slice.call(grid.children);
+      if (!originals.length) return;
+
+      setWidth = grid.scrollWidth;
+      for (var c = 1; c < COPIES; c++) {
+        originals.forEach(function (el) {
+          var copy = el.cloneNode(true);
+          /* a clone is a real, working card — it must add to cart like the
+             original. Only the init flag and duplicate ids are stripped. */
+          copy.removeAttribute('data-qdhero-init');
+          copy.querySelectorAll('[id]').forEach(function (n) { n.removeAttribute('id'); });
+          grid.appendChild(copy);
+          if (copy.hasAttribute('data-qpack')) initCard(copy);
+          else copy.querySelectorAll('[data-qpack]').forEach(initCard);
+        });
+      }
+      cloned = true;
+      goTo(setWidth, false);   /* park on the middle copy */
+    }
+
+    /* whenever we drift outside the middle copy, shift back by one set */
+    function recentre() {
+      if (!cloned || !setWidth) return;
+      var x = pos();
+      if (x < setWidth * 0.5) goTo(x + setWidth, false);
+      else if (x > setWidth * 1.5) goTo(x - setWidth, false);
+    }
 
     function step() {
-      /* desktop is a static 2-up grid — nothing to scroll */
-      if (grid.scrollWidth <= grid.clientWidth + 1) return;
-
+      if (!isSlider()) return;
+      buildLoop();
       var card = grid.querySelector('.qdhero__card');
       var by = card ? card.offsetWidth + 12 : grid.clientWidth * 0.82;
-      var pos = Math.abs(grid.scrollLeft);
-      var max = grid.scrollWidth - grid.clientWidth;
-
-      /* past the last card, wrap back to the start */
-      var next = (pos + by >= max - 2) ? 0 : pos + by;
-      grid.scrollTo({ left: rtl ? -next : next, behavior: 'smooth' });
+      goTo(pos() + by, true);
     }
 
     function start() {
-      if (timer || paused) return;
+      if (timer || resumeTimer || !isSlider()) return;
+      buildLoop();
       timer = setInterval(step, seconds * 1000);
     }
     function stop() {
       if (timer) { clearInterval(timer); timer = null; }
     }
 
-    /* a finger on the carousel wins over the timer, permanently for that visit */
-    grid.addEventListener('touchstart', function () { paused = true; stop(); }, { passive: true });
+    /* a finger beats the timer for RESUME_AFTER, then autoplay comes back */
+    function holdOff() {
+      stop();
+      if (resumeTimer) clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(function () { resumeTimer = null; start(); }, RESUME_AFTER);
+    }
+    grid.addEventListener('touchstart', holdOff, { passive: true });
+    grid.addEventListener('pointerdown', function (e) {
+      if (e.pointerType !== 'mouse') holdOff();
+    }, { passive: true });
 
-    /* don't animate a section nobody is looking at */
+    /* keep the seam invisible however the scroll happened — finger or timer */
+    var settle = null;
+    grid.addEventListener('scroll', function () {
+      if (settle) clearTimeout(settle);
+      settle = setTimeout(recentre, 120);
+    }, { passive: true });
+
+    /* rebuild if the viewport crosses the desktop/mobile boundary */
+    window.addEventListener('resize', function () {
+      if (!isSlider()) stop();
+      else start();
+    }, { passive: true });
+
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (entries) {
         entries[0].isIntersecting ? start() : stop();
@@ -382,5 +458,6 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
       start();
     }
   });
+
 })();
 </script>
