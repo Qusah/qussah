@@ -260,14 +260,15 @@
     &__sub { font-size: 16px; }
   }
 
-  // MOBILE — full bleed: the gutter and the radius both go, so the artwork
-  // uses the whole screen width.
+  // MOBILE — a rounded card, not full bleed: 15px gutters and a 24px radius,
+  // matching qissa-banner and the rest of the theme's mobile cards (hero,
+  // video banner, values, media) so the banners read as part of the same set.
   @media (max-width: 768px) {
     padding-block: 8px;
 
-    .container { padding-inline: 0; }
+    .container { padding-inline: 15px; }
 
-    &__viewport { border-radius: 0; }
+    &__viewport { border-radius: 24px; }
     &--fixed &__viewport { height: var(--qib-height-sm, 380px); }
 
     &__overlay { padding: 20px; }
