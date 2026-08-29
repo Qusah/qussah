@@ -1,8 +1,16 @@
 /* ─────────────────────────────────────────────────────────────────────────────
-   Packs-sold counter — seven-segment board in a chrome bezel, under the header.
-   Design source: the campaign hero banner (LED digits on deep navy, silver
-   frame, one digit caught mid-roll). Markup: components/qissa-packs-counter.twig
+   Packs-sold counter — seven-segment board in a chrome bezel, permanently hung
+   off the navbar as a notch. Design source: the campaign hero banner (LED digits
+   on deep navy, silver frame, one digit caught mid-roll).
+   Markup: components/qissa-packs-counter.twig
    Behaviour: js/partials/qissa-packs-counter.js
+
+   ONE STATE, ALWAYS. There is no in-flow card and no scroll transition: the
+   notch is fixed from first paint and simply stays put, so the figure is
+   readable at every scroll position. `.qpacks` itself renders nothing — it is a
+   zero-height anchor that owns the --qpacks-top variable the JS measures, while
+   `.qpacks__inner` is the notch. Nothing reserves page space, so no layout
+   shifts when the counter reveals itself.
 
    Everything inside the bezel is sized in em so one clamp() on the display
    scales the whole board — segments, commas, roll distance — together.
@@ -28,62 +36,54 @@ $qpacks-digits: (
 );
 
 .qpacks {
-  /* The theme floats rounded navy cards on the white page (header pill, hero
-     card) — the counter is another one of those cards, not a full-bleed strip */
-  padding: 0.9rem 0 0.25rem;
+  /* Anchor only — the notch inside is fixed, so this element must occupy no
+     page space and intercept no clicks. It exists to carry --qpacks-top. */
+  position: relative;
+  height: 0;
 
-  /* Track the navbar's edges, not the default centered container — the header
-     pill runs on `max-width: none` with 50px gutters (15px ≤1150px), and the
-     card sits flush under it, so mismatched gutters read as off-balance */
+  /* The bare container would otherwise re-impose gutters on a fixed child */
   .container {
     max-width: none;
-    padding-inline: 50px;
+    padding: 0;
   }
 
-  @media (max-width: 1150px) {
-    .container {
-      padding-inline: 15px;
-    }
-  }
+  /* ── The notch ─────────────────────────────────────────────────────────
+     Hung dead-center off the navbar's bottom edge, flat where it meets the
+     bar and rounded below, like a Dynamic Island sliding out from underneath.
 
+     The header is `sticky; z-index: 100` and goes full-bleed when pinned, so
+     the notch deliberately sits at z 90: on reveal it rises from BEHIND the
+     bar, which is what sells the "emerges from the notch" illusion. Its top
+     coordinate is measured by JS (--qpacks-top = the navbar's live bottom
+     edge, re-measured after the header's own 0.5s compaction transition). */
   &__inner {
-    position: relative;
+    position: fixed;
+    /* -1px bites into the navbar so no hairline of page shows between them */
+    top: calc(var(--qpacks-top, 0px) - 1px);
+    left: 50%;
+    z-index: 90;                 /* beneath the navbar (100) on purpose */
+    width: auto;
+
     overflow: hidden;
 
     display: flex;
-    flex-direction: column;      /* board on top, tagline beneath — banner order */
+    flex-direction: column;      /* board on top, tagline tucked under */
     align-items: center;
-    gap: 0.55rem;
+    gap: 0.18rem;
 
-    padding: clamp(1.1rem, 2.5vw, 1.6rem) 1rem;
-    border-radius: 24px;         /* hero card radius */
+    padding: 0.3rem 0.8rem 0.4rem;
+    border-radius: 0 0 20px 20px;   /* flat top against the bar, round below */
 
     /* Hero gradient (qissa-hero.scss) + the banner's wall light behind the frame */
     background:
       radial-gradient(60% 120% at 50% 8%, rgba(90, 130, 255, 0.22) 0%, rgba(90, 130, 255, 0) 60%),
       linear-gradient(125deg, #172951 0%, #25307a 50%, #30378e 100%);
     box-shadow:
-      inset 0 0 0 1px rgba(255, 255, 255, 0.07),   /* hairline ring, like the hero edge */
-      0 14px 34px -18px rgba(23, 41, 81, 0.55);    /* lifts the card off the page */
-  }
+      inset 0 0 0 1px rgba(255, 255, 255, 0.09),
+      0 12px 26px -10px rgba(10, 17, 64, 0.6);
 
-  /* Corner glows — the leafy highlight corners of the campaign banner, abstracted */
-  &__inner::before,
-  &__inner::after {
-    content: '';
-    position: absolute;
-    width: 38%;
-    height: 160%;
-    top: -30%;
-    pointer-events: none;
-  }
-  &__inner::before {
-    left: -12%;
-    background: radial-gradient(closest-side, rgba(218, 239, 247, 0.09), transparent 70%);
-  }
-  &__inner::after {
-    right: -12%;
-    background: radial-gradient(closest-side, rgba(218, 239, 247, 0.09), transparent 70%);
+    transform: translateX(-50%);
+    animation: qpacks-drop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   /* ── The framed display ──────────────────────────────────────────────── */
@@ -99,11 +99,12 @@ $qpacks-digits: (
     align-items: center;
     gap: 0.14em;
 
-    /* One knob scales the entire board — the number is the hero of the card */
-    font-size: clamp(1.5rem, 3.6vw, 2.6rem);
+    /* One knob scales the entire board. Notch scale: compact enough to hang
+       under the bar without covering content, large enough to read at a glance */
+    font-size: clamp(0.85rem, 1.6vw, 1.05rem);
 
-    padding: 0.34em 0.5em;
-    border: 3px solid transparent;
+    padding: 0.3em 0.45em;
+    border: 2px solid transparent;
     border-radius: 0.42em;
 
     /* Chrome bezel: panel gradient fills the padding-box, brushed-metal
@@ -229,21 +230,23 @@ $qpacks-digits: (
     position: relative;
     z-index: 1;
     color: #fff;
-    font-weight: 700;
-    font-size: clamp(0.95rem, 1.8vw, 1.25rem);
+    font-weight: 600;
+    font-size: 0.68rem;
     letter-spacing: 0.01em;
+    opacity: 0.9;
     text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
 
-    /* Accent rules either side, in the theme's ice blue */
+    /* Accent rules either side, in the theme's ice blue. Kept short so they
+       never stretch the notch wider than the board itself. */
     display: flex;
     align-items: center;
-    gap: 0.7em;
+    gap: 0.45em;
 
     &::before,
     &::after {
       content: '';
       height: 1px;
-      width: 2.2em;
+      width: 1.1em;
       background: linear-gradient(90deg, transparent, rgba(218, 239, 247, 0.55));
     }
     &::after {
@@ -262,86 +265,32 @@ $qpacks-digits: (
   }
 }
 
-/* ── Scrolled: the board detaches into a notch under the navbar ─────────────
-   Past the card, only the counter follows — a compact notch hung dead-center
-   off the pinned navbar's bottom edge, flat where it meets the bar and rounded
-   below, like a Dynamic Island sliding out from underneath.
-
-   The header is `sticky; z-index: 100` and goes full-bleed when pinned, so the
-   notch deliberately sits at z 90: during the drop it rises from BEHIND the
-   bar, which is what sells the "emerges from the notch" illusion. Its top
-   coordinate is measured by JS (--qpacks-top = the navbar's live bottom edge,
-   re-measured after the header's own 0.5s compaction transition).
-
-   The in-flow card keeps its height (JS pins min-height on the root) so the
-   page never jumps under the reader. */
-.qpacks--stuck {
-  .qpacks__inner {
-    position: fixed;
-    /* -1px bites into the navbar so no hairline of page shows between them */
-    top: calc(var(--qpacks-top, 0px) - 1px);
-    left: 50%;
-    z-index: 90;                      /* beneath the navbar (100) on purpose */
-    width: auto;
-
-    flex-direction: column;           /* notch: board with the tagline tucked under */
-    gap: 0.18rem;
-    padding: 0.3rem 0.8rem 0.4rem;
-    border-radius: 0 0 20px 20px;     /* flat top against the bar, round below */
-
-    box-shadow:
-      inset 0 0 0 1px rgba(255, 255, 255, 0.09),
-      0 12px 26px -10px rgba(10, 17, 64, 0.6);
-
-    transform: translateX(-50%);
-    animation: qpacks-drop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  /* The notch shows the number alone, small */
-  .qpacks__display {
-    font-size: clamp(0.85rem, 1.6vw, 1.05rem);
-    border-width: 2px;
-    padding: 0.3em 0.45em;
-  }
-
-  /* Tagline rides along, shrunk to notch scale; the accent rules shorten so
-     they don't stretch the pill wider than the board */
-  .qpacks__label {
-    font-size: 0.68rem;
-    font-weight: 600;
-    gap: 0.45em;
-    opacity: 0.9;
-
-    &::before,
-    &::after { width: 1.1em; }
-  }
-
-  .qpacks__inner::before,
-  .qpacks__inner::after { display: none; }
-}
-
 @keyframes qpacks-drop {
   from { transform: translate(-50%, -110%); }   /* starts hidden behind the bar */
   to   { transform: translate(-50%, 0); }
 }
 
-/* ── Mobile: same stacked card, digits sized to own the narrow screen ───── */
+/* ── Mobile: the notch narrows with the screen ──────────────────────────────
+   The vw floor keeps 320px legible; the label drops a step so the pill stays
+   narrower than the screen and never crowds the bar it hangs from. */
 @media (max-width: 560px) {
   .qpacks {
-    padding: 0.7rem 0 0.2rem;
-
     &__inner {
-      gap: 0.4rem;
-      border-radius: 18px;
+      padding: 0.26rem 0.6rem 0.34rem;
+      border-radius: 0 0 16px 16px;
+      max-width: calc(100vw - 24px);
     }
 
-    /* vw floor keeps 320px legible without the board escaping the card */
     &__display {
-      font-size: clamp(1.15rem, 5.4vw, 1.6rem);
+      font-size: clamp(0.8rem, 3.4vw, 0.98rem);
     }
 
     &__label {
-      font-size: 0.85rem;
+      font-size: 0.62rem;
+      gap: 0.35em;
+
+      &::before,
+      &::after { width: 0.8em; }
     }
   }
 }
@@ -350,7 +299,7 @@ $qpacks-digits: (
   .qpacks__reel {
     transition: none !important;
   }
-  .qpacks--stuck .qpacks__inner {
+  .qpacks__inner {
     animation: none;
   }
 }

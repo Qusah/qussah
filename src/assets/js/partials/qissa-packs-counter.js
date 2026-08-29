@@ -144,6 +144,10 @@
     // 1,000,000,000 re-shapes the board): set outright, no roll.
     if (prev === null || reduceMotion || digits.length !== cells.length) {
       build(str);
+      // Re-measure at the moment of reveal: the header may have compacted
+      // between load and the number arriving, which would drop the notch in
+      // at a stale coordinate. (pinTop is a hoisted declaration below.)
+      pinTop();
       root.hidden = false;
       return;
     }
@@ -193,46 +197,37 @@
     };
   }
 
-  /* ── Notch on scroll ────────────────────────────────────────────────── */
-  // Once the card scrolls off the top, only the board follows — a compact
-  // notch hung off the sticky navbar's bottom edge (styles: .qpacks--stuck).
-  // The header is sticky at z 100 and compacts with a 0.5s transition when
-  // pinned, so the notch's top coordinate has to be MEASURED, not assumed:
-  // --qpacks-top tracks the navbar's live bottom edge, re-sampled after the
-  // compaction settles and on resize. The root keeps its measured height
-  // while the inner goes fixed, so the page never jumps and the observer's
-  // geometry stays stable (no stick/unstick flicker).
-  if ('IntersectionObserver' in window) {
-    // Measure the visible dark bar, not the .qheader wrapper — the wrapper's
-    // box runs past the bar (child margins/spacers inside it), which left the
-    // notch floating with a strip of page between it and the navbar.
-    var header = document.querySelector('.qheader-nav') || document.querySelector('.qheader');
+  /* ── Notch positioning ──────────────────────────────────────────────── */
+  // The notch is fixed under the navbar at ALL times — there is no in-flow
+  // card and no scroll state to toggle. The only job left here is keeping its
+  // top coordinate honest: the header is sticky and compacts with a 0.5s
+  // transition when pinned, so --qpacks-top must be MEASURED rather than
+  // assumed, then re-measured whenever that edge can move.
+  //
+  // Measure the visible dark bar, not the .qheader wrapper — the wrapper's box
+  // runs past the bar (child margins/spacers inside it), which left the notch
+  // floating with a strip of page between it and the navbar.
+  var header = document.querySelector('.qheader-nav') || document.querySelector('.qheader');
 
-    var pinTop = function () {
-      if (!root.classList.contains('qpacks--stuck')) return;
-      var edge = header ? Math.max(0, Math.round(header.getBoundingClientRect().bottom)) : 0;
-      root.style.setProperty('--qpacks-top', edge + 'px');
-    };
-
-    new IntersectionObserver(function (entries) {
-      var e = entries[0];
-      // bottom < 0 ⇒ scrolled off the TOP — never stick while the card is
-      // still below the fold on a page that renders it late
-      if (!e.isIntersecting && e.boundingClientRect.bottom < 0) {
-        root.style.minHeight = root.offsetHeight + 'px';
-        // Position before painting the class, or the notch flashes at 0
-        var edge = header ? Math.max(0, Math.round(header.getBoundingClientRect().bottom)) : 0;
-        root.style.setProperty('--qpacks-top', edge + 'px');
-        root.classList.add('qpacks--stuck');
-        setTimeout(pinTop, 600);   // after the header's own 0.5s compaction
-      } else {
-        root.classList.remove('qpacks--stuck');
-        root.style.minHeight = '';
-      }
-    }).observe(root);
-
-    window.addEventListener('resize', pinTop);
+  function pinTop() {
+    var edge = header ? Math.max(0, Math.round(header.getBoundingClientRect().bottom)) : 0;
+    root.style.setProperty('--qpacks-top', edge + 'px');
   }
+
+  // Position before the bar is ever painted, or it flashes at the top of the
+  // page on reveal. Then re-sample as the header compacts and on resize.
+  pinTop();
+  setTimeout(pinTop, 600);   // after the header's own 0.5s compaction
+  window.addEventListener('resize', pinTop);
+
+  // The sticky header only changes height in response to scrolling, so sample
+  // on scroll too — passive, and coalesced into one read per frame.
+  var queued = false;
+  window.addEventListener('scroll', function () {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; pinTop(); });
+  }, { passive: true });
 
   // First paint decides everything: no number, no counter — but keep quietly
   // retrying so a transient pipeline boot doesn't blank the bar all session.
