@@ -44,11 +44,20 @@
 
   // cap each card to a sensible hero width; margin-auto keeps it centered when
   // the grid collapses to a single column on tablet/mobile.
+  //
+  // Flat here, unlike the standalone البكج الشامل card: .qpack__card brings a
+  // white fill and a 40px drop shadow, and with two of them side by side the
+  // shadows pool in the gap and read as a seam between the pair. The single
+  // card keeps its own styling — this only overrides the two in this section.
   &__card {
     max-width: 428px;
     margin-inline: auto;
     width: 100%;
     min-width: 0;   // grid item: allow shrink below content (no RTL edge cut)
+
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
   }
 }
 
@@ -75,14 +84,21 @@
 
   // ── SLIDER: one card + a peek of the next ──────────────────────────────
   //
-  // Scroll-snap carousel, no JS for the swipe itself. The card is 82% of the
-  // container so ~18% of the neighbour shows and the row reads as swipeable.
-  // Negative margin + matching padding let the peeking card run to the screen
-  // edge while the first card still aligns with the page gutter.
+  // Modelled on bareq-products-slider: a plain overflow-x FLEX row with CSS
+  // scroll-snap and fixed-width cards. No JS drives the scrolling, nothing is
+  // cloned and no transform is animated — the browser's own scroller is the
+  // whole mechanism, which is what keeps it from glitching.
+  //
+  // Flex with `flex: none`, not grid-auto-columns: a grid track still resolves
+  // against the container and re-measures on every scroll, which is where the
+  // old version's jitter came from. A fixed flex basis simply cannot drift.
+  //
+  // Negative margin + matching padding (given back as scroll-padding) let the
+  // peeking card run to the screen edge while the first still aligns to the
+  // page gutter — the same trick Bareq uses.
   .qdhero__grid[data-qdh-mobile='slider'] {
+    display: flex;
     grid-template-columns: none;
-    grid-auto-flow: column;
-    grid-auto-columns: 82%;
     gap: 12px;
     overflow-x: auto;
     overscroll-behavior-x: contain;
@@ -97,18 +113,20 @@
     &::-webkit-scrollbar { display: none; }
 
     > .qdhero__card {
+      flex: none;              // every card the same size, never re-measured
+      width: 82%;              // ~18% of the neighbour peeks
       scroll-snap-align: start;
-      min-width: 0;
     }
 
-    // The pack card's own image gallery is ALSO an x-mandatory snap container.
-    // Nested on the same axis the two fight: dragging the slider drags the
-    // gallery, both try to snap, and the card visibly jiggles while the photo
-    // flips on its own. Inside the slider the gallery snaps proximity instead —
-    // still swipeable by finger, but it stops competing for the same gesture.
+    // The card's own gallery is a second x-scroller nested inside this one.
+    // Two snap containers on one axis fight — dragging the slider drags the
+    // gallery, both try to snap, and the card jiggles while the photo flips on
+    // its own. Snapping is switched OFF for the inner one here and its
+    // horizontal panning handed to the slider, so a sideways drag always moves
+    // cards and never the photo. The thumbnails still change the image.
     .qpack__main {
-      scroll-snap-type: x proximity;
-      overscroll-behavior-x: contain;
+      scroll-snap-type: none;
+      overflow-x: hidden;
       touch-action: pan-y pinch-zoom;
     }
   }
