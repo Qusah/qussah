@@ -5,12 +5,17 @@
    Markup: components/qissa-packs-counter.twig
    Behaviour: js/partials/qissa-packs-counter.js
 
-   ONE STATE, ALWAYS. There is no in-flow card and no scroll transition: the
-   notch is fixed from first paint and simply stays put, so the figure is
-   readable at every scroll position. `.qpacks` itself renders nothing — it is a
-   zero-height anchor that owns the --qpacks-top variable the JS measures, while
-   `.qpacks__inner` is the notch. Nothing reserves page space, so no layout
-   shifts when the counter reveals itself.
+   ONE STATE, REVEALED ON SCROLL. There is no in-flow card: the notch is the
+   only form this takes. It is hidden at the top of the page and drops in once
+   the reader scrolls past a threshold, then stays for the rest of the page
+   (returning to the very top hides it again). `.qpacks` itself renders nothing
+   — it is a zero-height anchor that owns the --qpacks-top variable the JS
+   measures, while `.qpacks__inner` is the notch. Nothing reserves page space,
+   so no layout shifts whichever way it goes.
+
+   Visibility is the `.is-visible` class on the root, set by the JS. The notch
+   animates via transform+opacity rather than `display`, so it can slide back
+   up behind the navbar instead of vanishing.
 
    Everything inside the bezel is sized in em so one clamp() on the display
    scales the whole board — segments, commas, roll distance — together.
@@ -82,8 +87,27 @@ $qpacks-digits: (
       inset 0 0 0 1px rgba(255, 255, 255, 0.09),
       0 12px 26px -10px rgba(10, 17, 64, 0.6);
 
-    transform: translateX(-50%);
-    animation: qpacks-drop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* Hidden at rest: parked behind the navbar, which is why the notch sits at
+       z 90 (below the bar's 100) — it slides out from underneath rather than
+       fading in over the top of it. -110% clears its own full height. */
+    transform: translate(-50%, -110%);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+      opacity 0.25s ease,
+      visibility 0s linear 0.45s;
+  }
+
+  /* Scrolled past the threshold — the notch drops into view and stays */
+  &.is-visible &__inner {
+    transform: translate(-50%, 0);
+    opacity: 1;
+    visibility: visible;
+    transition:
+      transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+      opacity 0.25s ease,
+      visibility 0s;
   }
 
   /* ── The framed display ──────────────────────────────────────────────── */
@@ -265,11 +289,6 @@ $qpacks-digits: (
   }
 }
 
-@keyframes qpacks-drop {
-  from { transform: translate(-50%, -110%); }   /* starts hidden behind the bar */
-  to   { transform: translate(-50%, 0); }
-}
-
 /* ── Mobile: the notch narrows with the screen ──────────────────────────────
    The vw floor keeps 320px legible; the label drops a step so the pill stays
    narrower than the screen and never crowds the bar it hangs from. */
@@ -299,7 +318,12 @@ $qpacks-digits: (
   .qpacks__reel {
     transition: none !important;
   }
-  .qpacks__inner {
-    animation: none;
+  /* No slide for a reader who asked for less motion — it just appears */
+  .qpacks__inner,
+  .qpacks.is-visible .qpacks__inner {
+    transition: opacity 0.2s ease, visibility 0s;
+    transform: translate(-50%, 0);
   }
+  .qpacks__inner { opacity: 0; visibility: hidden; }
+  .qpacks.is-visible .qpacks__inner { opacity: 1; visibility: visible; }
 }

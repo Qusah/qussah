@@ -144,11 +144,13 @@
     // 1,000,000,000 re-shapes the board): set outright, no roll.
     if (prev === null || reduceMotion || digits.length !== cells.length) {
       build(str);
-      // Re-measure at the moment of reveal: the header may have compacted
-      // between load and the number arriving, which would drop the notch in
-      // at a stale coordinate. (pinTop is a hoisted declaration below.)
+      // Un-hide the anchor once a real number exists; whether the notch is
+      // actually on screen is the scroll threshold's call, not this one.
+      // Re-measure first — the header may have compacted between load and the
+      // number arriving. (Both are hoisted declarations below.)
       pinTop();
       root.hidden = false;
+      syncVisibility();
       return;
     }
 
@@ -197,36 +199,64 @@
     };
   }
 
-  /* ── Notch positioning ──────────────────────────────────────────────── */
-  // The notch is fixed under the navbar at ALL times — there is no in-flow
-  // card and no scroll state to toggle. The only job left here is keeping its
-  // top coordinate honest: the header is sticky and compacts with a 0.5s
-  // transition when pinned, so --qpacks-top must be MEASURED rather than
-  // assumed, then re-measured whenever that edge can move.
+  /* ── Notch: position + reveal on scroll ─────────────────────────────── */
+  // The notch is the counter's only form — there is no in-flow card. It stays
+  // hidden at the top of the page and drops in once the reader has scrolled
+  // past REVEAL_AT, then remains for the rest of the page; coming back to the
+  // very top puts it away again.
   //
-  // Measure the visible dark bar, not the .qheader wrapper — the wrapper's box
-  // runs past the bar (child margins/spacers inside it), which left the notch
-  // floating with a strip of page between it and the navbar.
+  // Its top coordinate has to be MEASURED, not assumed: the header is sticky
+  // and compacts with a 0.5s transition when pinned. Measure the visible dark
+  // bar, not the .qheader wrapper — the wrapper's box runs past the bar (child
+  // margins/spacers inside it), which left the notch floating with a strip of
+  // page between it and the navbar.
   var header = document.querySelector('.qheader-nav') || document.querySelector('.qheader');
+
+  // Far enough that it never flickers on the small scrolls of a tap or a
+  // rubber-band bounce, low enough to arrive as soon as the reader is moving.
+  var REVEAL_AT = 220;
+  // Hysteresis: hide again slightly higher than the show point, so a reader
+  // parked exactly on the threshold doesn't get a flapping notch.
+  var HIDE_AT = 140;
+  var shown = false;
 
   function pinTop() {
     var edge = header ? Math.max(0, Math.round(header.getBoundingClientRect().bottom)) : 0;
     root.style.setProperty('--qpacks-top', edge + 'px');
   }
 
-  // Position before the bar is ever painted, or it flashes at the top of the
-  // page on reveal. Then re-sample as the header compacts and on resize.
+  function syncVisibility() {
+    var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+    if (!shown && y > REVEAL_AT) {
+      // Position before the class lands, or it animates in from a stale
+      // coordinate on the very first reveal.
+      pinTop();
+      root.classList.add('is-visible');
+      shown = true;
+    } else if (shown && y < HIDE_AT) {
+      root.classList.remove('is-visible');
+      shown = false;
+    }
+  }
+
+  // Sample once up front — a reload partway down a page starts already past
+  // the threshold, and the notch should simply be there.
   pinTop();
+  syncVisibility();
   setTimeout(pinTop, 600);   // after the header's own 0.5s compaction
   window.addEventListener('resize', pinTop);
 
-  // The sticky header only changes height in response to scrolling, so sample
-  // on scroll too — passive, and coalesced into one read per frame.
+  // One read per frame, passive: the header's height and the reveal threshold
+  // both depend on scroll position, so they are sampled together.
   var queued = false;
   window.addEventListener('scroll', function () {
     if (queued) return;
     queued = true;
-    requestAnimationFrame(function () { queued = false; pinTop(); });
+    requestAnimationFrame(function () {
+      queued = false;
+      pinTop();
+      syncVisibility();
+    });
   }, { passive: true });
 
   // First paint decides everything: no number, no counter — but keep quietly
