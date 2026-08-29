@@ -45,19 +45,19 @@
   // cap each card to a sensible hero width; margin-auto keeps it centered when
   // the grid collapses to a single column on tablet/mobile.
   //
-  // Flat here, unlike the standalone البكج الشامل card: .qpack__card brings a
-  // white fill and a 40px drop shadow, and with two of them side by side the
-  // shadows pool in the gap and read as a seam between the pair. The single
-  // card keeps its own styling — this only overrides the two in this section.
+  // The white fill, radius and padding all stay — they ARE the card, and the
+  // gallery, marquee and info are clipped by them. Only the shadow goes:
+  // .qpack__card's 40px drop shadow is drawn for a single centred card, and
+  // with two side by side the two shadows pool in the gap between them and
+  // read as a seam. The standalone البكج الشامل card keeps its shadow; this
+  // only overrides the pair in this section.
   &__card {
     max-width: 428px;
     margin-inline: auto;
     width: 100%;
     min-width: 0;   // grid item: allow shrink below content (no RTL edge cut)
 
-    background: transparent;
     box-shadow: none;
-    padding: 0;
   }
 }
 
