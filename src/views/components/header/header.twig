@@ -11,7 +11,10 @@
      Gated by its own setting, independent of the LED notch below the navbar. #}
   {% include 'components.qissa-packs-bar' %}
 
-  {# top bar — sits ABOVE hero (not overlaid) #}
+  {# top bar — sits ABOVE hero (not overlaid). Hidden while the promo bar is
+     on: both occupy the same slot above the navbar, and stacking them puts
+     three rows before the page content. #}
+  {% if not theme.settings.get('packs_bar_enabled', false) %}
   <div class="qheader-topwrap">
    <div class="container">
     <div class="qheader-topbar">
@@ -32,6 +35,7 @@
     </div>
    </div>
   </div>
+  {% endif %}
 
   {# main nav #}
   <div class="container">
