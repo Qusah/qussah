@@ -8,6 +8,10 @@
    from the dashboard, so the defaults here are only that — defaults.
    ──────────────────────────────────────────────────────────────────────────── */
 
+// `display: flex` below outranks the `hidden` attribute the markup ships with,
+// which would paint an empty bar before the first number arrives. Restore it.
+.qpbar[hidden] { display: none; }
+
 .qpbar {
   --qpb-bg: linear-gradient(120deg, #172951 0%, #25307a 55%, #30378e 100%);
   --qpb-ink: #fff;
@@ -48,7 +52,7 @@
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 10px 16px;
+    gap: 6px 12px;
   }
 
   &__headline {
@@ -67,7 +71,7 @@
   &__msg {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     flex-wrap: wrap;
     justify-content: center;
   }
