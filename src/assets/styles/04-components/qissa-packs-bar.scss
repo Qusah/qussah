@@ -52,7 +52,7 @@
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 6px 12px;
+    gap: 6px 14px;
   }
 
   &__headline {
@@ -68,10 +68,12 @@
     opacity: 0.3;
   }
 
+  // 0.35em, not a pixel value: this is word spacing inside a sentence, so it
+  // has to track the font size rather than stay fixed as the bar shrinks.
   &__msg {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 0.35em;
     flex-wrap: wrap;
     justify-content: center;
   }
@@ -239,7 +241,7 @@
 
 @media (max-width: 420px) {
   .qpbar {
-    &__msg { gap: 4px; }
+    &__msg { gap: 0.3em; }
     &__spark { display: none; }      // the last thing worth losing
   }
 }
