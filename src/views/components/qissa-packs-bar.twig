@@ -32,7 +32,7 @@
         {% set pos = theme.settings.get('packs_bar_position', 'top')|default('top') %}
 
         {# Merchant colours are optional: unset means "use the chosen style". #}
-        {% set css = '' %}
+        {% set css = '--qpb-gap: ' ~ theme.settings.get('packs_bar_gap', 12)|default(12) ~ 'px;' %}
         {% if theme.settings.get('packs_bar_bg') %}
             {% set css = css ~ '--qpb-bg: ' ~ theme.settings.get('packs_bar_bg') ~ ';' %}
         {% endif %}
@@ -47,11 +47,12 @@
              data-qpbar
              data-endpoint="{{ base }}"
              data-target="{{ theme.settings.get('packs_bar_target', 0) }}"
+             data-numerals="{{ theme.settings.get('packs_bar_numerals', 'arabic')|default('arabic') }}"
              {% if theme.settings.get('packs_bar_dismissible', true) %}
                  data-dismissible="1"
                  data-key="{{ theme.settings.get('packs_bar_version', 'v1')|trim }}"
              {% endif %}
-             {% if css %}style="{{ css }}"{% endif %}
+                  style="{{ css }}"
              hidden>
             <div class="qpbar__inner">
 

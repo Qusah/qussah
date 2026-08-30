@@ -8,6 +8,11 @@ body, main, #app { background: transparent; }
   font-family: 'GE SS Two', sans-serif;
   color: #fff;
   padding-top: 40px;   // push the whole header (top bar + nav) down from the page top
+
+  // The promo bar replaces the utility strip and brings its own bottom gap,
+  // so the header stops padding itself away from the page top — otherwise the
+  // 40px above lands between the bar and the navbar as an unexplained void.
+  &:has(.qpbar) { padding-top: 12px; }
   transition: background-color .5s ease, box-shadow .5s ease;
 
   // full-bleed edges aligned to the hero (hero = margin 0 50px, no max-width)

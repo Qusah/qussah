@@ -514,6 +514,36 @@
             "required": false,
             "placeholder": "v1",
             "value": "v1"
+        },
+        {
+            "type": "string",
+            "icon": "sicon-hashtag",
+            "label": "أرقام العدّاد",
+            "description": "عربية (٩٣٥٬٨٠٦) أو إنجليزية (935,806)",
+            "id": "packs_bar_numerals",
+            "format": "select",
+            "required": false,
+            "value": "arabic",
+            "options": [
+                {
+                    "label": "عربية ٠١٢٣",
+                    "value": "arabic"
+                },
+                {
+                    "label": "إنجليزية 0123",
+                    "value": "latin"
+                }
+            ]
+        },
+        {
+            "type": "number",
+            "icon": "sicon-arrows-v",
+            "label": "المسافة بين الشريط والقائمة",
+            "description": "بالبكسل، الافتراضي ١٢",
+            "id": "packs_bar_gap",
+            "format": "integer",
+            "required": false,
+            "value": 12
         }
     ],
     "components": [

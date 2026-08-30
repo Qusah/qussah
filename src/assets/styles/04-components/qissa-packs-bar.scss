@@ -24,7 +24,10 @@
   align-items: center;
   justify-content: center;
 
-  margin: 15px 50px 0;
+  // --qpb-gap is the space between this bar and the navbar below it, and is
+  // merchant-set. The top margin stays small: the header already pads itself
+  // away from the page edge, so a large value here only opens a void above.
+  margin: 0 50px var(--qpb-gap, 12px);
   padding: 12px 48px 12px 20px;      // room on the right for the close button
   border-radius: 100px;              // matches the navbar pill
 
@@ -200,6 +203,7 @@
     top: 0;
     z-index: 120;                    // above the navbar's 100
     margin-top: 0;
+    margin-inline: 0;
     border-radius: 0;
     padding-block: 10px;
   }
@@ -219,7 +223,6 @@
    rows. The divider goes with it. */
 @media (max-width: 768px) {
   .qpbar {
-    margin-top: 10px;
     padding: 10px 40px 10px 14px;
     border-radius: 18px;             // pill → rounded card, like the other blocks
     font-size: 13px;

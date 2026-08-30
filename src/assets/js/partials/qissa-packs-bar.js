@@ -54,7 +54,9 @@
 
   /* ── formatting ────────────────────────────────────────────────────────── */
   var AR = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-  var arabicNumerals = document.documentElement.getAttribute('dir') === 'rtl';
+  // Merchant's choice, not the page direction: an Arabic store may still want
+  // Latin digits, which is a typographic decision rather than a language one.
+  var arabicNumerals = root.getAttribute('data-numerals') !== 'latin';
 
   function format(n) {
     var s = String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
