@@ -7,6 +7,10 @@
 #}
 <header class="store-header qheader qheader--solid">
 
+  {# Promotional packs counter — the strip above everything else in the header.
+     Gated by its own setting, independent of the LED notch below the navbar. #}
+  {% include 'components.qissa-packs-bar' %}
+
   {# top bar — sits ABOVE hero (not overlaid) #}
   <div class="qheader-topwrap">
    <div class="container">

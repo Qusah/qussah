@@ -316,6 +316,204 @@
             "format": "text",
             "placeholder": "منديل بين أيدي عملائنا",
             "value": "منديل بين أيدي عملائنا"
+        },
+        {
+            "type": "boolean",
+            "icon": "sicon-bullhorn",
+            "label": "عرض شريط العداد الترويجي أعلى القائمة",
+            "description": "شريط يوضح كم عبوة تبقّت للوصول للهدف، مستقل عن عداد الهيدر",
+            "id": "packs_bar_enabled",
+            "format": "switch",
+            "required": false,
+            "value": false,
+            "selected": false
+        },
+        {
+            "type": "string",
+            "icon": "sicon-edit",
+            "label": "عنوان الشريط الترويجي",
+            "description": "نص عريض يظهر أول الشريط، مثل: نقترب من المليار! — اتركه فارغاً لإخفائه",
+            "id": "packs_bar_headline",
+            "format": "text",
+            "required": false,
+            "placeholder": "نقترب من المليار!",
+            "value": "نقترب من المليار!"
+        },
+        {
+            "type": "string",
+            "icon": "sicon-edit",
+            "label": "النص قبل الرقم",
+            "description": "مثال: باقي",
+            "id": "packs_bar_text_before",
+            "format": "text",
+            "required": false,
+            "placeholder": "باقي",
+            "value": "باقي"
+        },
+        {
+            "type": "string",
+            "icon": "sicon-edit",
+            "label": "النص بعد الرقم",
+            "description": "مثال: عبوة ونوصل للمليار",
+            "id": "packs_bar_text_after",
+            "format": "text",
+            "required": false,
+            "placeholder": "عبوة ونوصل للمليار",
+            "value": "عبوة ونوصل للمليار"
+        },
+        {
+            "type": "number",
+            "icon": "sicon-chart",
+            "label": "الهدف المطلوب الوصول إليه",
+            "description": "اتركه صفراً لاستخدام الهدف القادم من الخادم. الرقم المعروض = الهدف ناقص المباع",
+            "id": "packs_bar_target",
+            "format": "integer",
+            "required": false,
+            "value": 0
+        },
+        {
+            "type": "string",
+            "icon": "sicon-link",
+            "label": "نص زر الشريط",
+            "description": "اتركه فارغاً لإخفاء الزر",
+            "id": "packs_bar_cta_text",
+            "format": "text",
+            "required": false,
+            "placeholder": "تسوق الآن",
+            "value": "تسوق الآن"
+        },
+        {
+            "type": "string",
+            "icon": "sicon-link",
+            "label": "رابط زر الشريط",
+            "description": "الصفحة التي ينتقل إليها الزر",
+            "id": "packs_bar_cta_url",
+            "format": "text",
+            "required": false,
+            "placeholder": "/products",
+            "value": ""
+        },
+        {
+            "type": "string",
+            "icon": "sicon-paint",
+            "label": "شكل الشريط",
+            "description": "تدرّج بألوان الهوية، لون واحد، فاتح، أو بإطار فقط",
+            "id": "packs_bar_style",
+            "format": "select",
+            "required": false,
+            "value": "gradient",
+            "options": [
+                {
+                    "label": "تدرّج (افتراضي)",
+                    "value": "gradient"
+                },
+                {
+                    "label": "لون واحد",
+                    "value": "solid"
+                },
+                {
+                    "label": "فاتح",
+                    "value": "light"
+                },
+                {
+                    "label": "إطار فقط",
+                    "value": "outline"
+                }
+            ]
+        },
+        {
+            "type": "string",
+            "icon": "sicon-arrow-up",
+            "label": "مكان الشريط",
+            "description": "أعلى الصفحة ويتحرك معها، أو ثابت في أعلى الشاشة دائماً",
+            "id": "packs_bar_position",
+            "format": "select",
+            "required": false,
+            "value": "top",
+            "options": [
+                {
+                    "label": "أعلى الصفحة",
+                    "value": "top"
+                },
+                {
+                    "label": "ثابت أثناء التمرير",
+                    "value": "sticky"
+                }
+            ]
+        },
+        {
+            "type": "string",
+            "icon": "sicon-paint",
+            "label": "لون خلفية الشريط",
+            "description": "يتجاوز الشكل المختار. اتركه فارغاً للون الافتراضي",
+            "id": "packs_bar_bg",
+            "format": "color",
+            "required": false,
+            "value": ""
+        },
+        {
+            "type": "string",
+            "icon": "sicon-paint",
+            "label": "لون نص الشريط",
+            "description": "اتركه فارغاً للون الافتراضي",
+            "id": "packs_bar_ink",
+            "format": "color",
+            "required": false,
+            "value": ""
+        },
+        {
+            "type": "string",
+            "icon": "sicon-paint",
+            "label": "لون العنوان المميز",
+            "description": "لون العنوان العريض. اتركه فارغاً للون الافتراضي",
+            "id": "packs_bar_accent",
+            "format": "color",
+            "required": false,
+            "value": ""
+        },
+        {
+            "type": "boolean",
+            "icon": "sicon-star",
+            "label": "إظهار الرمز ✨ بجانب النص",
+            "description": "زخرفة صغيرة بعد الجملة",
+            "id": "packs_bar_sparkle",
+            "format": "switch",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
+            "type": "boolean",
+            "icon": "sicon-chart",
+            "label": "إظهار شريط التقدم",
+            "description": "تعبئة خفيفة خلف النص توضح نسبة الوصول للهدف",
+            "id": "packs_bar_progress",
+            "format": "switch",
+            "required": false,
+            "value": false,
+            "selected": false
+        },
+        {
+            "type": "boolean",
+            "icon": "sicon-cancel",
+            "label": "السماح بإغلاق الشريط",
+            "description": "زر إغلاق يخفي الشريط لهذا الزائر",
+            "id": "packs_bar_dismissible",
+            "format": "switch",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
+            "type": "string",
+            "icon": "sicon-refresh",
+            "label": "رقم إصدار الشريط",
+            "description": "غيّر هذا الرقم لإظهار الشريط من جديد لمن أغلقه سابقاً",
+            "id": "packs_bar_version",
+            "format": "text",
+            "required": false,
+            "placeholder": "v1",
+            "value": "v1"
         }
     ],
     "components": [

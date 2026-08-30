@@ -1,0 +1,246 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Promotional packs bar — the strip above the navbar.
+   Markup: components/qissa-packs-bar.twig · Behaviour: js/partials/qissa-packs-bar.js
+
+   Shaped like the navbar it sits above: the same navy gradient, the same 50px
+   gutters, and a pill radius so the two read as a matched pair rather than a
+   banner bolted on top. Every colour is a variable the merchant can override
+   from the dashboard, so the defaults here are only that — defaults.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.qpbar {
+  --qpb-bg: linear-gradient(120deg, #172951 0%, #25307a 55%, #30378e 100%);
+  --qpb-ink: #fff;
+  --qpb-accent: #fff;
+
+  position: relative;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin: 15px 50px 0;
+  padding: 12px 48px 12px 20px;      // room on the right for the close button
+  border-radius: 100px;              // matches the navbar pill
+
+  background: var(--qpb-bg);
+  color: var(--qpb-ink);
+  font-family: 'GE SS Two', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+
+  overflow: hidden;                  // clips the progress fill to the pill
+
+  // Collapses on dismiss rather than vanishing — a strip that simply
+  // disappears makes the whole page jump under the reader's eye.
+  transition: opacity 0.25s ease, transform 0.25s ease;
+
+  &.is-closing {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  &__inner {
+    position: relative;
+    z-index: 1;                      // above the progress fill
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+  }
+
+  &__headline {
+    font-weight: 700;
+    color: var(--qpb-accent);
+  }
+
+  // Hairline divider between the headline and the message
+  &__sep {
+    width: 1px;
+    height: 16px;
+    background: currentcolor;
+    opacity: 0.3;
+  }
+
+  &__msg {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  // The figure carries the weight — it is the reason the bar exists
+  &__num {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;   // no width jitter as digits change
+    letter-spacing: 0.02em;
+  }
+
+  &__spark { line-height: 1; }
+
+  /* ── CTA ─────────────────────────────────────────────────────────────── */
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 7px 18px;
+    border: 1px solid rgb(255 255 255 / 35%);
+    border-radius: 100px;
+
+    color: var(--qpb-ink);
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+    &:hover {
+      background: var(--qpb-ink);
+      border-color: var(--qpb-ink);
+      color: #172951;
+    }
+
+    i { font-size: 12px; }
+  }
+
+  /* ── close ───────────────────────────────────────────────────────────── */
+  // Physical right: the bar is RTL, but the × belongs on the same side of the
+  // frame in both directions, matching where the reader expects to dismiss.
+  &__close {
+    position: absolute;
+    inset-block: 0;
+    right: 18px;
+    z-index: 2;
+
+    display: grid;
+    place-items: center;
+    width: 28px;
+
+    background: none;
+    border: 0;
+    color: inherit;
+    font-size: 14px;
+    opacity: 0.7;
+    cursor: pointer;
+
+    transition: opacity 0.2s ease;
+
+    &:hover { opacity: 1; }
+  }
+
+  /* ── progress fill ───────────────────────────────────────────────────── */
+  // Sits behind the text, width set by JS from total/target.
+  &__progress {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 0;
+    background: rgb(255 255 255 / 12%);
+    transition: width 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  /* Screen-reader value — the visible figure is aria-hidden */
+  &__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  /* ── STYLE: solid ────────────────────────────────────────────────────── */
+  &--solid { --qpb-bg: #172951; }
+
+  /* ── STYLE: light — for a store running a pale header ────────────────── */
+  &--light {
+    --qpb-bg: #e8fcff;
+    --qpb-ink: #172951;
+    --qpb-accent: #30378e;
+
+    .qpbar__cta {
+      border-color: rgb(23 41 81 / 25%);
+
+      &:hover { background: #172951; border-color: #172951; color: #fff; }
+    }
+
+    .qpbar__progress { background: rgb(23 41 81 / 8%); }
+  }
+
+  /* ── STYLE: outline — quietest of the three ──────────────────────────── */
+  &--outline {
+    --qpb-bg: transparent;
+    --qpb-ink: #172951;
+    --qpb-accent: #30378e;
+
+    border: 1px solid rgb(23 41 81 / 15%);
+
+    .qpbar__cta {
+      border-color: rgb(23 41 81 / 25%);
+
+      &:hover { background: #172951; border-color: #172951; color: #fff; }
+    }
+
+    .qpbar__progress { background: rgb(48 55 142 / 8%); }
+  }
+
+  /* ── POSITION: sticky — rides along at the top of the viewport ───────── */
+  &--sticky {
+    position: sticky;
+    top: 0;
+    z-index: 120;                    // above the navbar's 100
+    margin-top: 0;
+    border-radius: 0;
+    padding-block: 10px;
+  }
+}
+
+/* ── tablet ────────────────────────────────────────────────────────────── */
+@media (max-width: 1150px) {
+  .qpbar {
+    margin-inline: 15px;             // the navbar's own gutter
+    font-size: 14px;
+  }
+}
+
+/* ── mobile ────────────────────────────────────────────────────────────────
+   The headline is the first thing to go: at this width the countdown and the
+   CTA are the message, and a third line of text would push the bar to three
+   rows. The divider goes with it. */
+@media (max-width: 768px) {
+  .qpbar {
+    margin-top: 10px;
+    padding: 10px 40px 10px 14px;
+    border-radius: 18px;             // pill → rounded card, like the other blocks
+    font-size: 13px;
+
+    &__inner { gap: 8px 10px; }
+    &__headline,
+    &__sep { display: none; }
+
+    &__cta {
+      padding: 6px 14px;
+      font-size: 13px;
+    }
+
+    &__close { right: 12px; width: 24px; }
+
+    &--sticky { border-radius: 0; margin-inline: 0; }
+  }
+}
+
+@media (max-width: 420px) {
+  .qpbar {
+    &__msg { gap: 4px; }
+    &__spark { display: none; }      // the last thing worth losing
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qpbar,
+  .qpbar__progress { transition: none; }
+}

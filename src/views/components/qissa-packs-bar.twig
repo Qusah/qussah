@@ -1,0 +1,104 @@
+{# Promotional counter bar — the top strip above the navbar.
+
+   Shows how many packs are LEFT to reach the target ("باقي ٩٥٣٬٥٥٧ عبوة ونوصل
+   للمليار") rather than how many are sold, because a countdown reads as an
+   invitation to take part while a running total reads as a statistic. The
+   figure and the target both come from the same pipeline the LED notch uses —
+   the theme never does the maths and never hardcodes a number.
+
+   Independent of the notch: `packs_bar_enabled` gates this, `packs_counter_enabled`
+   gates the notch, so a merchant can run either, both, or neither.
+
+   ── Why the number is not server-rendered ────────────────────────────────────
+   A Twig-side figure would paint stale for every visitor served a cached page.
+   The bar ships `hidden`; qissa-packs-bar.js reveals it only once a real number
+   has arrived, so a dead endpoint leaves no empty strip behind.
+
+   ── Dismissal ───────────────────────────────────────────────────────────────
+   Optional, and remembered in localStorage against a merchant-set version key.
+   Bumping the key in the dashboard brings the bar back for everyone who closed
+   it — otherwise a dismissal would silently last forever and the next campaign
+   would never be seen.
+#}
+{% set on_cart = page.slug starts with 'cart' or page.slug starts with 'checkout' %}
+
+{% if theme.settings.get('packs_bar_enabled', false) and not on_cart %}
+    {% set base = theme.settings.get('packs_counter_endpoint', 'https://salla-pipeline.onrender.com')|trim %}
+
+    {% if base %}
+        {# Theme settings come back as plain scalars (unlike component fields,
+           which can arrive wrapped in a list), so these read directly. #}
+        {% set style = theme.settings.get('packs_bar_style', 'gradient')|default('gradient') %}
+        {% set pos = theme.settings.get('packs_bar_position', 'top')|default('top') %}
+
+        {# Merchant colours are optional: unset means "use the chosen style". #}
+        {% set css = '' %}
+        {% if theme.settings.get('packs_bar_bg') %}
+            {% set css = css ~ '--qpb-bg: ' ~ theme.settings.get('packs_bar_bg') ~ ';' %}
+        {% endif %}
+        {% if theme.settings.get('packs_bar_ink') %}
+            {% set css = css ~ '--qpb-ink: ' ~ theme.settings.get('packs_bar_ink') ~ ';' %}
+        {% endif %}
+        {% if theme.settings.get('packs_bar_accent') %}
+            {% set css = css ~ '--qpb-accent: ' ~ theme.settings.get('packs_bar_accent') ~ ';' %}
+        {% endif %}
+
+        <div class="qpbar qpbar--{{ style }} qpbar--{{ pos }}"
+             data-qpbar
+             data-endpoint="{{ base }}"
+             data-target="{{ theme.settings.get('packs_bar_target', 0) }}"
+             {% if theme.settings.get('packs_bar_dismissible', true) %}
+                 data-dismissible="1"
+                 data-key="{{ theme.settings.get('packs_bar_version', 'v1')|trim }}"
+             {% endif %}
+             {% if css %}style="{{ css }}"{% endif %}
+             hidden>
+            <div class="qpbar__inner">
+
+                {% set headline = theme.settings.get('packs_bar_headline', '')|trim %}
+                {% if headline %}
+                    <strong class="qpbar__headline">{{ headline }}</strong>
+                    <span class="qpbar__sep" aria-hidden="true"></span>
+                {% endif %}
+
+                {# The number is injected between the two halves of the sentence,
+                   so Arabic word order stays correct whatever the merchant types. #}
+                <span class="qpbar__msg">
+                    {% set before = theme.settings.get('packs_bar_text_before', 'باقي')|trim %}
+                    {% set after  = theme.settings.get('packs_bar_text_after', 'عبوة ونوصل للمليار')|trim %}
+                    {% if before %}<span class="qpbar__before">{{ before }}</span>{% endif %}
+                    <span class="qpbar__num" data-qpbar-num aria-hidden="true"></span>
+                    {% if after %}<span class="qpbar__after">{{ after }}</span>{% endif %}
+                    {% if theme.settings.get('packs_bar_sparkle', true) %}
+                        <span class="qpbar__spark" aria-hidden="true">✨</span>
+                    {% endif %}
+                </span>
+
+                {% set cta = theme.settings.get('packs_bar_cta_text', '')|trim %}
+                {% set cta_url = theme.settings.get('packs_bar_cta_url', '')|trim %}
+                {% if cta and cta_url %}
+                    <a class="qpbar__cta" href="{{ cta_url }}">
+                        <span>{{ cta }}</span>
+                        <i class="sicon-arrow-left" aria-hidden="true"></i>
+                    </a>
+                {% endif %}
+
+                {# aria-live sibling: the board above is decorative, this is what
+                   a screen reader actually announces (and only on real change). #}
+                <span class="qpbar__sr" data-qpbar-sr role="status" aria-live="polite"></span>
+            </div>
+
+            {% if theme.settings.get('packs_bar_dismissible', true) %}
+                <button type="button" class="qpbar__close" data-qpbar-close
+                        aria-label="{{ trans('blocks.qissa.close')|default('إغلاق') }}">
+                    <i class="sicon-cancel" aria-hidden="true"></i>
+                </button>
+            {% endif %}
+
+            {% if theme.settings.get('packs_bar_progress', false) %}
+                {# Fills toward the target — the campaign's own progress made visible #}
+                <span class="qpbar__progress" data-qpbar-progress aria-hidden="true"></span>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endif %}
