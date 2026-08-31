@@ -24,13 +24,23 @@ class App extends AppHelpers {
     this.initiateModals();
     this.initiateCollapse();
     
-    // Ensure #more-menu-dropdown exists before running changeMenuDirection
-    const menuDirInterval = setInterval(() => {
-      if (document.querySelector('#more-menu-dropdown')) {
-        this.changeMenuDirection();
-        clearInterval(menuDirInterval);
-      }
-    }, 100);
+    // Ensure #more-menu-dropdown exists before running changeMenuDirection.
+    // The dropdown is rendered by <custom-main-menu>; the Qussah header uses a
+    // static pill nav instead, so on this theme the element never arrives. Poll
+    // only where the menu is actually on the page, and give up after 5s either
+    // way — an unbounded 10Hz timer ran for the whole session on every page and
+    // showed up as main-thread work in the INP measurements.
+    if (document.querySelector('custom-main-menu')) {
+      let menuDirTries = 0;
+      const menuDirInterval = setInterval(() => {
+        if (document.querySelector('#more-menu-dropdown')) {
+          this.changeMenuDirection();
+          clearInterval(menuDirInterval);
+        } else if (++menuDirTries > 50) {
+          clearInterval(menuDirInterval);
+        }
+      }, 100);
+    }
 
     initTootTip();
     this.loadModalImgOnclick();
@@ -100,17 +110,25 @@ class App extends AppHelpers {
     }
   }
 
-isElementLoaded(selector){
+// Resolves once `selector` appears. Bounded on purpose: an element that never
+// arrives used to leave this polling at ~6Hz for the whole session. The promise
+// simply never resolves after the deadline, which is what the callers expect
+// when the element genuinely isn't on the page.
+isElementLoaded(selector, timeout = 8000){
   return new Promise((resolve=>{
+    const started = Date.now();
     const interval=setInterval(()=>{
     if(document.querySelector(selector)){
       clearInterval(interval)
       return resolve(document.querySelector(selector))
     }
+    if (Date.now() - started > timeout) {
+      clearInterval(interval)
+    }
    },160)
 }))
 
-  
+
   };
 
   copyToClipboard(event) {

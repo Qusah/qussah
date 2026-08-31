@@ -35,7 +35,10 @@
             {# Image side (left in RTL) #}
             {% if component.image %}
                 <div class="qissa-hero__media">
-                    <img src="{{ component.image }}" alt="{{ component.heading }}" loading="eager" class="qissa-hero__img"/>
+                    {# The hero photo is the LCP element on mobile. `eager` only
+                       stops it being deferred; `fetchpriority` is what moves it
+                       ahead of the other images the preload scanner finds. #}
+                    <img src="{{ component.image }}" alt="{{ component.heading }}" loading="eager" fetchpriority="high" decoding="async" class="qissa-hero__img"/>
                 </div>
             {% endif %}
         </div>

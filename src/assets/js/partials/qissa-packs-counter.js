@@ -246,16 +246,18 @@
   setTimeout(pinTop, 600);   // after the header's own 0.5s compaction
   window.addEventListener('resize', pinTop);
 
-  // One read per frame, passive: the header's height and the reveal threshold
-  // both depend on scroll position, so they are sampled together.
+  // Passive, one frame at a time. pinTop() forces a synchronous layout via
+  // getBoundingClientRect, so it is skipped entirely while the notch is off
+  // screen — there is nothing to position then, and paying for a reflow on
+  // every frame of every scroll on every page was pure waste.
   var queued = false;
   window.addEventListener('scroll', function () {
     if (queued) return;
     queued = true;
     requestAnimationFrame(function () {
       queued = false;
-      pinTop();
-      syncVisibility();
+      syncVisibility();          // positions itself on the frame it turns on
+      if (shown) { pinTop(); }   // afterwards, track the header while visible
     });
   }, { passive: true });
 

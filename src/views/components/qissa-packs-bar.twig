@@ -10,9 +10,19 @@
    gates the notch, so a merchant can run either, both, or neither.
 
    ── Why the number is not server-rendered ────────────────────────────────────
-   A Twig-side figure would paint stale for every visitor served a cached page.
-   The bar ships `hidden`; qissa-packs-bar.js reveals it only once a real number
-   has arrived, so a dead endpoint leaves no empty strip behind.
+   A Twig-side figure would paint stale for every visitor served a cached page,
+   so the figure alone is fetched client-side and dropped into a slot that is
+   already the right size.
+
+   ── Why the BAR is server-rendered (CLS) ─────────────────────────────────────
+   The bar used to ship `hidden` and be revealed once the number arrived. That
+   inserted a ~56px strip at the very top of the document after first paint and
+   pushed the header and hero down on every page — the single largest layout
+   shift on the store. The bar now paints with the page; only the numerals
+   arrive late, into a slot with a reserved width, so nothing moves.
+
+   Cost of that choice: if the pipeline is unreachable the sentence shows with
+   an empty numeral slot rather than no bar at all.
 
    ── Dismissal ───────────────────────────────────────────────────────────────
    Optional, and remembered in localStorage against a merchant-set version key.
@@ -31,8 +41,19 @@
         {% set style = theme.settings.get('packs_bar_style', 'gradient')|default('gradient') %}
         {% set pos = theme.settings.get('packs_bar_position', 'top')|default('top') %}
 
+        {# Width of the numeral slot, reserved so the figure arriving from the
+           pipeline cannot reflow the sentence around it. The countdown can never
+           exceed the target, so the target's own formatted length is an exact
+           upper bound rather than a guess: its digits plus one separator per
+           thousands group. With no merchant target the API supplies one we can't
+           see at render time, so fall back to the default copy's own goal — a
+           billion, whose countdown tops out at ٩٩٩٬٩٩٩٬٩٩٩: 9 digits + 2
+           separators = 11 characters. #}
+        {% set tgt_len = (theme.settings.get('packs_bar_target', 0) ~ '')|length %}
+        {% set num_ch = tgt_len > 1 ? tgt_len + ((tgt_len - 1) // 3) : 11 %}
+
         {# Merchant colours are optional: unset means "use the chosen style". #}
-        {% set css = '--qpb-gap: ' ~ theme.settings.get('packs_bar_gap', 12)|default(12) ~ 'px;' %}
+        {% set css = '--qpb-num-ch: ' ~ num_ch ~ ';--qpb-gap: ' ~ theme.settings.get('packs_bar_gap', 12)|default(12) ~ 'px;' %}
         {% if theme.settings.get('packs_bar_bg') %}
             {% set css = css ~ '--qpb-bg: ' ~ theme.settings.get('packs_bar_bg') ~ ';' %}
         {% endif %}
@@ -52,8 +73,7 @@
                  data-dismissible="1"
                  data-key="{{ theme.settings.get('packs_bar_version', 'v1')|trim }}"
              {% endif %}
-                  style="{{ css }}"
-             hidden>
+                  style="{{ css }}">
             <div class="qpbar__inner">
 
                 {% set headline = theme.settings.get('packs_bar_headline', '')|trim %}
@@ -68,7 +88,7 @@
                     {% set before = theme.settings.get('packs_bar_text_before', 'باقي')|trim %}
                     {% set after  = theme.settings.get('packs_bar_text_after', 'عبوة ونوصل للمليار')|trim %}
                     {% if before %}<span class="qpbar__before">{{ before }}</span>{% endif %}
-                    <span class="qpbar__num" data-qpbar-num aria-hidden="true"></span>
+                    <span class="qpbar__num is-pending" data-qpbar-num aria-hidden="true"></span>
                     {% if after %}<span class="qpbar__after">{{ after }}</span>{% endif %}
                     {% if theme.settings.get('packs_bar_sparkle', true) %}
                         <span class="qpbar__spark" aria-hidden="true">✨</span>
@@ -101,5 +121,24 @@
                 <span class="qpbar__progress" data-qpbar-progress aria-hidden="true"></span>
             {% endif %}
         </div>
+
+        {# Dismissal has to be resolved BEFORE the browser paints, or a visitor
+           who closed the bar would see it flash and collapse — which is the very
+           shift this component was reworked to remove. localStorage is only
+           readable from script, so this runs inline and synchronously: the
+           parser blocks on it while the bar is still unpainted. Deliberately not
+           in qissa-packs-bar.js — that file is `defer`red and therefore runs
+           after first paint, far too late to hide anything without a jump. #}
+        <script data-cfasync="false">
+        (function () {
+            var el = document.querySelector('[data-qpbar]');
+            if (!el || el.getAttribute('data-dismissible') !== '1') { return; }
+            try {
+                if (localStorage.getItem('qpbar_dismissed') === (el.getAttribute('data-key') || 'v1')) {
+                    el.hidden = true;
+                }
+            } catch (e) { /* private mode — leave the bar up */ }
+        })();
+        </script>
     {% endif %}
 {% endif %}

@@ -39,7 +39,9 @@
   if (root.getAttribute('data-dismissible') === '1') {
     var stored = null;
     try { stored = localStorage.getItem(KEY); } catch (e) { /* private mode */ }
-    if (stored === version) { return; }              // already closed: never paint
+    // Already hidden before first paint by the inline script in the markup —
+    // this only stops the needless polling for a bar nobody is looking at.
+    if (stored === version) { return; }
 
     var closeBtn = root.querySelector('[data-qpbar-close]');
     if (closeBtn) {
@@ -73,7 +75,11 @@
     if (!isFinite(total) || !isFinite(target)) { return; }
 
     // Past the goal the countdown would go negative, which is worse than
-    // nothing — the bar simply retires itself.
+    // nothing — the bar simply retires itself. This is the one path that still
+    // removes the strip after paint, and so the one that can still shift the
+    // page; it is a terminal, once-per-campaign state, and showing a wrong or
+    // negative figure would be the worse trade. Switch the bar off in the
+    // dashboard once the goal is reached.
     var left = target - total;
     if (left <= 0) { root.hidden = true; return; }
 
@@ -81,14 +87,13 @@
     prev = left;
 
     numEl.textContent = format(left);
+    numEl.classList.remove('is-pending');   // drop the reserved-slot placeholder
     if (srEl) { srEl.textContent = format(left); }
 
     if (barEl && target > 0) {
       var pct = Math.max(0, Math.min(100, (total / target) * 100));
       barEl.style.width = pct.toFixed(2) + '%';
     }
-
-    root.hidden = false;
   }
 
   /* ── transport: stream, falling back to polling ────────────────────────── */

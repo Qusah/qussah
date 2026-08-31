@@ -8,8 +8,8 @@
    from the dashboard, so the defaults here are only that — defaults.
    ──────────────────────────────────────────────────────────────────────────── */
 
-// `display: flex` below outranks the `hidden` attribute the markup ships with,
-// which would paint an empty bar before the first number arrives. Restore it.
+// `display: flex` below outranks the `hidden` attribute, which is still how a
+// dismissed bar is put away (by the inline script in the markup, before paint).
 .qpbar[hidden] { display: none; }
 
 .qpbar {
@@ -86,6 +86,37 @@
     font-weight: 700;
     font-variant-numeric: tabular-nums;   // no width jitter as digits change
     letter-spacing: 0.02em;
+
+    // The slot is sized before the number exists. The bar is server-rendered
+    // now, so the figure lands into space already accounted for instead of
+    // widening the sentence — that widening was reflowing the whole strip and,
+    // on a narrow screen, rewrapping it to a second line. --qpb-num-ch is the
+    // target's formatted length, set in the markup.
+    display: inline-block;
+    min-width: calc(var(--qpb-num-ch, 11) * 1ch);
+    text-align: center;
+
+    // Until the first figure arrives the slot reads as waiting rather than
+    // broken. No animation: this sits above the fold and must not repaint.
+    //
+    // The zero-width space is what gives the empty span a normal text line box,
+    // so the waiting slot is exactly as tall as the filled one; the bar itself
+    // is taken out of flow on top of it. Without both, swapping the placeholder
+    // for digits would change the row height — the shift this rework removes.
+    &.is-pending {
+      position: relative;
+
+      &::after { content: "\200b"; }
+
+      &::before {
+        content: '';
+        position: absolute;
+        inset: 0.25em 0;
+        border-radius: 3px;
+        background: currentcolor;
+        opacity: 0.22;
+      }
+    }
   }
 
   &__spark { line-height: 1; }

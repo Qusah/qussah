@@ -78,6 +78,10 @@
   font-family: 'WesternDigits';
   src: url('https://fonts.gstatic.com/s/nunito/v26/XRXV3I6Li01BKofINeaB.woff2') format('woff2');
   unicode-range: U+0030-0039;
+  // Without this the default (`auto` ≈ `block`) hides EVERY digit on the page —
+  // prices, cart totals, counters — for up to 3s while a third-party font loads.
+  // `swap` paints them in the fallback immediately and exchanges them on arrival.
+  font-display: swap;
 }
 /* LTR spans (phone numbers, prices) get a Latin face + lining numerals */
 span[dir="ltr"] {
