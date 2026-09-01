@@ -146,14 +146,9 @@ content re-isolates its own RTL for the Arabic text.
                                The banner ships with an empty chrome frame; the figure is
                                drawn into it by qissa-hero-counter.js so the artwork never
                                needs re-exporting. Nothing is server-rendered: a Twig-side
-                               number would paint stale for every cached page. The caption
-                               fields are optional — blank means the board alone. #}
+                               number would paint stale for every cached page. The board is
+                               all there is — the artwork carries its own tagline. #}
                             {% if slide.counter_enabled and counter_base %}
-                                {% set cap_raw = slide.counter_caption is iterable ? slide.counter_caption|first : slide.counter_caption %}
-                                {% set cap = cap_raw.value|default(cap_raw)|default('above') %}
-                                {% set nums_raw = slide.counter_numerals is iterable ? slide.counter_numerals|first : slide.counter_numerals %}
-                                {% set nums = nums_raw.value|default(nums_raw)|default('arabic') %}
-
                                 {# Frame coordinates as % of the image, one set per artwork
                                    (desktop / mobile). Text fields, because Twilight numbers
                                    are integers and the frame needs tenths; anything that is
@@ -175,44 +170,23 @@ content re-isolates its own RTL for the Arabic text.
                                     {% set ccss = ccss ~ '--qibc-' ~ k ~ ':' ~ v ~ '%;--qibc-' ~ k ~ 'm:' ~ vm ~ '%;' %}
                                 {% endfor %}
 
-                                {% set c_before  = slide.counter_before|default('')|trim %}
-                                {% set c_after   = slide.counter_after|default('')|trim %}
-                                {% set c_cta     = slide.counter_cta_text|default('')|trim %}
-                                {% set c_cta_url = slide.counter_cta_url|default('')|trim %}
+                                {# Merchant colours are optional: unset keeps the design's
+                                   white digits with a blue glow (defaults in the SCSS). #}
+                                {% set c_ink  = slide.counter_color|default('')|trim %}
+                                {% set c_glow = slide.counter_glow|default('')|trim %}
+                                {% if c_ink %}{% set ccss = ccss ~ '--qibc-ink:' ~ c_ink ~ ';' %}{% endif %}
+                                {% if c_glow %}{% set ccss = ccss ~ '--qibc-glow:' ~ c_glow ~ ';' %}{% endif %}
 
                                 <div class="qibc"
                                      data-qibc
                                      data-endpoint="{{ counter_base }}"
                                      data-target="{{ slide.counter_target|default(0) }}"
-                                     data-numerals="{{ nums }}"
-                                     data-caption="{{ cap }}"
                                      style="{{ ccss }}">
                                     <div class="qibc__frame">
                                         {# pure glowing geometry, no text: the value for
                                            assistive tech is the live region below #}
                                         <span class="qibc__board" data-qibc-board aria-hidden="true"></span>
                                     </div>
-
-                                    {% if cap != 'none' and (c_before or c_after or (c_cta and c_cta_url)) %}
-                                        <div class="qibc__caption">
-                                            {% if c_before or c_after %}
-                                                {# the number sits between the two halves, so the
-                                                   Arabic word order holds whatever the merchant types #}
-                                                <span class="qibc__text" data-qibc-text aria-hidden="true">
-                                                    {% if c_before %}<span>{{ c_before }}</span>{% endif %}
-                                                    <b class="qibc__num" data-qibc-num></b>
-                                                    {% if c_after %}<span>{{ c_after }}</span>{% endif %}
-                                                </span>
-                                            {% endif %}
-                                            {% if c_cta and c_cta_url %}
-                                                <a class="qibc__cta" href="{{ c_cta_url }}">
-                                                    <span>{{ c_cta }}</span>
-                                                    <i class="sicon-arrow-left" aria-hidden="true"></i>
-                                                </a>
-                                            {% endif %}
-                                        </div>
-                                    {% endif %}
-
                                     <span class="qibc__sr" data-qibc-sr role="status" aria-live="polite"></span>
                                 </div>
                             {% endif %}

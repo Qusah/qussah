@@ -1936,96 +1936,23 @@
                         },
                         {
                             "type": "string",
-                            "format": "text",
-                            "id": "slides.counter_before",
-                            "label": "جملة اختيارية قبل الرقم",
-                            "description": "اتركها فارغة لعرض الشاشة المضيئة وحدها (الصورة تحمل عبارتها الخاصة)",
+                            "format": "color",
+                            "icon": "sicon-paint-brush",
+                            "id": "slides.counter_color",
+                            "label": "لون أرقام العداد",
+                            "description": "فارغ = أبيض مضيء كما في التصميم",
                             "value": "",
                             "required": false
                         },
                         {
                             "type": "string",
-                            "format": "text",
-                            "id": "slides.counter_after",
-                            "label": "جملة اختيارية بعد الرقم",
+                            "format": "color",
+                            "icon": "sicon-paint-brush",
+                            "id": "slides.counter_glow",
+                            "label": "لون توهج الأرقام",
+                            "description": "الهالة حول الأرقام والخانات المطفأة. فارغ = أزرق كما في التصميم",
                             "value": "",
                             "required": false
-                        },
-                        {
-                            "type": "string",
-                            "format": "text",
-                            "id": "slides.counter_cta_text",
-                            "label": "نص زر العداد (اختياري)",
-                            "value": "",
-                            "required": false
-                        },
-                        {
-                            "type": "string",
-                            "format": "text",
-                            "id": "slides.counter_cta_url",
-                            "label": "رابط زر العداد",
-                            "description": "اتركه فارغاً لإخفاء الزر",
-                            "value": "",
-                            "required": false
-                        },
-                        {
-                            "id": "slides.counter_caption",
-                            "type": "items",
-                            "format": "dropdown-list",
-                            "source": "Manual",
-                            "label": "مكان جملة العداد والزر",
-                            "description": "بالنسبة لإطار الشاشة في الصورة",
-                            "selected": [
-                                {
-                                    "label": "فوق الإطار",
-                                    "value": "above",
-                                    "key": "00000000-0000-0000-0000-000051100021"
-                                }
-                            ],
-                            "options": [
-                                {
-                                    "label": "فوق الإطار",
-                                    "value": "above",
-                                    "key": "00000000-0000-0000-0000-000051100021"
-                                },
-                                {
-                                    "label": "تحت الإطار",
-                                    "value": "below",
-                                    "key": "00000000-0000-0000-0000-000051100022"
-                                },
-                                {
-                                    "label": "بدون جملة وزر",
-                                    "value": "none",
-                                    "key": "00000000-0000-0000-0000-000051100023"
-                                }
-                            ]
-                        },
-                        {
-                            "id": "slides.counter_numerals",
-                            "type": "items",
-                            "format": "dropdown-list",
-                            "source": "Manual",
-                            "label": "أرقام الجملة",
-                            "description": "أرقام الشاشة المضيئة إنجليزية دائماً؛ هذا الخيار للرقم داخل الجملة",
-                            "selected": [
-                                {
-                                    "label": "عربية ٠١٢٣",
-                                    "value": "arabic",
-                                    "key": "00000000-0000-0000-0000-000051100024"
-                                }
-                            ],
-                            "options": [
-                                {
-                                    "label": "عربية ٠١٢٣",
-                                    "value": "arabic",
-                                    "key": "00000000-0000-0000-0000-000051100024"
-                                },
-                                {
-                                    "label": "إنجليزية 0123",
-                                    "value": "latin",
-                                    "key": "00000000-0000-0000-0000-000051100025"
-                                }
-                            ]
                         },
                         {
                             "type": "string",

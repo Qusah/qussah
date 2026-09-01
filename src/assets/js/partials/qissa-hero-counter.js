@@ -36,7 +36,6 @@
   var GHOST      = ' ';   // an unlit cell in the padded digit string
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var AR = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
 
   /* ── Glyphs ─────────────────────────────────────────────────────────── */
 
@@ -58,13 +57,10 @@
   function Board(root) {
     this.root  = root;
     this.board = root.querySelector('[data-qibc-board]');
-    this.num   = root.querySelector('[data-qibc-num]');
-    this.text  = root.querySelector('[data-qibc-text]');
     this.sr    = root.querySelector('[data-qibc-sr]');
 
     var own = parseInt(root.getAttribute('data-target'), 10);
     this.ownTarget = isFinite(own) && own > 0 ? own : 0;
-    this.arabic = root.getAttribute('data-numerals') !== 'latin';
 
     this.current = null;   // last figure displayed
     this.width   = 0;      // digit columns on the board
@@ -72,13 +68,11 @@
     this.seps    = [];
   }
 
-  // Caption figure: thousands commas, then the merchant's choice of numerals.
-  // The board itself is always Latin — seven segments cannot draw ٠-٩.
-  Board.prototype.format = function (n) {
-    var s = String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    if (!this.arabic) return s;
-    return s.replace(/\d/g, function (d) { return AR[+d]; });
-  };
+  // Screen-reader figure: the board is glowing geometry with no text, so the
+  // live region carries the number with thousands commas.
+  function format(n) {
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
 
   // Left-pad to the board width, then lay out with thousands separators. Each
   // separator is lit only once a lit digit stands to its left.
@@ -172,13 +166,7 @@
     var prev = this.current;
     this.current = total;
 
-    // Caption + screen reader. When a sentence is set it carries the whole
-    // phrase, so announcing its text reads naturally; otherwise the bare figure.
-    var caption = this.format(total);
-    if (this.num) this.num.textContent = caption;
-    if (this.sr) {
-      this.sr.textContent = this.text ? this.text.textContent.replace(/\s+/g, ' ').trim() : caption;
-    }
+    if (this.sr) this.sr.textContent = format(total);
 
     var str = String(total);
 
