@@ -67,8 +67,10 @@
 
     <script defer data-cfasync="false" crossorigin="anonymous" src="{{ 'product-card.js'|asset }}"></script>
     <script defer crossorigin="anonymous" src="{{ 'main-menu.js'|asset }}"></script>
-    <script defer crossorigin="anonymous" src="{{ 'qissa-packs-counter.js'|asset }}"></script>
-    <script defer crossorigin="anonymous" src="{{ 'qissa-packs-bar.js'|asset }}"></script>
+    {# The packs counter now lives inside the hero banner's LED frame. The
+       header notch (qissa-packs-counter.js) and promo bar (qissa-packs-bar.js)
+       are retired from the page along with their includes in header.twig. #}
+    <script defer crossorigin="anonymous" src="{{ 'qissa-hero-counter.js'|asset }}"></script>
     <script defer crossorigin="anonymous" src="{{ 'qissa-image-banner.js'|asset }}"></script>
     {% if theme.settings.get('enable_add_product_toast', true) %}
         <script defer crossorigin="anonymous" src="{{ 'add-product-toast.js'|asset }}"></script>

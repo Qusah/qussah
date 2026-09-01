@@ -1,0 +1,279 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Hero counter — the live packs-sold total inside the campaign banner's LED frame.
+   Markup: components/home/qissa-image-banner.twig (per slide)
+   Behaviour: js/partials/qissa-hero-counter.js
+
+   The artwork carries the chrome bezel; this only draws the digits INSIDE it.
+   The root is an absolutely positioned box laid over the slide at the frame's
+   coordinates — percentages of the image, set per slide in the dashboard, one
+   set for the desktop artwork and one for the mobile file (the <picture>
+   source switches at 768px, so the coordinates switch there too).
+
+   The board sizes itself to that box with container units: one font-size
+   drives every segment, comma and roll distance, so whatever the viewport,
+   the figure fills the frame the way the digits did in the original export.
+
+   Segment styles are a copy of the LED notch's (qissa-packs-counter.scss),
+   under their own names so this component survives the notch being removed.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+// Which segments light up per numeral. Canonical 7-seg lettering:
+//        ── a ──
+//       f       b
+//        ── g ──
+//       e       c
+//        ── d ──
+$qibc-digits: (
+  0: (a, b, c, d, e, f),
+  1: (b, c),
+  2: (a, b, g, e, d),
+  3: (a, b, g, c, d),
+  4: (f, g, b, c),
+  5: (a, f, g, c, d),
+  6: (a, f, g, e, d, c),
+  7: (a, b, c),
+  8: (a, b, c, d, e, f, g),
+  9: (a, b, c, d, f, g),
+);
+
+.qibc {
+  position: absolute;
+  left: var(--qibc-l, 7.8%);
+  top: var(--qibc-t, 17.1%);
+  width: var(--qibc-w, 59.5%);
+  height: var(--qibc-h, 24.8%);
+  z-index: 2;                          // over the scrim, under the arrows (3)
+
+  // Physical coordinates: the frame is at a fixed spot in the artwork whatever
+  // the page direction. The caption re-isolates RTL for its Arabic below.
+  direction: ltr;
+  line-height: normal;
+  pointer-events: none;                // the slide's link/drag stays reachable
+
+  /* ── The board, centred in the frame ──────────────────────────────── */
+  &__frame {
+    position: absolute;
+    inset: 0;
+    container-type: size;              // lets the board size in cqw/cqh
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__board {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.14em;
+
+    // One knob scales the whole board. A nine-digit figure with two commas is
+    // ~7.4em wide and 1em tall; the frame is about 7:1, so the height bound
+    // wins on the desktop artwork and the width bound guards a narrower one.
+    // The vw line is only a fallback for browsers without container units.
+    font-size: 4vw;
+    font-size: min(78cqh, 12.4cqw);
+  }
+
+  /* ── One digit position ──────────────────────────────────────────── */
+  &__cell {
+    position: relative;
+    width: 0.62em;
+    height: 1em;
+    overflow: hidden;                  // the roll happens behind this window
+  }
+
+  // The strip that rolls: one glyph at rest, two mid-roll, sliding by -50%
+  // of the two-glyph strip — exactly one cell, "9 over 8" in the window.
+  &__reel {
+    display: block;
+    will-change: transform;
+  }
+
+  &__glyph {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 1em;
+  }
+
+  /* ── Segment geometry ────────────────────────────────────────────── */
+  &__seg {
+    position: absolute;
+    border-radius: 0.055em;
+    // Unlit ghost — the faint "8" skeleton a real LED board shows, and what a
+    // padded (leading) cell is made of entirely.
+    background: rgba(160, 190, 255, 0.07);
+
+    &--a,
+    &--g,
+    &--d {
+      left: 0.08em;
+      right: 0.08em;
+      height: 0.11em;
+    }
+    &--a { top: 0; }
+    &--g { top: calc(50% - 0.055em); }
+    &--d { bottom: 0; }
+
+    &--f,
+    &--b,
+    &--e,
+    &--c {
+      width: 0.11em;
+      height: calc(50% - 0.115em);
+    }
+    &--f { left: 0;  top: 0.06em; }
+    &--b { right: 0; top: 0.06em; }
+    &--e { left: 0;  bottom: 0.06em; }
+    &--c { right: 0; bottom: 0.06em; }
+  }
+
+  /* ── Lighting: which segments burn per numeral ───────────────────── */
+  @each $digit, $segs in $qibc-digits {
+    &__glyph[data-d='#{$digit}'] {
+      @each $s in $segs {
+        .qibc__seg--#{$s} {
+          background: #f2f8ff;
+          box-shadow:
+            0 0 0.07em rgba(210, 230, 255, 0.95),
+            0 0 0.28em rgba(130, 175, 255, 0.6),
+            0 0 0.55em rgba(80, 130, 255, 0.35);
+        }
+      }
+    }
+  }
+
+  /* ── Thousands separator — a lit comma block, baseline-hung ──────── */
+  &__sep {
+    position: relative;
+    width: 0.2em;
+    height: 1em;
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: -0.03em;
+      left: 0.03em;
+      width: 0.13em;
+      height: 0.2em;
+      transform: skewX(-8deg);
+      border-radius: 0.05em 0.05em 0.08em 0.04em;
+      background: #f2f8ff;
+      box-shadow:
+        0 0 0.07em rgba(210, 230, 255, 0.95),
+        0 0 0.28em rgba(130, 175, 255, 0.6);
+    }
+
+    // No lit digit to its left yet: the comma is a ghost like the cells
+    &.is-off::before {
+      background: rgba(160, 190, 255, 0.07);
+      box-shadow: none;
+    }
+  }
+
+  /* ── Caption: optional sentence / CTA, hung off the frame ────────── */
+  // Off by default (the artwork carries its own tagline). When a merchant
+  // fills the fields it sits centred on the frame, above by default: on both
+  // artworks the wall above is clear, while below runs into the tissue boxes.
+  &__caption {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 0.9em);
+    transform: translateX(-50%);
+
+    direction: rtl;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    width: max-content;
+    max-width: min(90vw, 160%);
+
+    color: #fff;
+    font-family: 'GE SS Two', sans-serif;
+    font-size: clamp(14px, 1.3vw, 20px);
+    line-height: 1.5;
+    text-align: center;
+    text-shadow: 0 2px 14px rgb(10 17 64 / 45%);
+    pointer-events: auto;
+  }
+
+  &[data-caption='below'] &__caption {
+    bottom: auto;
+    top: calc(100% + 0.9em);
+  }
+
+  &__text {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.35em;                       // word spacing, so it tracks the font
+  }
+
+  // The figure carries the weight; tabular so it never jitters as it counts
+  &__num {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 7px 18px;
+    border: 1px solid rgb(255 255 255 / 45%);
+    border-radius: 100px;
+
+    color: #fff;
+    font-size: 0.9em;
+    font-weight: 600;
+    white-space: nowrap;
+
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+    &:hover {
+      background: #fff;
+      border-color: #fff;
+      color: #172951;
+    }
+
+    i { font-size: 12px; }
+  }
+
+  /* Screen-reader value — the board is aria-hidden geometry */
+  &__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+/* ── Mobile: the <picture> swaps to the mobile artwork here, so the frame
+   coordinates swap with it (the Twig repeats the desktop set when there is
+   no mobile file). The caption drops a step to stay inside the card. ───── */
+@media (max-width: 768px) {
+  .qibc {
+    left: var(--qibc-lm, var(--qibc-l, 7.8%));
+    top: var(--qibc-tm, var(--qibc-t, 17.1%));
+    width: var(--qibc-wm, var(--qibc-w, 59.5%));
+    height: var(--qibc-hm, var(--qibc-h, 24.8%));
+
+    &__caption {
+      gap: 6px 10px;
+      font-size: 13px;
+      max-width: calc(100vw - 60px);
+    }
+
+    &__cta { padding: 6px 14px; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qibc__reel { transition: none !important; }
+}

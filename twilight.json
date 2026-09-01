@@ -1912,6 +1912,194 @@
                                     "key": "00000000-0000-0000-0000-000051100017"
                                 }
                             ]
+                        },
+                        {
+                            "type": "boolean",
+                            "format": "switch",
+                            "icon": "sicon-chart",
+                            "id": "slides.counter_enabled",
+                            "label": "عرض العداد داخل البانر",
+                            "description": "يرسم إجمالي المناديل المباعة (رقم مباشر من الخادم) داخل إطار الشاشة المرسوم في صورة البانر. يعمل مع البانر الواحد بالارتفاع الطبيعي فقط (القص يُخل بالمحاذاة)",
+                            "value": false,
+                            "selected": false,
+                            "required": false
+                        },
+                        {
+                            "type": "number",
+                            "format": "integer",
+                            "icon": "sicon-flag",
+                            "id": "slides.counter_target",
+                            "label": "هدف الحملة (عدد الخانات المضيئة)",
+                            "description": "يحدد عدد خانات الشاشة فقط: هدف المليار يعرض 9 خانات كما في التصميم. 0 = استخدام الهدف القادم من الخادم",
+                            "value": 0,
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "text",
+                            "id": "slides.counter_before",
+                            "label": "جملة اختيارية قبل الرقم",
+                            "description": "اتركها فارغة لعرض الشاشة المضيئة وحدها (الصورة تحمل عبارتها الخاصة)",
+                            "value": "",
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "text",
+                            "id": "slides.counter_after",
+                            "label": "جملة اختيارية بعد الرقم",
+                            "value": "",
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "text",
+                            "id": "slides.counter_cta_text",
+                            "label": "نص زر العداد (اختياري)",
+                            "value": "",
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "text",
+                            "id": "slides.counter_cta_url",
+                            "label": "رابط زر العداد",
+                            "description": "اتركه فارغاً لإخفاء الزر",
+                            "value": "",
+                            "required": false
+                        },
+                        {
+                            "id": "slides.counter_caption",
+                            "type": "items",
+                            "format": "dropdown-list",
+                            "source": "Manual",
+                            "label": "مكان جملة العداد والزر",
+                            "description": "بالنسبة لإطار الشاشة في الصورة",
+                            "selected": [
+                                {
+                                    "label": "فوق الإطار",
+                                    "value": "above",
+                                    "key": "00000000-0000-0000-0000-000051100021"
+                                }
+                            ],
+                            "options": [
+                                {
+                                    "label": "فوق الإطار",
+                                    "value": "above",
+                                    "key": "00000000-0000-0000-0000-000051100021"
+                                },
+                                {
+                                    "label": "تحت الإطار",
+                                    "value": "below",
+                                    "key": "00000000-0000-0000-0000-000051100022"
+                                },
+                                {
+                                    "label": "بدون جملة وزر",
+                                    "value": "none",
+                                    "key": "00000000-0000-0000-0000-000051100023"
+                                }
+                            ]
+                        },
+                        {
+                            "id": "slides.counter_numerals",
+                            "type": "items",
+                            "format": "dropdown-list",
+                            "source": "Manual",
+                            "label": "أرقام الجملة",
+                            "description": "أرقام الشاشة المضيئة إنجليزية دائماً؛ هذا الخيار للرقم داخل الجملة",
+                            "selected": [
+                                {
+                                    "label": "عربية ٠١٢٣",
+                                    "value": "arabic",
+                                    "key": "00000000-0000-0000-0000-000051100024"
+                                }
+                            ],
+                            "options": [
+                                {
+                                    "label": "عربية ٠١٢٣",
+                                    "value": "arabic",
+                                    "key": "00000000-0000-0000-0000-000051100024"
+                                },
+                                {
+                                    "label": "إنجليزية 0123",
+                                    "value": "latin",
+                                    "key": "00000000-0000-0000-0000-000051100025"
+                                }
+                            ]
+                        },
+                        {
+                            "type": "string",
+                            "format": "text",
+                            "icon": "sicon-desktop",
+                            "id": "slides.counter_left",
+                            "label": "إطار العداد — المسافة من اليسار % (سطح المكتب)",
+                            "description": "نسبة من عرض الصورة. القيم الافتراضية مضبوطة على بانر الحملة الحالي",
+                            "value": "7.8",
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "text",
+                            "icon": "sicon-desktop",
+                            "id": "slides.counter_top",
+                            "label": "إطار العداد — المسافة من الأعلى % (سطح المكتب)",
+                            "value": "17.1",
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "text",
+                            "icon": "sicon-desktop",
+                            "id": "slides.counter_width",
+                            "label": "إطار العداد — العرض % (سطح المكتب)",
+                            "value": "59.5",
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "text",
+                            "icon": "sicon-desktop",
+                            "id": "slides.counter_height",
+                            "label": "إطار العداد — الارتفاع % (سطح المكتب)",
+                            "value": "24.8",
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "text",
+                            "icon": "sicon-mobile",
+                            "id": "slides.counter_left_m",
+                            "label": "إطار العداد — المسافة من اليسار % (الجوال)",
+                            "description": "تُطبق على صورة الجوال. اتركها فارغة لتتبع قيم سطح المكتب عند عدم وجود صورة للجوال",
+                            "value": "7.3",
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "text",
+                            "icon": "sicon-mobile",
+                            "id": "slides.counter_top_m",
+                            "label": "إطار العداد — المسافة من الأعلى % (الجوال)",
+                            "value": "36",
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "text",
+                            "icon": "sicon-mobile",
+                            "id": "slides.counter_width_m",
+                            "label": "إطار العداد — العرض % (الجوال)",
+                            "value": "59.7",
+                            "required": false
+                        },
+                        {
+                            "type": "string",
+                            "format": "text",
+                            "icon": "sicon-mobile",
+                            "id": "slides.counter_height_m",
+                            "label": "إطار العداد — الارتفاع % (الجوال)",
+                            "value": "10.3",
+                            "required": false
                         }
                     ]
                 },
