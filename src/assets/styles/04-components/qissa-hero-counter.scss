@@ -87,14 +87,35 @@ $qibc-digits: (
     // so it is running from first paint — nothing waits on the script or the
     // fetch. Opacity animates the whole board (glow included) as one lamp.
     opacity: 0.18;
-    animation: qibc-starter 2.6s steps(1, end) infinite;
+    animation: qibc-starter 1.8s steps(1, end) infinite;
     will-change: opacity, filter;
   }
 
   // The figure has landed: one ignition — a hard strike, two stutters, then a
   // steady burn — and the board stays lit for good. `both` holds the last frame.
   &.is-live &__board {
-    animation: qibc-ignite 1.1s steps(1, end) 1 both;
+    animation: qibc-ignite 0.8s steps(1, end) 1 both;
+  }
+
+  // Ignition over (JS stamps this once it has played): steady-on, no animation
+  // bound to the element at all. Data updates only ever roll the digits — the
+  // flicker is a page-load effect and can never be re-triggered from here.
+  &.is-lit &__board {
+    animation: none;
+    opacity: 1;
+    filter: none;
+    will-change: auto;
+  }
+
+  // Merchant switched the neon off (dashboard): the board is simply on, from
+  // first paint, in every state. Placeholder columns come unlit from the Twig,
+  // so the frame reads as empty until the figure is set.
+  &--static &__board,
+  &--static.is-live &__board {
+    animation: none;
+    opacity: 1;
+    filter: none;
+    will-change: auto;
   }
 
   /* ── One digit position ──────────────────────────────────────────── */
@@ -268,5 +289,6 @@ $qibc-digits: (
     opacity: 0.35;
     transition: opacity 0.4s ease;
   }
-  .qibc.is-live .qibc__board { animation: none; opacity: 1; }
+  .qibc.is-live .qibc__board,
+  .qibc.is-lit .qibc__board { animation: none; opacity: 1; }
 }

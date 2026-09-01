@@ -1925,6 +1925,17 @@
                             "required": false
                         },
                         {
+                            "type": "boolean",
+                            "format": "switch",
+                            "icon": "sicon-lightbulb",
+                            "id": "slides.counter_animation",
+                            "label": "تأثير إضاءة النيون عند فتح الصفحة",
+                            "description": "وميض بادئ النيون ثم الإشعال عند وصول الرقم، مرة واحدة عند تحميل الصفحة. إيقافه يعرض الأرقام ثابتة مباشرة",
+                            "value": true,
+                            "selected": true,
+                            "required": false
+                        },
+                        {
                             "type": "number",
                             "format": "integer",
                             "icon": "sicon-flag",

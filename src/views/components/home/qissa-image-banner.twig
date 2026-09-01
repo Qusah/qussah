@@ -187,18 +187,25 @@ content re-isolates its own RTL for the Arabic text.
                                 {% set c_cols = ((c_target - 1) ~ '')|length %}
                                 {% if c_cols < 1 %}{% set c_cols = 1 %}{% endif %}
 
-                                <div class="qibc"
+                                {# Neon on/off. Not |default(true): that filter treats a
+                                   stored `false` as empty and would flip the switch back on.
+                                   Off = unlit placeholder columns and no flicker/ignite;
+                                   the JS then sets the first figure outright. #}
+                                {% set c_anim = (slide.counter_animation is defined and slide.counter_animation is not null) ? slide.counter_animation : true %}
+
+                                <div class="qibc{{ c_anim ? '' : ' qibc--static' }}"
                                      data-qibc
                                      data-endpoint="{{ counter_base }}"
                                      data-target="{{ slide.counter_target|default(0) }}"
+                                     data-animation="{{ c_anim ? '1' : '0' }}"
                                      style="{{ ccss }}">
                                     <div class="qibc__frame">
                                         {# pure glowing geometry, no text: the value for
                                            assistive tech is the live region below #}
                                         <span class="qibc__board" data-qibc-board aria-hidden="true">
                                             {%- for i in 0..(c_cols - 1) -%}
-                                                {%- if i > 0 and (c_cols - i) % 3 == 0 -%}<span class="qibc__sep"></span>{%- endif -%}
-                                                <span class="qibc__cell"><span class="qibc__reel"><span class="qibc__glyph" data-d="8">
+                                                {%- if i > 0 and (c_cols - i) % 3 == 0 -%}<span class="qibc__sep{{ c_anim ? '' : ' is-off' }}"></span>{%- endif -%}
+                                                <span class="qibc__cell"><span class="qibc__reel"><span class="qibc__glyph" data-d="{{ c_anim ? '8' : '' }}">
                                                     {%- for s in ['a', 'b', 'c', 'd', 'e', 'f', 'g'] -%}<span class="qibc__seg qibc__seg--{{ s }}"></span>{%- endfor -%}
                                                 </span></span></span>
                                             {%- endfor -%}

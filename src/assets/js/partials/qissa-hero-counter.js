@@ -40,6 +40,7 @@
   var STAGGER_MS = 45;
   var EASING     = 'cubic-bezier(0.3, 0.9, 0.3, 1)';
   var GHOST      = ' ';   // an unlit cell in the padded digit string
+  var IGNITE_MS  = 900;   // ≥ the CSS qibc-ignite duration (0.8s)
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -67,6 +68,10 @@
 
     var own = parseInt(root.getAttribute('data-target'), 10);
     this.ownTarget = isFinite(own) && own > 0 ? own : 0;
+
+    // Merchant switched the neon off: no flicker/ignite (CSS), and the first
+    // figure is set outright rather than rolled in from the placeholder.
+    this.static = root.getAttribute('data-animation') === '0';
 
     this.current = null;   // last figure displayed
     this.width   = 0;      // digit columns on the board
@@ -202,12 +207,20 @@
 
     var lay = this.layout(str);
 
-    // The tube ignites on the first figure (CSS), whichever path paints it
-    this.root.classList.add('is-live');
+    // The tube ignites on the FIRST figure only (CSS), whichever path paints
+    // it. Once the ignition has played, `is-lit` pins the board steady-on with
+    // no animation at all, so no later update — or class churn — can ever
+    // restart the flicker: that belongs to the page load, not to the data.
+    if (prev === null) {
+      var root = this.root;
+      root.classList.add('is-live');
+      setTimeout(function () { root.classList.add('is-lit'); }, IGNITE_MS);
+    }
 
-    // Set outright — no roll — for reduced motion, a re-shaped board, or a
-    // board with no placeholder cells to roll from.
-    if (reduceMotion || reshape || !this.cells.length) {
+    // Set outright — no roll — for reduced motion, a re-shaped board, a board
+    // with no placeholder cells to roll from, or the first figure with the
+    // neon switched off (nothing lit to roll out of).
+    if (reduceMotion || reshape || !this.cells.length || (this.static && prev === null)) {
       this.build(lay);
       return;
     }
