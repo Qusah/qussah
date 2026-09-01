@@ -24,6 +24,12 @@
  * its dark "8" skeletons, so the figure always fills the frame and the layout
  * never re-shapes as it grows.
  *
+ * The Twig pre-renders the board as all-8s (a panel's power-on test pattern)
+ * and the CSS runs a neon "starter" flicker on it from first paint — nothing
+ * here has to run for that. This script ADOPTS those cells, and when the first
+ * figure lands it marks the root `is-live` (CSS: the tube ignites and holds)
+ * while every column rolls from its 8 into the real digit.
+ *
  * One transport per endpoint feeds every board on the page (several slides may
  * carry one), stream first, polling if EventSource is missing or the server
  * refuses. No `salla.*` anywhere: Rocket Loader reorders the SDK on the live
@@ -66,7 +72,24 @@
     this.width   = 0;      // digit columns on the board
     this.cells   = [];
     this.seps    = [];
+    this.adopt();
   }
+
+  // Take over the server-rendered placeholder board (all 8s) so the first
+  // figure rolls into it instead of replacing it. A board rendered without
+  // cells (older markup) simply builds on first paint as before.
+  Board.prototype.adopt = function () {
+    var cellEls = this.board.querySelectorAll('.qibc__cell');
+    var sepEls  = this.board.querySelectorAll('.qibc__sep');
+    for (var i = 0; i < cellEls.length; i++) {
+      var reel  = cellEls[i].querySelector('.qibc__reel');
+      var glyph = reel && reel.querySelector('.qibc__glyph');
+      if (!reel || !glyph) { this.cells = []; this.seps = []; return; }
+      this.cells.push({ reel: reel, digit: glyph.getAttribute('data-d') || '', timer: null, landing: null });
+    }
+    for (var s = 0; s < sepEls.length; s++) this.seps.push(sepEls[s]);
+    this.width = this.cells.length;
+  };
 
   // Screen-reader figure: the board is glowing geometry with no text, so the
   // live region carries the number with thousands commas.
@@ -179,13 +202,19 @@
 
     var lay = this.layout(str);
 
-    if (prev === null || reduceMotion || reshape) {
+    // The tube ignites on the first figure (CSS), whichever path paints it
+    this.root.classList.add('is-live');
+
+    // Set outright — no roll — for reduced motion, a re-shaped board, or a
+    // board with no placeholder cells to roll from.
+    if (reduceMotion || reshape || !this.cells.length) {
       this.build(lay);
-      this.root.classList.add('is-live');
       return;
     }
 
-    var up = total > prev;   // down for a cancelled order — roll, don't clamp
+    // First figure rolls the power-on 8s forward; afterwards direction follows
+    // the number (down for a cancelled order — roll, don't clamp).
+    var up = prev === null ? true : total > prev;
     var n = this.cells.length;
     for (var i = 0; i < n; i++) {
       if (lay.digits[i] === this.cells[i].digit) continue;

@@ -177,6 +177,16 @@ content re-isolates its own RTL for the Arabic text.
                                 {% if c_ink %}{% set ccss = ccss ~ '--qibc-ink:' ~ c_ink ~ ';' %}{% endif %}
                                 {% if c_glow %}{% set ccss = ccss ~ '--qibc-glow:' ~ c_glow ~ ';' %}{% endif %}
 
+                                {# The board is pre-rendered as all-8s — the power-on test
+                                   pattern of a real seven-segment panel — so the neon
+                                   "starter" flicker (pure CSS) runs from first paint, before
+                                   any script or fetch. Column count follows the target: a
+                                   billion → 999,999,999 → 9 digits. The JS adopts these cells
+                                   and rolls each 8 into the live digit when the figure lands. #}
+                                {% set c_target = slide.counter_target|default(0) > 0 ? slide.counter_target : 1000000000 %}
+                                {% set c_cols = ((c_target - 1) ~ '')|length %}
+                                {% if c_cols < 1 %}{% set c_cols = 1 %}{% endif %}
+
                                 <div class="qibc"
                                      data-qibc
                                      data-endpoint="{{ counter_base }}"
@@ -185,7 +195,14 @@ content re-isolates its own RTL for the Arabic text.
                                     <div class="qibc__frame">
                                         {# pure glowing geometry, no text: the value for
                                            assistive tech is the live region below #}
-                                        <span class="qibc__board" data-qibc-board aria-hidden="true"></span>
+                                        <span class="qibc__board" data-qibc-board aria-hidden="true">
+                                            {%- for i in 0..(c_cols - 1) -%}
+                                                {%- if i > 0 and (c_cols - i) % 3 == 0 -%}<span class="qibc__sep"></span>{%- endif -%}
+                                                <span class="qibc__cell"><span class="qibc__reel"><span class="qibc__glyph" data-d="8">
+                                                    {%- for s in ['a', 'b', 'c', 'd', 'e', 'f', 'g'] -%}<span class="qibc__seg qibc__seg--{{ s }}"></span>{%- endfor -%}
+                                                </span></span></span>
+                                            {%- endfor -%}
+                                        </span>
                                     </div>
                                     <span class="qibc__sr" data-qibc-sr role="status" aria-live="polite"></span>
                                 </div>
