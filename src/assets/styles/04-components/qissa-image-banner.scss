@@ -10,6 +10,16 @@
   font-family: var(--qib-font, 'GE SS Two', sans-serif);
   padding-block: 12px;
 
+  // As the first visible block on the page it hangs straight off the navbar,
+  // like qissa-hero does: the generic .s-block top margin (mt-16 = 64px) would
+  // otherwise stack on the nav's own 24px and this padding, opening ~100px of
+  // white above the campaign banner. Salla injects (often empty) .s-blocks-wrapper
+  // hook containers between home components, so a plain :first-child misses
+  // when one sits before the banner — the real condition is "no visible block
+  // before it". A banner placed mid-page keeps the normal block rhythm.
+  &:first-child,
+  &:not(.s-block ~ *):not(.s-blocks-wrapper:not(:empty) ~ *) { margin-top: 0; }
+
   // Track the navbar's edges exactly, not a container default: the header runs
   // `max-width: none` with 50px gutters, dropping to 15px at ≤1150px. Matching
   // it means the banner's sides line up with the bar above it at every width.
