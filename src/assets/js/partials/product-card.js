@@ -258,7 +258,7 @@ class ProductCard extends HTMLElement {
     if (count < 2) return '';
     let dots = '';
     for (let i = 0; i < count; i++) {
-      dots += `<button type="button" class="qpc-dot${i === 0 ? ' is-active' : ''}" data-i="${i}" aria-label="${i + 1}"></button>`;
+      dots += `<button type="button" class="qpc-dot${i === 0 ? ' is-active' : ''}" data-i="${i}" aria-label="${i + 1}" tabindex="-1"></button>`;
     }
     return `<div class="qpc-dots" aria-hidden="true">${dots}</div>`;
   }

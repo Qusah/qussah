@@ -42,7 +42,7 @@
         </div>
         <div class="qpc-dots" aria-hidden="true">
             {% for im in slides %}
-                <button type="button" class="qpc-dot{{ loop.first ? ' is-active' : '' }}" data-i="{{ loop.index0 }}" aria-label="{{ loop.index }}"></button>
+                <button type="button" class="qpc-dot{{ loop.first ? ' is-active' : '' }}" data-i="{{ loop.index0 }}" aria-label="{{ loop.index }}" tabindex="-1"></button>
             {% endfor %}
         </div>
     </div>

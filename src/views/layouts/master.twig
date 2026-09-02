@@ -62,18 +62,31 @@
        DNS + TLS round-trips that would otherwise start only once the CSS has
        parsed — measurable on the mobile traffic that is 96.8% of this store. #}
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    {# The hero banner (the LCP image) and every product photo come from the
+       files CDN, a different origin from the theme assets above. Without this
+       hint the browser opens that connection only when the parser reaches the
+       first <img>, and the DNS + TCP + TLS round-trips land inside the LCP
+       "resource load delay" (1.6s at p75 in the field). #}
+    <link rel="preconnect" href="https://cdn.files.salla.network">
 
     {{ theme.settings.set('placeholder', 'images/placeholder.png') }}
 
+    {# data-cfasync="false" on every theme script: Cloudflare Rocket Loader is
+       enabled on the store's zone and rewrites any <script> it is allowed to
+       touch, then fetches those scripts only after it has run every
+       third-party tag on the page. Measured on a throttled phone: a rewritten
+       theme script is requested at ~5.0s, a plain deferred one at ~0.8s. Each
+       script here already waits for Salla through the inline onReady stub or
+       theme::ready, so running them at their natural time is safe. #}
     <script defer data-cfasync="false" crossorigin="anonymous" src="{{ 'product-card.js'|asset }}"></script>
-    <script defer crossorigin="anonymous" src="{{ 'main-menu.js'|asset }}"></script>
+    <script defer data-cfasync="false" crossorigin="anonymous" src="{{ 'main-menu.js'|asset }}"></script>
     {# The packs counter now lives inside the hero banner's LED frame. The
        header notch (qissa-packs-counter.js) and promo bar (qissa-packs-bar.js)
        are retired from the page along with their includes in header.twig. #}
-    <script defer crossorigin="anonymous" src="{{ 'qissa-hero-counter.js'|asset }}"></script>
-    <script defer crossorigin="anonymous" src="{{ 'qissa-image-banner.js'|asset }}"></script>
+    <script defer data-cfasync="false" crossorigin="anonymous" src="{{ 'qissa-hero-counter.js'|asset }}"></script>
+    <script defer data-cfasync="false" crossorigin="anonymous" src="{{ 'qissa-image-banner.js'|asset }}"></script>
     {% if theme.settings.get('enable_add_product_toast', true) %}
-        <script defer crossorigin="anonymous" src="{{ 'add-product-toast.js'|asset }}"></script>
+        <script defer data-cfasync="false" crossorigin="anonymous" src="{{ 'add-product-toast.js'|asset }}"></script>
     {% endif %}
 
     {% block head_scripts %}{% endblock %}
@@ -106,7 +119,14 @@
     <noscript><link rel="stylesheet" href="{{ 'fonts.css' | asset }}"></noscript>
 
     <link rel="stylesheet" href="{{ 'app.css' | asset }}">
-    <link rel="stylesheet" href="{{ theme.font.path|cdn }}"/>
+    {# The store font chosen in the dashboard, taken off the critical path the
+       same way as fonts.css. The body already renders in the embedded GE SS
+       Two; only Salla's own components read var(--font-main), so nothing on
+       first paint depends on this file. As a plain stylesheet it blocked first
+       paint for ~1s on a throttled phone — and on this store the CDN path
+       currently returns a 404, so the block bought nothing at all. #}
+    <link rel="preload" as="style" href="{{ theme.font.path|cdn }}" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ theme.font.path|cdn }}"></noscript>
     <link rel="stylesheet" href="{{ 'fonts/sallaicons.css'|cdn }}"/>
     
     <style>
@@ -143,7 +163,7 @@
 {% if theme.settings.get('enable_add_product_toast', true) %}
     <salla-add-product-toast></salla-add-product-toast>
 {% endif %}
-<script defer crossorigin="anonymous" src="{{ 'app.js' | asset }}"></script>
+<script defer data-cfasync="false" crossorigin="anonymous" src="{{ 'app.js' | asset }}"></script>
 
 {# Twilight Components #}
 <salla-offer-modal></salla-offer-modal>

@@ -10,5 +10,5 @@
     {% component home %}
 {% endblock %}
 {% block scripts %}
-    <script defer crossorigin="anonymous" src="{{ 'home.js' | asset }}"></script>
+    <script defer data-cfasync="false" crossorigin="anonymous" src="{{ 'home.js' | asset }}"></script>
 {% endblock %}
