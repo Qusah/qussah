@@ -228,30 +228,35 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
       var idx = 0, lock = false, lockT, settleT, raf;
 
       // center an element within its OWN scroll container (RTL-safe, no page jump)
-      // Measured from offsetLeft, NOT getBoundingClientRect: rect coords are
-      // viewport-relative, so when the mobile slider scrolls this whole card
-      // sideways the gallery reads its image as "off centre" and scroll-corrects
-      // — the card jiggles and the photo flips on its own. offsetLeft is relative
-      // to the scroll container, so outer movement cannot perturb it.
+      //
+      // Measured as the DIFFERENCE between the element rect and the container
+      // rect, read in the same frame. Both are viewport-relative, so when the
+      // mobile slider scrolls this whole card sideways the two move together and
+      // the difference is unchanged — no self-correcting jiggle, no photo flip.
+      //
+      // NOT offsetLeft: .qpack__main is not positioned, so a slide reports
+      // offsetLeft against .qpack__stage (0, -w, -2w …) instead of against the
+      // scroller. Clamping those to >= 0 collapsed every target onto 0 and the
+      // main image never moved, while the thumbs (a different offsetParent)
+      // still did.
       var centerIn = function (container, el) {
         if (!container || !el) { return; }
-        var target = el.offsetLeft - (container.clientWidth - el.offsetWidth) / 2;
-        var max = container.scrollWidth - container.clientWidth;
-        target = Math.max(0, Math.min(max, target));
-        var cur = Math.abs(container.scrollLeft);
-        if (Math.abs(target - cur) < 2) { return; }          // already centered → don't nudge
-        var rtlBox = getComputedStyle(container).direction === 'rtl';
-        container.scrollTo({ left: rtlBox ? -target : target, behavior: 'smooth' });
+        var cr = container.getBoundingClientRect(), er = el.getBoundingClientRect();
+        var delta = (er.left + er.width / 2) - (cr.left + cr.width / 2);
+        if (Math.abs(delta) < 2) { return; }        // already centered → don't nudge
+        container.scrollBy({ left: delta, behavior: 'smooth' });
       };
       var setActive = function (i) {
         thumbBtns.forEach(function (b, k) { b.classList.toggle('is-active', k === i); });
       };
-      // index of the image currently centered in the main viewport (RTL-safe)
+      // index of the image currently centered in the main viewport
+      // (same rect-difference reasoning as centerIn: RTL-safe and immune to the
+      // outer mobile slider moving the card)
       var current = function () {
-        // container-relative for the same reason as centerIn above
-        var mid = Math.abs(main.scrollLeft) + main.clientWidth / 2, best = 0, bd = Infinity;
+        var cr = main.getBoundingClientRect(), mid = cr.left + cr.width / 2, best = 0, bd = Infinity;
         slides.forEach(function (s, k) {
-          var d = Math.abs((s.offsetLeft + s.offsetWidth / 2) - mid);
+          var sr = s.getBoundingClientRect();
+          var d = Math.abs((sr.left + sr.width / 2) - mid);
           if (d < bd) { bd = d; best = k; }
         });
         return best;
