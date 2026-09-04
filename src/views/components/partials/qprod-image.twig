@@ -34,9 +34,20 @@
     <div class="{{ img_class }}" data-qpc-media>
         {% if badge_text %}<span class="{{ badge_class }}">{{ badge_text }}</span>{% endif %}
         <div class="qpc-carousel" data-qpc>
+            {# Only the first slide carries a real src. The rest sit off-axis in a
+               scroll-snap track, and Chrome's native lazy-load still fetches
+               them on a slow connection (its distance threshold grows to
+               ~2500px), so two homepage grids requested ~115 gallery photos,
+               2.4MB, while the hero image was still downloading. The
+               carousel enhancer swaps data-src in when the card nears the
+               viewport (see hydrate() in partials/card-carousel.js). #}
             {% for im in slides %}
                 <a href="{{ product.url }}" class="qpc-slide" aria-label="{{ product.name }}" draggable="false">
-                    <img src="{{ im.url }}" alt="{{ im.alt|default(product.name) }}" loading="lazy" draggable="false"/>
+                    {% if loop.first %}
+                        <img src="{{ im.url }}" alt="{{ im.alt|default(product.name) }}" loading="lazy" draggable="false"/>
+                    {% else %}
+                        <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="{{ im.url }}" alt="{{ im.alt|default(product.name) }}" loading="lazy" draggable="false"/>
+                    {% endif %}
                 </a>
             {% endfor %}
         </div>

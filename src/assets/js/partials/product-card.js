@@ -226,12 +226,20 @@ class ProductCard extends HTMLElement {
     return photos.filter(p => !seen.has(p.url) && seen.add(p.url)).slice(0, MAX);
   }
 
-  buildCardImg(img) {
+  // deferred: the slide is off-axis in the carousel track, so it gets a
+  // transparent 1x1 src and the real URL in data-src. card-carousel.js
+  // hydrates it when the card nears the viewport. Without this, Chrome's
+  // native lazy-load pulled every gallery photo of every card on a slow
+  // connection while the hero (LCP) image was still downloading.
+  buildCardImg(img, deferred = false) {
     const url = img?.url || this.placeholder || '';
     const fit = salla.url.is_placeholder(url)
       ? 'contain'
       : (this.fitImageHeight ? this.fitImageHeight : 'cover');
     const alt = this.escapeHTML(img?.alt || this.product?.name || '');
+    if (deferred) {
+      return `<img class="s-product-card-image-${fit}" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="${url}" alt="${alt}" loading="lazy" />`;
+    }
     return `<img class="s-product-card-image-${fit}" src="${url}" alt="${alt}" loading="lazy" />`;
   }
 
@@ -247,7 +255,7 @@ class ProductCard extends HTMLElement {
     }
 
     const slides = photos
-      .map(img => `<a href="${href}" aria-label="${aria}" class="qpc-slide" draggable="false">${this.buildCardImg(img)}</a>`)
+      .map((img, i) => `<a href="${href}" aria-label="${aria}" class="qpc-slide" draggable="false">${this.buildCardImg(img, i > 0)}</a>`)
       .join('');
 
     return `<div class="qpc-carousel" data-qpc>${slides}</div>`;

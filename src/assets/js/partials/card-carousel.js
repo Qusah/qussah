@@ -34,6 +34,32 @@ function snapNearest(carousel, slides) {
   if (best) best.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 }
 
+// Slides after the first are rendered with a transparent src and the photo in
+// data-src (see qprod-image.twig / product-card.js). Swap the real URL in once
+// the card is about to be seen, or the moment someone starts to swipe it. A
+// clone made before hydration still carries data-src, so it hydrates itself.
+function hydrate(carousel) {
+  if (carousel._qpcHydrated) return;
+  carousel._qpcHydrated = true;
+  carousel.querySelectorAll('img[data-src]').forEach((img) => {
+    img.src = img.dataset.src;
+    img.removeAttribute('data-src');
+  });
+}
+
+function hydrateWhenNear(carousel) {
+  if (!('IntersectionObserver' in window)) { hydrate(carousel); return; }
+  const io = new IntersectionObserver((entries) => {
+    if (!entries.some((e) => e.isIntersecting)) return;
+    io.disconnect();
+    hydrate(carousel);
+  }, { rootMargin: '300px 0px' });
+  io.observe(carousel);
+  const now = () => { io.disconnect(); hydrate(carousel); };
+  carousel.addEventListener('touchstart', now, { passive: true, once: true });
+  carousel.addEventListener('pointerdown', now, { passive: true, once: true });
+}
+
 export function enhanceCarousel(carousel) {
   // Guard on a JS property (NOT a data-attribute): salla-products-list clones the
   // card DOM after render, and cloneNode copies attributes but not expando
@@ -43,6 +69,8 @@ export function enhanceCarousel(carousel) {
   const slides = Array.from(carousel.querySelectorAll('.qpc-slide'));
   if (slides.length < 2) return;
   carousel._qpcEnhanced = true;
+
+  hydrateWhenNear(carousel);
 
   // Dots live as a sibling under the same positioned wrapper.
   const wrap = carousel.parentElement;
