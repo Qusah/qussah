@@ -13,6 +13,8 @@
     "production": "webpack --mode production",
     "prod": "webpack --mode production",
     "development": "webpack --mode development",
+    "safelist": "node scripts/salla-safelist.js",
+    "safelist:verify": "node scripts/salla-safelist.js --verify",
     "watch": "webpack --mode production --watch"
   },
   "author": "Salla",

@@ -1,0 +1,415 @@
+s-has-error
+s-input
+s-hidden
+s-block
+s-form-control
+s-form-label
+s-form-group
+s-checkbox
+s-font-default
+s-form-has-error
+text-danger
+s-accordion-head-wrapper
+s-accordion-wrapper[collapsible='false'] .s-accordion-head-wrapper
+s-accordion-head-wrapper [slot='progress']
+s-accordion-head-wrapper [slot='note']
+s-add-product-button-with-quick-buy
+s-add-product-button-with-quick-buy:not(.s-add-product-button-with-sticky-bar)
+s-add-product-button-main
+s-add-product-button-with-sticky-bar salla-quick-buy
+s-add-product-button-with-quick-buy:not(.s-add-product-button-with-sticky-bar) .s-add-product-button-main
+s-add-product-button-with-quick-buy:not(.s-add-product-button-with-apple-pay) .s-add-product-button-main
+s-add-product-button-main:not(.w-full) > salla-button
+s-add-product-button-main .s-add-product-button-mini-checkout
+s-add-product-button-with-sticky-bar
+s-add-product-button-with-apple-pay
+s-add-product-button-with-apple-pay:not(.s-add-product-button-with-sticky-bar) salla-quick-buy apple-pay-button
+s-add-product-button-with-sticky-bar salla-quick-buy .s-quick-buy-button .s-button-text span
+s-add-product-button-mini-checkout-content
+s-add-product-button-mini-checkout-content svg
+s-add-product-button-busy
+s-basket-gap-card-offer .s-count-down-item
+s-basket-gap-entry .s-basket-gap-card-offer.s-basket-gap-card-offer .s-count-down-item::before
+s-basket-gap-entry .s-basket-gap-card-offer.s-basket-gap-card-offer .s-count-down-item::after
+[dir='rtl'] s-basket-gap-entry .s-basket-gap-card-offer.s-basket-gap-card-offer .s-count-down-item:not(:last-child)::after
+[dir='ltr'] s-basket-gap-entry .s-basket-gap-card-offer.s-basket-gap-card-offer .s-count-down-item:not(:first-child)::after
+s-basket-gap-card-btn
+s-basket-gap-card-btn salla-button .s-button-btn
+s-basket-gap-card-btn salla-button .s-button-loader:before
+s-booking-field-modal .s-modal-body
+s-bottom-alert-modal .s-modal-body
+s-bottom-alert-modal-content-footer button .s-button-text
+s-bottom-alert-modal-content-footer
+s-bullet-delivery .s-bullet-delivery-modal .s-modal-body
+s-bullet-delivery .s-bullet-delivery-modal .s-modal-body:has(.s-searchable-dropdown--open)
+s-button-wrap
+s-button-wrap[width='wide']
+s-button-wrap[type='submit']
+s-button-wrap[type='button']
+s-button-wrap[type='reset']
+s-button-wrap[loading] .s-button-loader-center .s-button-text
+s-button-element:not(:disabled):not([loading])
+s-button-btn
+s-button-wrap svg
+s-button-icon
+s-button-icon .s-button-text
+s-button-icon.s-button-large
+s-button-icon.s-button-large svg
+s-button-icon.s-button-small
+s-button-icon.s-button-small svg
+s-button-icon.s-button-small .s-button-loader:before
+s-button-outline
+s-button-outline .s-button-loader:before
+s-button-solid .s-button-loader:before
+s-button-small
+s-button-text
+s-button-loader
+s-button-loader-after .s-button-loader
+s-button-loader-start.s-button-element
+s-button-loader-start .s-button-loader
+s-button-loader-end.s-button-element
+s-button-loader-end .s-button-loader
+s-button-loader-center .s-button-loader
+s-cart-coupons-coupon-input-container
+s-cart-coupons-coupon-input-container .form-input
+s-cart-coupons-coupon-input-container .form-input:focus
+s-cart-coupons-coupon-input-container .form-input.s-coupon-input-error
+s-cart-summary-card-bar-savings-badge
+s-color-picker-widget
+s-color-picker-widget svg
+s-color-picker-widget span
+s-comment-form-input
+s-comments-item-like-btn .s-button-text
+s-count-down-item
+s-count-down-boxed .s-count-down-item
+s-count-down-sm .s-count-down-item
+s-count-down-md .s-count-down-item
+s-count-down-lg .s-count-down-item
+s-count-down-light .s-count-down-item
+s-count-down-dark .s-count-down-item
+s-count-down-primary .s-count-down-item
+s-count-down-ended .s-count-down-item
+s-count-down-pre-order .s-count-down-item
+s-count-down-horizontal .s-count-down-list .s-count-down-item
+s-count-down-with-button
+s-count-down-with-button button .s-button-text
+s-datetime-picker-input
+flatpickr-day.selected
+flatpickr-months
+[dir='rtl'] flatpickr-calendar
+flatpickr-calendar.arrowTop:before,.flatpickr-calendar.arrowTop:after
+s-delivery-promise-city-modal .s-modal-body
+s-delivery-promise-city-modal .s-modal-body > salla-button
+s-file-upload-wrapper .filepond--drop-label
+s-file-upload-wrapper .filepond--drop-label label
+s-file-upload-wrapper .filepond--label-action
+s-file-upload-wrapper .filepond--panel-root
+s-file-upload:not(.s-file-upload-multiple) .s-file-upload-wrapper .filepond--list-scroller
+filepond--root
+s-file-upload-wrapper .filepond--item-panel
+s-file-upload-wrapper .filepond--drip-blob
+s-file-upload-wrapper .filepond--list
+s-file-upload-wrapper .filepond--file-poster-wrapper
+s-file-upload-wrapper .filepond--file-poster
+s-file-upload-wrapper .filepond--file-poster-overlay
+s-file-upload-wrapper .filepond--item
+s-file-upload-wrapper .filepond--file-info
+s-file-upload-wrapper .filepond--file-info-main
+s-file-upload-wrapper .filepond--file-status
+s-file-upload-wrapper .filepond--file-status .filepond--file-status-sub
+s-file-upload-multiple .filepond--root
+s-file-upload-multiple .filepond--list-scroller
+s-file-upload-multiple .filepond--drop-label:not(.s-hidden) + .filepond--list-scroller
+s-file-upload-multiple .filepond--item
+s-filters-checkbox
+s-filters-radio
+s-filters-radio:checked
+s-filters-label
+s-filters-option-name
+s-filters-widget-container
+s-gifting-widget .s-list-tile-item-icon
+s-gifting-widget-vertical .s-list-tile-item-icon
+s-gifting-widget-vertical .s-list-tile-item-title svg
+s-gifting-widget-vertical .s-list-tile-item-subtitle
+s-gifting-widget-vertical .s-list-tile-item
+s-gifting-widget-vertical .s-list-tile-item-action
+s-gifting-widget-vertical .widget-icon
+s-gifting-widget .s-button-text
+s-gifting-widget .s-list-tile-item
+s-gifting-widget-horizontal .s-gifting-widget-action button
+s-gifting-widget-action-content
+s-gifting-widget-action-content svg
+s-gifting-modal .s-modal-body
+s-gifting-steps-wrapper
+s-gifting-steps-wrapper .s-button-wrap
+is-current-step-2 .gift-step-1, .is-current-step-1 .gift-step-2
+s-gifting-step-one
+s-gifting-step-two
+s-gifting-step-one .swiper-wrapper
+s-gifting-step-one .swiper-slide
+s-gifting-step-one .filepond--list-scroller
+s-gifting-step-one .swiper-wrapper img
+s-gifting-step-one .filepond--root
+s-gifting-step-one .filepond--list
+s-gifting-step-one .filepond-bg
+s-gifting-step-one .s-slider-button-next
+s-gifting-step-one .s-slider-button-next button
+s-gifting-step-one .s-slider-button-prev
+s-gifting-step-one .s-slider-button-prev button
+s-gifting-tel-input .s-tel-input-control
+s-gifting-tel-input .s-tel-input-error-msg
+s-gifting-step-two .s-form-group.s-form-has-error .s-tel-input-control
+s-gifting-schedule .s-form-label
+s-gifting-schedule
+s-infinite-scroll-wrapper
+s-infinite-scroll-last
+s-infinite-scroll-error
+s-list-tile-item
+s-loyalty-modal .s-modal-body
+s-loyalty-widget .s-list-tile-item
+s-loyalty-after-exchange .s-list-tile-item
+s-loyalty-after-exchange .s-list-tile-item .s-list-tile-item-title
+s-loyalty-points-history-table-tbody-tr
+s-loyalty-points-history-table-tbody-tr a
+s-loyalty-program-after-exchange .s-list-tile-item
+s-loyalty-program-after-exchange .s-list-tile-item .s-list-tile-item-title
+s-loyalty-program-panel-widget .s-list-tile-item
+s-map-location-button .s-button-text
+s-modal-icon
+s-modal-icon svg
+s-modal-bg-normal
+s-modal-body
+s-multiple-bundle-product-checkbox
+s-multiple-bundle-product-options-modal-slider .s-slider-container .swiper-slide
+s-multiple-bundle-product-options-modal-slider .s-slider-thumbs
+s-multiple-bundle-product-options-modal-slider .s-slider-thumbs-container
+s-multiple-bundle-product-options-modal-slider .s-slider-thumbs-container .swiper-slide
+s-next-order-coupon-icon-wrap
+s-next-order-coupon-icon-bg
+s-notifications-no-content
+s-offer-wrapper
+s-offer-bank-logo
+s-offer-bank-logo img
+s-offer-bank-payment-single
+s-offer-bank-payment-single img
+s-offer-.s-offer-wrapper .s-slider-block__title h2
+s-offer-.s-offer-wrapper .s-slider-block__title p
+s-offer-wrapper .s-slider-block__title::before
+s-offer-drawer-card .s-accordion-head-wrapper
+s-offer-modal-cat-item.swiper-slide
+s-offer-modal-brand-item.swiper-slide
+s-offer-modal-tag-item.swiper-slide
+s-offer-modal-type-discounts-table .s-modal-body
+salla-modals-order-cancel-modal .s-modal-body
+s-order-cancel-textarea
+s-order-details-option-color-picker
+s-order-details-option-color-picker-swatch
+s-order-edit-actions
+s-order-edit-actions salla-button
+s-order-edit-actions salla-button .s-button-element
+s-order-shipments-card
+s-order-summary-item-copy-button span svg
+s-order-summary-item-copy-button.copied .s-button-text
+s-orders-table-tbody-tr
+s-orders-table-tbody-tr a
+s-payments-list
+s-payments-list-item
+s-payments-list-item img
+s-price-range-number-input
+s-product-availability-error-msg
+s-product-card-entry
+s-product-card-shadow
+s-product-card-out-of-stock img.loaded
+s-product-card-overlay
+s-product-card-vertical
+s-product-card-vertical .s-product-card-image
+s-product-card-vertical .s-product-card-wishlist-btn
+s-product-card-minimal .s-product-card-wishlist-btn
+s-product-card-minimal .s-product-card-image
+s-product-card-minimal .s-product-card-content-title a
+s-product-card-minimal .s-product-card-content
+s-product-card-minimal .s-product-card-wishlist-btn button
+s-product-card-minimal .s-product-card-wishlist-btn button svg, .s-product-card-full-image .s-product-card-wishlist-btn button svg
+s-product-card-vertical .s-product-card-wishlist-btn button
+s-product-card-wishlist-btn button:hover svg
+s-product-card-fit-height .s-product-card-image
+s-product-card-quantity
+s-product-card-promotion-title
+s-product-card-out-badge
+s-product-card-image
+s-product-card-image img
+s-product-card-image img.lazy
+s-product-card-image img.loaded
+s-product-card-content
+s-product-card-content-title
+s-product-card-content-subtitle
+s-product-card-special .s-product-card-content-main, special .s-product-card-content-sub
+s-product-card-donation-input
+s-product-card-donation-input label
+s-product-card-donation-input label span
+s-product-card-content-title a
+s-product-card-content-sub
+s-product-card-out-of-stock-label
+s-product-card-rating
+s-product-card-rating span svg
+s-product-card-content-footer
+s-product-card-sale-price
+s-product-card-sale-price h4
+s-product-card-sale-price span
+s-product-card-starting-price
+s-product-card-starting-price h4
+s-product-card-price
+s-product-card-image-cover
+s-product-card-image-contain
+s-product-card-content-pie
+s-product-card-content-pie span
+s-product-card-content-pie span b
+s-product-card-content-extra-padding
+s-product-card-wishlist-added svg
+s-product-card-horizontal .s-product-card-image
+s-product-card-horizontal .s-product-card-quantity
+s-product-card-horizontal .s-product-card-content-title a
+s-product-card-horizontal .s-product-card-promotion-title
+s-product-card-horizontal .s-product-card-out-badge
+s-product-card-horizontal .s-product-card-content
+s-product-card-full-image
+s-product-card-full-image .s-product-card-content
+s-product-card-full-image img
+s-product-card-full-image .s-product-card-image a
+s-product-card-full-image .s-product-card-content-title a
+s-product-card-full-image .s-product-card-content-subtitle
+s-product-card-full-image .s-product-card-price
+s-product-card-full-image .s-product-card-sale-price
+s-product-card-full-image .s-product-card-sale-price span
+s-product-card-image-full
+s-product-card-compact
+s-product-card-compact .s-product-card-content-footer
+s-product-card-add-to-cart-icon svg
+s-product-card-compact .s-add-product-button-compact salla-button .s-button-btn
+s-product-card-compact .s-add-product-button-compact salla-button .s-button-btn:hover
+s-product-card-compact .s-product-card-content
+s-product-card-compact .s-product-card-content-main
+s-product-card-compact .s-product-card-content-title
+s-product-card-compact .s-product-card-content-title a
+s-product-card-compact .s-product-card-content-subtitle
+s-product-card-compact .s-product-card-content-sub
+s-product-card-compact .s-product-card-content-sub h4
+s-product-card-compact .s-product-card-content-sub .s-product-card-price
+s-product-card-compact .s-product-card-image
+s-product-card-compact .s-product-card-image img
+s-product-card-compact .s-product-card-promotion-title
+s-product-card-embed-card
+s-product-card-embed-card custom-salla-product-card
+s-product-card-embed-card-align-center
+s-product-card-embed-card-align-left
+s-product-card-embed-card-align-right
+s-product-card-embed-fallback
+article:has(salla-product-card-embed)::after
+s-product-options-option
+s-product-options-image-input .s-file-upload-wrapper
+s-quantity-input-container
+s-quantity-input-input
+s-quantity-input-button
+s-quantity-input-button svg
+s-quick-buy-button svg
+s-quick-buy-apple-pay
+s-quick-buy-apple-pay .apple-pay-btn-wrapper .apple-pay-btn
+s-quick-order-container
+s-quick-order-checkbox-container
+s-quick-order-checkbox-container input
+s-quick-order-expandable
+s-quick-order-expandable:not(.s-quick-order-shown)
+s-quick-order-expandable.s-quick-order-shown
+s-quick-order-expandable .s-form-group
+s-quick-order-expandable .s-form-group input
+s-quick-order-expandable .s-form-group > span
+s-quick-order-expandable .s-form-group span svg
+s-quick-order-confirm
+s-quick-order-confirm span
+s-quick-order-confirm svg
+s-quick-order-terms .s-form-label
+s-quick-order-terms
+s-quick-order-terms .s-checkbox
+s-quick-order-btn-close button
+unicode
+s-rating-modal-wrap .s-modal-body
+s-rating-stars-btn-star
+s-reviews-container
+s-reviews-header-wrapper
+s-reviews-header
+s-reviews-testimonial
+s-reviews-testimonial__inner
+s-reviews-testimonial__avatar
+s-reviews-testimonial__icon svg
+s-reviews-testimonial__text
+s-reviews-testimonial__text p
+s-reviews-testimonial__name_wrapper
+s-reviews-testimonial__rating
+s-reviews-testimonial__info h2
+s-reviews-container .swiper-slide
+s-reviews-container .swiper-slide:not(.swiper-slide-active) .s-reviews-testimonial__avatar
+s-reviews-container .swiper-slide:not(.swiper-slide-active) .s-reviews-testimonial__inner
+s-reviews-container .swiper-slide:not(.swiper-slide-active) .s-reviews-testimonial__icon svg
+s-reviews-container .swiper-slide-prev .s-reviews-testimonial
+s-reviews-container .swiper-slide-next .s-reviews-testimonial
+s-reviews-container .swiper-slide-active
+s-reviews-container .swiper-slide-active .s-reviews-testimonial
+s-reviews-container .swiper-slide-active .s-reviews-testimonial__inner
+s-reviews-container .swiper-slide-active .s-reviews-testimonial__avatar
+s-reviews-container .swiper-slide-active .s-reviews-testimonial__info
+s-reviews-container .swiper-slide-active .s-reviews-testimonial__rating
+s-reviews-container .swiper-slide-active .s-reviews-testimonial__text p
+s-reviews-container .s-slider--nav-arrow
+s-reviews-container .s-slider--nav-arrow.s-slider-next
+s-reviews-summary-header
+s-reviews-summary-header .s-rating-stars-selected
+s-reviews-summary-header .s-rating-stars-btn-star
+s-scopes-search-input
+s-search-grid-item .s-product-card-out-badge
+s-search-modal .s-modal-body
+s-search-modal.s-search-modal-new .s-modal-body
+s-slider-wrapper .swiper-pagination-bullet
+s-slider-wrapper .swiper-pagination-bullet-active
+s-slider-container
+s-slider-horizontal .s-slider-thumbs
+s-slider-thumbs-container
+s-slider-wrapper
+salla-slider:not(hydrated), .carousel-slider
+salla-slider[type]:not(hydrated) > div, salla-slider[type]:not(.hydrated) .swiper > div > div, .carousel-slider .swiper
+salla-slider[type]:not(hydrated) > div > div, salla-slider[type]:not(.hydrated) .swiper > div > div > div, .carousel-slider .swiper-wrapper > div
+salla-slider:not([type='carousel']):not([type='thumbs']):not(hydrated) > div, salla-slider.photos-slider:not(.hydrated) > div
+salla-slider:not([type='carousel']):not([type='thumbs']):not(hydrated) > div > div, salla-slider.photos-slider:not(.hydrated) > div > div
+salla-slider:not([type='carousel']):not([type='thumbs']):not(hydrated) > div > div:nth-child(n+2)
+salla-slider[type='fullscreen'] [slot='items'] > div
+salla-slider:not(hydrated)
+salla-slider div[slot='thumbs']
+salla-slider
+salla-slider div[slot='thumbs'] > div
+s-slider-vertical .s-slider-container
+s-slider-vertical .s-slider-thumbs
+s-slider-vertical .s-slider-thumbs-container
+s-slider-thumbs .s-slider-thumbs-container .swiper-slide
+s-slider-vertical .s-slider-thumbs-container .swiper-slide
+s-slider-thumbs .s-slider-thumbs-container .swiper-slide:after
+thumbs s-slider-thumbs-container
+s-slider-thumbs .s-slider-thumbs-container.has-more-4-slides
+salla-slider video-entry, salla-slider .model-entry
+salla-slider video-entry:before, salla-slider .model-entry:before
+video-entry:before, .model-entry:before
+salla-slider model-entry .s-toggle-switcher
+salla-slider model-entry:before
+s-slider-thumbs .swiper-slide.video-entry:before, .s-slider-thumbs .swiper-slide.model-entry:before
+s-slider-thumbs .s-slider-thumbs-container .swiper-slide.swiper-slide-thumb-active:after
+s-slider-with-grid-thumbs .s-slider-thumbs .s-slider-thumbs-container .swiper-slide
+s-slider-with-grid-thumbs .s-slider-thumbs .s-slider-thumbs-container
+s-tel-input-control
+s-tel-input-error-msg
+salla-user-menu div[slot='trigger']
+s-user-settings-section .s-list-tile-item
+s-user-settings-section-delete-user .s-list-tile-item
+s-verify-codes
+s-verify-codes.has-error
+s-verify-input
+s-verify-error-message
+s-wallet-table-tbody-tr
+s-wallet-table-tbody-tr a

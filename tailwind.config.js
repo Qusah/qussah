@@ -3,8 +3,10 @@ module.exports = {
     content: [
         "src/views/**/*.twig",
         "src/assets/js/**/*.js",
-        //todo:: inject it via the plugin or easier way
-        'node_modules/@salla.sa/twilight-tailwind-theme/safe-list-css.txt',
+        // Curated copy of the plugin's safe-list-css.txt: only the Salla component
+        // classes this theme must style itself. Regenerate with `pnpm run safelist`
+        // after bumping @salla.sa packages (see scripts/salla-safelist.js).
+        'src/assets/styles/salla-safelist.txt',
     ],
     darkMode: 'class', // or 'media' or 'class'
     theme   : {
