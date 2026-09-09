@@ -111,7 +111,7 @@
     z-index: 3;
     top: 16px;
     left: 16px;
-    height: 30px;
+    min-height: 30px;
     min-width: 67px;
     display: inline-flex;
     align-items: center;
@@ -121,9 +121,17 @@
     color: #fff;
     font-size: 12px;
     font-weight: 300;
-    line-height: 1;
+    line-height: 1.25;
     border-radius: 4px;
-    white-space: nowrap;
+    // Merchant promotion_title values are far longer than the "خصم 25%" this pill
+    // was drawn for. As an absolutely positioned nowrap badge it grew past the
+    // card: clipped mid-word where the image box has overflow:hidden, and spilling
+    // into the page where it doesn't, which is the horizontal scroll some phones
+    // got. Cap it to the card and let a long label wrap instead of overrunning.
+    max-width: calc(100% - 32px);
+    white-space: normal;
+    overflow-wrap: break-word;
+    text-align: center;
     &::before {
       content: "";
       position: absolute;
@@ -413,7 +421,8 @@
   .qprod__badge {
     top: 12px;
     left: 12px;
-    height: 26px;
+    max-width: calc(100% - 24px);
+    min-height: 26px;
     min-width: 52px;
     font-size: 11px;
     padding: 4px 8px;
