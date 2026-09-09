@@ -107,39 +107,50 @@
   // elements at z-index:auto paint in tree order, so without this the slides
   // cover the badge on every multi-image product. Matches .qpack__badge.
   &__badge {
+    // Merchant promotion_title labels run far longer than the short discount text
+    // this pill was drawn for, and as a nowrap badge with no cap it grew past the
+    // card. Hold it to one line at a fixed height and truncate with an ellipsis.
+    //
+    // Truncating needs overflow:hidden, which would also clip a tail drawn outside
+    // the box — so the tail now sits inside the padding box and ::after paints the
+    // pill behind the text. The badge is offset by the width of the tail so the
+    // pill itself still starts on the design's 16px line, and isolation keeps that
+    // z-index:-1 layer inside this badge instead of dropping behind the card.
     position: absolute;
     z-index: 3;
+    isolation: isolate;
     top: 16px;
-    left: 16px;
-    min-height: 30px;
-    min-width: 67px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 5px 10px;
-    background: #f55157;
+    left: 10px;                    // 16px pill edge − 6px tail
+    height: 30px;
+    line-height: 30px;             // one line, vertically centred
+    min-width: 73px;               // 67px pill + tail
+    max-width: calc(100% - 26px);  // pill stops 16px short of the far edge
+    display: block;
+    padding: 0 10px 0 16px;        // 10px gutter each side, +6px for the tail
+    background: none;              // the pill is ::after now
     color: #fff;
     font-size: 12px;
     font-weight: 300;
-    line-height: 1.25;
-    border-radius: 4px;
-    // Merchant promotion_title values are far longer than the "خصم 25%" this pill
-    // was drawn for. As an absolutely positioned nowrap badge it grew past the
-    // card: clipped mid-word where the image box has overflow:hidden, and spilling
-    // into the page where it doesn't, which is the horizontal scroll some phones
-    // got. Cap it to the card and let a long label wrap instead of overrunning.
-    max-width: calc(100% - 32px);
-    white-space: normal;
-    overflow-wrap: break-word;
     text-align: center;
-    &::before {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    &::before {                    // folded tail, inside the box
       content: "";
       position: absolute;
       top: 50%;
-      left: -6px;
+      left: 0;
       transform: translateY(-50%);
       border-block: 6px solid transparent;
       border-inline-end: 6px solid #f55157;
+    }
+    &::after {                     // the pill, behind the text
+      content: "";
+      position: absolute;
+      inset: 0 0 0 6px;
+      z-index: -1;
+      background: #f55157;
+      border-radius: 4px;
     }
   }
 
@@ -420,12 +431,13 @@
   }
   .qprod__badge {
     top: 12px;
-    left: 12px;
-    max-width: calc(100% - 24px);
-    min-height: 26px;
-    min-width: 52px;
+    left: 6px;                     // 12px pill edge − 6px tail
+    max-width: calc(100% - 18px);
+    height: 26px;
+    line-height: 26px;
+    min-width: 58px;
     font-size: 11px;
-    padding: 4px 8px;
+    padding: 0 8px 0 14px;
   }
 }
 

@@ -40,28 +40,34 @@
 
   // ---- discount / promotion / preorder badge (top start of image) ----
   .s-product-card-promotion-title {
+    // Merchant promotion_title labels run far longer than the short discount text
+    // this pill was drawn for, and as a nowrap badge with no cap it grew past the
+    // card. Hold it to one line at a fixed height and truncate with an ellipsis.
+    //
+    // Truncating needs overflow:hidden, which would also clip a tail drawn outside
+    // the box — so the tail now sits inside the padding box and ::after paints the
+    // pill behind the text. The badge is offset by the width of the tail so the
+    // pill itself still starts on the design's 16px line, and isolation keeps that
+    // z-index:-1 layer inside this badge instead of dropping behind the card.
     position: absolute;
-    top: 16px; left: 16px; right: auto;
-    min-height: 30px; min-width: 67px;
-    display: inline-flex; align-items: center; justify-content: center;
-    padding: 5px 10px;
-    background: #f55157; color: #fff;
-    font-size: 12px; font-weight: 300; line-height: 1.25;
-    border-radius: 5px;
-    // Merchant promotion_title values are far longer than the "خصم 25%" this pill
-    // was drawn for. As an absolutely positioned nowrap badge it grew past the
-    // card: clipped mid-word where the image box has overflow:hidden, and spilling
-    // into the page where it doesn't, which is the horizontal scroll some phones
-    // got. Cap it to the card and let a long label wrap instead of overrunning.
-    max-width: calc(100% - 32px);
-    white-space: normal;
-    overflow-wrap: break-word;
+    top: 16px; left: 10px; right: auto; isolation: isolate;
+    height: 30px; line-height: 30px;
+    min-width: 73px; max-width: calc(100% - 26px);
+    display: block;
+    padding: 0 10px 0 16px;
+    background: none; color: #fff;
+    font-size: 12px; font-weight: 300;
     text-align: center;
-    &::before {
-      content: ''; position: absolute; top: 50%; left: -6px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    &::before {                    // folded tail, inside the box
+      content: ''; position: absolute; top: 50%; left: 0;
       transform: translateY(-50%);
       border-block: 6px solid transparent;
       border-inline-end: 6px solid #f55157;
+    }
+    &::after {                     // the pill, behind the text
+      content: ''; position: absolute; inset: 0 0 0 6px; z-index: -1;
+      background: #f55157; border-radius: 5px;
     }
   }
 
