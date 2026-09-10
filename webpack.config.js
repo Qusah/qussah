@@ -16,6 +16,7 @@ module.exports = {
         home    : asset('js/home.js'),
         'product-card' : asset('js/partials/product-card.js'),
         'live-visitors' : asset('js/partials/live-visitors.js'),
+        'satisfaction' : asset('js/partials/satisfaction.js'),
         'main-menu' : asset('js/partials/main-menu.js'),
         'qissa-packs-counter' : asset('js/partials/qissa-packs-counter.js'),
         'qissa-image-banner' : asset('js/partials/qissa-image-banner.js'),

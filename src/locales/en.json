@@ -105,6 +105,14 @@
       "product_many": "{count} people are looking at this product right now",
       "cart_few": "{count} people are checking out right now",
       "cart_many": "{count} people are checking out right now"
+    },
+    "csat": {
+      "pick": "Pick your rating",
+      "face_1": "Very unhappy",
+      "face_2": "Unhappy",
+      "face_3": "Neutral",
+      "face_4": "Happy",
+      "face_5": "Very happy"
     }
   },
   "pages": {

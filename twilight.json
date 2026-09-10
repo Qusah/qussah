@@ -576,6 +576,88 @@
                 "required": false,
                 "placeholder": "https://salla-pipeline.onrender.com",
                 "value": "https://salla-pipeline.onrender.com"
+        },
+        {
+                "type": "boolean",
+                "icon": "sicon-smile",
+                "label": "سؤال رضا العميل في صفحة تأكيد الطلب",
+                "description": "«هل تنصح أصدقاءك بتجربة الشراء من متجر …؟» بخمسة وجوه، ثم سؤال مفتوح حسب التقييم. تُحفظ الإجابات في لوحة البيانات",
+                "id": "csat_enabled",
+                "format": "switch",
+                "required": false,
+                "value": true,
+                "selected": true
+        },
+        {
+                "type": "string",
+                "icon": "sicon-edit",
+                "label": "سؤال الرضا",
+                "description": "اكتب {المتجر} ليُستبدل باسم المتجر",
+                "id": "csat_question",
+                "format": "text",
+                "required": false,
+                "value": "هل تنصح أصدقاءك بتجربة الشراء من متجر {المتجر}؟"
+        },
+        {
+                "type": "string",
+                "icon": "sicon-edit",
+                "label": "السؤال عند اختيار ٥ (راضٍ جداً)",
+                "description": "اكتب {المتجر} ليُستبدل باسم المتجر",
+                "id": "csat_prompt_top",
+                "format": "text",
+                "required": false,
+                "value": "ايش أكثر شيء عجبك في متجر {المتجر}؟"
+        },
+        {
+                "type": "string",
+                "icon": "sicon-edit",
+                "label": "السؤال عند اختيار أقل من ٥",
+                "description": "",
+                "id": "csat_prompt_low",
+                "format": "text",
+                "required": false,
+                "value": "كيف نقدر نصير أحسن؟"
+        },
+        {
+                "type": "string",
+                "icon": "sicon-edit",
+                "label": "نص مربع الكتابة",
+                "description": "",
+                "id": "csat_placeholder",
+                "format": "text",
+                "required": false,
+                "value": "اكتب لنا هنا…"
+        },
+        {
+                "type": "string",
+                "icon": "sicon-edit",
+                "label": "نص زر الإرسال",
+                "description": "",
+                "id": "csat_submit",
+                "format": "text",
+                "required": false,
+                "value": "إرسال"
+        },
+        {
+                "type": "string",
+                "icon": "sicon-edit",
+                "label": "رسالة الشكر بعد الإرسال",
+                "description": "",
+                "id": "csat_thanks",
+                "format": "text",
+                "required": false,
+                "value": "شكراً لك! رأيك يهمنا 🤍"
+        },
+        {
+                "type": "string",
+                "icon": "sicon-link",
+                "label": "رابط خادم حفظ الإجابات",
+                "description": "اتركه كما هو إلا عند تغيير الخادم",
+                "id": "csat_endpoint",
+                "format": "text",
+                "required": false,
+                "placeholder": "https://salla-pipeline.onrender.com",
+                "value": "https://salla-pipeline.onrender.com"
         }
     ],
     "components": [
