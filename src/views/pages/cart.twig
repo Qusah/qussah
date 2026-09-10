@@ -57,6 +57,21 @@
         </nav>
         <h1 class="sr-only">{{ trans('blocks.header.cart') }}</h1>
         <salla-conditional-offer></salla-conditional-offer>
+
+                {# Live visitors (ClickUp: [All Stores] Live Visitors). Ships hidden;
+                   live-visitors.js reveals it only once the pipeline answers with a
+                   count at or above the merchant's minimum. #}
+                {% if theme.settings.get('live_visitors_enabled', true) %}
+                <p class="qlive qlive--cart" data-live-visitors hidden
+                   data-endpoint="{{ theme.settings.get('live_visitors_endpoint', 'https://salla-pipeline.onrender.com')|trim }}"
+                   data-store="{{ store.id }}" data-page="cart" data-key="cart"
+                   data-min="{{ theme.settings.get('live_visitors_min', 3) }}"
+                   data-few="{{ trans('blocks.live_visitors.cart_few') }}"
+                   data-many="{{ trans('blocks.live_visitors.cart_many') }}">
+                    <span class="qlive__dot" aria-hidden="true"></span>
+                    <span data-live-text></span>
+                </p>
+                {% endif %}
         <div class="qcart__layout pt-5 pb-6 lg:pb-20{{ cart.items|length ? '' : ' qcart__layout--empty' }}">
             <div class="main-content qcart__items">
                 {% hook 'cart:items.start' %}

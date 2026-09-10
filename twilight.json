@@ -544,6 +544,38 @@
             "format": "integer",
             "required": false,
             "value": 12
+        },
+        {
+                "type": "boolean",
+                "icon": "sicon-users",
+                "label": "إظهار عدد الزوار المباشر",
+                "description": "«هناك ١٥ شخصاً يشاهدون هذا المنتج الآن» تحت اسم المنتج، و«يتممون عملية الشراء» أعلى السلة. يُحسب من زوار آخر ٣٠ دقيقة",
+                "id": "live_visitors_enabled",
+                "format": "switch",
+                "required": false,
+                "value": true,
+                "selected": true
+        },
+        {
+                "type": "number",
+                "icon": "sicon-users",
+                "label": "الحد الأدنى لإظهار عدد الزوار",
+                "description": "لا يظهر السطر إذا كان العدد أقل من هذا. الافتراضي ٣",
+                "id": "live_visitors_min",
+                "format": "integer",
+                "required": false,
+                "value": 3
+        },
+        {
+                "type": "string",
+                "icon": "sicon-link",
+                "label": "رابط خادم عدد الزوار",
+                "description": "اتركه كما هو إلا عند تغيير الخادم",
+                "id": "live_visitors_endpoint",
+                "format": "text",
+                "required": false,
+                "placeholder": "https://salla-pipeline.onrender.com",
+                "value": "https://salla-pipeline.onrender.com"
         }
     ],
     "components": [

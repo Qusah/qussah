@@ -1,0 +1,53 @@
+/* Live visitors — the "N people are looking at this right now" line under the
+   product title and at the top of the cart (ClickUp: [All Stores] Live
+   Visitors). Ships hidden; live-visitors.js reveals it at >= the minimum.
+   Quiet by design: the theme's secondary text with a small pulsing dot in
+   green, so it reads as a fact rather than an advert. */
+.qlive {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0 0;
+  color: #6c757d;
+  font-family: "GE SS Two", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+
+  &[hidden] { display: none; }
+
+  &__dot {
+    position: relative;
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #1fc16b;
+
+    /* the pulse: a ring that grows out of the dot and fades */
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid #1fc16b;
+      opacity: 0;
+      animation: qlive-pulse 2s ease-out infinite;
+    }
+  }
+}
+
+/* cart: sits on its own line above the list, with room below */
+.qlive--cart {
+  display: flex;
+  margin: 0 0 14px;
+}
+
+@keyframes qlive-pulse {
+  0%   { transform: scale(0.6); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qlive__dot::after { animation: none; }
+}

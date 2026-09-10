@@ -394,6 +394,21 @@
                         </button>
                     </div>
                     <h1 class="qpd__title">{{ product.name }}</h1>
+
+                {# Live visitors (ClickUp: [All Stores] Live Visitors). Ships hidden;
+                   live-visitors.js reveals it only once the pipeline answers with a
+                   count at or above the merchant's minimum. #}
+                {% if theme.settings.get('live_visitors_enabled', true) %}
+                <p class="qlive" data-live-visitors hidden
+                   data-endpoint="{{ theme.settings.get('live_visitors_endpoint', 'https://salla-pipeline.onrender.com')|trim }}"
+                   data-store="{{ store.id }}" data-page="product" data-key="{{ product.id }}"
+                   data-min="{{ theme.settings.get('live_visitors_min', 3) }}"
+                   data-few="{{ trans('blocks.live_visitors.product_few') }}"
+                   data-many="{{ trans('blocks.live_visitors.product_many') }}">
+                    <span class="qlive__dot" aria-hidden="true"></span>
+                    <span data-live-text></span>
+                </p>
+                {% endif %}
                 </div>
 
                 {% if product.subtitle %}
