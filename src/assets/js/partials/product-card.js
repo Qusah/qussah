@@ -359,6 +359,9 @@ class ProductCard extends HTMLElement {
               : (this.product?.subtitle && !this.minimal
                   ? `<p class="s-product-card-content-subtitle opacity-80">${this.product?.subtitle}</p>`
                   : ``)}
+            ${this.isPlainVertical && document.body.hasAttribute('data-live-cards')
+              ? `<span class="qlive qlive--card" data-live-card="${this.product.id}" hidden><span class="qlive__dot" aria-hidden="true"></span><span data-live-text></span></span>`
+              : ``}
           </div>
           ${this.product?.donation && !this.minimal && !this.fullImage ?
           `<salla-progress-bar donation=${JSON.stringify(this.product?.donation)}></salla-progress-bar>

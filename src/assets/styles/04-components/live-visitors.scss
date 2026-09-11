@@ -1,18 +1,31 @@
-/* Live visitors — the "N people are looking at this right now" line under the
-   product title and at the top of the cart (ClickUp: [All Stores] Live
-   Visitors). Ships hidden; live-visitors.js reveals it at >= the minimum.
-   Quiet by design: the theme's secondary text with a small pulsing dot in
-   green, so it reads as a fact rather than an advert. */
+/* Live visitors — "N people are looking at this right now" (ClickUp: [All
+   Stores] Live Visitors). Ships hidden; live-visitors.js reveals it at >= the
+   merchant's minimum.
+
+   Two shapes, both from the theme's own vocabulary:
+     .qlive          product page + cart — the ICE PILL: blue/50 (#e8fcff)
+                     capsule with royal text, the same family as the spec chip
+                     («32 عبوة»), with a pulsing green dot.
+     .qlive--card    product cards — the STAT line: the wording of the
+                     «تم شراءه 23172 مرة» row, secondary text with the number
+                     in royal Poppins. Quiet enough to sit between the chips
+                     and the price on every card. */
+
 .qlive {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin: 6px 0 0;
-  color: #6c757d;
+  margin: 0 0 12px;
+  padding: 8px 14px 8px 12px;
+  border-radius: 100px;
+  background: #e8fcff;
+  color: #30378e;
   font-family: "GE SS Two", sans-serif;
   font-size: 14px;
   font-weight: 500;
-  line-height: 1.5;
+  line-height: 1;
+  white-space: nowrap;
+  max-width: 100%;
 
   &[hidden] { display: none; }
 
@@ -35,12 +48,47 @@
       animation: qlive-pulse 2s ease-out infinite;
     }
   }
+
+  /* the figure: Poppins, tabular, bolder than the sentence */
+  [data-live-text] {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
+
+/* product page: its own line under the title row (the title row is a flex
+   row; the pill used to be squeezed into it) */
+.qpd .qlive { margin: -4px 0 12px; }
 
 /* cart: sits on its own line above the list, with room below */
 .qlive--cart {
-  display: flex;
   margin: 0 0 14px;
+  font-size: 13.5px;
+}
+
+/* product cards: the stat line — no capsule, secondary text, royal number.
+   Lives inside .qprod__info / .s-product-card-content-main (flex columns), so
+   it takes the column's gap and needs no margin of its own. */
+.qlive--card {
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  color: #6c757d;
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 1.4;
+
+  .qlive__dot {
+    width: 6px;
+    height: 6px;
+    &::after { inset: -3px; border-width: 1.5px; }
+  }
+
+  [data-live-text] {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 @keyframes qlive-pulse {

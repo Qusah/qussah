@@ -557,6 +557,17 @@
                 "selected": true
         },
         {
+                "type": "boolean",
+                "icon": "sicon-grid",
+                "label": "عدد الزوار داخل بطاقات المنتجات",
+                "description": "سطر «١٢ يشاهدون الآن» تحت اسم المنتج في بطاقات التصنيفات والصفحة الرئيسية والمنتجات المشابهة. يتبع نفس الحد الأدنى",
+                "id": "live_visitors_cards",
+                "format": "switch",
+                "required": false,
+                "value": true,
+                "selected": true
+        },
+        {
                 "type": "number",
                 "icon": "sicon-users",
                 "label": "الحد الأدنى لإظهار عدد الزوار",

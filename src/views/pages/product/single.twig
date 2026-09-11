@@ -395,6 +395,8 @@
                     </div>
                     <h1 class="qpd__title">{{ product.name }}</h1>
 
+                </div>
+
                 {# Live visitors (ClickUp: [All Stores] Live Visitors). Ships hidden;
                    live-visitors.js reveals it only once the pipeline answers with a
                    count at or above the merchant's minimum. #}
@@ -409,7 +411,6 @@
                     <span data-live-text></span>
                 </p>
                 {% endif %}
-                </div>
 
                 {% if product.subtitle %}
                     <h2 class="product-entry__sub-title text-sm text-gray-500 leading-6 mb-2.5">

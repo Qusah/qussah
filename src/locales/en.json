@@ -104,7 +104,9 @@
       "product_few": "{count} people are looking at this product right now",
       "product_many": "{count} people are looking at this product right now",
       "cart_few": "{count} people are checking out right now",
-      "cart_many": "{count} people are checking out right now"
+      "cart_many": "{count} people are checking out right now",
+      "card_few": "{count} viewing now",
+      "card_many": "{count} viewing now"
     },
     "csat": {
       "pick": "Pick your rating",

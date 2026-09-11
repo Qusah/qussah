@@ -66,6 +66,9 @@ initCardCarousels() in home.js.
                                 {% endfor %}
                             </div>
                         {% endif %}
+                        {% if theme.settings.get('live_visitors_enabled', true) and theme.settings.get('live_visitors_cards', true) %}
+                            <span class="qlive qlive--card" data-live-card="{{ product.id }}" hidden><span class="qlive__dot" aria-hidden="true"></span><span data-live-text></span></span>
+                        {% endif %}
 
                         {# price #}
                         {% if component.show_price %}
