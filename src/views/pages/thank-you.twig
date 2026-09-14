@@ -84,7 +84,13 @@
                  data-prompt-top="{{ csat_top|e('html_attr') }}"
                  data-prompt-low="{{ csat_low|e('html_attr') }}">
             <div class="qcsat__inner">
-                <h2 class="qcsat__q">{{ csat_q }}</h2>
+                {# the lid: navy hero gradient, the question, and the thanks once answered; a tissue peeks out of the slot #}
+                <div class="qcsat__lid">
+                    <h2 class="qcsat__q">{{ csat_q }}</h2>
+                    <p class="qcsat__thanks" data-csat-thanks hidden>{{ theme.settings.get('csat_thanks', 'شكراً لك! رأيك يهمنا 🤍') }}</p>
+                    <span class="qcsat__tissue" aria-hidden="true"></span>
+                </div>
+                <div class="qcsat__body">
 
                 <div class="qcsat__faces" role="radiogroup" aria-label="{{ trans('blocks.csat.pick') }}">
                     <button type="button" class="qcsat__face" data-csat-face="1"
@@ -116,7 +122,7 @@
                     <button type="submit" class="qcsat__send">{{ theme.settings.get('csat_submit', 'إرسال') }}</button>
                 </form>
 
-                <p class="qcsat__thanks" data-csat-thanks hidden>{{ theme.settings.get('csat_thanks', 'شكراً لك! رأيك يهمنا 🤍') }}</p>
+                </div>
             </div>
         </section>
         {% endif %}
