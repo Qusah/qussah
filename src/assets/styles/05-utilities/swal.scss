@@ -73,3 +73,26 @@
 		}
 	}
 }
+
+// ====================================================================
+// Toast placement under the sticky header
+// The notifier fires these toasts at top-start (app.js → initiateNotifier), and
+// SweetAlert pins .swal2-container to the top of the viewport, so the toast
+// landed on top of .qheader-nav and covered the logo and the cart button.
+//
+// Measured on the live store at 412px: the nav sits at 0→62 pinned and 15→85
+// unpinned, so an 80px container offset clears both (the toast starts at ~89px).
+// Desktop keeps the default: there the logo and cart sit below the toast already.
+//
+// Scoped to the top-* position classes so centred Swal.fire(...) modals — the
+// object-message branch of the notifier — keep their own placement.
+// ====================================================================
+.swal2-container {
+  &.swal2-top,
+  &.swal2-top-start,
+  &.swal2-top-end {
+    @media (max-width: 1150px) {
+      top: 80px;
+    }
+  }
+}
