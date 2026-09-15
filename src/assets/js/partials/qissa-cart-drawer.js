@@ -317,7 +317,8 @@ class QissaCartDrawer {
         </div>
         <div class="qcd__bottom">
           <div class="qcd__total">
-            <span class="qcd__total-label">${this.s.final} · ${this.s.count.replace('{count}', this.number(count))}</span>
+            <span class="qcd__total-count">${this.s.count.replace('{count}', this.number(count))}</span>
+            <span class="qcd__total-label">${this.s.final}</span>
             <b class="qcd__total-value">${this.money(t.total)}</b>
           </div>
           <button type="button" class="qcd__checkout" data-qcd-checkout>
