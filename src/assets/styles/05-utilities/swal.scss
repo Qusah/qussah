@@ -76,23 +76,36 @@
 
 // ====================================================================
 // Toast placement under the sticky header
-// The notifier fires these toasts at top-start (app.js → initiateNotifier), and
-// SweetAlert pins .swal2-container to the top of the viewport, so the toast
-// landed on top of .qheader-nav and covered the logo and the cart button.
+// The notifier fires these toasts at top-start (app.js -> initiateNotifier).
+// SweetAlert's own stylesheet pins the container to the top of the viewport:
+//     body.swal2-toast-shown .swal2-container.swal2-top-start { inset: 0 auto auto 0 }
+// so the toast landed on .qheader-nav and covered the logo and the cart button.
 //
-// Measured on the live store at 412px: the nav sits at 0→62 pinned and 15→85
-// unpinned, so an 80px container offset clears both (the toast starts at ~89px).
-// Desktop keeps the default: there the logo and cart sit below the toast already.
+// That selector scores (0,3,1), and SweetAlert injects the stylesheet at runtime
+// -- after app.css -- so a plain `.swal2-container.swal2-top-start` rule here
+// loses on BOTH specificity and order and never applies. Match the
+// `body.swal2-toast-shown` shape and keep !important.
 //
-// Scoped to the top-* position classes so centred Swal.fire(...) modals — the
-// object-message branch of the notifier — keep their own placement.
+// Offsets measured on the live store, in both header states:
+//   mobile  (412px):  nav 15->85 unpinned, 0->62 pinned  -> 80px  puts it at 89
+//   desktop (1440px): nav 36->126 unpinned, -56->20 pinned -> 140px puts it at 134
+// Each clears the nav bar, the logo and the cart in both states.
+//
+// Scoped to the top-* position classes so centred Swal.fire(...) modals -- the
+// object-message branch of the notifier -- keep their own placement.
 // ====================================================================
-.swal2-container {
+body.swal2-toast-shown .swal2-container {
   &.swal2-top,
   &.swal2-top-start,
-  &.swal2-top-end {
+  &.swal2-top-left,
+  &.swal2-top-end,
+  &.swal2-top-right {
     @media (max-width: 1150px) {
-      top: 80px;
+      top: 80px !important;
+    }
+
+    @media (min-width: 1151px) {
+      top: 140px !important;
     }
   }
 }
