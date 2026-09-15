@@ -1,0 +1,216 @@
+/* ==========================================================================
+   Qussah cart drawer — the approved «الإجمالي أولاً» design
+   --------------------------------------------------------------------------
+   Markup : src/assets/js/partials/qissa-cart-drawer.js
+            (shell + empty-state template in layouts/master.twig)
+
+   Anchored to the LEFT edge and slides in from there on every breakpoint —
+   a physical side, not an inline one, so physical left/right are used over
+   logical properties on purpose.
+
+   Tokens: navy #0a1f30 · royal #30378e · hero gradient #172951→#25307a→#30378e
+           ice #e8fcff · line #daeff7 · cream #fff9ec · cyan #91e6f7
+           sale red #d50d1e · badge red #f55157 · gray-600 #6c757d · gray-500 #adb5bd
+   ========================================================================== */
+
+.qcd {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  font-family: "GE SS Two", sans-serif;
+  color: #0a1f30;
+
+  &[hidden] { display: none; }
+
+  &__i {
+    width: 20px; height: 20px; flex: none;
+    fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  &__backdrop {
+    position: absolute; inset: 0;
+    background: rgba(10, 31, 48, 0.45);
+    animation: qcd-fade 0.2s ease;
+  }
+
+  &__panel {
+    position: absolute; top: 0; left: 0; bottom: 0;
+    display: flex; flex-direction: column;
+    width: min(100%, 380px);
+    background: #fff;
+    box-shadow: 10px 0 34px rgba(10, 31, 48, 0.18);
+    animation: qcd-slide 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    @media (min-width: 1024px) { width: 400px; }
+  }
+
+  /* ---- head: navy hero gradient, title + count, close, the shipping line ---- */
+  &__head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px 10px;
+    padding: 16px 18px 18px;
+    color: #fff;
+    background:
+      radial-gradient(60% 120% at 50% 8%, rgba(90, 130, 255, 0.22) 0%, rgba(90, 130, 255, 0) 60%),
+      linear-gradient(125deg, #172951 0%, #25307a 50%, #30378e 100%);
+  }
+  &__title { margin: 0; font-size: 18px; font-weight: 700; line-height: 1.3; color: #fff; }
+  &__count { margin: 2px 0 0; font-size: 12px; font-weight: 400; color: rgba(255, 255, 255, 0.7); min-height: 1em; }
+  &__close {
+    display: grid; place-items: center;
+    width: 36px; height: 36px; padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12); color: #fff; cursor: pointer;
+    &:hover { background: rgba(255, 255, 255, 0.2); }
+  }
+
+  &__ship {
+    grid-column: 1 / -1;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  &__ship-text {
+    display: flex; align-items: center; gap: 8px;
+    margin: 0; font-size: 12.5px; line-height: 1.4; color: rgba(255, 255, 255, 0.85);
+    b { color: #91e6f7; font-size: 13px; }
+  }
+  &__ship-icon {
+    display: grid; place-items: center; flex: none;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: #91e6f7; color: #0a1f30;
+    .qcd__i { width: 16px; height: 16px; }
+  }
+  &__track { position: relative; height: 5px; border-radius: 99px; background: rgba(255, 255, 255, 0.16); overflow: hidden; }
+  &__fill {
+    position: absolute; top: 0; bottom: 0; right: 0;
+    border-radius: 99px; background: linear-gradient(to left, #91e6f7, #c9f4fb);
+    transition: width 0.4s ease;
+    [dir="ltr"] & { right: auto; left: 0; background: linear-gradient(to right, #91e6f7, #c9f4fb); }
+  }
+  &__ship.is-done &__ship-icon { background: #fff; }
+
+  /* ---- items ---- */
+  &__body {
+    flex: 1; min-height: 0; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 12px;
+    padding: 14px 18px;
+    &--empty { justify-content: center; }
+  }
+  &__item {
+    display: flex; gap: 12px; align-items: stretch;
+    padding-bottom: 12px; border-bottom: 1px solid #eef5f9;
+    &:last-of-type { border-bottom: 0; }
+  }
+  &__thumb {
+    display: block; flex: none; width: 68px; height: 68px;
+    border-radius: 12px; background: #fff9ec; overflow: hidden;
+    img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  }
+  &__main { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; }
+  &__name {
+    font-size: 13.5px; font-weight: 500; line-height: 1.35; color: #0a1f30;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    &:hover { color: #30378e; }
+  }
+  &__form { display: block; }
+
+  /* the SDK's stepper, dressed as the approved pill: ice round buttons, royal glyphs */
+  &__qty {
+    display: inline-block;
+    .s-quantity-input-container {
+      display: inline-flex; align-items: center; gap: 2px;
+      height: 34px; padding: 3px; border: 1px solid #daeff7; border-radius: 999px; background: #fff;
+    }
+    .s-quantity-input-button {
+      display: grid; place-items: center; width: 26px; height: 26px; margin: 0; padding: 0;
+      border: 0; border-radius: 50%; background: #e8fcff; color: #30378e; font-size: 15px; cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+      &:hover:not(:disabled) { background: #30378e; color: #fff; }
+      &:disabled { opacity: 0.4; cursor: not-allowed; }
+    }
+    .s-quantity-input-input {
+      width: 30px; min-width: 30px; padding: 0; border: 0; background: none;
+      font-size: 13px; font-weight: 500; color: #0a1f30; text-align: center;
+      &:focus { outline: none; }
+    }
+  }
+
+  /* the side column: delete on top, price under it, both at the end side */
+  &__side { flex: none; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; gap: 6px; }
+  &__remove {
+    display: grid; place-items: center; width: 30px; height: 30px; padding: 0;
+    border: 1px solid #eef5f9; border-radius: 50%; background: #fff; color: #adb5bd; cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    .qcd__i { width: 16px; height: 16px; }
+    &:hover { color: #d50d1e; border-color: #f5c6c9; }
+    &:disabled { opacity: 0.5; cursor: default; }
+  }
+  &__price { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; text-align: end; white-space: nowrap; }
+  &__was { font-size: 11px; font-weight: 400; color: #adb5bd; }
+  &__now { font-size: 14px; font-weight: 700; color: #30378e; line-height: 1.2; }
+  &__off {
+    display: inline-block; padding: 1px 6px; border-radius: 5px;
+    background: #f55157; color: #fff; font-size: 10.5px; font-weight: 700; line-height: 1.5;
+  }
+  &__clear {
+    align-self: center; margin-top: auto; padding: 4px 8px;
+    border: 0; background: none; color: #6c757d; font: inherit; font-size: 12px; text-decoration: underline dotted; cursor: pointer;
+    &:hover { color: #0a1f30; }
+    &:disabled { opacity: 0.5; cursor: default; }
+  }
+
+  /* ---- foot: three plain rows, then the navy total + checkout ---- */
+  &__foot { border-top: 1px solid #eef5f9; display: flex; flex-direction: column; }
+  &__rows { display: flex; flex-direction: column; gap: 8px; padding: 12px 18px 10px; }
+  &__row {
+    display: flex; justify-content: space-between; gap: 10px;
+    font-size: 13.5px; color: #0a1f30;
+    &--discount { span:last-child { color: #d50d1e; font-weight: 700; } small { font-size: 12px; color: #d50d1e; margin-inline-start: 4px; } }
+  }
+  &__coupon { display: block; font-size: 12.5px; color: #30378e; text-decoration: underline; &:hover { color: #0a1f30; } }
+  &__bottom {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 18px 16px; color: #fff;
+    background:
+      radial-gradient(60% 120% at 50% 8%, rgba(90, 130, 255, 0.22) 0%, rgba(90, 130, 255, 0) 60%),
+      linear-gradient(125deg, #172951 0%, #25307a 50%, #30378e 100%);
+  }
+  &__total { display: flex; flex-direction: column; min-width: 0; }
+  &__total-label { font-size: 12px; color: rgba(255, 255, 255, 0.7); }
+  &__total-value { font-size: 24px; font-weight: 700; line-height: 1.1; margin-top: 2px; white-space: nowrap; }
+  &__checkout {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: none;
+    height: 48px; padding: 0 20px; border: 0; border-radius: 999px;
+    background: #91e6f7; color: #0a1f30; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+    transition: background 0.2s ease;
+    &:hover { background: #a9ecf9; }
+  }
+
+  /* ---- empty: the cart page's own state (same illustration, copy and
+     button as qissa-cart.scss), cloned from the template in master.twig ---- */
+  &__empty { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 16px 0; }
+  &__empty-icon { display: inline-flex; margin-bottom: 16px; svg { width: 135px; height: 135px; } }
+  &__empty-title { margin: 0 0 8px; font-size: 24px; font-weight: 600; color: #0a1f30; }
+  &__empty-sub { margin: 0 0 24px; font-size: 14px; font-weight: 300; line-height: 1.7; color: #6c757d; max-width: 280px; }
+  &__empty-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: 48px; padding: 0 32px; border-radius: 999px;
+    background: #30378e; color: #fff; font-size: 16px; font-weight: 600;
+    transition: background 0.2s ease;
+    &:hover { background: #262c72; color: #fff; }
+  }
+
+  /* ---- skeleton while the first fetch is in flight ---- */
+  &__item.is-loading { pointer-events: none; .qcd__thumb { background: #e8fcff; } }
+  &__skel { display: block; border-radius: 6px; background: #e8fcff; &--title { height: 14px; width: 70%; } &--row { height: 30px; width: 45%; } }
+}
+
+body.qcd-open { overflow: hidden; }
+
+@keyframes qcd-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes qcd-slide { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .qcd__backdrop, .qcd__panel { animation: none; }
+  .qcd__fill { transition: none; }
+}

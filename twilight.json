@@ -212,6 +212,17 @@
         },
         {
             "type": "boolean",
+            "icon": "sicon-shopping-bag",
+            "label": "فتح السلة في درج جانبي",
+            "description": "زر السلة في الهيدر يفتح درجاً من يسار الشاشة بدل الانتقال إلى صفحة السلة: شريط الشحن المجاني، المنتجات، الخصم، والمبلغ النهائي مع زر الإتمام",
+            "id": "cart_drawer_enabled",
+            "format": "switch",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
+            "type": "boolean",
             "icon": "sicon-toggle-off",
             "label": "إظهار زر \"أعلمني عند التوفر\" في بطاقة المنتج",
             "description": "يظهر زر إشعار التوفر في بطاقات المنتجات التي نفذت كميتها",
