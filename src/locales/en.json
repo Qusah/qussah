@@ -113,7 +113,8 @@
         "remove": "Remove item",
         "close": "Close cart",
         "qty_failed": "Could not update the quantity",
-        "clear_failed": "Could not empty the cart"
+        "clear_failed": "Could not empty the cart",
+        "title": "Your cart"
       }
     },
     "csat": {

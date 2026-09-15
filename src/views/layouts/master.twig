@@ -183,7 +183,7 @@
 {% if theme.settings.get('cart_drawer_enabled', true) %}
 <div class="qcd" data-qcd hidden>
     <div class="qcd__backdrop" data-qcd-close></div>
-    <aside class="qcd__panel" role="dialog" aria-modal="true" aria-label="{{ trans('pages.cart.title') }}"></aside>
+    <aside class="qcd__panel" role="dialog" aria-modal="true" aria-label="{{ trans('blocks.qissa.cart_drawer.title') }}"></aside>
     <template data-qcd-empty>
         <div class="qcd__empty">
             <span class="qcd__empty-icon">{% include 'components.partials.empty-bag' %}</span>
@@ -193,7 +193,7 @@
         </div>
     </template>
     <script type="application/json" data-qcd-i18n>{{ {
-        'title': trans('pages.cart.title'),
+        'title': trans('blocks.qissa.cart_drawer.title'),
         'count': trans('blocks.qissa.cart_drawer.count'),
         'none': trans('blocks.qissa.cart_drawer.none'),
         'remaining': trans('blocks.qissa.cart_drawer.remaining'),

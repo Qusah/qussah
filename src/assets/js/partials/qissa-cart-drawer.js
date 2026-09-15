@@ -365,13 +365,20 @@ class QissaCartDrawer {
 
   /* ----------------------------------------------------------------- helpers */
 
+  /** The SDK formats with Arabic-Indic digits on an Arabic store; the cart
+   *  page's server-side `|money` prints Latin ones (the theme's WesternDigits
+   *  face renders them). The drawer matches the page. */
+  static latin(text) {
+    return String(text).replace(/[\u0660-\u0669]/g, d => String(d.charCodeAt(0) - 0x0660));
+  }
+
   money(value) {
     const amount = QissaCartDrawer.num(value);
-    return (typeof salla !== 'undefined' && salla.money) ? salla.money(amount) : String(amount);
+    return QissaCartDrawer.latin((typeof salla !== 'undefined' && salla.money) ? salla.money(amount) : amount);
   }
 
   number(value) {
-    return (typeof salla !== 'undefined' && salla.helpers?.number) ? salla.helpers.number(value) : String(value);
+    return QissaCartDrawer.latin((typeof salla !== 'undefined' && salla.helpers?.number) ? salla.helpers.number(value) : value);
   }
 
   static esc(value) {
