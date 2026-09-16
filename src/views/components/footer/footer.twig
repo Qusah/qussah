@@ -20,7 +20,7 @@
      VAT number (store.settings.tax.number) + ZATCA badge (local asset) + copyright.
    * Account links have no Salla data source → linked to the standard customer pages.
 #}
-<footer class="qfooter">
+<footer class="qfooter"{% if page.slug starts with 'cart' %} data-ftg-closed{% endif %}>
   <div class="container">
     <div class="qfooter__cols">
 

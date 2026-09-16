@@ -289,3 +289,23 @@
     font-size: 13px;
   }
 }
+
+// ====================================================================
+// Footer accordion (mobile only) — assets/js/partials/footer-accordion.js.
+// Each titled column collapses under its heading; the chevron points down
+// when closed and up when open. Closed by default on the cart page.
+// ====================================================================
+.qfooter__title.ftg-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.qfooter .ftg-chev {
+  display: none; flex: 0 0 auto; width: 18px; height: 18px;
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  transition: transform .2s ease;
+}
+@media (max-width: 768px) {
+  .qfooter__title.ftg-head { cursor: pointer; user-select: none; }
+  .qfooter .ftg-chev { display: block; transform: rotate(180deg); }
+  .qfooter__col.is-closed .ftg-chev { transform: none; }
+  .qfooter__col.is-closed > :not(.qfooter__title) { display: none; }
+}
