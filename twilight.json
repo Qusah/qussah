@@ -235,6 +235,17 @@
         {
             "type": "boolean",
             "icon": "sicon-toggle-off",
+            "label": "إظهار وصف مختصر تحت اسم المنتج في البطاقة",
+            "description": "سطران من وصف المنتج (إدارة المنتجات ← الوصف) يظهران تحت الاسم وفوق الخصائص في كل بطاقات المنتجات",
+            "id": "card_show_description",
+            "format": "switch",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
+            "type": "boolean",
+            "icon": "sicon-toggle-off",
             "label": "تثبيت زر الإضافة والكمية أسفل شاشة الجوال",
             "description": null,
             "id": "sticky_add_to_cart",

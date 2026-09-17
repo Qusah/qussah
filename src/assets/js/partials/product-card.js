@@ -1,5 +1,19 @@
 import BasePage from '../base-page';
 import { enhanceCarousels } from './card-carousel';
+
+/* Plain text out of a product's HTML description — shared by the JS card here
+   and the server-rendered cards (app.js hydrates [data-qdesc] with the same). */
+const QissaCardText = {
+  fromHtml(html, max = 220) {
+    let text = '';
+    try { text = new DOMParser().parseFromString(String(html), 'text/html').body.textContent || ''; }
+    catch (e) { text = String(html).replace(/<[^>]*>/g, ' '); }
+    text = text.replace(/\s+/g, ' ').trim();
+    return text.length > max ? text.slice(0, max).replace(/\s+\S*$/, '') + '…' : text;
+  }
+};
+window.QissaCardText = QissaCardText;
+
 class ProductCard extends HTMLElement {
   constructor(){
     super()
@@ -188,6 +202,17 @@ class ProductCard extends HTMLElement {
     this.isPlainVertical = !this.horizontal && !this.fullImage && !this.minimal && !this.isSpecial;
   }
 
+  /**
+   * Two-line plain-text excerpt of the product description (theme setting
+   * card_show_description). The description arrives as HTML, so it is parsed
+   * and only its text kept; the CSS clamps it to two lines.
+   */
+  descriptionText() {
+    if (!window.card_show_description || !this.product?.description) return '';
+    if (this._descText === undefined) this._descText = QissaCardText.fromHtml(this.product.description, 220);
+    return this._descText;
+  }
+
   escapeHTML(str = '') {
   return String(str)
     .replace(/&/g, "&amp;")
@@ -351,6 +376,7 @@ class ProductCard extends HTMLElement {
             <h3 class="s-product-card-content-title">
               <a href="${this.product?.url}">${this.product?.name}</a>
             </h3>
+            ${this.descriptionText() ? `<p class="s-product-card-content-desc">${this.escapeHTML(this.descriptionText())}</p>` : ``}
 
             ${this.isPlainVertical
               ? (this.chips.length

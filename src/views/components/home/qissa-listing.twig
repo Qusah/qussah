@@ -57,6 +57,7 @@
                                 <div class="qprod__info">
                                     {% if product.brand.name %}<span class="qprod__cat">{{ product.brand.name }}</span>{% endif %}
                                     <a href="{{ product.url }}" class="qprod__name">{{ product.name }}</a>
+                                    {% if theme.settings.get('card_show_description', true) and product.description %}<p class="qprod__desc" data-qdesc="{{ product.description|slice(0, 500) }}"></p>{% endif %}
                                     {% if product.subtitle %}
                                         <div class="qprod__chips">
                                             {% for chip in product.subtitle|split('،') %}

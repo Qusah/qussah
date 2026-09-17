@@ -130,6 +130,7 @@ stepper + add-to-cart. Every element is merchant-toggleable. Dynamic Salla data 
                         {% if component.show_brand and product.brand.name %}<div class="qpack__cat">{{ product.brand.name }}</div>{% endif %}
 
                         <a class="qpack__name" href="{{ product.url }}">{{ product.name }}</a>
+                        {% if theme.settings.get('card_show_description', true) and product.description %}<p class="qpack__desc" data-qdesc="{{ product.description|slice(0, 500) }}"></p>{% endif %}
 
                         {% if component.show_price %}
                             <div class="qpack__price">

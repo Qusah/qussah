@@ -20,6 +20,7 @@ class App extends AppHelpers {
     }
     this.initAddToCart();
     this.hookGuestWishlist();
+    this.hydrateCardDescriptions();
     this.initiateDropdowns();
     this.initiateModals();
     this.initiateCollapse();
@@ -327,6 +328,27 @@ isElementLoaded(selector, timeout = 8000){
 
     salla.cart.event.onItemAdded((response, prodId) => {
       app.element('salla-cart-summary').animateToCart(app.element(`#product-${prodId} img`));
+    });
+  }
+
+  /**
+   * Server-rendered product cards carry the product description as HTML in
+   * data-qdesc (theme setting card_show_description). Turn it into the plain
+   * two-line excerpt the JS card shows, so both card kinds read the same.
+   */
+  hydrateCardDescriptions() {
+    const toText = (html) => {
+      if (window.QissaCardText) return window.QissaCardText.fromHtml(html, 220);
+      let text = '';
+      try { text = new DOMParser().parseFromString(String(html), 'text/html').body.textContent || ''; }
+      catch (e) { text = String(html).replace(/<[^>]*>/g, ' '); }
+      text = text.replace(/\s+/g, ' ').trim();
+      return text.length > 220 ? text.slice(0, 220).replace(/\s+\S*$/, '') + '…' : text;
+    };
+    document.querySelectorAll('[data-qdesc]').forEach((el) => {
+      const text = toText(el.getAttribute('data-qdesc'));
+      el.removeAttribute('data-qdesc');
+      if (text) el.textContent = text; else el.remove();
     });
   }
 

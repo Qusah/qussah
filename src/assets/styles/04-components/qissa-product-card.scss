@@ -464,3 +464,26 @@
 @media (max-width: 768px) {
   .qpc-dots { bottom: 6px; }
 }
+
+// ---- short description under the product name (theme setting
+//      card_show_description) — two clamped lines of the description's text,
+//      above the spec chips. Same rule for the Twig cards (.qprod / .qpack) and
+//      the JS card. An empty element (no text after hydration) takes no space.
+.qprod__desc,
+.qpack__desc,
+.s-product-card-content-desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  width: 100%;
+  margin: 0;
+  color: #6c757d;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.5;
+  text-align: right;
+  word-break: break-word;
+  [dir="ltr"] & { text-align: left; }
+  &:empty { display: none; }
+}
