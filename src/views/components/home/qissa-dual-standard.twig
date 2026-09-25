@@ -19,7 +19,11 @@ Two products shown side-by-side using the Standard Product Card design (reuses t
 merchant-toggleable. Dynamic Salla data only — the image carousel auto-wires via
 initCardCarousels() in home.js.
 #}
-<section class="s-block qdstd" id="qdstd-{{ position }}">
+{# Quick view switch for this section (default on; sections saved before the
+   field existed carry null, which reads as on). qissa-quick-view.js skips
+   the eye trigger for cards inside [data-qv="off"]. #}
+{% set qv_on = (component.show_quick_view is defined and component.show_quick_view is not null) ? component.show_quick_view : true %}
+<section class="s-block qdstd" id="qdstd-{{ position }}"{% if not qv_on %} data-qv="off"{% endif %}>
     <div class="container">
         {# gradient box (same shell as "خصيصاً من قصة") so the white cards read as cards #}
         <div class="qdstd__box">

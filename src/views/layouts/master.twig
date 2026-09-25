@@ -105,6 +105,10 @@
         window.enable_add_product_toast = "{{ theme.settings.get('enable_add_product_toast', true) }}"
         window.notify_when_available_in_card = "{{ theme.settings.get('notify_when_available_in_card', true) }}"
         window.card_show_description = "{{ theme.settings.get('card_show_description', true) }}"
+        {# Quick view on product cards: "off" only when the switch is explicitly off
+           (unset / null reads as on). qissa-quick-view.js checks this. #}
+        {% set qv_setting = theme.settings.get('quick_view_enabled', true) %}
+        window.quick_view_enabled = "{{ (qv_setting is not null and not qv_setting) ? 'off' : 'on' }}"
     </script>
     
     {% hook 'head:start' %}

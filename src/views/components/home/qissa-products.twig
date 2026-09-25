@@ -8,7 +8,11 @@
 | component.products        | Product[] | merchant-selected products (dropdown source)      |
 | position                  | int       | sorting block                                     |
 #}
-<section class="s-block qprods" id="qprods-{{ position }}">
+{# Quick view switch for this section (default on; sections saved before the
+   field existed carry null, which reads as on). qissa-quick-view.js skips
+   the eye trigger for cards inside [data-qv="off"]. #}
+{% set qv_on = (component.show_quick_view is defined and component.show_quick_view is not null) ? component.show_quick_view : true %}
+<section class="s-block qprods" id="qprods-{{ position }}"{% if not qv_on %} data-qv="off"{% endif %}>
     <div class="container">
         <div class="qprods__box">
 

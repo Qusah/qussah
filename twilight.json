@@ -245,6 +245,17 @@
         },
         {
             "type": "boolean",
+            "icon": "sicon-eye",
+            "label": "النظرة السريعة على المنتج",
+            "description": "زر «نظرة سريعة» بجانب «أضف للسلة» في كل بطاقات المنتجات (الرئيسية، التصنيفات، البحث، «قد يعجبك أيضاً») يفتح تذكرة فيها الصور والسعر ومحتويات البكج وأزرار الشراء. الإيقاف هنا يخفيه من كل الصفحات، ويمكن إيقافه لقسم واحد من إعدادات القسم",
+            "id": "quick_view_enabled",
+            "format": "switch",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
+            "type": "boolean",
             "icon": "sicon-toggle-off",
             "label": "تثبيت زر الإضافة والكمية أسفل شاشة الجوال",
             "description": null,
@@ -1096,6 +1107,19 @@
                     "maxLength": 100,
                     "minLength": 1,
                     "value": []
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_quick_view",
+                    "format": "switch",
+                    "icon": "sicon-eye",
+                    "label": {
+                        "en": "Show quick view",
+                        "ar": "إظهار النظرة السريعة"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
                 }
             ]
         },
@@ -1631,6 +1655,19 @@
                     "selected": true
                 },
                 {
+                    "type": "boolean",
+                    "id": "show_quick_view",
+                    "format": "switch",
+                    "icon": "sicon-eye",
+                    "label": {
+                        "en": "Show quick view",
+                        "ar": "إظهار النظرة السريعة"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
                     "id": "products",
                     "type": "items",
                     "icon": "sicon-keyboard_arrow_down",
@@ -1714,6 +1751,19 @@
                         "ar": "رابط الزر"
                     },
                     "value": "/products"
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_quick_view",
+                    "format": "switch",
+                    "icon": "sicon-eye",
+                    "label": {
+                        "en": "Show quick view",
+                        "ar": "إظهار النظرة السريعة"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
                 }
             ]
         },
@@ -2677,6 +2727,19 @@
                         "ar": "رابط زر البانر"
                     },
                     "value": "/products"
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_quick_view",
+                    "format": "switch",
+                    "icon": "sicon-eye",
+                    "label": {
+                        "en": "Show quick view",
+                        "ar": "إظهار النظرة السريعة"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
                 }
             ]
         },
@@ -4013,6 +4076,19 @@
                             "value": "custom"
                         }
                     ]
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_quick_view",
+                    "format": "switch",
+                    "icon": "sicon-eye",
+                    "label": {
+                        "en": "Show quick view",
+                        "ar": "إظهار النظرة السريعة"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
                 }
             ]
         },

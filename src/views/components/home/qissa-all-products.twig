@@ -14,7 +14,11 @@ Figma: desktop 6036:767 (1440) — title RIGHT + cyan CTA LEFT, 4-col grid.
 Static grid (prev/next arrows are hidden in both frames → no carousel).
 Cards reuse the shared .qprod card (identical to "منتجات مميزة").
 #}
-<section class="s-block qallprods" id="qallprods-{{ position }}">
+{# Quick view switch for this section (default on; sections saved before the
+   field existed carry null, which reads as on). qissa-quick-view.js skips
+   the eye trigger for cards inside [data-qv="off"]. #}
+{% set qv_on = (component.show_quick_view is defined and component.show_quick_view is not null) ? component.show_quick_view : true %}
+<section class="s-block qallprods" id="qallprods-{{ position }}"{% if not qv_on %} data-qv="off"{% endif %}>
     <div class="container">
         <div class="qallprods__box">
 
