@@ -1,0 +1,582 @@
+// ====================================================================
+// Quick view «تذكرة الطلب» + the card add flow (js/partials/qissa-quick-view.js)
+// Locked concept: quick-view/qusah (26 Sep 2026). Values ported from it; the
+// card itself keeps its current look — only the slot, stepper and eye are new.
+//
+// RTL note: postcss-preset-env downlevels logical properties as if LTR, so
+// everything directional here is physical (left / right).
+// ====================================================================
+
+$qqv-navy: #2e3793;
+$qqv-navy-2: #30378e;
+$qqv-navy-dk: #172951;
+$qqv-ink: #0a0b1c;
+$qqv-cyan: #91e6f7;
+$qqv-star: #ffc62a;
+$qqv-ease: cubic-bezier(.16, 1, .3, 1);
+$qqv-ease-out: cubic-bezier(.33, 1, .68, 1);
+
+.qqv-sr {
+  position: absolute !important;
+  width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+.qqv-i {
+  width: 22px; height: 22px; flex: none;
+  fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+.qqv-spin {
+  width: 18px; height: 18px; flex: none;
+  border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent;
+  animation: qqv-spin .8s linear infinite;
+}
+@keyframes qqv-spin { to { transform: rotate(360deg); } }
+@keyframes qqv-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+// ====================================================================
+// Card: add slot · «✓ أُضيف» · − n + stepper · eye trigger
+// ====================================================================
+
+.qqv-card {
+  container: qqvcard / inline-size;
+  --qqv-r: 12px;
+}
+
+// The add button, the confirmation and the stepper share one cell — same
+// height, no layout jump. At rest the slot is exactly the old add button.
+.qqv-slot {
+  flex: 1 1 0;
+  min-width: 0;
+  display: grid;
+  > * { grid-area: 1 / 1; min-width: 0; }
+}
+
+.qqv-slot[data-step] > .qprod__add,
+.qqv-slot[data-step] > salla-add-product-button {
+  // inset(-6px) leaves room for the focus ring while nothing is folding
+  clip-path: inset(-6px round 18px);
+  transition: opacity .24s $qqv-ease-out, clip-path .38s $qqv-ease, visibility 0s;
+}
+
+.qqv-done {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  direction: rtl;                       // «✓ أُضيف»: the check leads (the Twig row runs LTR)
+  border-radius: var(--qqv-r);
+  background: $qqv-navy-dk; color: #fff;
+  font-size: 16px; font-weight: 500; line-height: 1;
+  white-space: nowrap; overflow: hidden;
+  pointer-events: none;
+  opacity: 0; visibility: hidden;
+  clip-path: inset(0 0 0 0 round var(--qqv-r));
+  transition: opacity .18s, visibility 0s linear .18s, clip-path .32s $qqv-ease;
+  .qqv-i { width: 18px; height: 18px; stroke-width: 2.4; }
+  .qqv-spin { display: none; width: 18px; height: 18px; }
+}
+.qqv-slot:is([data-s="busy"], [data-s="done"]) .qqv-done {
+  opacity: 1; visibility: visible;
+  transition: opacity .16s, visibility 0s;
+}
+.qqv-slot[data-s="busy"] .qqv-done {
+  > :not(.qqv-spin) { display: none; }
+  .qqv-spin { display: block; }
+}
+
+.qqv-step {
+  display: grid;
+  grid-template-columns: minmax(28px, 44px) minmax(18px, 1fr) minmax(28px, 44px);
+  direction: rtl;                       // + on the right, − on the left (concept)
+  border-radius: var(--qqv-r);
+  background: #f3f4f7;
+  box-shadow: inset 0 0 0 1px #e3e5ee;
+  overflow: hidden;
+  opacity: 0; visibility: hidden;
+  clip-path: inset(0 36% 0 36% round var(--qqv-r));
+  transition: opacity .2s, clip-path .3s $qqv-ease, visibility 0s linear .3s;
+
+  button {
+    position: relative;
+    display: grid; place-items: center;
+    padding: 0; margin: 0; border: 0; background: none;
+    color: $qqv-ink; cursor: pointer;
+    transition: background-color .2s;
+    // the number is not a target: each button reaches 7px over it (44px on phones)
+    &::after { content: ''; position: absolute; top: 0; bottom: 0; left: -7px; right: -7px; }
+    &:hover { background: #e6e8f1; }
+    &:focus-visible { outline: 2px solid $qqv-navy-2; outline-offset: -3px; }
+    .qqv-i { width: 18px; height: 18px; }
+  }
+  output {
+    display: grid; place-items: center; min-width: 0;
+    font-size: 17px; font-weight: 700; line-height: 1; color: $qqv-navy-2;
+    pointer-events: none;
+  }
+}
+.qqv-slot[data-s="qty"] .qqv-step {
+  opacity: 1; visibility: visible;
+  clip-path: inset(0 0 0 0 round var(--qqv-r));
+  transition: opacity .3s $qqv-ease-out .06s, clip-path .44s $qqv-ease .06s, visibility 0s;
+}
+.qqv-slot[data-s="qty"] > .qprod__add,
+.qqv-slot[data-s="qty"] > salla-add-product-button,
+.qqv-slot[data-s="qty"] > .qqv-done {
+  opacity: 0; visibility: hidden;
+  clip-path: inset(0 36% 0 36% round var(--qqv-r));
+  transition: opacity .22s, clip-path .32s $qqv-ease, visibility 0s linear .32s;
+}
+
+// Eye trigger. Collapsed to nothing at rest on desktop (the negative margin
+// cancels its row gap, so the row measures exactly as before); both rows put
+// the add slot on the trigger's right.
+.qqv-trig {
+  flex: 0 0 0px;
+  width: auto; min-width: 0;
+  margin: 0 -8px 0 0;
+  padding: 0;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  overflow: hidden; white-space: nowrap;
+  border: 0; border-radius: var(--qqv-r);
+  background: #fff; color: $qqv-navy;
+  box-shadow: inset 0 0 0 1.5px $qqv-navy;
+  font-size: 14px; font-weight: 700; line-height: 1;
+  opacity: 0;
+  cursor: pointer;
+  transition: flex-basis .3s $qqv-ease, margin .3s $qqv-ease, opacity .2s, background-color .2s, color .2s, box-shadow .2s;
+  .qqv-i { width: 20px; height: 20px; }
+  span { display: none; }
+  &:hover,
+  &[aria-expanded="true"] { background: $qqv-navy-dk; color: #fff; box-shadow: none; }
+  &:focus-visible { outline: 2px solid $qqv-navy; outline-offset: 2px; }
+}
+
+// The card the ticket belongs to stays lit (the veil has a hole cut for it).
+.qqv-card.qqv-lit {
+  border-color: transparent !important;
+  box-shadow: 0 0 0 2px $qqv-navy, 0 20px 40px -22px rgba(23, 41, 81, .6) !important;
+}
+
+// Labels squeezed only while the eye is open on a narrow card (container =
+// the card's content box). Twig card: 16px label + bag icon need ~235px.
+@mixin qqv-squeeze {
+  @container qqvcard (max-width: 277px) {
+    salla-add-product-button :is(button, .s-button-element) { padding-left: 8px !important; padding-right: 8px !important; }
+  }
+  @container qqvcard (max-width: 261px) {
+    salla-add-product-button :is(button, .s-button-element) { font-size: 14px !important; }
+    salla-add-product-button i { display: none !important; }
+  }
+  @container qqvcard (max-width: 234px) {
+    .qprod__add { font-size: 14px; gap: 0; padding-left: 2px; padding-right: 2px; }
+    .qprod__add i { display: none; }
+  }
+}
+
+@media (hover: hover) and (min-width: 769px) {
+  .qqv-card:is(:hover, :focus-within, .qqv-lit) .qqv-trig { flex-basis: 50px; margin-right: 0; opacity: 1; }
+  .qqv-card.qqv-has-trig:is(:hover, :focus-within, .qqv-lit) { @include qqv-squeeze; }
+  @container qqvcard (min-width: 380px) {
+    .qqv-card:is(:hover, :focus-within, .qqv-lit) .qqv-trig { flex-basis: 128px; }
+    .qqv-trig span { display: inline; }
+  }
+}
+// touch tablets: nothing to hover, the eye is always there
+@media (hover: none) and (min-width: 769px) {
+  .qqv-trig { flex-basis: 50px; margin-right: 0; opacity: 1; }
+  .qqv-card.qqv-has-trig { @include qqv-squeeze; }
+}
+
+// Phones: 44px eye always visible; the heart moves onto the image corner
+// (the row cannot hold heart + eye + a readable «أضف للسلة» at 166px).
+@media (max-width: 768px) {
+  .qqv-card { --qqv-r: 8px; }
+  .qqv-done { font-size: 14px; .qqv-i { width: 16px; height: 16px; } }
+  .qqv-step output { font-size: 16px; }
+
+  .qqv-trig { flex-basis: 44px; margin-right: 0; opacity: 1; min-height: 44px; }
+
+  .qqv-card.qqv-has-trig {
+    position: relative;
+    .qprod__add { height: 44px; }
+    salla-add-product-button :is(button, .s-button-element) { height: 44px !important; min-height: 44px !important; }
+
+    .qprod__like,
+    .s-product-card-wishlist-btn {
+      position: absolute !important;
+      top: 18px; right: 18px; left: auto;
+      z-index: 4;
+      flex: none !important;
+      width: 36px !important; height: 36px !important;
+      min-width: 36px !important; min-height: 36px !important;
+      border-radius: 50% !important;
+      box-shadow: 0 2px 8px rgba(23, 41, 81, .14) !important;
+      &::after { content: ''; position: absolute; top: -4px; right: -4px; bottom: -4px; left: -4px; }
+      i { font-size: 17px; }
+    }
+  }
+  // 360px phones: the Twig card's label drops its bag icon next to the eye
+  @container qqvcard (max-width: 137px) {
+    .qqv-card.qqv-has-trig .qprod__add i { display: none; }
+  }
+}
+
+// ====================================================================
+// The ticket
+// ====================================================================
+
+
+.qqv-veil {
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0;
+  z-index: 150;                          // above the sticky header (100), under Salla's sheets (200)
+  background: rgba(255, 255, 255, .5);
+  &[hidden] { display: none; }
+}
+
+.qqv-wrap {
+  position: fixed; top: 0; left: 0;
+  z-index: 151;
+  direction: rtl;
+  color: #fff;
+  filter: drop-shadow(0 34px 34px rgba(23, 41, 81, .32)) drop-shadow(0 8px 10px rgba(23, 41, 81, .22));
+  &[hidden] { display: none; }
+  :focus-visible { outline: 2px solid $qqv-cyan; outline-offset: 3px; }
+}
+
+.qqv-ticket {
+  --perf: 62px;
+  width: 408px;
+  max-height: calc(100vh - 24px);
+  display: flex; flex-direction: column;
+  border-radius: 24px;
+  background:
+    radial-gradient(120% 60% at 100% 0%, rgba(92, 104, 214, .45) 0%, rgba(92, 104, 214, 0) 60%),
+    linear-gradient(170deg, #28348a 0%, #1d2a66 45%, $qqv-navy-dk 100%);
+  -webkit-mask: radial-gradient(circle 11px at 0 var(--perf), #0000 97%, #000), radial-gradient(circle 11px at 100% var(--perf), #0000 97%, #000);
+  -webkit-mask-composite: source-in;
+  mask: radial-gradient(circle 11px at 0 var(--perf), #0000 97%, #000), radial-gradient(circle 11px at 100% var(--perf), #0000 97%, #000);
+  mask-composite: intersect;
+  font-weight: 300;
+  line-height: 1.65;
+  text-align: right;
+
+  h2, h3, p, ul, ol, dl, dd { margin: 0; }
+  ul, ol { padding: 0; list-style: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  img { display: block; max-width: 100%; }
+  b { font-weight: 700; }
+  [hidden] { display: none !important; }
+}
+
+.qqv-notch {
+  position: absolute; top: var(--qqv-ny, 80px);
+  width: 20px; height: 20px; margin-top: -10px;
+  background: #212e70; border-radius: 3px;
+  transform: rotate(45deg);
+}
+.qqv-wrap[data-side="left"] .qqv-notch { right: -7px; }
+.qqv-wrap[data-side="right"] .qqv-notch { left: -7px; }
+.qqv-wrap[data-side="none"] .qqv-notch { display: none; }
+
+// perforated stub: steps + close
+.qqv-top {
+  flex: none;
+  height: var(--perf);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 22px 0 14px;
+  border-bottom: 2px dashed rgba(255, 255, 255, .2);
+}
+.qqv-steps {
+  display: flex; align-items: center; gap: 10px;
+  li { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 500; line-height: 1; color: rgba(255, 255, 255, .62); transition: color .3s; }
+  li i {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 12.5px; font-weight: 700; font-style: normal; line-height: 1;
+    box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .35);
+    transition: background-color .3s, color .3s, box-shadow .3s;
+  }
+  li.is-on { color: #fff; }
+  li.is-on i { background: $qqv-cyan; color: $qqv-navy; box-shadow: none; }
+  li.is-done i { background: rgba(145, 230, 247, .2); color: $qqv-cyan; box-shadow: none; }
+  .qqv-line {
+    width: 34px; height: 2px; border-radius: 1px;
+    background: rgba(255, 255, 255, .22);
+    position: relative; overflow: hidden;
+    &::after {
+      content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+      background: $qqv-cyan;
+      transform: scaleX(0); transform-origin: right;
+      transition: transform .5s $qqv-ease;
+    }
+  }
+}
+.qqv-ticket.is-ordered .qqv-line::after { transform: scaleX(1); }
+.qqv-x {
+  width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center;
+  color: #fff !important; background: rgba(255, 255, 255, .1) !important;
+  transition: background-color .2s;
+  &:hover { background: rgba(255, 255, 255, .18) !important; }
+  .qqv-i { width: 20px; height: 20px; }
+}
+
+.qqv-scroll {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, .25) transparent;
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, .25); border-radius: 3px; }
+}
+.qqv-stack { display: grid; position: relative; overflow: hidden; }
+.qqv-pane {
+  grid-area: 1 / 1;
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 16px 22px 20px;
+  transition: transform .46s $qqv-ease, opacity .3s, visibility 0s;
+}
+.qqv-ticket.is-ordered .qqv-prod,
+.qqv-ticket:not(.is-ordered) .qqv-order {
+  visibility: hidden; opacity: 0;
+  position: absolute; top: 0; right: 0; left: 0;
+  transition: transform .46s $qqv-ease, opacity .25s, visibility 0s linear .46s;
+}
+.qqv-ticket.is-ordered .qqv-prod { transform: translateX(34%); }
+.qqv-ticket:not(.is-ordered) .qqv-order { transform: translateX(-34%); }
+
+// ---- product step ----
+.qqv-gal { position: relative; }
+.qqv-img {
+  border-radius: 16px; overflow: hidden;
+  aspect-ratio: 1.9;
+  background: linear-gradient(180deg, #d9e7f7, #a9c5e8);
+  touch-action: pan-y;
+  img { width: 100%; height: 100%; object-fit: cover; transition: opacity .2s; }
+  img.is-swap { opacity: .2; }
+}
+.qqv-dots {
+  position: absolute; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  button { width: 34px; height: 44px; display: grid; place-items: center; }
+  button i {
+    width: 8px; height: 8px; border-radius: 4px;
+    background: rgba(255, 255, 255, .62);
+    box-shadow: 0 1px 3px rgba(23, 41, 81, .35);
+    transition: width .3s $qqv-ease, background-color .2s;
+  }
+  button[aria-pressed="true"] i { width: 22px; background: #fff; }
+  button:focus-visible { outline-offset: -6px; }
+}
+.qqv-ticket h2 { font-size: 20px; font-weight: 700; line-height: 1.5; color: #fff; outline: none; overflow-wrap: anywhere; }
+.qqv-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; margin-top: -6px; }
+.qqv-pill {
+  background: rgba(145, 230, 247, .16); color: $qqv-cyan;
+  font-size: 12.5px; font-weight: 500; line-height: 1;
+  padding: 7px 10px 6px; border-radius: 999px;
+}
+.qqv-rate {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12.5px; color: rgba(255, 255, 255, .72);
+}
+.qqv-stars { display: inline-flex; gap: 1px; color: $qqv-star; }
+.qqv-st { width: 13px; height: 13px; fill: currentColor; flex: none; }
+
+// what's inside — 3 lines, the rest behind «+N»
+.qqv-in { padding-top: 10px; border-top: 1px dashed rgba(255, 255, 255, .2); }
+.qqv-in-hd { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 26px; }
+.qqv-in h3 { font-size: 13px; font-weight: 700; line-height: 1.4; color: $qqv-cyan; }
+.qqv-more {
+  position: relative; flex: none;
+  font-size: 12px !important; font-weight: 700 !important; line-height: 1 !important;
+  color: $qqv-navy !important; background: $qqv-cyan !important;
+  padding: 6px 10px 5px !important; border-radius: 999px;
+  transition: background-color .2s;
+  &::after { content: ''; position: absolute; top: -9px; right: -6px; bottom: -9px; left: -6px; }
+  &:hover { background: #b3eefa !important; }
+}
+.qqv-in-list {
+  display: grid; gap: 2px; margin-top: 4px !important;
+  li { display: flex; align-items: flex-start; gap: 8px; font-size: 13.5px; font-weight: 500; line-height: 1.6; color: #fff; overflow-wrap: anywhere; }
+  .qqv-i { width: 16px; height: 16px; margin-top: 4px; color: $qqv-cyan; stroke-width: 2.6; }
+}
+.qqv-in:not(.is-open) .qqv-in-list li.is-more { display: none; }
+
+.qqv-price {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px;
+  &:empty { display: none; }
+}
+.qqv-now {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 36px; font-weight: 700; line-height: 1; color: #fff;
+  .sicon-sar { font-size: .72em; }
+}
+.qqv-was {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 16px; line-height: 1; color: #ff9ea3;
+  text-decoration: line-through; text-decoration-thickness: 1.5px;
+  .sicon-sar { font-size: .85em; }
+}
+.qqv-save {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: $qqv-cyan; color: $qqv-navy;
+  font-size: 13px; font-weight: 700; line-height: 1;
+  padding: 7px 10px 6px; border-radius: 999px;
+  span { display: inline-flex; align-items: center; gap: 2px; }
+  .sicon-sar { font-size: .85em; }
+}
+.qqv-desc {
+  font-size: 14px; line-height: 1.8; color: rgba(255, 255, 255, .78);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+.qqv-buy { display: flex; flex-direction: column; gap: 12px; }
+.qqv-row { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; margin-top: 4px; }
+.qqv-qty {
+  display: inline-flex; align-items: center; justify-content: space-between; gap: 4px;
+  min-width: 134px; height: 52px; padding: 4px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .08);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16);
+  direction: rtl;
+  button { width: 44px; height: 44px; border-radius: 8px; display: grid; place-items: center; color: #fff !important; transition: background-color .2s; }
+  button:hover { background: rgba(255, 255, 255, .12) !important; }
+  button:disabled { opacity: .45; cursor: default; }
+  .qqv-i { width: 18px; height: 18px; }
+  output { font-size: 17px; font-weight: 700; line-height: 1; min-width: 26px; text-align: center; }
+}
+
+.qqv-btn {
+  position: relative; overflow: hidden;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; min-height: 52px; padding: 0 18px !important;
+  border-radius: 10px;
+  font-size: 16px !important; font-weight: 700 !important; line-height: 1.2 !important;
+  text-decoration: none !important; text-align: center;
+  transition: background-color .2s, color .2s, box-shadow .2s, transform .14s $qqv-ease;
+  &:active { transform: scale(.985); }
+  &:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+  .qqv-spin { display: none; }
+  .qqv-lbl { display: inline-flex; align-items: center; gap: 8px; }
+  &.is-busy { .qqv-spin { display: block; } .qqv-lbl { display: none; } }
+  &.is-busy:disabled { opacity: 1; cursor: progress; }
+}
+.qqv-btn--white { background: #fff !important; color: $qqv-navy !important; &:hover { background: #eef0fb !important; } }
+.qqv-btn--cyan { background: $qqv-cyan !important; color: $qqv-navy !important; &:hover { background: #7ad9ee !important; } }
+.qqv-btn--ghost {
+  background: transparent !important; color: #fff !important;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .34);
+  &:hover { background: rgba(255, 255, 255, .08) !important; }
+}
+// buy now → «جاري تحويلك لإتمام الطلب»
+.qqv-btn.is-going {
+  pointer-events: none;
+  .qqv-spin { display: block; }
+  &::after {
+    content: ''; position: absolute; right: 0; bottom: 0; height: 3px; width: 100%;
+    background: currentColor; opacity: .55;
+    transform-origin: right;
+    animation: qqv-fill 2.2s $qqv-ease-out forwards;
+  }
+}
+.qqv-err {
+  font-size: 13px; line-height: 1.6; color: #ffd2d4;
+  background: rgba(227, 32, 42, .18);
+  border-radius: 10px; padding: 8px 12px;
+}
+
+.qqv-trust {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 4px !important; padding-top: 14px !important;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+  li { display: grid; justify-items: center; text-align: center; gap: 4px; padding: 0 4px; position: relative; }
+  li + li::before { content: ''; position: absolute; right: 0; top: 12px; bottom: 12px; border-right: 1px dotted rgba(255, 255, 255, .3); }
+  .qqv-i { width: 22px; height: 22px; color: $qqv-cyan; }
+  b { font-size: 12.5px; line-height: 1.35; }
+  small { font-size: 11.5px; line-height: 1.35; color: rgba(255, 255, 255, .66); }
+}
+.qqv-pdp {
+  display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
+  min-height: 44px;
+  font-size: 14px; font-weight: 500; line-height: 1;
+  color: $qqv-cyan !important;
+  text-decoration: underline; text-decoration-color: rgba(145, 230, 247, .4); text-underline-offset: 5px;
+  .qqv-i { width: 18px; height: 18px; }
+}
+
+// ---- order step (after add) ----
+.qqv-okh {
+  display: flex; align-items: center; gap: 12px;
+  p { font-size: 13px; color: rgba(255, 255, 255, .72); }
+}
+.qqv-okc {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: $qqv-cyan; color: $qqv-navy;
+  display: grid; place-items: center; flex: none;
+  .qqv-i { width: 20px; height: 20px; stroke-width: 2.4; }
+}
+.qqv-lines {
+  display: grid;
+  li {
+    display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; align-items: center; gap: 12px;
+    padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, .12);
+  }
+  li:first-child { border-top: 1px solid rgba(255, 255, 255, .12); }
+  img { width: 52px; height: 52px; border-radius: 12px; object-fit: cover; background: #fff9ec; }
+  b { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 13.5px; line-height: 1.5; }
+  small { display: inline-flex; align-items: center; gap: 3px; font-size: 12.5px; color: rgba(255, 255, 255, .7); }
+  .qqv-u { display: inline-flex; align-items: center; gap: 3px; font-weight: 500; color: #fff; }
+  .qqv-qty { height: 44px; min-width: 0; padding: 0; gap: 0; }
+  .qqv-qty button { width: 40px; height: 44px; }
+  .qqv-qty output { min-width: 20px; font-size: 15px; }
+}
+.qqv-sum {
+  display: grid; gap: 2px;
+  div { display: flex; align-items: center; justify-content: space-between; min-height: 34px; font-size: 14px; color: rgba(255, 255, 255, .75); }
+  dd { display: inline-flex; align-items: center; gap: 3px; font-size: 14.5px; font-weight: 500; line-height: 1; color: #fff; }
+  .is-neg dd { color: #ff9ea3; }
+  .is-ship dd { color: #8ee6b0; }
+  .is-tot { border-top: 2px dashed rgba(255, 255, 255, .18); margin-top: 4px; padding-top: 8px; min-height: 52px; }
+  .is-tot dt { font-size: 16px; font-weight: 700; line-height: 1; color: #fff; }
+  .is-tot .qqv-now { font-size: 30px; }
+}
+.qqv-cod {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-size: 12.5px; color: rgba(255, 255, 255, .72);
+  .qqv-i { width: 18px; height: 18px; color: $qqv-cyan; }
+}
+.qqv-back {
+  align-self: center;
+  display: inline-flex; align-items: center; gap: 4px;
+  min-height: 44px; padding: 0 10px !important;
+  font-size: 13.5px; font-weight: 500; line-height: 1;
+  color: rgba(255, 255, 255, .82) !important;
+  .qqv-i { width: 18px; height: 18px; }
+}
+
+// ---- phone: a floating card, full width with a 10px margin, navy veil ----
+@media (max-width: 768px) {
+  .qqv-veil { background: rgba(23, 41, 81, .45); }
+  .qqv-wrap { left: 10px !important; right: 10px; }
+  .qqv-ticket { width: 100%; max-height: calc(100vh - 20px); }
+  .qqv-pane { padding: 14px 16px 18px; }
+  .qqv-top { padding: 0 16px 0 10px; }
+  .qqv-img { aspect-ratio: 2; }
+  .qqv-dots button { width: 44px; }
+  .qqv-ticket h2 { font-size: 18px; }
+  .qqv-now { font-size: 32px; }
+  .qqv-desc { font-size: 13.5px; }
+  .qqv-in-list li { font-size: 13px; line-height: 1.55; }
+}
+// short phones: keep add + buy on the first screen
+@media (max-width: 768px) and (max-height: 760px) {
+  .qqv-img { aspect-ratio: 2.5; }
+  .qqv-desc { -webkit-line-clamp: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qqv-slot[data-step] > *, .qqv-step, .qqv-done, .qqv-trig { transition: none !important; }
+  .qqv-pane,
+  .qqv-ticket.is-ordered .qqv-prod,
+  .qqv-ticket:not(.is-ordered) .qqv-order { transition: opacity .2s, visibility 0s; transform: none; }
+  .qqv-spin { animation-duration: 2s; }
+}

@@ -1,5 +1,10 @@
 import BasePage from '../base-page';
 import { enhanceCarousels } from './card-carousel';
+import { bootQuickView, enhanceJsCard } from './qissa-quick-view';
+
+// Card add → «✓ أُضيف» → stepper, and the quick-view ticket (every page loads
+// this file). Waits for theme::ready itself — nothing touches salla.* here.
+bootQuickView();
 
 /* Plain text out of a product's HTML description — shared by the JS card here
    and the server-rendered cards (app.js hydrates [data-qdesc] with the same). */
@@ -422,6 +427,7 @@ class ProductCard extends HTMLElement {
 
           ${!this.hideAddBtn ?
             `<div class="s-product-card-content-footer gap-2">
+              ${this.isPlainVertical ? `<div class="qqv-slot">` : ``}
               <salla-add-product-button fill="outline" width="wide"
                 product-id="${this.product.id}"
                 product-status="${this.effectiveStatus}"
@@ -431,6 +437,7 @@ class ProductCard extends HTMLElement {
                   }
                 <span>${this.product.add_to_cart_label ? this.product.add_to_cart_label : this.getAddButtonLabel() }</span>
               </salla-add-product-button>
+              ${this.isPlainVertical ? `</div>` : ``}
 
               ${this.horizontal || this.fullImage || (this.isPlainVertical && !this.hideAddBtn) ?
                 `<button type="button"
@@ -471,6 +478,9 @@ class ProductCard extends HTMLElement {
 
       // Wire the image swipe carousel + dot indicators (multi-image products).
       this.initCarousels();
+
+      // Stepper + quick-view trigger in the add slot (plain vertical card only).
+      enhanceJsCard(this);
     }
 }
 

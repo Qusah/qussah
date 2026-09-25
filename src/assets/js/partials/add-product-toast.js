@@ -76,6 +76,8 @@ class AddToCartToast extends HTMLElement {
   }
 
   async handleProductAdded() {
+    // Adds made inside the quick-view ticket already land on its «طلبك» step.
+    if (document.documentElement.classList.contains("qqv-open")) return;
     try {
       const cartResponse = await salla.cart.api.details(null, ["options"]);
       const cart = cartResponse?.data?.cart;
