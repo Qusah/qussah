@@ -49,7 +49,10 @@ module.exports = {
                 use    : {
                     loader : 'babel-loader',
                     options: {
-                        presets: ['@babel/preset-env'],
+                        // Phones from iOS 13.4 / Chrome 80 on (optional chaining and
+                        // `??` native there): no ES5 class/async rewrites and no
+                        // regenerator runtime copied into every bundle.
+                        presets: [['@babel/preset-env', { targets: { chrome: '80', edge: '80', firefox: '78', safari: '13.1', ios: '13.4', samsung: '13' } }]],
                         plugins: [
                           ["@babel/plugin-transform-runtime",
                            {

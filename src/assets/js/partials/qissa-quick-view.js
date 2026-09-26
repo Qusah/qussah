@@ -310,17 +310,17 @@ const Cards = {
     if (canStep) {
       slot.dataset.step = '1';
       slot.insertAdjacentHTML('beforeend',
-        `<span class="qqv-done" aria-hidden="true"><span class="qqv-spin"></span>${IC.check}<span>${T.added}</span></span>`
+        `<span class="qqv-done qqv-c" aria-hidden="true"><span class="qqv-spin"></span>${IC.check}<span>${T.added}</span></span>`
         + `<div class="qqv-step" role="group" aria-label="${esc(T.cardQty(name))}">`
         + `<button type="button" data-qqv-d="1" aria-label="${T.inc}" tabindex="-1">${IC.plus}</button>`
-        + `<output>0</output>`
+        + `<output class="qqv-c">0</output>`
         + `<button type="button" data-qqv-d="-1" aria-label="${T.dec}" tabindex="-1">${IC.minus}</button></div>`);
     }
     if (qvOnFor(card)) {
       card.classList.add('qqv-has-trig');
       // Visually always heart · eye · add: the Twig row runs LTR, the JS card's RTL.
       slot.insertAdjacentHTML(card.product ? 'afterend' : 'beforebegin',
-        `<button type="button" class="qqv-trig" aria-haspopup="dialog" aria-expanded="false" aria-label="${esc(T.qvOn(name))}">${IC.eye}<span aria-hidden="true">${T.qv}</span></button>`);
+        `<button type="button" class="qqv-trig qqv-c" aria-haspopup="dialog" aria-expanded="false" aria-label="${esc(T.qvOn(name))}">${IC.eye}<span aria-hidden="true">${T.qv}</span></button>`);
     }
     this.sync(card);
   },
@@ -525,62 +525,9 @@ const Ticket = {
   build() {
     if (this.built) return;
     this.built = true;
-    const html = `
-<div class="qqv-veil" hidden></div>
-<div class="qqv-wrap" hidden data-side="left">
-  <span class="qqv-notch" aria-hidden="true"></span>
-  <div class="qqv-ticket" role="dialog" aria-modal="true" aria-labelledby="qqv-title">
-    <div class="qqv-top">
-      <ol class="qqv-steps" aria-label="${T.steps}">
-        <li class="is-on" data-st="1" aria-current="step"><i>${latin(1)}</i>${T.stepProduct}</li>
-        <li class="qqv-line" aria-hidden="true"></li>
-        <li data-st="2"><i>${latin(2)}</i>${T.stepOrder}</li>
-      </ol>
-      <button class="qqv-x" type="button" data-act="close" aria-label="${T.close}">${IC.x}</button>
-    </div>
-    <div class="qqv-scroll">
-      <div class="qqv-stack">
-        <section class="qqv-pane qqv-prod" aria-labelledby="qqv-title">
-          <div class="qqv-gal">
-            <div class="qqv-img"><img alt="" width="900" height="900" decoding="async"></div>
-            <div class="qqv-dots" role="group" aria-label="${T.images}"></div>
-          </div>
-          <h2 id="qqv-title" tabindex="-1"></h2>
-          <div class="qqv-meta"><span class="qqv-pill"></span><div class="qqv-rate"></div></div>
-          <section class="qqv-in" aria-labelledby="qqv-in-h">
-            <div class="qqv-in-hd"><h3 id="qqv-in-h"></h3><button class="qqv-more" type="button" data-act="more" aria-expanded="false" aria-controls="qqv-in-list"></button></div>
-            <ul class="qqv-in-list" id="qqv-in-list"></ul>
-          </section>
-          <div class="qqv-price"></div>
-          <p class="qqv-desc"></p>
-          <div class="qqv-buy">
-            <div class="qqv-row">
-              <div class="qqv-qty" role="group" aria-label="${T.qty}"><button type="button" data-q="1" aria-label="${T.inc}">${IC.plus}</button><output aria-live="polite">1</output><button type="button" data-q="-1" aria-label="${T.dec}">${IC.minus}</button></div>
-              <button class="qqv-btn qqv-btn--white" type="button" data-act="add"><span class="qqv-spin"></span><span class="qqv-lbl">${T.add}</span></button>
-            </div>
-            <button class="qqv-btn qqv-btn--cyan" type="button" data-act="buy"><span class="qqv-spin"></span><span class="qqv-lbl">${T.buy}</span></button>
-            <a class="qqv-btn qqv-btn--white qqv-opts" href="#" hidden>${T.options}</a>
-            <p class="qqv-err" role="alert" hidden></p>
-          </div>
-          <ul class="qqv-trust" aria-label="${T.trust}">
+    const html = `<div class="qqv-veil" hidden></div><div class="qqv-wrap" hidden data-side="left"><span class="qqv-notch" aria-hidden="true"></span><div class="qqv-ticket" role="dialog" aria-modal="true" aria-labelledby="qqv-title"><div class="qqv-top"><ol class="qqv-steps" aria-label="${T.steps}"><li class="is-on" data-st="1" aria-current="step"><i>${latin(1)}</i>${T.stepProduct}</li><li class="qqv-line" aria-hidden="true"></li><li data-st="2"><i>${latin(2)}</i>${T.stepOrder}</li></ol><button class="qqv-x qqv-c" type="button" data-act="close" aria-label="${T.close}">${IC.x}</button></div><div class="qqv-scroll"><div class="qqv-stack"><section class="qqv-pane qqv-prod" aria-labelledby="qqv-title"><div class="qqv-gal"><div class="qqv-img"><img alt="" width="900" height="900" decoding="async"></div><div class="qqv-dots" role="group" aria-label="${T.images}"></div></div><h2 id="qqv-title" tabindex="-1"></h2><div class="qqv-meta"><span class="qqv-pill"></span><div class="qqv-rate"></div></div><section class="qqv-in" aria-labelledby="qqv-in-h"><div class="qqv-in-hd"><h3 id="qqv-in-h"></h3><button class="qqv-more" type="button" data-act="more" aria-expanded="false" aria-controls="qqv-in-list"></button></div><ul class="qqv-in-list" id="qqv-in-list"></ul></section><div class="qqv-price"></div><p class="qqv-desc"></p><div class="qqv-buy"><div class="qqv-row"><div class="qqv-qty" role="group" aria-label="${T.qty}"><button type="button" data-q="1" aria-label="${T.inc}">${IC.plus}</button><output aria-live="polite">1</output><button type="button" data-q="-1" aria-label="${T.dec}">${IC.minus}</button></div><button class="qqv-btn qqv-w qqv-c" type="button" data-act="add"><span class="qqv-spin"></span><span class="qqv-lbl">${T.add}</span></button></div><button class="qqv-btn qqv-cy qqv-c" type="button" data-act="buy"><span class="qqv-spin"></span><span class="qqv-lbl">${T.buy}</span></button><a class="qqv-btn qqv-w qqv-c qqv-opts" href="#" hidden>${T.options}</a><p class="qqv-err" role="alert" hidden></p></div><ul class="qqv-trust" aria-label="${T.trust}">
             ${T.trustItems.map(([i, b, s]) => `<li>${IC[i]}<b>${b}</b><small>${s}</small></li>`).join('')}
-          </ul>
-          <a class="qqv-pdp" href="#">${T.pdp}${IC.left}</a>
-        </section>
-        <section class="qqv-pane qqv-order" aria-labelledby="qqv-order-h" inert>
-          <div class="qqv-okh"><span class="qqv-okc">${IC.check}</span><div><h2 id="qqv-order-h" tabindex="-1">${T.ordered}</h2><p class="qqv-order-sub"></p></div></div>
-          <ul class="qqv-lines" aria-label="${T.lines}"></ul>
-          <dl class="qqv-sum"></dl>
-          <p class="qqv-err qqv-order-err" role="alert" hidden></p>
-          <button class="qqv-btn qqv-btn--cyan" type="button" data-act="checkout"><span class="qqv-lbl">${T.checkout}</span></button>
-          <button class="qqv-btn qqv-btn--ghost" type="button" data-act="continue">${T.keepShopping}</button>
-          <p class="qqv-cod">${IC.shield}${T.cod}</p>
-          <button class="qqv-back" type="button" data-act="back">${IC.right}${T.back}</button>
-        </section>
-      </div>
-    </div>
-  </div>
-</div>`;
+          </ul><a class="qqv-pdp" href="#">${T.pdp}${IC.left}</a></section><section class="qqv-pane qqv-order" aria-labelledby="qqv-order-h" inert><div class="qqv-okh"><span class="qqv-okc qqv-c">${IC.check}</span><div><h2 id="qqv-order-h" tabindex="-1">${T.ordered}</h2><p class="qqv-order-sub"></p></div></div><ul class="qqv-lines" aria-label="${T.lines}"></ul><dl class="qqv-sum"></dl><p class="qqv-err qqv-order-err" role="alert" hidden></p><button class="qqv-btn qqv-cy qqv-c" type="button" data-act="checkout"><span class="qqv-lbl">${T.checkout}</span></button><button class="qqv-btn qqv-gh qqv-c" type="button" data-act="continue">${T.keepShopping}</button><p class="qqv-cod qqv-c">${IC.shield}${T.cod}</p><button class="qqv-back" type="button" data-act="back">${IC.right}${T.back}</button></section></div></div></div></div>`;
     document.body.insertAdjacentHTML('beforeend', html);
     this.veil = $('.qqv-veil');
     this.wrap = $('.qqv-wrap');
@@ -790,18 +737,13 @@ const Ticket = {
     $('.qqv-lines', this.order).innerHTML = items.map(item => {
       const name = esc(item.product_name || item.name || '');
       const qty = num(item.quantity) || 1;
-      return `<li>
-        <img src="${esc(item.product_image || '')}" alt="" width="52" height="52" loading="lazy">
-        <div><b>${name}</b><small>${latin(qty)} × <span class="qqv-u">${money(item.price)}</span></small></div>
-        <div class="qqv-qty" role="group" aria-label="${esc(T.cardQty(item.product_name || ''))}"><button type="button" data-lq="${esc(item.id)}" data-d="1" aria-label="${esc(T.incLine(item.product_name || ''))}">${IC.plus}</button><output>${latin(qty)}</output><button type="button" data-lq="${esc(item.id)}" data-d="-1" aria-label="${esc(qty > 1 ? T.decLine(item.product_name || '') : T.removeLine(item.product_name || ''))}">${qty > 1 ? IC.minus : IC.x}</button></div>
-      </li>`;
+      return `<li><img src="${esc(item.product_image || '')}" alt="" width="52" height="52" loading="lazy"><div><b>${name}</b><small>${latin(qty)} × <span class="qqv-u">${money(item.price)}</span></small></div><div class="qqv-qty" role="group" aria-label="${esc(T.cardQty(item.product_name || ''))}"><button type="button" data-lq="${esc(item.id)}" data-d="1" aria-label="${esc(T.incLine(item.product_name || ''))}">${IC.plus}</button><output>${latin(qty)}</output><button type="button" data-lq="${esc(item.id)}" data-d="-1" aria-label="${esc(qty > 1 ? T.decLine(item.product_name || '') : T.removeLine(item.product_name || ''))}">${qty > 1 ? IC.minus : IC.x}</button></div></li>`;
     }).join('');
     const t = totals(cart);
     $('.qqv-sum', this.order).innerHTML = `
       <div><dt>${T.subtotal}</dt><dd>${money(t.regular)}</dd></div>
       ${t.discount > 0.009 ? `<div class="is-neg"><dt>${T.discount}</dt><dd>&minus; ${money(t.discount)}</dd></div>` : ''}
-      <div class="is-ship"><dt>${T.shipping}</dt><dd>${T.shipLater}</dd></div>
-      <div class="is-tot"><dt>${T.total}</dt><dd><span class="qqv-now">${money(t.total)}</span></dd></div>`;
+      <div class="is-ship"><dt>${T.shipping}</dt><dd>${T.shipLater}</dd></div><div class="is-tot"><dt>${T.total}</dt><dd><span class="qqv-now">${money(t.total)}</span></dd></div>`;
   },
 
   lineQty(itemId, d, btn) {
