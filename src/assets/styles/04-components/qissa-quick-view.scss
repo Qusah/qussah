@@ -104,14 +104,18 @@ $cyan: #91e6f7;
 // Narrow cards: the label makes room while the eye is out (container = the
 // card's content box). JS card «أضف إلى السلة» needs ~278px, Twig ~235px.
 @mixin squeeze($s) {
-  @container qqvcard (max-width: 277px) { #{$s} salla-add-product-button .s-button-element { padding-left: 8px !important; padding-right: 8px !important; } }
+  @container qqvcard (max-width: 277px) { #{$s} { salla-add-product-button .s-button-element { padding-left: 8px !important; padding-right: 8px !important; } } }
   @container qqvcard (max-width: 261px) {
-    #{$s} salla-add-product-button .s-button-element { font-size: 14px !important; }
-    #{$s} salla-add-product-button i { display: none !important; }
+    #{$s} {
+      salla-add-product-button .s-button-element { font-size: 14px !important; }
+      salla-add-product-button i { display: none !important; }
+    }
   }
   @container qqvcard (max-width: 234px) {
-    #{$s} .qprod__add { font-size: 14px; gap: 0; padding-left: 2px; padding-right: 2px; }
-    #{$s} .qprod__add i { display: none; }
+    #{$s} {
+      .qprod__add { font-size: 13px; gap: 0; padding-left: 2px; padding-right: 2px; white-space: nowrap; }
+      .qprod__add i { display: none; }
+    }
   }
 }
 
