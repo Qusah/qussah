@@ -140,7 +140,14 @@ const needsOptions = error => {
 
 function textOf(html) {
   let text = '';
-  try { text = new DOMParser().parseFromString(String(html || ''), 'text/html').body.textContent || ''; }
+  try {
+    const body = new DOMParser().parseFromString(String(html || ''), 'text/html').body;
+    // cells and blocks sit flush in the markup — without a gap a size table
+    // reads «المقاس36نصف محيط»
+    body.querySelectorAll('br').forEach(br => br.replaceWith(' '));
+    body.querySelectorAll('td,th,tr,p,li,div,h1,h2,h3,h4,h5,h6').forEach(el => el.append(' '));
+    text = body.textContent || '';
+  }
   catch (e) { text = String(html || '').replace(/<[^>]*>/g, ' '); }
   return text.replace(/\s+/g, ' ').trim();
 }
@@ -172,6 +179,7 @@ const STOP = /^(ال)?(مميزات|المميزات|الاستخدام|استخ
 function descLines(doc) {
   const body = doc.body.cloneNode(true);
   body.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
+  body.querySelectorAll('td,th').forEach(el => el.append(' '));
   body.querySelectorAll('p,li,h1,h2,h3,h4,h5,h6,div,ul,ol,tr').forEach(el => el.append('\n'));
   return (body.textContent || '').split('\n').map(clean);
 }

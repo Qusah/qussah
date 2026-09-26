@@ -177,6 +177,8 @@ $cyan: #91e6f7;
   direction: rtl; color: #fff;
   filter: drop-shadow(0 34px 34px rgba(23, 41, 81, .32)) drop-shadow(0 8px 10px rgba(23, 41, 81, .22));
   :focus-visible { outline: 2px solid $cyan; outline-offset: 3px; }
+  // headings only take focus from script on open/step change — no ring on them
+  [tabindex="-1"]:focus, [tabindex="-1"]:focus-visible { outline: none; }
 }
 
 .qqv-ticket {
@@ -242,9 +244,11 @@ $cyan: #91e6f7;
   min-height: 0; overflow-y: auto; overscroll-behavior: contain;
   scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, .25) transparent;
 }
-.qqv-stack { display: grid; position: relative; overflow: hidden; }
+// minmax(0) + min-width 0: a long unbroken word in a description (size tables
+// flatten into one) must wrap, not widen the pane past the ticket
+.qqv-stack { display: grid; grid-template-columns: minmax(0, 1fr); position: relative; overflow: hidden; }
 .qqv-pane {
-  grid-area: 1 / 1;
+  grid-area: 1 / 1; min-width: 0; overflow-wrap: anywhere;
   display: flex; flex-direction: column; gap: 12px;
   padding: 16px 22px 20px;
   transition: transform .46s var(--qe), opacity .3s, visibility 0s;

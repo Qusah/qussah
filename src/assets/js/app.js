@@ -340,7 +340,12 @@ isElementLoaded(selector, timeout = 8000){
     const toText = (html) => {
       if (window.QissaCardText) return window.QissaCardText.fromHtml(html, 220);
       let text = '';
-      try { text = new DOMParser().parseFromString(String(html), 'text/html').body.textContent || ''; }
+      try {
+        const body = new DOMParser().parseFromString(String(html), 'text/html').body;
+        body.querySelectorAll('br').forEach(br => br.replaceWith(' '));
+        body.querySelectorAll('td,th,tr,p,li,div,h1,h2,h3,h4,h5,h6').forEach(el => el.append(' '));
+        text = body.textContent || '';
+      }
       catch (e) { text = String(html).replace(/<[^>]*>/g, ' '); }
       text = text.replace(/\s+/g, ' ').trim();
       return text.length > 220 ? text.slice(0, 220).replace(/\s+\S*$/, '') + '…' : text;
