@@ -312,6 +312,7 @@ $cyan: #91e6f7;
 
 .qqv-buy { display: flex; flex-direction: column; gap: 12px; }
 .qqv-row { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; margin-top: 4px; }
+.qqv-qty[hidden] + .qqv-btn { grid-column: 1 / -1; }   // out of stock: the disabled button spans the row
 .qqv-qty {
   display: inline-flex; align-items: center; justify-content: space-between; gap: 4px;
   min-width: 134px; height: 52px; padding: 4px;
