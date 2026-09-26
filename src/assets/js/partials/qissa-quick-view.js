@@ -884,7 +884,10 @@ const Ticket = {
     if (RM.matches) this.wrap.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 180 });
     else if (again) this.wrap.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: E_IN });
     else {
-      this.ink(true);
+      // Drop the clip once it has spread: details arriving later can make the
+      // ticket taller than the circle it was drawn with.
+      const ink = this.ink(true);
+      ink.finished.then(() => { if (this.open && !this.closing) ink.cancel(); }).catch(() => {});
       this.prod.animate([{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 480, delay: 140, easing: E_IN, fill: 'backwards' });
       this.veil.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300 });
     }
