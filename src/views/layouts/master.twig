@@ -90,7 +90,12 @@
        are retired from the page along with their includes in header.twig. #}
     <script defer data-cfasync="false" crossorigin="anonymous" src="{{ 'qissa-hero-counter.js'|asset }}"></script>
     <script defer data-cfasync="false" crossorigin="anonymous" src="{{ 'qissa-image-banner.js'|asset }}"></script>
-    {% if theme.settings.get('enable_add_product_toast', true) %}
+    {# «وصل للسلة» add-to-cart pill: off only when the switch is explicitly off
+       (unset / null reads as on). add-product-toast.js carries the pill and the
+       older mini-cart modal, so it loads when either one is wanted. #}
+    {% set cart_toast_setting = theme.settings.get('cart_toast_enabled', true) %}
+    {% set cart_toast_on = (cart_toast_setting is not null and not cart_toast_setting) ? false : true %}
+    {% if cart_toast_on or theme.settings.get('enable_add_product_toast', true) %}
         <script defer data-cfasync="false" crossorigin="anonymous" src="{{ 'add-product-toast.js'|asset }}"></script>
     {% endif %}
 
@@ -109,6 +114,8 @@
            (unset / null reads as on). qissa-quick-view.js checks this. #}
         {% set qv_setting = theme.settings.get('quick_view_enabled', true) %}
         window.quick_view_enabled = "{{ (qv_setting is not null and not qv_setting) ? 'off' : 'on' }}"
+        {# The add-to-cart pill (qissa-cart-toast.js) binds only when this is "on". #}
+        window.cart_toast_enabled = "{{ cart_toast_on ? 'on' : 'off' }}"
     </script>
     
     {% hook 'head:start' %}

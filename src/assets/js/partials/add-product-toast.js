@@ -1,4 +1,17 @@
 // ====================================================================
+// Add-to-cart confirmation.
+//
+// With the theme setting `cart_toast_enabled` on (the default) every add is
+// confirmed by the «وصل للسلة» pill (qissa-cart-toast.js) and the modal below
+// stays out of the way. With it off, the store's earlier choice applies: this
+// modal when `enable_add_product_toast` is on, Salla's green bar otherwise.
+// ====================================================================
+
+import { bootCartToast } from './qissa-cart-toast';
+
+bootCartToast();
+
+// ====================================================================
 // Add-to-cart mini-cart modal
 // Figma node 6036:6374 (السلة popup). On "Product Added" this opens a
 // centered modal (backdrop + close X) showing the WHOLE cart: every item
@@ -78,6 +91,8 @@ class AddToCartToast extends HTMLElement {
   async handleProductAdded() {
     // Adds made inside the quick-view ticket already land on its «طلبك» step.
     if (document.documentElement.classList.contains("qqv-open")) return;
+    // The «وصل للسلة» pill confirms adds while its switch is on.
+    if (window.qissaCartToast && window.qissaCartToast.enabled()) return;
     try {
       const cartResponse = await salla.cart.api.details(null, ["options"]);
       const cart = cartResponse?.data?.cart;

@@ -377,7 +377,8 @@ const Cards = {
     const id = card.dataset.qqvId;
     slot.dataset.s = 'busy';
     slot.setAttribute('aria-busy', 'true');
-    // Not muted: a card add keeps the theme's own «تمت إضافة المنتج» toast.
+    // Not muted: the add's confirmation is the theme's (the «وصل للسلة» pill,
+    // or the green toast when the pill is switched off).
     salla.cart.addItem({ id, quantity: 1 })
       .then(res => {
         slot.removeAttribute('aria-busy');
@@ -385,7 +386,10 @@ const Cards = {
         const cart = res && res.data && res.data.cart;
         if (cart) Cart.apply(cart);
         const line = Cart.lines.get(id);
-        announce(T.addedSr(cardName(card), latin(num(cart && cart.count) || (line ? line.qty : 1))));
+        // the «وصل للسلة» pill announces the add itself when it is on
+        if (!(window.qissaCartToast && window.qissaCartToast.enabled())) {
+          announce(T.addedSr(cardName(card), latin(num(cart && cart.count) || (line ? line.qty : 1))));
+        }
         clearTimeout(slot._t);
         slot._t = setTimeout(() => { slot.dataset.s = 'add'; this.sync(card, kb); }, CONFIRM_MS);
       })

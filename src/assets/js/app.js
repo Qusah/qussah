@@ -149,6 +149,11 @@ isElementLoaded(selector, timeout = 8000){
 
   initiateNotifier() {
     salla.notify.setNotifier(function (message, type, data) {
+      // The «وصل للسلة» pill (add-product-toast.js) confirms an add and shows
+      // a refused one itself; it takes both toasts while its switch is on.
+      if (window.qissaCartToast && window.qissaCartToast.claims(type, data)) {
+        return;
+      }
       if (window.enable_add_product_toast && data?.data?.googleTags?.event === "addToCart") {
         return;
       }
