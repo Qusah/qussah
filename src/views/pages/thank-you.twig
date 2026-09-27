@@ -314,7 +314,7 @@
                     <div class="qty-stub__ask" data-csat-ask>
                         <h2 id="qty-q" class="qty-stub__q" data-csat-question>{{ csat_q }}</h2>
                         <p class="qty-stub__hint" id="qty-hint" data-csat-hint>{{ theme.settings.get('csat_hint', 'ضغطة وحدة تكفي، اختر رقماً') }}</p>
-                        <p class="qty-stub__got" hidden><svg class="qty-i" width="17" height="17" stroke-width="2.4" aria-hidden="true"><use href="#qty-i-check"/></svg>{{ theme.settings.get('csat_hint_rated', 'وصل تقييمك، والتعليق اختياري') }}</p>
+                        <p class="qty-stub__got" data-csat-got hidden><svg class="qty-i" width="17" height="17" stroke-width="2.4" aria-hidden="true"><use href="#qty-i-check"/></svg>{{ theme.settings.get('csat_hint_rated', 'وصل تقييمك، والتعليق اختياري') }}</p>
                     </div>
                     <div class="qty-punch" role="radiogroup" aria-labelledby="qty-q" aria-describedby="qty-hint">
                         {% for n in [1, 2, 3, 4, 5] %}
@@ -337,7 +337,8 @@
                             <span class="qty-stamp__in"><svg class="qty-i" width="22" height="22"><use href="#qty-i-heart"/></svg><b>{{ theme.settings.get('csat_stamp', 'رأيك وصل') }}</b><small>{{ store.name }}</small></span>
                         </div>
                         <div class="qty-stub__said">
-                            <p class="qty-stub__thanks" data-csat-thanks>{{ theme.settings.get('csat_thanks', 'شكراً لك! رأيك يهمنا 🤍')|replace({' 🤍': ' 🤍'}) }}</p>
+                            {# the stamp already carries the heart: the default's trailing 🤍 would wrap alone on phones #}
+                            <p class="qty-stub__thanks" data-csat-thanks>{{ theme.settings.get('csat_thanks', 'شكراً لك! رأيك يهمنا 🤍')|replace({'🤍': ''})|trim }}</p>
                             <p class="qty-stub__chosen" data-csat-chosen></p>
                         </div>
                     </div>

@@ -30,7 +30,9 @@ $qe: cubic-bezier(.16, 1, .3, 1);
 .qty-sprite { position: absolute; }
 .qty-i { flex: none; }
 .qty-num { display: inline-block; direction: ltr; unicode-bidi: isolate; }
-.qty-m { display: inline-flex; align-items: center; gap: .28em; white-space: nowrap; direction: rtl; }
+/* an amount as |money prints it ("419 <i class=sicon-sar>"): the number reads LTR (a discount keeps its minus
+   in front) and the riyal sign sits on its left, as everywhere on the store */
+.qty-m { display: inline-flex; flex-direction: row-reverse; align-items: center; gap: .28em; white-space: nowrap; direction: ltr; }
 
 .qty-btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 48px; padding: 0 24px;
