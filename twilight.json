@@ -591,6 +591,17 @@
         },
         {
                 "type": "boolean",
+                "icon": "sicon-newspaper",
+                "label": "تصميم صفحة الشكر الجديد",
+                "description": "صفحة تأكيد الطلب كتذكرة: رقم الطلب وحالته وشركة الشحن والإجمالي، وقسيمة التقييم بخمسة أرقام في أول الشاشة، ثم محتويات الطلب وما يحدث بعده والفاتورة والدعم. الإيقاف يعيد الصفحة السابقة",
+                "id": "thank_you_redesign",
+                "format": "switch",
+                "required": false,
+                "value": true,
+                "selected": true
+        },
+        {
+                "type": "boolean",
                 "icon": "sicon-smile",
                 "label": "سؤال رضا العميل في صفحة تأكيد الطلب",
                 "description": "«هل تنصح أصدقاءك بتجربة الشراء من متجر …؟» بخمسة وجوه، ثم سؤال مفتوح حسب التقييم. تُحفظ الإجابات في لوحة البيانات",
@@ -659,6 +670,46 @@
                 "format": "text",
                 "required": false,
                 "value": "شكراً لك! رأيك يهمنا 🤍"
+        },
+        {
+                "type": "string",
+                "icon": "sicon-edit",
+                "label": "سطر التلميح تحت سؤال الرضا",
+                "description": "في تصميم صفحة الشكر الجديد، قبل اختيار الرقم",
+                "id": "csat_hint",
+                "format": "text",
+                "required": false,
+                "value": "ضغطة وحدة تكفي، اختر رقماً"
+        },
+        {
+                "type": "string",
+                "icon": "sicon-edit",
+                "label": "سطر التلميح بعد اختيار الرقم",
+                "description": "في تصميم صفحة الشكر الجديد",
+                "id": "csat_hint_rated",
+                "format": "text",
+                "required": false,
+                "value": "وصل تقييمك، والتعليق اختياري"
+        },
+        {
+                "type": "string",
+                "icon": "sicon-edit",
+                "label": "كلمات المقياس من ١ إلى ٥",
+                "description": "خمس كلمات تفصلها فاصلة «،» — الأولى والأخيرة تظهران تحت الرقمين ١ و٥",
+                "id": "csat_scale_words",
+                "format": "text",
+                "required": false,
+                "value": "ما أنصح،غالباً لا،يمكن،أنصح،أنصح أكيد"
+        },
+        {
+                "type": "string",
+                "icon": "sicon-edit",
+                "label": "نص الختم بعد الإرسال",
+                "description": "في تصميم صفحة الشكر الجديد",
+                "id": "csat_stamp",
+                "format": "text",
+                "required": false,
+                "value": "رأيك وصل"
         },
         {
                 "type": "string",

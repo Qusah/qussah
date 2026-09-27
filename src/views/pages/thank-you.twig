@@ -12,6 +12,11 @@
 {% extends "layouts.master" %}
 
 {% block content %}
+{# «تصميم صفحة الشكر الجديد» (thank_you_redesign): on unless explicitly switched off —
+   unset / null reads as on. Off = the page as it was (the tissue-box card), which
+   still sends order_ref and keeps the comment box hidden until a face is picked. #}
+{% set ty_new = theme.settings.get('thank_you_redesign') %}
+{% if ty_new is not null and not ty_new %}
     {% hook 'thank-you:start' %}
     <div class="h-52 -mb-52 w-full bg-primary rtl:right-0 ltr:left-0 relative -z-1">
         <svg class="text-primary absolute top-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
@@ -80,7 +85,7 @@
         {% set csat_low = theme.settings.get('csat_prompt_low', 'كيف نقدر نصير أحسن؟')|replace({'{المتجر}': store.name}) %}
         <section class="qcsat" data-csat data-testid="store-thankyou-satisfaction"
                  data-endpoint="{{ theme.settings.get('csat_endpoint', 'https://salla-pipeline.onrender.com')|trim }}"
-                 data-store="{{ store.id }}" data-order="{{ order.id }}" data-theme="qussah"
+                 data-store="{{ store.id }}" data-order="{{ order.id }}" data-order-ref="{{ order.reference_id }}" data-theme="qussah"
                  data-prompt-top="{{ csat_top|e('html_attr') }}"
                  data-prompt-low="{{ csat_low|e('html_attr') }}">
             <div class="qcsat__inner">
@@ -182,6 +187,295 @@
         </div>
         {% hook 'thank-you:end' %}
     </div>
+{% else %}
+    {#  «تذكرة الطلب» — the order ticket (thank_you_redesign ON, the default).
+        One paper ticket on the navy stage: the body reassures (number, status, shipping
+        company, total), the perforated stub on its side asks the one question with five
+        numbered punch-holes and tears off once sent. Below: the receipt, what happens
+        next, the invoice, support, then Salla's own branch / coupon / shipments blocks.
+        Only order.id, order.reference_id, order.url, order.email_sent, order.is_pickable
+        and store.* are documented for this page — every other order field is guarded,
+        so a missing one hides only its own line. #}
+    {% hook 'thank-you:start' %}
+    {% set ty_title = (thank_you_title ?: page.title)|trim %}
+    {% set ty_parts = ty_title|split('!') %}
+    {% set ty_rest = ty_parts|slice(1)|join('!')|trim %}
+    {% set ty_name = (order.customer is defined and order.customer and order.customer.first_name is defined and order.customer.first_name) ? order.customer.first_name|trim : '' %}
+    {% set ty_status = (order.status is defined and order.status and order.status.name is defined and order.status.name) ? order.status.name|trim : '' %}
+    {% set ty_ship = (order.shipping is defined and order.shipping and order.shipping.name is defined and order.shipping.name) ? order.shipping.name|trim : '' %}
+    {% set ty_ship_cost = (order.shipping is defined and order.shipping and order.shipping.cost is defined and order.shipping.cost is not null) ? order.shipping.cost : null %}
+    {% set ty_sub = (order.sub_total is defined and order.sub_total is not null) ? order.sub_total : null %}
+    {% set ty_total = (order.total is defined and order.total is not null) ? order.total : null %}
+    {% set ty_items = (order.items is defined and order.items and order.items|length) ? order.items : [] %}
+    {% set ty_disc = (order.discounts is defined and order.discounts and order.discounts|length) ? order.discounts : [] %}
+    {% set ty_cod = (order.cod_cost is defined and order.cod_cost and order.cod_cost > 0) ? order.cod_cost : null %}
+    {% set ty_pay = (order.payment_method is defined and order.payment_method) ? order.payment_method : null %}
+    {% if ty_pay is iterable %}{% set ty_pay = ty_pay.name is defined ? ty_pay.name : null %}{% endif %}
+    {% set ty_receipt = ty_items|length or ty_sub is not null or ty_total is not null %}
+    {% set ty_mobile = (store.contacts is defined and store.contacts and store.contacts.mobile is defined) ? store.contacts.mobile : null %}
+    {% set ty_wa = (store.contacts is defined and store.contacts and store.contacts.whatsapp is defined) ? store.contacts.whatsapp : null %}
+    {% set csat_on = theme.settings.get('csat_enabled', true) %}
+    <div class="qty" data-qty>
+        <svg width="0" height="0" class="qty-sprite" aria-hidden="true" focusable="false"><defs>
+            <symbol id="qty-i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+            <symbol id="qty-i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"><rect x="8.5" y="8.5" width="11" height="11" rx="2.2"/><path d="M15.5 8.5V6.2a1.7 1.7 0 0 0-1.7-1.7H6.2a1.7 1.7 0 0 0-1.7 1.7v7.6a1.7 1.7 0 0 0 1.7 1.7h2.3"/></symbol>
+            <symbol id="qty-i-receipt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"><path d="M6 3.5h12v17l-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3-2 1.3z"/><path d="M9 8h6M9 11.5h6M9 15h3.5"/></symbol>
+            <symbol id="qty-i-down" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"><path d="m6 9.5 6 6 6-6"/></symbol>
+            <symbol id="qty-i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"><path d="M19.5 12H5.5M11 6.2 5.2 12l5.8 5.8"/></symbol>
+            <symbol id="qty-i-heart" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.2s-7.7-4.7-7.7-10.4A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.7 2.6c0 5.7-7.7 10.4-7.7 10.4z"/></symbol>
+            <symbol id="qty-i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"><rect x="3.5" y="5.5" width="17" height="13" rx="2.2"/><path d="m4.2 7.2 7.8 5.9 7.8-5.9"/></symbol>
+            <symbol id="qty-i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"><path d="M6.6 3.8h2.6l1.3 4-1.9 1.3a10.4 10.4 0 0 0 6.3 6.3l1.3-1.9 4 1.3v2.6a2 2 0 0 1-2.2 2A16.6 16.6 0 0 1 4.6 6a2 2 0 0 1 2-2.2z"/></symbol>
+            <symbol id="qty-i-wa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"><path d="M4.4 19.6l1.2-4a8.2 8.2 0 1 1 3 2.9z"/><path d="M9.4 8.3c.3-.4.6-.5 1-.4l.8 1.8-.7.9c.5 1.1 1.4 2 2.6 2.6l.9-.7 1.8.8c.1.4 0 .7-.4 1-1 .7-2.2.6-3.6-.2a8 8 0 0 1-2.7-2.7c-.8-1.4-.9-2.6-.2-3.6z"/></symbol>
+            <symbol id="qty-i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"><path d="M12 3.2 20 7.4v9.2L12 20.8 4 16.6V7.4z"/><path d="M4.3 7.6 12 11.7l7.7-4.1M12 11.7v9"/></symbol>
+        </defs></svg>
+
+        <section class="qty-stage" aria-labelledby="qty-title">
+            <svg class="qty-stage__waves" viewBox="0 0 1440 260" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path fill-opacity=".06" d="M0 150C220 96 420 206 720 160S1180 70 1440 118V260H0z"/><path fill-opacity=".06" d="M0 196C260 150 470 238 760 204S1210 132 1440 170V260H0z"/><path fill-opacity=".08" d="M0 232C300 206 520 262 800 240S1230 196 1440 222V260H0z"/></svg>
+
+            <article class="qty-tk{{ csat_on ? '' : ' qty-tk--solo' }}" aria-label="{{ trans('blocks.thank_you.ticket') }}">
+                <div class="qty-tk__main">
+                    <div class="qty-tk__head">
+                        <span class="qty-tk__seal" aria-hidden="true"><svg class="qty-i" width="26" height="26" stroke-width="2.4"><use href="#qty-i-check"/></svg></span>
+                        <div class="qty-tk__titles">
+                            <h1 id="qty-title" class="qty-tk__title" data-testid="store-thankyou-title">
+                                {%- if ty_parts|length > 1 and ty_parts[0]|trim and ty_rest -%}
+                                    <span class="qty-tk__t1">{{ ty_parts[0]|trim }}!</span> <span class="qty-tk__t2">{{ ty_rest }}</span>
+                                {%- else -%}
+                                    {{ ty_title }}
+                                {%- endif -%}
+                            </h1>
+                            <p class="qty-tk__hi">{{ ty_name ? trans('blocks.thank_you.hello')|replace({'{name}': ty_name, '{store}': store.name}) : trans('blocks.thank_you.hello_anon')|replace({'{store}': store.name}) }}</p>
+                        </div>
+                    </div>
+
+                    <dl class="qty-tk__fields">
+                        <div class="qty-tk__f qty-tk__f--ref">
+                            <dt>{{ trans('pages.thank_you.order_id') }}</dt>
+                            <dd><button type="button" class="qty-copy" onclick="app.copyToClipboard(event)" data-content="{{ order.reference_id }}" data-testid="store-thankyou-order-id"
+                                        aria-label="{{ trans('blocks.thank_you.copy') }} {{ order.reference_id }}"><span class="qty-num">#{{ order.reference_id }}</span><svg class="qty-i" width="17" height="17" aria-hidden="true"><use href="#qty-i-copy"/></svg><span class="qty-copy__done" aria-hidden="true">{{ trans('blocks.thank_you.copied') }}</span></button></dd>
+                        </div>
+                        {% if ty_status %}
+                        <div class="qty-tk__f"><dt>{{ trans('blocks.thank_you.status') }}</dt><dd><span class="qty-tk__dot" aria-hidden="true"></span>{{ ty_status }}</dd></div>
+                        {% endif %}
+                        {% if ty_ship %}
+                        <div class="qty-tk__f"><dt>{{ trans('blocks.thank_you.shipping_with') }}</dt><dd>{{ ty_ship }}</dd></div>
+                        {% endif %}
+                        {% if ty_total is not null %}
+                        <div class="qty-tk__f"><dt>{{ trans('blocks.thank_you.total') }}</dt><dd><span class="qty-m">{{ ty_total|money }}</span></dd></div>
+                        {% endif %}
+                    </dl>
+
+                    {% if ty_items|length %}
+                    <ul class="qty-tk__items" aria-label="{{ trans('blocks.thank_you.products') }}">
+                        {% for item in ty_items|slice(0, 2) %}
+                        <li>
+                            {% if item.image is defined and item.image %}<img src="{{ item.image }}" alt="" width="44" height="44">{% else %}<span class="qty-ph" aria-hidden="true"><svg class="qty-i" width="24" height="24"><use href="#qty-i-box"/></svg></span>{% endif %}
+                            <span class="qty-tk__iname">{{ item.name }}</span>
+                            {% if item.quantity is defined and item.quantity %}<span class="qty-tk__iq qty-num">× {{ item.quantity }}</span>{% endif %}
+                        </li>
+                        {% endfor %}
+                        {% if ty_items|length > 2 %}
+                        <li class="qty-tk__more"><a href="#qty-receipt"><span class="qty-num">+{{ ty_items|length - 2 }}</span><span class="sr-only"> {{ trans('blocks.thank_you.more') }}</span></a></li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+
+                    <div class="qty-tk__acts">
+                        <button type="button" class="qty-btn" data-testid="store-thankyou-order-details-btn" onclick="salla.order.show({order_id:'{{ order.id }}', url:'{{ order.url }}'})"><svg class="qty-i" width="19" height="19" aria-hidden="true"><use href="#qty-i-receipt"/></svg>{{ trans('pages.thank_you.order_details') }}</button>
+                        {% if ty_receipt %}
+                        <a class="qty-tk__jump" href="#qty-receipt">{{ trans('blocks.thank_you.contents') }}<svg class="qty-i" width="18" height="18" aria-hidden="true"><use href="#qty-i-down"/></svg></a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if csat_on %}
+                {% set csat_q = theme.settings.get('csat_question', 'هل تنصح أصدقاءك بتجربة الشراء من متجر {المتجر}؟')|replace({'{المتجر}': store.name}) %}
+                {% set csat_top = theme.settings.get('csat_prompt_top', 'ايش أكثر شيء عجبك في متجر {المتجر}؟')|replace({'{المتجر}': store.name}) %}
+                {% set csat_low = theme.settings.get('csat_prompt_low', 'كيف نقدر نصير أحسن؟')|replace({'{المتجر}': store.name}) %}
+                {% set ty_words_def = ['ما أنصح', 'غالباً لا', 'يمكن', 'أنصح', 'أنصح أكيد'] %}
+                {% set ty_words_in = (theme.settings.get('csat_scale_words', 'ما أنصح،غالباً لا،يمكن،أنصح،أنصح أكيد') ~ '')|replace({',': '،'})|split('،') %}
+                {% set ty_words = [] %}
+                {% for i in [0, 1, 2, 3, 4] %}
+                    {% set ty_w = ty_words_in[i] is defined ? ty_words_in[i]|trim : '' %}
+                    {% set ty_words = ty_words|merge([ty_w ?: ty_words_def[i]]) %}
+                {% endfor %}
+                {# The stub. Same data-* contract as the old card, plus data-order-ref: every POST
+                   carries order (order.id, what the answers table has always stored) AND
+                   order_ref (the #number the customer and Salla's order list show). #}
+                <section class="qty-stub" data-csat data-state="idle" data-testid="store-thankyou-satisfaction" aria-labelledby="qty-q"
+                         data-endpoint="{{ theme.settings.get('csat_endpoint', 'https://salla-pipeline.onrender.com')|trim }}"
+                         data-store="{{ store.id }}" data-order="{{ order.id }}" data-order-ref="{{ order.reference_id }}" data-theme="qussah"
+                         data-prompt-top="{{ csat_top|e('html_attr') }}"
+                         data-prompt-low="{{ csat_low|e('html_attr') }}"
+                         data-words="{{ ty_words|join('|')|e('html_attr') }}"
+                         data-chosen="{{ trans('blocks.thank_you.chosen')|e('html_attr') }}"
+                         data-live="{{ trans('blocks.thank_you.rated_live')|e('html_attr') }}"
+                         data-optional="{{ trans('blocks.thank_you.optional')|e('html_attr') }}">
+                    <div class="qty-stub__ask" data-csat-ask>
+                        <h2 id="qty-q" class="qty-stub__q" data-csat-question>{{ csat_q }}</h2>
+                        <p class="qty-stub__hint" id="qty-hint" data-csat-hint>{{ theme.settings.get('csat_hint', 'ضغطة وحدة تكفي، اختر رقماً') }}</p>
+                        <p class="qty-stub__got" hidden><svg class="qty-i" width="17" height="17" stroke-width="2.4" aria-hidden="true"><use href="#qty-i-check"/></svg>{{ theme.settings.get('csat_hint_rated', 'وصل تقييمك، والتعليق اختياري') }}</p>
+                    </div>
+                    <div class="qty-punch" role="radiogroup" aria-labelledby="qty-q" aria-describedby="qty-hint">
+                        {% for n in [1, 2, 3, 4, 5] %}
+                        <button type="button" role="radio" aria-checked="false" tabindex="{{ n == 1 ? '0' : '-1' }}" data-rate="{{ n }}"
+                                aria-label="{{ trans('blocks.thank_you.rate_of')|replace({'{n}': n ~ '', '{word}': ty_words[n - 1]}) }}"><span class="qty-punch__n">{{ n }}</span><span class="qty-punch__chad" aria-hidden="true">{{ n }}</span></button>
+                        {% endfor %}
+                    </div>
+                    <div class="qty-punch__ends" data-csat-ends aria-hidden="true"><span>{{ ty_words[0] }}</span><span>{{ ty_words[4] }}</span></div>
+
+                    <form class="qty-stub__more" data-csat-more hidden>
+                        <label class="qty-stub__prompt" for="qty-comment-{{ order.id }}" data-csat-prompt></label>
+                        <textarea class="qty-stub__text" id="qty-comment-{{ order.id }}" data-csat-comment rows="3" maxlength="2000"
+                                  placeholder="{{ theme.settings.get('csat_placeholder', 'اكتب لنا هنا…') }}"></textarea>
+                        <button type="submit" class="qty-btn qty-stub__send">{{ theme.settings.get('csat_submit', 'إرسال') }}<svg class="qty-i" width="19" height="19" aria-hidden="true"><use href="#qty-i-send"/></svg></button>
+                    </form>
+
+                    <div class="qty-stub__done" data-csat-done tabindex="-1" hidden>
+                        <div class="qty-stamp" aria-hidden="true">
+                            <svg viewBox="0 0 120 120" width="100%" height="100%" fill="none" stroke="currentColor"><circle cx="60" cy="60" r="56" stroke-width="3"/><circle cx="60" cy="60" r="49" stroke-width="1.2"/></svg>
+                            <span class="qty-stamp__in"><svg class="qty-i" width="22" height="22"><use href="#qty-i-heart"/></svg><b>{{ theme.settings.get('csat_stamp', 'رأيك وصل') }}</b><small>{{ store.name }}</small></span>
+                        </div>
+                        <div class="qty-stub__said">
+                            <p class="qty-stub__thanks" data-csat-thanks>{{ theme.settings.get('csat_thanks', 'شكراً لك! رأيك يهمنا 🤍')|replace({' 🤍': ' 🤍'}) }}</p>
+                            <p class="qty-stub__chosen" data-csat-chosen></p>
+                        </div>
+                    </div>
+                    <p class="qty-stub__foot" data-csat-foot aria-hidden="true"><span>{{ trans('blocks.thank_you.stub_foot') }}</span><span class="qty-num">#{{ order.reference_id }}</span></p>
+                    <p class="sr-only" aria-live="polite" data-csat-live></p>
+                </section>
+                {% endif %}
+            </article>
+        </section>
+
+        <div class="qty-after">
+            {% if order.instructions or messages|length %}
+            <div class="qty-note">
+                {% if order.instructions %}
+                    <article class="article article--main article--small">{{ order.instructions|raw }}</article>
+                {% endif %}
+                {% for message in messages %}
+                    <p class="qty-note__msg">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% if ty_receipt %}
+            <div class="qty-rcw">
+                <section class="qty-rc" id="qty-receipt" aria-labelledby="qty-rc-t">
+                    <h2 id="qty-rc-t" class="qty-rc__t">{{ trans('blocks.thank_you.contents') }} <span class="qty-num qty-rc__ref">#{{ order.reference_id }}</span></h2>
+                    {% hook 'thank-you:items.start' %}
+                    {% if ty_items|length %}
+                    <ul class="qty-rc__items">
+                        {% for item in ty_items %}
+                        <li class="qty-rc__it">
+                            {% if item.image is defined and item.image %}<img src="{{ item.image }}" alt="" width="76" height="76" loading="lazy">{% else %}<span class="qty-ph" aria-hidden="true"><svg class="qty-i" width="24" height="24"><use href="#qty-i-box"/></svg></span>{% endif %}
+                            <div class="qty-rc__nm">
+                                <b>{{ item.name }}</b>
+                                {% if item.product is defined and item.product and item.product.subtitle is defined and item.product.subtitle %}<span>{{ item.product.subtitle }}</span>{% endif %}
+                                {% if item.options is defined and item.options and item.options|length %}
+                                    {% for option in item.options %}{% if option.value is defined and option.value %}<span>{{ option.name is defined and option.name ? option.name ~ ': ' : '' }}{{ option.value }}</span>{% endif %}{% endfor %}
+                                {% endif %}
+                            </div>
+                            <span class="qty-rc__q">{% if item.quantity is defined and item.quantity %}{{ trans('blocks.thank_you.qty') }} <span class="qty-num">{{ item.quantity }}</span>{% endif %}</span>
+                            <span class="qty-m qty-rc__p">{% if item.total is defined and item.total is not null %}{{ item.total|money }}{% endif %}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    {% hook 'thank-you:items.end' %}
+                    <dl class="qty-rc__sum">
+                        {% if ty_sub is not null %}
+                        <div><dt>{{ trans('blocks.thank_you.sub_total') }}</dt><dd class="qty-m">{{ ty_sub|money }}</dd></div>
+                        {% endif %}
+                        {% for d in ty_disc %}{% if d.discount is defined and d.discount %}
+                        <div><dt>{{ d.name is defined and d.name ? d.name : '' }}</dt><dd class="qty-m">{{ d.discount|money }}</dd></div>
+                        {% endif %}{% endfor %}
+                        {% if ty_ship_cost is not null %}
+                        <div><dt>{{ trans('blocks.thank_you.shipping') }}{{ ty_ship ? ' · ' ~ ty_ship : '' }}</dt><dd class="qty-m">{{ ty_ship_cost|money }}</dd></div>
+                        {% endif %}
+                        {% if ty_cod is not null %}
+                        <div><dt>{{ trans('blocks.thank_you.cod') }}</dt><dd class="qty-m">{{ ty_cod|money }}</dd></div>
+                        {% endif %}
+                        {% if ty_total is not null %}
+                        <div class="qty-rc__tot"><dt>{{ trans('blocks.thank_you.total') }} <small>{{ trans('blocks.thank_you.incl_tax') }}</small></dt><dd class="qty-m">{{ ty_total|money }}</dd></div>
+                        {% endif %}
+                        {% if ty_pay %}
+                        <div><dt>{{ trans('blocks.thank_you.payment') }}</dt><dd>{{ ty_pay }}</dd></div>
+                        {% endif %}
+                    </dl>
+                </section>
+            </div>
+            {% else %}
+                {% hook 'thank-you:items.start' %}
+                {% hook 'thank-you:items.end' %}
+            {% endif %}
+
+            <aside class="qty-side">
+                {# Salla's default stages; the current one is order.status.name. A status the
+                   list does not know (custom, pending payment) is shown as the current step. #}
+                {% set ty_steps = [trans('blocks.thank_you.step_review'), trans('blocks.thank_you.step_progress'), trans('blocks.thank_you.step_shipped'), trans('blocks.thank_you.step_delivered')] %}
+                {% set ty_now = -1 %}
+                {% for s in ty_steps %}{% if ty_status and s == ty_status %}{% set ty_now = loop.index0 %}{% endif %}{% endfor %}
+                <section class="qty-nx" aria-labelledby="qty-nx-t">
+                    <h2 id="qty-nx-t" class="qty-side__h">{{ trans('blocks.thank_you.next') }}</h2>
+                    <ol class="qty-nx__list">
+                        <li class="is-done"><span class="qty-nx__b" aria-hidden="true"><svg class="qty-i" width="14" height="14" stroke-width="3"><use href="#qty-i-check"/></svg></span><span>{{ trans('blocks.thank_you.step_received') }}</span></li>
+                        {% if ty_status and ty_now < 0 %}
+                        <li class="is-now" aria-current="step"><span class="qty-nx__b" aria-hidden="true"></span><span>{{ ty_status }} <em>{{ trans('blocks.thank_you.now') }}</em></span></li>
+                        {% endif %}
+                        {% for s in ty_steps %}
+                        <li class="{{ ty_now >= 0 and loop.index0 < ty_now ? 'is-done' : (loop.index0 == ty_now ? 'is-now' : '') }}"{{ loop.index0 == ty_now ? ' aria-current="step"' : '' }}>
+                            <span class="qty-nx__b" aria-hidden="true">{% if ty_now >= 0 and loop.index0 < ty_now %}<svg class="qty-i" width="14" height="14" stroke-width="3"><use href="#qty-i-check"/></svg>{% endif %}</span>
+                            <span>{{ s }}{% if loop.index0 == ty_now %} <em>{{ trans('blocks.thank_you.now') }}</em>{% elseif loop.index0 == 2 and ty_ship %} <em>{{ trans('blocks.thank_you.with')|replace({'{name}': ty_ship}) }}</em>{% endif %}</span>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </section>
+
+                <section class="qty-inv" aria-labelledby="qty-inv-t">
+                    {% if order.email_sent %}
+                        <p class="qty-inv__sent" id="qty-inv-t"><svg class="qty-i" width="22" height="22" stroke-width="2.4" aria-hidden="true"><use href="#qty-i-check"/></svg><span>{{ trans('pages.thank_you.email_sent') }}{% if order.customer is defined and order.customer and order.customer.email is defined and order.customer.email %}<b dir="ltr">{{ order.customer.email }}</b>{% endif %}</span></p>
+                    {% else %}
+                        {# thankyou.js swaps #invoice-form's content for Salla's message once sent #}
+                        <div id="invoice-form" class="qty-inv__box">
+                            <h2 id="qty-inv-t" class="qty-side__h qty-side__h--sm"><svg class="qty-i" width="20" height="20" aria-hidden="true"><use href="#qty-i-mail"/></svg>{{ trans('pages.thank_you.resend_email') }}</h2>
+                            <form class="qty-inv__f" onsubmit="return salla.form.onSubmit('order.sendInvoice', event)">
+                                <label class="sr-only" for="qty-inv-e">{{ trans('blocks.thank_you.email') }}</label>
+                                <input id="qty-inv-e" type="email" name="email" placeholder="your@email.com" autocomplete="email" dir="ltr" required>
+                                <salla-button type="submit" loader-position="center" class="qty-inv__btn"><span class="btn__text">{{ trans('blocks.comments.submit') }}</span></salla-button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </section>
+
+                {% if ty_wa or ty_mobile %}
+                <section class="qty-sup" aria-labelledby="qty-sup-t">
+                    <h2 id="qty-sup-t" class="qty-side__h qty-side__h--sm">{{ trans('common.titles.support') }}</h2>
+                    <div class="qty-sup__row">
+                        {% if ty_wa %}
+                        <a class="qty-sup__a" href="https://wa.me/{{ ty_wa|replace({' ': '', '+': '', '-': ''}) }}" target="_blank" rel="noopener"><svg class="qty-i" width="22" height="22" aria-hidden="true"><use href="#qty-i-wa"/></svg><span>{{ trans('blocks.thank_you.whatsapp') }}<b class="qty-num" dir="ltr">{{ ty_wa }}</b></span></a>
+                        {% endif %}
+                        {% if ty_mobile %}
+                        <a class="qty-sup__a" href="tel:{{ ty_mobile|replace({' ': ''}) }}"><svg class="qty-i" width="22" height="22" aria-hidden="true"><use href="#qty-i-phone"/></svg><span>{{ trans('blocks.thank_you.call') }}<b class="qty-num" dir="ltr">{{ ty_mobile }}</b></span></a>
+                        {% endif %}
+                    </div>
+                </section>
+                {% endif %}
+            </aside>
+
+            <div class="qty-slots">
+                {% if order.is_pickable %}
+                    <salla-order-branch data-testid="store-thankyou-branch"></salla-order-branch>
+                {% endif %}
+                <salla-next-order-coupon data-testid="store-thankyou-coupon"></salla-next-order-coupon>
+                {# Split shipment tracking — self-hides for single-shipment orders #}
+                <salla-order-shipments></salla-order-shipments>
+            </div>
+        </div>
+    </div>
+    {% hook 'thank-you:end' %}
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
