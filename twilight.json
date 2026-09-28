@@ -266,6 +266,16 @@
             "selected": true
         },
         {
+            "type": "string",
+            "icon": "sicon-paint",
+            "label": "لون زر المعاينة السريعة",
+            "description": "لون زر العين بجانب «أضف للسلة» في بطاقات المنتجات. لون الأيقونة يتبدّل تلقائياً ليبقى واضحاً: اللون الغامق يرسم إطار الزر وأيقونته، والفاتح يصبح خلفية الزر بأيقونة كحلية",
+            "id": "quick_view_button_color",
+            "format": "color",
+            "required": false,
+            "value": "#2e3793"
+        },
+        {
             "type": "boolean",
             "icon": "sicon-toggle-off",
             "label": "تثبيت زر الإضافة والكمية أسفل شاشة الجوال",

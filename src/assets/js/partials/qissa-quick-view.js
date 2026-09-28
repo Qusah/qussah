@@ -1136,10 +1136,31 @@ function onIntent(e) {
   if (id && !details.has(id)) getDetails(id).catch(() => {});
 }
 
+/* Eye colour — theme setting `quick_view_button_color` (master.twig, a #rrggbb
+   from the colour picker). Unset, invalid or the default navy: nothing is set
+   and the CSS defaults draw today's eye. A colour dark enough for 3:1 on white
+   (relative luminance ≤ .3) draws the eye's edge and icon, and on hover/open
+   fills the button under a white icon; a lighter one becomes the button's
+   background under a navy icon (> 4.7:1). Tailwind scans this file: keep
+   utility names out of these comments. */
+function tint() {
+  const m = /^#?([0-9a-f]{6})$/i.exec(String(window.quick_view_button_color || '').trim());
+  if (!m || /^2e3793$/i.test(m[1])) return;
+  const c = `#${m[1]}`;
+  const lum = [0, 2, 4].reduce((s, i, j) => {
+    const v = parseInt(m[1].substr(i, 2), 16) / 255;
+    return s + [0.2126, 0.7152, 0.0722][j] * (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+  }, 0);
+  const st = document.body.style;
+  if (lum <= 0.3) { st.setProperty('--qqv-tc', c); st.setProperty('--qqv-th', c); }
+  else { st.setProperty('--qqv-tb', c); st.setProperty('--qqv-tc', '#172951'); }
+}
+
 let booted = false;
 function boot() {
   if (booted) return;
   booted = true;
+  tint();
   Cards.scan();
   Cart.bind();
   document.addEventListener('click', onClickCapture, true);

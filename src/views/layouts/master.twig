@@ -114,6 +114,8 @@
            (unset / null reads as on). qissa-quick-view.js checks this. #}
         {% set qv_setting = theme.settings.get('quick_view_enabled', true) %}
         window.quick_view_enabled = "{{ (qv_setting is not null and not qv_setting) ? 'off' : 'on' }}"
+        {# The eye's colour (theme setting). Empty / unset = the original navy. #}
+        window.quick_view_button_color = "{{ theme.settings.get('quick_view_button_color') }}"
         {# The add-to-cart pill (qissa-cart-toast.js) binds only when this is "on". #}
         window.cart_toast_enabled = "{{ cart_toast_on ? 'on' : 'off' }}"
     </script>
