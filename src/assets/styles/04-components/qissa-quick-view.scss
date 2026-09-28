@@ -291,22 +291,27 @@ body { --qqv-tc: #{$navy}; --qqv-tb: #fff; --qqv-th: #{$dk}; }
 }
 .qqv-ticket h2 { font-size: 20px; font-weight: 700; line-height: 1.5; color: #fff; outline: 0; overflow-wrap: anywhere; }
 .qqv-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; margin-top: -6px; }
-.qqv-pill, .qqv-save, .qqv-more { font-size: 12.5px; font-weight: 500; line-height: 1; padding: 7px 10px 6px; border-radius: 999px; }
+.qqv-pill, .qqv-save { font-size: 12.5px; font-weight: 500; line-height: 1; padding: 7px 10px 6px; border-radius: 999px; }
 .qqv-pill { background: rgba(145, 230, 247, .16); color: $cyan; }
 .qqv-rate { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: rgba(255, 255, 255, .72); }
 .qqv-stars { display: inline-flex; gap: 1px; color: #ffc62a; }
 .qqv-st { width: 13px; height: 13px; fill: currentColor; }
 
-// what's inside — 3 lines, the rest behind «+N»
+// what's inside — 3 lines, then «عرض N عناصر أخرى ⌄» opens the rest in place
 .qqv-in { padding-top: 10px; border-top: 1px dashed rgba(255, 255, 255, .2); }
-.qqv-in-hd { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 26px; }
 .qqv-in h3 { font-size: 13px; font-weight: 700; line-height: 1.4; color: $cyan; }
 .qqv-more {
-  position: relative; flex: none;
-  padding: 6px 10px 5px !important; font-weight: 700 !important; color: $navy !important; background: $cyan !important;
-  &::after { content: ''; position: absolute; top: -9px; right: -6px; bottom: -9px; left: -6px; }
-  &:hover { background: #b3eefa !important; }
+  display: inline-flex; align-items: center; gap: 4px;
+  min-height: 44px; margin-bottom: -10px !important;
+  font-size: 13.5px; font-weight: 700 !important; line-height: 1;
+  color: $cyan !important;
+  text-decoration: underline; text-decoration-color: rgba(145, 230, 247, .4); text-underline-offset: 5px;
+  .qqv-i { width: 18px; height: 18px; stroke-width: 2.2; transition: transform .3s var(--qe); }
+  &:hover { text-decoration-color: $cyan; }
 }
+.is-open .qqv-more .qqv-i { transform: rotate(180deg); }
+.is-open .is-more { animation: qqv-rise .36s var(--qe) both; }
+@keyframes qqv-rise { from { opacity: 0; transform: translateY(-6px); } }
 .qqv-in-list {
   display: grid; gap: 2px; margin-top: 4px !important;
   li { display: flex; align-items: flex-start; gap: 8px; font-size: 13.5px; font-weight: 500; line-height: 1.6; overflow-wrap: anywhere; }
@@ -448,5 +453,6 @@ body { --qqv-tc: #{$navy}; --qqv-tb: #fff; --qqv-th: #{$dk}; }
 @media (prefers-reduced-motion: reduce) {
   .qqv-card *, .qqv-wrap * { transition-duration: .01ms !important; }
   .qqv-pane { transform: none !important; }
+  .is-more { animation: none !important; }
   .qqv-spin { animation-duration: 2s; }
 }

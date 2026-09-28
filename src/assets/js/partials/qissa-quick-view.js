@@ -14,8 +14,11 @@
  *
  *   2. The ticket. An eye button beside «أضف للسلة» (hover/focus on desktop,
  *      always on phones) opens one page-level dark ticket anchored to the card.
- *      Product step: gallery, name, subtitle, rating, «ماذا يوجد في البكج» read
- *      from the description, price + saving, qty + add, buy now, trust lines.
+ *      Product step: gallery (every photo: a swipeable scroll-snap track from
+ *      card-carousel.js + a row of thumbnails), name, subtitle, rating,
+ *      «ماذا يوجد في البكج» read from the description (3 lines, then «عرض N
+ *      عناصر أخرى» opens the rest in place), price + saving, qty + add, buy now,
+ *      trust lines. The eye takes the colour `quick_view_button_color`.
  *      After an add it slides to «طلبك», built from the cart the add returned.
  *      Off when the theme setting `quick_view_enabled` is off, or for one
  *      section when it carries data-qv="off" — then no trigger is drawn and the
@@ -48,9 +51,8 @@ const T = {
   photo: (k, n) => `الصورة ${k} من ${n}`,
   imageN: (k, n) => `عرض ${T.photo(k, n)}`,
   inside: box => `ماذا يوجد في ${box}`,
-  more: n => `عرض ${n === 1 ? 'عنصر آخر' : n + ' عناصر أخرى'}`,
-  less: 'أقل',
-  lessLabel: 'إخفاء العناصر الإضافية',
+  more: n => `عرض ${n === 1 ? 'عنصر آخر' : n === 2 ? 'عنصرين آخرين' : latin(n) + ' عناصر أخرى'}`,
+  less: 'عرض أقل',
   instead: 'بدلًا من',
   save: 'وفّر',
   qty: 'الكمية',
@@ -100,6 +102,7 @@ const IC = {
   check: svg('<path d="m5 12.5 4.5 4.5L19 7.5"/>'),
   left: svg('<path d="m15 6-6 6 6 6"/>'),
   right: svg('<path d="m9 6 6 6-6 6"/>'),
+  down: svg('<path d="m6 9 6 6 6-6"/>'),
   star: '<svg class="qqv-st" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.6l2.9 6 6.5.8-4.8 4.5 1.2 6.5L12 17.2l-5.8 3.2 1.2-6.5-4.8-4.5 6.5-.8z"/></svg>',
   box: svg('<path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9M8 5.3l8 4.5"/>'),
   truck: svg('<path d="M2.5 6.5h11v9h-11zM13.5 9.5h4l3 3v3h-7"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>'),
@@ -540,7 +543,7 @@ const Ticket = {
   build() {
     if (this.built) return;
     this.built = true;
-    const html = `<div class="qqv-veil" hidden></div><div class="qqv-wrap" hidden data-side="left"><span class="qqv-notch" aria-hidden="true"></span><div class="qqv-ticket" role="dialog" aria-modal="true" aria-labelledby="qqv-title"><div class="qqv-top"><ol class="qqv-steps" aria-label="${T.steps}"><li class="is-on" data-st="1" aria-current="step"><i>${latin(1)}</i>${T.stepProduct}</li><li class="qqv-line" aria-hidden="true"></li><li data-st="2"><i>${latin(2)}</i>${T.stepOrder}</li></ol><button class="qqv-x qqv-c" type="button" data-act="close" aria-label="${T.close}">${IC.x}</button></div><div class="qqv-scroll"><div class="qqv-stack"><section class="qqv-pane qqv-prod" aria-labelledby="qqv-title"><div class="qqv-gal"><div class="qqv-img"></div><div class="qqv-ths" role="group" aria-label="${T.images}"></div></div><h2 id="qqv-title" tabindex="-1"></h2><div class="qqv-meta"><span class="qqv-pill"></span><div class="qqv-rate"></div></div><section class="qqv-in" aria-labelledby="qqv-in-h"><div class="qqv-in-hd"><h3 id="qqv-in-h"></h3><button class="qqv-more" type="button" data-act="more" aria-expanded="false" aria-controls="qqv-in-list"></button></div><ul class="qqv-in-list" id="qqv-in-list"></ul></section><div class="qqv-price"></div><p class="qqv-desc"></p><div class="qqv-buy"><div class="qqv-row"><div class="qqv-qty" role="group" aria-label="${T.qty}"><button type="button" data-q="1" aria-label="${T.inc}">${IC.plus}</button><output aria-live="polite">1</output><button type="button" data-q="-1" aria-label="${T.dec}">${IC.minus}</button></div><button class="qqv-btn qqv-w qqv-c" type="button" data-act="add"><span class="qqv-spin"></span><span class="qqv-lbl">${T.add}</span></button></div><button class="qqv-btn qqv-cy qqv-c" type="button" data-act="buy"><span class="qqv-spin"></span><span class="qqv-lbl">${T.buy}</span></button><a class="qqv-btn qqv-w qqv-c qqv-opts" href="#" hidden>${T.options}</a><p class="qqv-err" role="alert" hidden></p></div><ul class="qqv-trust" aria-label="${T.trust}">
+    const html = `<div class="qqv-veil" hidden></div><div class="qqv-wrap" hidden data-side="left"><span class="qqv-notch" aria-hidden="true"></span><div class="qqv-ticket" role="dialog" aria-modal="true" aria-labelledby="qqv-title"><div class="qqv-top"><ol class="qqv-steps" aria-label="${T.steps}"><li class="is-on" data-st="1" aria-current="step"><i>${latin(1)}</i>${T.stepProduct}</li><li class="qqv-line" aria-hidden="true"></li><li data-st="2"><i>${latin(2)}</i>${T.stepOrder}</li></ol><button class="qqv-x qqv-c" type="button" data-act="close" aria-label="${T.close}">${IC.x}</button></div><div class="qqv-scroll"><div class="qqv-stack"><section class="qqv-pane qqv-prod" aria-labelledby="qqv-title"><div class="qqv-gal"><div class="qqv-img"></div><div class="qqv-ths" role="group" aria-label="${T.images}"></div></div><h2 id="qqv-title" tabindex="-1"></h2><div class="qqv-meta"><span class="qqv-pill"></span><div class="qqv-rate"></div></div><section class="qqv-in" aria-labelledby="qqv-in-h"><h3 id="qqv-in-h"></h3><ul class="qqv-in-list" id="qqv-in-list"></ul><button class="qqv-more" type="button" data-act="more" aria-expanded="false" aria-controls="qqv-in-list"><span></span>${IC.down}</button></section><div class="qqv-price"></div><p class="qqv-desc"></p><div class="qqv-buy"><div class="qqv-row"><div class="qqv-qty" role="group" aria-label="${T.qty}"><button type="button" data-q="1" aria-label="${T.inc}">${IC.plus}</button><output aria-live="polite">1</output><button type="button" data-q="-1" aria-label="${T.dec}">${IC.minus}</button></div><button class="qqv-btn qqv-w qqv-c" type="button" data-act="add"><span class="qqv-spin"></span><span class="qqv-lbl">${T.add}</span></button></div><button class="qqv-btn qqv-cy qqv-c" type="button" data-act="buy"><span class="qqv-spin"></span><span class="qqv-lbl">${T.buy}</span></button><a class="qqv-btn qqv-w qqv-c qqv-opts" href="#" hidden>${T.options}</a><p class="qqv-err" role="alert" hidden></p></div><ul class="qqv-trust" aria-label="${T.trust}">
             ${T.trustItems.map(([i, b, s]) => `<li>${IC[i]}<b>${b}</b><small>${s}</small></li>`).join('')}
           </ul><a class="qqv-pdp" href="#">${T.pdp}${IC.left}</a></section><section class="qqv-pane qqv-order" aria-labelledby="qqv-order-h" inert><div class="qqv-okh"><span class="qqv-okc qqv-c">${IC.check}</span><div><h2 id="qqv-order-h" tabindex="-1">${T.ordered}</h2><p class="qqv-order-sub"></p></div></div><ul class="qqv-lines" aria-label="${T.lines}"></ul><dl class="qqv-sum"></dl><p class="qqv-err qqv-order-err" role="alert" hidden></p><button class="qqv-btn qqv-cy qqv-c" type="button" data-act="checkout"><span class="qqv-lbl">${T.checkout}</span></button><button class="qqv-btn qqv-gh qqv-c" type="button" data-act="continue">${T.keepShopping}</button><p class="qqv-cod qqv-c">${IC.shield}${T.cod}</p><button class="qqv-back" type="button" data-act="back">${IC.right}${T.back}</button></section></div></div></div></div>`;
     document.body.insertAdjacentHTML('beforeend', html);
@@ -584,15 +587,7 @@ const Ticket = {
     else if (a === 'buy') this.add(true);
     else if (a === 'checkout') this.checkout(b);
     else if (a === 'back') this.step(false);
-    else if (a === 'more') {
-      const box = $('.qqv-in', this.prod);
-      const on = !box.classList.contains('is-open');
-      const n = $$('.qqv-in-list li.is-more', box).length;
-      box.classList.toggle('is-open', on);
-      b.setAttribute('aria-expanded', String(on));
-      b.textContent = on ? T.less : plusN(n);
-      b.setAttribute('aria-label', on ? T.lessLabel : T.more(n));
-    }
+    else if (a === 'more') this.more(!$('.qqv-in', this.prod).classList.contains('is-open'));
   },
 
   maxQ() {
@@ -626,17 +621,11 @@ const Ticket = {
     const list = d.description ? insideLines(d.description) : (first ? [] : this._inside || []);
     this._inside = list;
     const box = $('.qqv-in', prod);
-    const openNow = box.classList.contains('is-open') && !first;
     box.hidden = !list.length;
-    box.classList.toggle('is-open', openNow);
     $('#qqv-in-h').textContent = T.inside(/بكج|باقة|مجموعة|بكجات/.test(name) ? 'البكج' : 'الكرتون');
     $('.qqv-in-list', prod).innerHTML = list.map((t, k) => `<li${k >= 3 ? ' class="is-more"' : ''}>${IC.check}<span>${esc(latin(t))}</span></li>`).join('');
-    const extra = list.length - 3;
-    const more = $('.qqv-more', prod);
-    more.hidden = extra <= 0;
-    more.textContent = openNow ? T.less : plusN(extra);
-    more.setAttribute('aria-expanded', String(openNow));
-    more.setAttribute('aria-label', openNow ? T.lessLabel : T.more(extra));
+    $('.qqv-more', prod).hidden = list.length < 4;
+    this.more(box.classList.contains('is-open') && !first);
 
     // price + saving
     const onSale = !!d.is_on_sale && num(d.regular_price) > num(d.sale_price);
@@ -748,6 +737,15 @@ const Ticket = {
     const w = ths.getBoundingClientRect();
     const dx = r.left < w.left ? r.left - w.left - 8 : r.right > w.right ? r.right - w.right + 8 : 0;
     if (dx) ths.scrollBy(dx, 0);
+  },
+
+  /** «ماذا يوجد»: three lines, then «عرض N عناصر أخرى» opens the rest in place. */
+  more(on) {
+    const box = $('.qqv-in', this.prod);
+    const b = $('.qqv-more', box);
+    box.classList.toggle('is-open', on);
+    b.setAttribute('aria-expanded', String(on));
+    b.firstChild.textContent = on ? T.less : T.more($$('.is-more', box).length);
   },
 
   err(msg, order = false) {
@@ -1087,9 +1085,6 @@ function totals(cart) {
   const discount = Math.round((productDisc + num(cart.total_discount)) * 100) / 100;
   return { regular: Math.round(regular * 100) / 100, discount, total: num(cart.total) || sub };
 }
-
-/** «+5» reads left-to-right inside the RTL line (isolated, not mirrored to «5+»). */
-const plusN = n => `\u2066+${latin(n)}\u2069`;
 
 /* Page scroll is held while the ticket is open without touching overflow:
    overflow:hidden on <html> turns <body> (overflow-x:hidden) into the scroll
