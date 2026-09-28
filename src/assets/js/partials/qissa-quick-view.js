@@ -32,6 +32,8 @@
  * ⚠ No salla.* at module scope (Rocket Loader runs the SDK after this file).
  */
 
+import { enhanceCarousel } from './card-carousel';
+
 const T = {
   add: 'أضف للسلة',
   added: 'أُضيف',
@@ -43,7 +45,8 @@ const T = {
   steps: 'خطوات الطلب',
   close: 'إغلاق النظرة السريعة',
   images: 'صور المنتج',
-  imageN: (k, n) => `عرض الصورة ${k} من ${n}`,
+  photo: (k, n) => `الصورة ${k} من ${n}`,
+  imageN: (k, n) => `عرض ${T.photo(k, n)}`,
   inside: box => `ماذا يوجد في ${box}`,
   more: n => `عرض ${n === 1 ? 'عنصر آخر' : n + ' عناصر أخرى'}`,
   less: 'أقل',
@@ -537,7 +540,7 @@ const Ticket = {
   build() {
     if (this.built) return;
     this.built = true;
-    const html = `<div class="qqv-veil" hidden></div><div class="qqv-wrap" hidden data-side="left"><span class="qqv-notch" aria-hidden="true"></span><div class="qqv-ticket" role="dialog" aria-modal="true" aria-labelledby="qqv-title"><div class="qqv-top"><ol class="qqv-steps" aria-label="${T.steps}"><li class="is-on" data-st="1" aria-current="step"><i>${latin(1)}</i>${T.stepProduct}</li><li class="qqv-line" aria-hidden="true"></li><li data-st="2"><i>${latin(2)}</i>${T.stepOrder}</li></ol><button class="qqv-x qqv-c" type="button" data-act="close" aria-label="${T.close}">${IC.x}</button></div><div class="qqv-scroll"><div class="qqv-stack"><section class="qqv-pane qqv-prod" aria-labelledby="qqv-title"><div class="qqv-gal"><div class="qqv-img"><img alt="" width="900" height="900" decoding="async"></div><div class="qqv-dots" role="group" aria-label="${T.images}"></div></div><h2 id="qqv-title" tabindex="-1"></h2><div class="qqv-meta"><span class="qqv-pill"></span><div class="qqv-rate"></div></div><section class="qqv-in" aria-labelledby="qqv-in-h"><div class="qqv-in-hd"><h3 id="qqv-in-h"></h3><button class="qqv-more" type="button" data-act="more" aria-expanded="false" aria-controls="qqv-in-list"></button></div><ul class="qqv-in-list" id="qqv-in-list"></ul></section><div class="qqv-price"></div><p class="qqv-desc"></p><div class="qqv-buy"><div class="qqv-row"><div class="qqv-qty" role="group" aria-label="${T.qty}"><button type="button" data-q="1" aria-label="${T.inc}">${IC.plus}</button><output aria-live="polite">1</output><button type="button" data-q="-1" aria-label="${T.dec}">${IC.minus}</button></div><button class="qqv-btn qqv-w qqv-c" type="button" data-act="add"><span class="qqv-spin"></span><span class="qqv-lbl">${T.add}</span></button></div><button class="qqv-btn qqv-cy qqv-c" type="button" data-act="buy"><span class="qqv-spin"></span><span class="qqv-lbl">${T.buy}</span></button><a class="qqv-btn qqv-w qqv-c qqv-opts" href="#" hidden>${T.options}</a><p class="qqv-err" role="alert" hidden></p></div><ul class="qqv-trust" aria-label="${T.trust}">
+    const html = `<div class="qqv-veil" hidden></div><div class="qqv-wrap" hidden data-side="left"><span class="qqv-notch" aria-hidden="true"></span><div class="qqv-ticket" role="dialog" aria-modal="true" aria-labelledby="qqv-title"><div class="qqv-top"><ol class="qqv-steps" aria-label="${T.steps}"><li class="is-on" data-st="1" aria-current="step"><i>${latin(1)}</i>${T.stepProduct}</li><li class="qqv-line" aria-hidden="true"></li><li data-st="2"><i>${latin(2)}</i>${T.stepOrder}</li></ol><button class="qqv-x qqv-c" type="button" data-act="close" aria-label="${T.close}">${IC.x}</button></div><div class="qqv-scroll"><div class="qqv-stack"><section class="qqv-pane qqv-prod" aria-labelledby="qqv-title"><div class="qqv-gal"><div class="qqv-img"></div><div class="qqv-ths" role="group" aria-label="${T.images}"></div></div><h2 id="qqv-title" tabindex="-1"></h2><div class="qqv-meta"><span class="qqv-pill"></span><div class="qqv-rate"></div></div><section class="qqv-in" aria-labelledby="qqv-in-h"><div class="qqv-in-hd"><h3 id="qqv-in-h"></h3><button class="qqv-more" type="button" data-act="more" aria-expanded="false" aria-controls="qqv-in-list"></button></div><ul class="qqv-in-list" id="qqv-in-list"></ul></section><div class="qqv-price"></div><p class="qqv-desc"></p><div class="qqv-buy"><div class="qqv-row"><div class="qqv-qty" role="group" aria-label="${T.qty}"><button type="button" data-q="1" aria-label="${T.inc}">${IC.plus}</button><output aria-live="polite">1</output><button type="button" data-q="-1" aria-label="${T.dec}">${IC.minus}</button></div><button class="qqv-btn qqv-w qqv-c" type="button" data-act="add"><span class="qqv-spin"></span><span class="qqv-lbl">${T.add}</span></button></div><button class="qqv-btn qqv-cy qqv-c" type="button" data-act="buy"><span class="qqv-spin"></span><span class="qqv-lbl">${T.buy}</span></button><a class="qqv-btn qqv-w qqv-c qqv-opts" href="#" hidden>${T.options}</a><p class="qqv-err" role="alert" hidden></p></div><ul class="qqv-trust" aria-label="${T.trust}">
             ${T.trustItems.map(([i, b, s]) => `<li>${IC[i]}<b>${b}</b><small>${s}</small></li>`).join('')}
           </ul><a class="qqv-pdp" href="#">${T.pdp}${IC.left}</a></section><section class="qqv-pane qqv-order" aria-labelledby="qqv-order-h" inert><div class="qqv-okh"><span class="qqv-okc qqv-c">${IC.check}</span><div><h2 id="qqv-order-h" tabindex="-1">${T.ordered}</h2><p class="qqv-order-sub"></p></div></div><ul class="qqv-lines" aria-label="${T.lines}"></ul><dl class="qqv-sum"></dl><p class="qqv-err qqv-order-err" role="alert" hidden></p><button class="qqv-btn qqv-cy qqv-c" type="button" data-act="checkout"><span class="qqv-lbl">${T.checkout}</span></button><button class="qqv-btn qqv-gh qqv-c" type="button" data-act="continue">${T.keepShopping}</button><p class="qqv-cod qqv-c">${IC.shield}${T.cod}</p><button class="qqv-back" type="button" data-act="back">${IC.right}${T.back}</button></section></div></div></div></div>`;
     document.body.insertAdjacentHTML('beforeend', html);
@@ -554,16 +557,6 @@ const Ticket = {
       if (e.key === 'Escape') { e.stopPropagation(); this.close(); } else trapTab(this.tk, e);
     });
     this.tk.addEventListener('click', e => this.onClick(e));
-    const stage = $('.qqv-img', this.wrap);
-    let x0 = null;
-    stage.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
-    stage.addEventListener('touchend', e => {
-      if (x0 === null) return;
-      const dx = e.changedTouches[0].clientX - x0;
-      x0 = null;
-      if (Math.abs(dx) > 40) this.setImg(this.im + (dx > 0 ? 1 : -1));
-    });
-    stage.addEventListener('touchcancel', () => { x0 = null; });
     let rz = 0;
     window.addEventListener('resize', () => {
       if (!this.open) return;
@@ -578,7 +571,7 @@ const Ticket = {
   onClick(e) {
     const b = e.target.closest('[data-act],[data-img],[data-q],[data-lq]');
     if (!b || b.disabled) return;
-    if (b.dataset.img) { this.setImg(+b.dataset.img); return; }
+    if (b.dataset.img) { this.go(+b.dataset.img); return; }
     if (b.dataset.q) {
       this.q = Math.max(1, Math.min(this.maxQ(), this.q + (+b.dataset.q)));
       $('.qqv-qty output', this.prod).textContent = latin(this.q);
@@ -690,26 +683,71 @@ const Ticket = {
     // `image` is a resized copy of images[0]; only fall back to it.
     if (!photos.length && d.image && d.image.url) photos.push(d.image.url);
     const seen = new Set();
-    this.photos = photos.filter(u => !seen.has(u) && seen.add(u)).slice(0, 8);
-    if (!this.photos.length) this.photos = [salla.url.asset(salla.config.get('theme.settings.placeholder') || 'images/placeholder.png')];
-    const dots = $('.qqv-dots', prod);
-    dots.hidden = this.photos.length < 2;
-    dots.innerHTML = this.photos.length < 2 ? '' : this.photos.map((u, k) => `<button type="button" data-img="${k}" aria-label="${T.imageN(latin(k + 1), latin(this.photos.length))}" aria-pressed="false"><i></i></button>`).join('');
-    const keep = first ? 0 : Math.min(this.im, this.photos.length - 1);
-    this.setImg(keep, true);
+    const ph = this.photos = photos.filter(u => !seen.has(u) && seen.add(u));
+    if (!ph.length) ph.push(salla.url.asset(salla.config.get('theme.settings.placeholder') || 'images/placeholder.png'));
+    const n = ph.length;
+    const keep = first ? 0 : Math.min(this.im, n - 1);
+    // Every photo is its own <img> in a scroll-snap track, the first eight
+    // requested as the ticket opens (the rest lazily, as the strip or the track
+    // brings them near): picking a thumbnail moves the track at once. (The old
+    // stage swapped one <img>'s src, and the browser keeps painting the previous
+    // picture until the new file arrives — a tap looked ignored.)
+    const lz = k => (k > 7 ? ' loading="lazy"' : '');
+    if (first || ph.join() !== this._gk) {
+      this._gk = ph.join();
+      $('.qqv-img', prod).innerHTML = `<div class="qpc-carousel" data-qpc>${ph.map((u, k) => `<div class="qpc-slide"><img src="${esc(u)}" alt="${esc(n > 1 ? `${name}، ${T.photo(latin(k + 1), latin(n))}` : name)}"${lz(k)} decoding="async" draggable="false"></div>`).join('')}</div>`;
+      const ths = $('.qqv-ths', prod);
+      ths.hidden = n < 2;
+      ths.innerHTML = n < 2 ? '' : ph.map((u, k) => `<button type="button" data-img="${k}" aria-label="${T.imageN(latin(k + 1), latin(n))}" aria-pressed="false"><img src="${esc(u)}" alt=""${lz(k)} draggable="false"></button>`).join('');
+      const track = this.track = $('.qpc-carousel', prod);
+      enhanceCarousel(track); // mouse drag-to-swipe on desktop; touch swipes natively
+      let r = 0;
+      track.addEventListener('scroll', () => { cancelAnimationFrame(r); r = requestAnimationFrame(() => this.synced()); }, { passive: true });
+    }
+    this.go(keep, true);
   },
 
-  setImg(k, instant = false) {
-    const n = this.photos.length;
-    this.im = ((k % n) + n) % n;
-    const img = $('.qqv-img img', this.prod);
-    const apply = () => {
-      img.src = this.photos[this.im];
-      img.alt = n > 1 ? `${this.data.name || ''}، ${T.imageN(latin(this.im + 1), latin(n))}` : (this.data.name || '');
-      img.classList.remove('is-swap');
-    };
-    if (!instant && img.getAttribute('src') && !RM.matches) { img.classList.add('is-swap'); setTimeout(apply, 110); } else apply();
-    $$('.qqv-dots button', this.prod).forEach((b, j) => b.setAttribute('aria-pressed', String(j === this.im)));
+  /** Show photo k: the track glides there; the thumbnail is marked at once. */
+  go(k, instant) {
+    const t = this.track;
+    const s = t && t.children[k];
+    if (!s) return;
+    this.mark(k);
+    this._to = k;
+    clearTimeout(this._tt);
+    this._tt = setTimeout(() => { this._to = null; this.synced(); }, 900);
+    // An absolute target, never scrollBy: a relative scroll counts as a
+    // "directional" one, and the track's scroll-snap-stop: always then lets it
+    // pass a single photo — tap photo 5 from photo 1 and it stopped on 2 (one
+    // photo per tap). scrollLeft + a physical delta holds for every RTL
+    // scrollLeft convention.
+    t.scrollTo({ left: t.scrollLeft + s.getBoundingClientRect().left - t.getBoundingClientRect().left, behavior: instant || RM.matches ? 'auto' : 'smooth' });
+  },
+
+  /** After a swipe / drag / glide: mark the photo that sits in the track. */
+  synced() {
+    const t = this.track;
+    if (!t || !this.open) return;
+    const x = t.getBoundingClientRect().left;
+    let k = 0;
+    let d = 1e9;
+    Array.from(t.children).forEach((s, j) => { const e = Math.abs(s.getBoundingClientRect().left - x); if (e < d) { d = e; k = j; } });
+    if (this._to != null) { if (k !== this._to) return; this._to = null; }
+    this.mark(k);
+  },
+
+  mark(k) {
+    this.im = k;
+    const ths = $('.qqv-ths', this.prod);
+    $$('button', ths).forEach((b, j) => b.setAttribute('aria-pressed', String(j === k)));
+    // 8+ thumbnails overflow a phone: keep the current one in view (instant —
+    // a second smooth scroll could cut the track's glide short)
+    const b = ths.children[k];
+    if (!b || ths.scrollWidth <= ths.clientWidth) return;
+    const r = b.getBoundingClientRect();
+    const w = ths.getBoundingClientRect();
+    const dx = r.left < w.left ? r.left - w.left - 8 : r.right > w.right ? r.right - w.right + 8 : 0;
+    if (dx) ths.scrollBy(dx, 0);
   },
 
   err(msg, order = false) {
@@ -1058,8 +1096,9 @@ const plusN = n => `\u2066+${latin(n)}\u2069`;
    container and the sticky header scrolls away under the veil. Wheel and
    touch are stopped instead, except inside the ticket's own scroller. */
 function scrollsInside(e) {
-  const sc = e.target && e.target.closest && e.target.closest('.qqv-scroll');
-  return !!(sc && sc.scrollHeight > sc.clientHeight + 1);
+  const t = e.target && e.target.closest ? e.target : null;
+  const sc = t && t.closest('.qqv-scroll');
+  return !!(t && t.closest('.qqv-gal')) || !!(sc && sc.scrollHeight > sc.clientHeight + 1);
 }
 function blockScroll(e) { if (!scrollsInside(e)) e.preventDefault(); }
 function blockKeys(e) {

@@ -20,7 +20,7 @@ $cyan: #91e6f7;
 .qqv-spin { width: 18px; height: 18px; flex: none; border-radius: 50%; border: 2px solid; border-right-color: transparent; animation: qqv-spin .8s linear infinite; }
 @keyframes qqv-spin { to { transform: rotate(1turn); } }
 @keyframes qqv-fill { from { transform: scaleX(0); } }
-.qqv-c, .qqv-step button, .qqv-qty button, .qqv-dots button { display: flex; align-items: center; justify-content: center; }
+.qqv-c, .qqv-step button, .qqv-qty button { display: flex; align-items: center; justify-content: center; }
 
 // ====================================================================
 // Card: add slot · «✓ أُضيف» · − n + stepper · eye trigger
@@ -266,21 +266,28 @@ body { --qqv-tc: #{$navy}; --qqv-tb: #fff; --qqv-th: #{$dk}; }
 .qqv-ticket:not(.is-ordered) .qqv-order { transform: translateX(-34%); }
 
 // ---- product step ----
-.qqv-gal { position: relative; }
+// gallery: the card's scroll-snap track (qissa-product-card.scss) + thumbnails
 .qqv-img {
   border-radius: 16px; overflow: hidden; aspect-ratio: 1.9;
   background: linear-gradient(#d9e7f7, #a9c5e8);
-  touch-action: pan-y;
-  img { width: 100%; height: 100%; object-fit: cover; transition: opacity .2s; }
-  .is-swap { opacity: .2; }
+  .qpc-carousel { scroll-behavior: auto; }   // the JS picks smooth or instant
 }
-.qqv-dots {
-  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-  display: flex;
-  button { width: 34px; height: 44px; }
-  i { display: block; margin: auto; width: 8px; height: 8px; border-radius: 4px; background: rgba(255, 255, 255, .62); box-shadow: 0 1px 3px rgba(23, 41, 81, .35); transition: width .3s var(--qe); }
-  [aria-pressed="true"] i { width: 22px; background: #fff; }
-  button:focus-visible { outline-offset: -6px; }
+// padding keeps the current ring and the focus ring inside the strip's scroll box
+.qqv-ths {
+  display: flex; align-items: flex-start; gap: 5px;
+  margin: 3px -5px -5px; padding: 5px;
+  overflow-x: auto; scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+  button { flex: 1 0 44px; max-width: 56px; aspect-ratio: 1; border-radius: 10px; background: #fff9ec; opacity: .6; transition: opacity .2s; }
+  [aria-pressed="true"] { opacity: 1; box-shadow: 0 0 0 2px $cyan; }
+  img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; pointer-events: none; }
+}
+// A mouse can't swipe the strip (its scrollbar is hidden): there, many photos
+// wrap onto a second row. Touch keeps :hover on the last thumb tapped — only a
+// mouse brightens on hover.
+@media (hover: hover) {
+  .qqv-ths { flex-wrap: wrap; }
+  .qqv-ths button:hover { opacity: 1; }
 }
 .qqv-ticket h2 { font-size: 20px; font-weight: 700; line-height: 1.5; color: #fff; outline: 0; overflow-wrap: anywhere; }
 .qqv-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; margin-top: -6px; }
@@ -427,7 +434,6 @@ body { --qqv-tc: #{$navy}; --qqv-tb: #fff; --qqv-th: #{$dk}; }
   .qqv-pane { padding: 14px 16px 18px; }
   .qqv-top { padding: 0 16px 0 10px; }
   .qqv-img { aspect-ratio: 2; }
-  .qqv-dots button { width: 44px; }
   .qqv-ticket h2 { font-size: 18px; }
   .qqv-now { font-size: 32px; }
   .qqv-desc { font-size: 13.5px; }
