@@ -1,7 +1,9 @@
 // ====================================================================
 // Quick view «تذكرة الطلب» + the card add flow (js/partials/qissa-quick-view.js)
-// Locked concept: quick-view/qusah (26 Sep 2026). Values ported from it; the
-// card itself keeps its current look — only the slot, stepper and eye are new.
+// Locked concept: quick-view/qusah (26 Sep 2026). Since 28 Sep it opens the way
+// Bareq's «قلّب البطاقة» does (bareq-quick-view.scss): a folded corner with the
+// eye on the card photo turns the card over in place, and its back is the
+// ticket — same navy, perforations, steps and components as before.
 //
 // Written lean on purpose (the theme's CSS+JS sit near 1MB): no :is() or
 // place-items (postcss-preset-env multiplies both), one easing variable.
@@ -13,7 +15,7 @@ $navy: #2e3793;
 $dk: #172951;
 $cyan: #91e6f7;
 
-.qqv-card, .qqv-wrap { --qe: cubic-bezier(.16, 1, .3, 1); --qo: cubic-bezier(.33, 1, .68, 1); }
+.qqv-card { --qe: cubic-bezier(.16, 1, .3, 1); --qo: cubic-bezier(.33, 1, .68, 1); }
 
 .qqv-sr { position: absolute !important; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 .qqv-i { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -23,7 +25,7 @@ $cyan: #91e6f7;
 .qqv-c, .qqv-step button, .qqv-qty button { display: flex; align-items: center; justify-content: center; }
 
 // ====================================================================
-// Card: add slot · «✓ أُضيف» · − n + stepper · eye trigger
+// Card: add slot · «✓ أُضيف» · − n + stepper
 // ====================================================================
 
 .qqv-card { container: qqvcard / inline-size; --qqv-r: 12px; }
@@ -81,69 +83,12 @@ $cyan: #91e6f7;
   transition: opacity .22s, clip-path .32s var(--qe), visibility 0s linear .32s;
 }
 
-// Eye trigger. Collapsed to nothing at rest on desktop — the negative margin
-// cancels its row gap so the row measures exactly as before; both rows keep
-// the add slot on the trigger's right. Colours: theme setting
-// quick_view_button_color → --qqv-tc/tb/th, set inline on <body> by tint() in
-// the JS; these defaults are the original navy eye. (On body, not :root/html —
-// postcss would copy every var() below into a fallback declaration.)
-body { --qqv-tc: #{$navy}; --qqv-tb: #fff; --qqv-th: #{$dk}; }
-.qqv-trig {
-  flex: 0 0 0; min-width: 0; margin: 0 -8px 0 0; padding: 0;
-  gap: 6px; overflow: hidden; white-space: nowrap;
-  border: 0; border-radius: var(--qqv-r);
-  background: var(--qqv-tb); color: var(--qqv-tc); box-shadow: inset 0 0 0 1.5px var(--qqv-tc);
-  font-size: 14px; font-weight: 700; line-height: 1; cursor: pointer;
-  opacity: 0;
-  transition: flex-basis .3s var(--qe), margin .3s var(--qe), opacity .2s, background-color .2s, color .2s;
-  .qqv-i { width: 20px; height: 20px; }
-  span { display: none; }
-  &:hover, &[aria-expanded="true"] { background: var(--qqv-th); color: #fff; box-shadow: none; }
-  &:focus-visible { outline: 2px solid $navy; outline-offset: 2px; }
-}
-
-// The card the ticket belongs to stays lit (the veil has a hole for it).
-.qqv-card.qqv-lit { border-color: transparent !important; box-shadow: 0 0 0 2px $navy, 0 20px 40px -22px rgba(23, 41, 81, .6) !important; }
-
-// Narrow cards: the label makes room while the eye is out (container = the
-// card's content box). JS card «أضف إلى السلة» needs ~278px, Twig ~235px.
-@mixin squeeze($s) {
-  @container qqvcard (max-width: 277px) { #{$s} { salla-add-product-button .s-button-element { padding-left: 8px !important; padding-right: 8px !important; } } }
-  @container qqvcard (max-width: 261px) {
-    #{$s} {
-      salla-add-product-button .s-button-element { font-size: 14px !important; }
-      salla-add-product-button i { display: none !important; }
-    }
-  }
-  @container qqvcard (max-width: 234px) {
-    #{$s} {
-      .qprod__add { font-size: 13px; gap: 0; padding-left: 2px; padding-right: 2px; white-space: nowrap; }
-      .qprod__add i { display: none; }
-    }
-  }
-}
-
-@media (hover: hover) and (min-width: 769px) {
-  .qqv-card:hover .qqv-trig, .qqv-card:focus-within .qqv-trig, .qqv-lit .qqv-trig { flex-basis: 50px; margin-right: 0; opacity: 1; }
-  @include squeeze('.qqv-has-trig:hover,.qqv-has-trig:focus-within,.qqv-has-trig.qqv-lit');
-  @container qqvcard (min-width: 380px) {
-    .qqv-card:hover .qqv-trig, .qqv-card:focus-within .qqv-trig, .qqv-lit .qqv-trig { flex-basis: 128px; }
-    .qqv-trig span { display: inline; }
-  }
-}
-// touch tablets: nothing to hover, the eye is always there
-@media (hover: none) and (min-width: 769px) {
-  .qqv-trig { flex-basis: 50px; margin-right: 0; opacity: 1; }
-  @include squeeze('.qqv-has-trig');
-}
-
-// Phones: 44px eye always visible; the heart moves onto the image corner
-// (heart + eye + a readable «أضف للسلة» cannot share a 166px card).
+// Phones: the heart sits on the image corner (as since the quick view first
+// shipped) and the add row is 44px tall.
 @media (max-width: 768px) {
   .qqv-card { --qqv-r: 8px; }
   .qqv-done { font-size: 14px; }
   .qqv-step output { font-size: 16px; }
-  .qqv-trig { flex-basis: 44px; margin-right: 0; opacity: 1; min-height: 44px; }
   .qqv-has-trig {
     position: relative;
     .qprod__add { height: 44px; }
@@ -158,36 +103,91 @@ body { --qqv-tc: #{$navy}; --qqv-tb: #fff; --qqv-th: #{$dk}; }
       i { font-size: 17px; }
     }
   }
-  // 360px phones: the Twig card's label drops its bag icon next to the eye
-  @container qqvcard (max-width: 137px) { .qqv-has-trig .qprod__add i { display: none; } }
 }
 
 // ====================================================================
-// The ticket
+// The folded corner — Bareq's «قلّب» ear, with Qusah's eye and navy.
+// Always there on phones and touch screens (48px); with a pointer on a wide
+// screen it folds out on card hover / focus with «قلّب». Colour: theme
+// setting quick_view_button_color → --qqv-ear, and the eye's ink --qqv-ink
+// (white or navy, whichever reads — tint() in the JS). On body, not :root —
+// postcss would copy every var() below into a fallback declaration. The fold's
+// shadow line stays a navy tint whatever the colour.
 // ====================================================================
 
-// floating chat buttons (GetButton sits at z-index 16000160) would cover it
-.qqv-open [id^="gb-widget"], .qqv-open #tidio-chat { visibility: hidden !important; }
-
-.qqv-veil {
-  position: fixed; top: 0; right: 0; bottom: 0; left: 0;
-  z-index: 150;                          // over the sticky header (100), under Salla's sheets (200)
-  background: rgba(255, 255, 255, .5);
+body { --qqv-ear: #{$navy}; --qqv-ink: #fff; }
+.qqv-ln { display: block; height: 100%; }   // the link of a one-photo Twig card
+.qqv-ear {
+  position: absolute; bottom: 0; left: 0; z-index: 3;
+  display: block; width: 48px; height: 48px; padding: 0; overflow: hidden;
+  color: var(--qqv-ink); cursor: pointer;
+  background: linear-gradient(45deg, var(--qqv-ear) 0 49%, rgba(23, 41, 81, .22) 50%, transparent 58%);
+  border: 0; border-radius: 0 0 0 15px;
+  transition: width .38s var(--qe), height .38s var(--qe);
+  -webkit-tap-highlight-color: transparent;
+  .qqv-i { position: absolute; bottom: 6px; left: 6px; width: 18px; height: 18px; }
+  span { display: none; }
+  &:hover, &:focus-visible { width: 60px; height: 60px; }
+  // navy ring for the photo half, white under it for the navy half
+  &:focus-visible { outline: 2px solid $navy; outline-offset: -2px; box-shadow: inset 0 0 0 4px #fff; }
 }
-.qqv-veil[hidden], .qqv-wrap[hidden], .qqv-ticket [hidden] { display: none !important; }
+@media (min-width: 1024px) and (hover: hover) {
+  .qqv-ear {
+    width: 0; height: 0;
+    .qqv-i { bottom: 10px; left: 10px; width: 20px; height: 20px; }
+    span { position: absolute; bottom: 10px; left: 34px; display: block; font-size: 12px; line-height: 1.5; opacity: 0; transition: opacity .2s; }
+  }
+  .qqv-card:hover .qqv-ear, .qqv-card:focus-within .qqv-ear { width: 88px; height: 88px; }
+  .qqv-card .qqv-ear:hover, .qqv-card .qqv-ear:focus-visible { width: 100px; height: 100px; }
+  .qqv-card:hover .qqv-ear span, .qqv-ear:focus-visible span { opacity: 1; }
+}
+// Where the corner always shows, the photo dots centre on the space beside it.
+@media (max-width: 1023px), (hover: none) { .qqv-has-trig .qpc-dots { left: 44px; } }
 
-.qqv-wrap {
-  position: fixed; top: 0; left: 0; z-index: 151;
+// ====================================================================
+// The open card. Its front is hidden and its frame handed to the back; the
+// card stays the grid item and the whole thing turns as one. Nothing here
+// applies to a resting card.
+// ====================================================================
+
+.qqv-card.is-qv-open {
+  height: auto !important; padding: 0 !important; overflow: visible !important;
+  background: none !important; border: 0 !important; box-shadow: none !important;
+  > :not(.qqv-bk) { display: none !important; }
+}
+.qqv-turn { position: relative; z-index: 2; }
+// the element that carries the span (the card, or its slide), over its neighbours
+.qqv-item { position: relative; z-index: 2; align-self: stretch; }
+.qqv-grid > .qqv-item { max-width: none !important; }   // the dual section caps its cards
+// dense: the hole the widened card leaves is filled; start: neighbours keep their height
+.qqv-grid.qqv-grid { grid-auto-flow: row dense; align-items: start; }
+.qqv-track.qqv-track { align-items: flex-start; }
+
+// Whatever floats over the page steps aside while a card is turned: chat
+// buttons and the product page's pinned add-to-cart bar would sit on the back's
+// buttons, and a slider's arrows on its text.
+.qqv-flip [id^="gb-widget"], .qqv-flip #tidio-chat, .qqv-flip a.wa-s-n, .qqv-flip .qpd-sticky { visibility: hidden !important; }
+// (its own rule: a browser without :has() drops the whole selector list)
+salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: hidden; }
+
+// ====================================================================
+// The back: the ticket
+// ====================================================================
+
+.qqv-bk {
+  position: relative; flex: 1 1 auto; width: 100%; min-width: 0;
+  display: flex; flex-direction: column;
   direction: rtl; color: #fff;
   filter: drop-shadow(0 34px 34px rgba(23, 41, 81, .32)) drop-shadow(0 8px 10px rgba(23, 41, 81, .22));
   :focus-visible { outline: 2px solid $cyan; outline-offset: 3px; }
   // headings only take focus from script on open/step change — no ring on them
   [tabindex="-1"]:focus, [tabindex="-1"]:focus-visible { outline: none; }
 }
+.qqv-ticket [hidden] { display: none !important; }
 
 .qqv-ticket {
   --perf: 62px;
-  width: 408px;
+  flex: 1 1 auto;
   display: flex; flex-direction: column;
   border-radius: 24px;
   background: radial-gradient(120% 60% at 100% 0, rgba(92, 104, 214, .45), rgba(92, 104, 214, 0) 60%), linear-gradient(170deg, #28348a, #1d2a66 45%, $dk);
@@ -199,15 +199,6 @@ body { --qqv-tc: #{$navy}; --qqv-tb: #fff; --qqv-th: #{$dk}; }
   button { font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
   b { font-weight: 700; }
 }
-
-.qqv-notch {
-  position: absolute; top: var(--qqv-ny, 80px);
-  width: 20px; height: 20px; margin-top: -10px;
-  background: #212e70; border-radius: 3px; transform: rotate(45deg);
-}
-[data-side="left"] > .qqv-notch { right: -7px; }
-[data-side="right"] > .qqv-notch { left: -7px; }
-[data-side="none"] > .qqv-notch { display: none; }
 
 // perforated stub: steps + close
 .qqv-top {
@@ -244,10 +235,6 @@ body { --qqv-tc: #{$navy}; --qqv-tb: #fff; --qqv-th: #{$dk}; }
   .qqv-i { width: 20px; height: 20px; }
 }
 
-.qqv-scroll {
-  min-height: 0; overflow-y: auto; overscroll-behavior: contain;
-  scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, .25) transparent;
-}
 // minmax(0) + min-width 0: a long unbroken word in a description (size tables
 // flatten into one) must wrap, not widen the pane past the ticket
 .qqv-stack { display: grid; grid-template-columns: minmax(0, 1fr); position: relative; overflow: hidden; }
@@ -266,6 +253,20 @@ body { --qqv-tc: #{$navy}; --qqv-tb: #fff; --qqv-th: #{$dk}; }
 .qqv-ticket:not(.is-ordered) .qqv-order { transform: translateX(-34%); }
 
 // ---- product step ----
+// Two groups, the photos (+ description) and the details, then the trust row.
+// On a narrow back they dissolve into the ticket's one column, in its original
+// order; on a widened desktop card (.qqv-split) the groups stand side by side,
+// photos on the right, and the trust row runs under both.
+.qqv-c1, .qqv-c2 { display: contents; }
+.qqv-desc { order: 1; }
+.qqv-buy { order: 2; }
+.qqv-trust { order: 3; }
+.qqv-pdp { order: 4; }
+.qqv-split .qqv-prod { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: start; gap: 12px 18px; }
+.qqv-split .qqv-c1, .qqv-split .qqv-c2 { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.qqv-split .qqv-img { aspect-ratio: 1; }
+.qqv-split .qqv-trust { grid-column: 1 / -1; }
+
 // gallery: the card's scroll-snap track (qissa-product-card.scss) + thumbnails
 .qqv-img {
   border-radius: 16px; overflow: hidden; aspect-ratio: 1.9;
@@ -330,8 +331,10 @@ body { --qqv-tc: #{$navy}; --qqv-tb: #fff; --qqv-th: #{$dk}; }
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 
-.qqv-buy { display: flex; flex-direction: column; gap: 12px; }
+// the qty sits beside «أضف للسلة» while the label has room (≈270px), above it after
+.qqv-buy { display: flex; flex-direction: column; gap: 12px; container-type: inline-size; }
 .qqv-row { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; margin-top: 4px; }
+@container (max-width: 269px) { .qqv-row { grid-template-columns: minmax(0, 1fr); } }
 .qqv-qty[hidden] + .qqv-btn { grid-column: 1 / -1; }   // out of stock: the disabled button spans the row
 .qqv-qty {
   display: inline-flex; align-items: center; justify-content: space-between; gap: 4px;
@@ -431,11 +434,8 @@ body { --qqv-tc: #{$navy}; --qqv-tb: #fff; --qqv-th: #{$dk}; }
   .qqv-i { width: 18px; height: 18px; }
 }
 
-// ---- phone: a floating card, full width with a 10px margin, navy veil ----
+// ---- phone type sizes (as the phone ticket) ----
 @media (max-width: 768px) {
-  .qqv-veil { background: rgba(23, 41, 81, .45); }
-  .qqv-wrap { left: 10px !important; right: 10px; }
-  .qqv-ticket { width: 100%; }
   .qqv-pane { padding: 14px 16px 18px; }
   .qqv-top { padding: 0 16px 0 10px; }
   .qqv-img { aspect-ratio: 2; }
@@ -444,14 +444,21 @@ body { --qqv-tc: #{$navy}; --qqv-tb: #fff; --qqv-th: #{$dk}; }
   .qqv-desc { font-size: 13.5px; }
   .qqv-in-list li { font-size: 13px; line-height: 1.55; }
 }
-// short phones: keep add + buy on the first screen
-@media (max-width: 768px) and (max-height: 760px) {
-  .qqv-img { aspect-ratio: 2.5; }
-  .qqv-desc { -webkit-line-clamp: 1; }
+// A card that turns at its own width in a slider (240–300px): the stub and the
+// order lines tighten so nothing is cut.
+@container qqvcard (max-width: 300px) {
+  .qqv-top { padding: 0 12px 0 8px; }
+  .qqv-steps { gap: 6px; }
+  .qqv-steps li { gap: 5px; }
+  .qqv-line { width: 14px; }
+  .qqv-pane { padding: 14px 14px 18px; }
+  .qqv-lines li { grid-template-columns: 40px minmax(0, 1fr); }
+  .qqv-lines img { width: 40px; height: 40px; }
+  .qqv-lines .qqv-qty { grid-column: 2; justify-self: start; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .qqv-card *, .qqv-wrap * { transition-duration: .01ms !important; }
+  .qqv-card * { transition-duration: .01ms !important; }
   .qqv-pane { transform: none !important; }
   .is-more { animation: none !important; }
   .qqv-spin { animation-duration: 2s; }

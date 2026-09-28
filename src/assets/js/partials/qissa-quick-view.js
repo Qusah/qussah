@@ -1,5 +1,5 @@
 /**
- * Qussah quick view — «تذكرة الطلب» (locked concept, quick-view/BUILD.md).
+ * Qussah quick view — «تذكرة الطلب», opened the way Bareq's «قلّب البطاقة» is.
  *
  * Two independent pieces live here, both wired to every product card on the
  * site: the hand-built Twig cards (`.qprod`, home grids + the listing page)
@@ -12,17 +12,23 @@
  *      options, out of stock, bookings and donations keep the theme's own
  *      button. This part runs whatever the quick-view switches say.
  *
- *   2. The ticket. An eye button beside «أضف للسلة» (hover/focus on desktop,
- *      always on phones) opens one page-level dark ticket anchored to the card.
- *      Product step: gallery (every photo: a swipeable scroll-snap track from
- *      card-carousel.js + a row of thumbnails), name, subtitle, rating,
- *      «ماذا يوجد في البكج» read from the description (3 lines, then «عرض N
- *      عناصر أخرى» opens the rest in place), price + saving, qty + add, buy now,
- *      trust lines. The eye takes the colour `quick_view_button_color`.
- *      After an add it slides to «طلبك», built from the cart the add returned.
- *      Off when the theme setting `quick_view_enabled` is off, or for one
- *      section when it carries data-qv="off" — then no trigger is drawn and the
- *      ticket is never built.
+ *   2. The ticket. A folded corner with the eye sits on the card's photo
+ *      (always there on phones and touch screens; with a pointer it folds out
+ *      on hover/focus). It turns THAT card over, in place: at the edge-on
+ *      moment the card widens — two grid columns, or the whole row when the
+ *      grid has fewer than three; its own width inside a slider or a flex row —
+ *      and its back is the navy ticket. Product step: gallery (every photo: a
+ *      swipeable scroll-snap track from card-carousel.js + a row of
+ *      thumbnails), name, subtitle, rating, «ماذا يوجد في البكج» read from the
+ *      description (3 lines, then «عرض N عناصر أخرى» opens the rest in place),
+ *      price + saving, qty + add, buy now, trust lines. After an add it slides
+ *      to «طلبك», built from the cart the add returned. ×, «أكمل التسوق» and Esc
+ *      turn it back and hand focus to the corner. One card open at a time.
+ *      Choreography, timing and layout rules are Bareq's (bareq-quick-view.js);
+ *      the ticket's look is unchanged. The corner takes the colour
+ *      `quick_view_button_color`. Off when the theme setting
+ *      `quick_view_enabled` is off, or for one section when it carries
+ *      data-qv="off" — then no corner is drawn and the ticket is never built.
  *
  * Verified against the live store (26 Sep 2026): getDetails(id, ['images',
  * 'options', 'rating']) returns images / options / rating; addItem,
@@ -41,7 +47,7 @@ const T = {
   add: 'أضف للسلة',
   added: 'أُضيف',
   buy: 'اشترِ الآن',
-  qv: 'نظرة سريعة',
+  flip: 'قلّب',
   qvOn: name => `نظرة سريعة على ${name}`,
   stepProduct: 'المنتج',
   stepOrder: 'طلبك',
@@ -112,8 +118,8 @@ const IC = {
 /* ------------------------------------------------------------------ helpers */
 
 const RM = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : { matches: false };
-const PHONE = window.matchMedia ? matchMedia('(max-width: 768px)') : { matches: false };
-const E_IN = 'cubic-bezier(.16,1,.3,1)';
+const E_OUT = 'cubic-bezier(.16,1,.3,1)';
+const E_ACC = 'cubic-bezier(.55,0,.9,.45)';
 const CONFIRM_MS = 850;
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
@@ -126,6 +132,21 @@ const sdkReady = () => !!(window.salla && salla.cart && salla.cart.api && window
 const quiet = fn => (salla.api && typeof salla.api.withoutNotifier === 'function' ? salla.api.withoutNotifier(fn) : fn());
 const qvGlobalOn = () => window.quick_view_enabled !== 'off';
 const qvOnFor = card => qvGlobalOn() && !card.closest('[data-qv="off"]');
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+/* The theme's add toasts (qissa-cart-toast.js, add-product-toast.js) stay
+   quiet while <html> carries qqv-open: the back's own «طلبك» step confirms its
+   adds. Set only while such an add is in flight — the rest of the page stays
+   live beside an open card, and its adds keep their toast. */
+let muteT;
+function mute(p) {
+  const h = document.documentElement.classList;
+  const off = () => { muteT = setTimeout(() => h.remove('qqv-open'), 800); };
+  clearTimeout(muteT);
+  h.add('qqv-open');
+  p.then(off, off);
+  return p;
+}
 
 function errorText(error) {
   const data = error && error.response && error.response.data;
@@ -190,7 +211,7 @@ function descLines(doc) {
   return (body.textContent || '').split('\n').map(clean);
 }
 function clean(t) {
-  return String(t).replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
+  return String(t).replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
 }
 function tidy(t) {
   return clean(t).replace(/^[*•\-–—·]+\s*/, '').replace(/[.،,\s]+$/, '').trim();
@@ -289,7 +310,7 @@ const Cart = {
 
 
 const Cards = {
-  /** Hand-built Twig card: wrap the add button, add the stepper + trigger. */
+  /** Hand-built Twig card: wrap the add button, add the stepper + corner. */
   enhanceTwig(card) {
     if (card.dataset.qqv) return;
     const row = $('.qprod__btns', card);
@@ -330,11 +351,23 @@ const Cards = {
         + `<output class="qqv-c">0</output>`
         + `<button type="button" data-qqv-d="-1" aria-label="${T.dec}" tabindex="-1">${IC.minus}</button></div>`);
     }
-    if (qvOnFor(card)) {
+    let box = qvOnFor(card) && $('.qprod__img, .s-product-card-image', card);
+    if (box) {
       card.classList.add('qqv-has-trig');
-      // Visually always heart · eye · add: the Twig row runs LTR, the JS card's RTL.
-      slot.insertAdjacentHTML(card.product ? 'afterend' : 'beforebegin',
-        `<button type="button" class="qqv-trig qqv-c" aria-haspopup="dialog" aria-expanded="false" aria-label="${esc(T.qvOn(name))}">${IC.eye}<span aria-hidden="true">${T.qv}</span></button>`);
+      if (box.tagName === 'A') {
+        // A one-photo Twig card: its link IS the photo box. The corner is a
+        // button, so it goes beside the link, never inside it — the box moves
+        // to a wrapper and the link keeps the photo (the carousel cards'
+        // shape: div.qprod__img > a > img).
+        const d = document.createElement('div');
+        d.className = box.className;
+        box.className = 'qqv-ln';
+        box.before(d);
+        d.appendChild(box);
+        box = d;
+      }
+      box.insertAdjacentHTML('beforeend',
+        `<button type="button" class="qqv-ear" aria-expanded="false" aria-label="${esc(T.qvOn(name))}">${IC.eye}<span aria-hidden="true">${T.flip}</span></button>`);
     }
     this.sync(card);
   },
@@ -526,49 +559,94 @@ function getDetails(id) {
   return details.get(id);
 }
 
+/* ============================================================ the turn
+   Bareq's «قلّب البطاقة» (bareq-quick-view.js), ported as is: a quarter turn
+   to edge-on (210ms, accelerating), the back goes in and the card takes its
+   new span, the neighbours slide to their new places (FLIP, 460ms), and a
+   quarter turn from the other side lands it (380ms, decelerating). Back:
+   190ms + 320ms. Reduced motion: no turn and no sliding — it simply swaps. */
+
+const PERSP = 'perspective(1600px) rotateY(';
+function turn(el, from, to, duration, easing) {
+  if (RM.matches || !el.animate) return null;
+  return el.animate([{ transform: `${PERSP}${from}deg)` }, { transform: `${PERSP}${to}deg)` }], { duration, easing, fill: 'both' });
+}
+const settle = a => (a ? a.finished.catch(() => {}) : Promise.resolve());
+
+/** grid: the card (or its wrapper) is a grid item — it spans. Flex: a slider
+    track or a wrapping row — it turns at its own width. */
+function layoutOf(host) {
+  let item = host;
+  let parent = host.parentElement;
+  for (let i = 0; i < 2 && parent; i++) {
+    const d = getComputedStyle(parent).display;
+    if (/grid/.test(d)) return { item, grid: parent };
+    if (/flex/.test(d)) return { item, track: parent };
+    item = parent;
+    parent = parent.parentElement;
+  }
+  return { item: host };
+}
+
+const snapshot = grid => (grid ? new Map(Array.from(grid.children, el => [el, el.getBoundingClientRect()])) : null);
+
+/* FLIP: the neighbours slide from where they were to where the span put them. */
+function playFlip(before, skip) {
+  if (!before || RM.matches) return;
+  before.forEach((a, el) => {
+    if (el === skip || !el.isConnected) return;
+    const b = el.getBoundingClientRect();
+    const dx = a.left - b.left;
+    const dy = a.top - b.top;
+    if (Math.abs(dx) + Math.abs(dy) < 1 || !b.width) return;
+    el.animate([{ transform: `translate(${dx}px,${dy}px)` }, { transform: 'none' }], { duration: 460, easing: E_OUT });
+  });
+}
+
+/* Where an element sits with its OWN transform ignored — the card is mid-turn
+   when the page scrolls to it (offsetTop/Left ignore transforms). */
+function layoutRect(el) {
+  const op = el.offsetParent;
+  let top = el.offsetTop - scrollY;
+  let left = el.offsetLeft - scrollX;
+  if (op && op !== document.body) {
+    const b = op.getBoundingClientRect();
+    top = b.top + op.clientTop + el.offsetTop;
+    left = b.left + op.clientLeft + el.offsetLeft;
+  }
+  return { top, left, height: el.offsetHeight, bottom: top + el.offsetHeight, right: left + el.offsetWidth };
+}
+
+/* The sticky navy bar: the back lands below it. */
+function headerBottom() {
+  const h = $('.qheader-nav') || $('.qheader');
+  return h ? Math.max(0, h.getBoundingClientRect().bottom) : 0;
+}
+
 /* ================================================================= ticket */
 
 const Ticket = {
-  built: false,
+  bk: null,
   open: false,
+  turning: false,
   card: null,
+  item: null,
+  grid: null,
+  track: null,
   data: null,
   q: 1,
   im: 0,
-  back: null,
-  closing: null,
   busy: false,
-  raf: 0,
 
   build() {
-    if (this.built) return;
-    this.built = true;
-    const html = `<div class="qqv-veil" hidden></div><div class="qqv-wrap" hidden data-side="left"><span class="qqv-notch" aria-hidden="true"></span><div class="qqv-ticket" role="dialog" aria-modal="true" aria-labelledby="qqv-title"><div class="qqv-top"><ol class="qqv-steps" aria-label="${T.steps}"><li class="is-on" data-st="1" aria-current="step"><i>${latin(1)}</i>${T.stepProduct}</li><li class="qqv-line" aria-hidden="true"></li><li data-st="2"><i>${latin(2)}</i>${T.stepOrder}</li></ol><button class="qqv-x qqv-c" type="button" data-act="close" aria-label="${T.close}">${IC.x}</button></div><div class="qqv-scroll"><div class="qqv-stack"><section class="qqv-pane qqv-prod" aria-labelledby="qqv-title"><div class="qqv-gal"><div class="qqv-img"></div><div class="qqv-ths" role="group" aria-label="${T.images}"></div></div><h2 id="qqv-title" tabindex="-1"></h2><div class="qqv-meta"><span class="qqv-pill"></span><div class="qqv-rate"></div></div><section class="qqv-in" aria-labelledby="qqv-in-h"><h3 id="qqv-in-h"></h3><ul class="qqv-in-list" id="qqv-in-list"></ul><button class="qqv-more" type="button" data-act="more" aria-expanded="false" aria-controls="qqv-in-list"><span></span>${IC.down}</button></section><div class="qqv-price"></div><p class="qqv-desc"></p><div class="qqv-buy"><div class="qqv-row"><div class="qqv-qty" role="group" aria-label="${T.qty}"><button type="button" data-q="1" aria-label="${T.inc}">${IC.plus}</button><output aria-live="polite">1</output><button type="button" data-q="-1" aria-label="${T.dec}">${IC.minus}</button></div><button class="qqv-btn qqv-w qqv-c" type="button" data-act="add"><span class="qqv-spin"></span><span class="qqv-lbl">${T.add}</span></button></div><button class="qqv-btn qqv-cy qqv-c" type="button" data-act="buy"><span class="qqv-spin"></span><span class="qqv-lbl">${T.buy}</span></button><a class="qqv-btn qqv-w qqv-c qqv-opts" href="#" hidden>${T.options}</a><p class="qqv-err" role="alert" hidden></p></div><ul class="qqv-trust" aria-label="${T.trust}">
-            ${T.trustItems.map(([i, b, s]) => `<li>${IC[i]}<b>${b}</b><small>${s}</small></li>`).join('')}
-          </ul><a class="qqv-pdp" href="#">${T.pdp}${IC.left}</a></section><section class="qqv-pane qqv-order" aria-labelledby="qqv-order-h" inert><div class="qqv-okh"><span class="qqv-okc qqv-c">${IC.check}</span><div><h2 id="qqv-order-h" tabindex="-1">${T.ordered}</h2><p class="qqv-order-sub"></p></div></div><ul class="qqv-lines" aria-label="${T.lines}"></ul><dl class="qqv-sum"></dl><p class="qqv-err qqv-order-err" role="alert" hidden></p><button class="qqv-btn qqv-cy qqv-c" type="button" data-act="checkout"><span class="qqv-lbl">${T.checkout}</span></button><button class="qqv-btn qqv-gh qqv-c" type="button" data-act="continue">${T.keepShopping}</button><p class="qqv-cod qqv-c">${IC.shield}${T.cod}</p><button class="qqv-back" type="button" data-act="back">${IC.right}${T.back}</button></section></div></div></div></div>`;
-    document.body.insertAdjacentHTML('beforeend', html);
-    this.veil = $('.qqv-veil');
-    this.wrap = $('.qqv-wrap');
-    this.tk = $('.qqv-ticket', this.wrap);
-    this.scroller = $('.qqv-scroll', this.wrap);
-    this.prod = $('.qqv-prod', this.wrap);
-    this.order = $('.qqv-order', this.wrap);
-
-    this.veil.addEventListener('click', () => this.close());
-    document.addEventListener('keydown', e => { if (this.open && e.key === 'Escape') this.close(); });
-    this.tk.addEventListener('keydown', e => {
-      if (e.key === 'Escape') { e.stopPropagation(); this.close(); } else trapTab(this.tk, e);
-    });
-    this.tk.addEventListener('click', e => this.onClick(e));
-    let rz = 0;
-    window.addEventListener('resize', () => {
-      if (!this.open) return;
-      cancelAnimationFrame(rz);
-      rz = requestAnimationFrame(() => {
-        if (!this.card || !this.card.isConnected || !this.card.getClientRects().length) { this.close(); return; }
-        this.place();
-      });
-    });
+    if (this.bk) return;
+    const tmp = document.createElement('div');
+    tmp.innerHTML = `<div class="qqv-bk" id="qqv-bk" role="region"><div class="qqv-ticket"><div class="qqv-top"><ol class="qqv-steps" aria-label="${T.steps}"><li class="is-on" data-st="1" aria-current="step"><i>${latin(1)}</i>${T.stepProduct}</li><li class="qqv-line" aria-hidden="true"></li><li data-st="2"><i>${latin(2)}</i>${T.stepOrder}</li></ol><button class="qqv-x qqv-c" type="button" data-act="close" aria-label="${T.close}">${IC.x}</button></div><div class="qqv-stack"><section class="qqv-pane qqv-prod" aria-labelledby="qqv-title"><div class="qqv-c1"><div class="qqv-gal"><div class="qqv-img"></div><div class="qqv-ths" role="group" aria-label="${T.images}"></div></div><p class="qqv-desc"></p></div><div class="qqv-c2"><h2 id="qqv-title" tabindex="-1"></h2><div class="qqv-meta"><span class="qqv-pill"></span><div class="qqv-rate"></div></div><section class="qqv-in" aria-labelledby="qqv-in-h"><h3 id="qqv-in-h"></h3><ul class="qqv-in-list" id="qqv-in-list"></ul><button class="qqv-more" type="button" data-act="more" aria-expanded="false" aria-controls="qqv-in-list"><span></span>${IC.down}</button></section><div class="qqv-price"></div><div class="qqv-buy"><div class="qqv-row"><div class="qqv-qty" role="group" aria-label="${T.qty}"><button type="button" data-q="1" aria-label="${T.inc}">${IC.plus}</button><output aria-live="polite">1</output><button type="button" data-q="-1" aria-label="${T.dec}">${IC.minus}</button></div><button class="qqv-btn qqv-w qqv-c" type="button" data-act="add"><span class="qqv-spin"></span><span class="qqv-lbl">${T.add}</span></button></div><button class="qqv-btn qqv-cy qqv-c" type="button" data-act="buy"><span class="qqv-spin"></span><span class="qqv-lbl">${T.buy}</span></button><a class="qqv-btn qqv-w qqv-c qqv-opts" href="#" hidden>${T.options}</a><p class="qqv-err" role="alert" hidden></p></div><a class="qqv-pdp" href="#">${T.pdp}${IC.left}</a></div><ul class="qqv-trust" aria-label="${T.trust}">${T.trustItems.map(([i, b, s]) => `<li>${IC[i]}<b>${b}</b><small>${s}</small></li>`).join('')}</ul></section><section class="qqv-pane qqv-order" aria-labelledby="qqv-order-h" inert><div class="qqv-okh"><span class="qqv-okc qqv-c">${IC.check}</span><div><h2 id="qqv-order-h" tabindex="-1">${T.ordered}</h2><p class="qqv-order-sub"></p></div></div><ul class="qqv-lines" aria-label="${T.lines}"></ul><dl class="qqv-sum"></dl><p class="qqv-err qqv-order-err" role="alert" hidden></p><button class="qqv-btn qqv-cy qqv-c" type="button" data-act="checkout"><span class="qqv-lbl">${T.checkout}</span></button><button class="qqv-btn qqv-gh qqv-c" type="button" data-act="continue">${T.keepShopping}</button><p class="qqv-cod qqv-c">${IC.shield}${T.cod}</p><button class="qqv-back" type="button" data-act="back">${IC.right}${T.back}</button></section></div></div></div>`;
+    this.bk = tmp.firstChild;
+    this.tk = $('.qqv-ticket', this.bk);
+    this.prod = $('.qqv-prod', this.bk);
+    this.order = $('.qqv-order', this.bk);
+    this.bk.addEventListener('click', e => this.onClick(e));
   },
 
   onClick(e) {
@@ -582,7 +660,7 @@ const Ticket = {
     }
     if (b.dataset.lq) { this.lineQty(b.dataset.lq, +b.dataset.d, b); return; }
     const a = b.dataset.act;
-    if (a === 'close' || a === 'continue') this.close();
+    if (a === 'close' || a === 'continue') this.hide(true);
     else if (a === 'add') this.add(false);
     else if (a === 'buy') this.add(true);
     else if (a === 'checkout') this.checkout(b);
@@ -603,7 +681,8 @@ const Ticket = {
     const d = this.data = data;
     const prod = this.prod;
     const name = d.name || '';
-    $('#qqv-title').textContent = name;
+    $('#qqv-title', prod).textContent = name;
+    this.bk.setAttribute('aria-label', T.qvOn(name));
     const pill = $('.qqv-pill', prod);
     pill.textContent = d.subtitle || '';
     pill.hidden = !d.subtitle;
@@ -622,7 +701,7 @@ const Ticket = {
     this._inside = list;
     const box = $('.qqv-in', prod);
     box.hidden = !list.length;
-    $('#qqv-in-h').textContent = T.inside(/بكج|باقة|مجموعة|بكجات/.test(name) ? 'البكج' : 'الكرتون');
+    $('#qqv-in-h', prod).textContent = T.inside(/بكج|باقة|مجموعة|بكجات/.test(name) ? 'البكج' : 'الكرتون');
     $('.qqv-in-list', prod).innerHTML = list.map((t, k) => `<li${k >= 3 ? ' class="is-more"' : ''}>${IC.check}<span>${esc(latin(t))}</span></li>`).join('');
     $('.qqv-more', prod).hidden = list.length < 4;
     this.more(box.classList.contains('is-open') && !first);
@@ -688,7 +767,7 @@ const Ticket = {
       const ths = $('.qqv-ths', prod);
       ths.hidden = n < 2;
       ths.innerHTML = n < 2 ? '' : ph.map((u, k) => `<button type="button" data-img="${k}" aria-label="${T.imageN(latin(k + 1), latin(n))}" aria-pressed="false"><img src="${esc(u)}" alt=""${lz(k)} draggable="false"></button>`).join('');
-      const track = this.track = $('.qpc-carousel', prod);
+      const track = this.track2 = $('.qpc-carousel', prod);
       enhanceCarousel(track); // mouse drag-to-swipe on desktop; touch swipes natively
       let r = 0;
       track.addEventListener('scroll', () => { cancelAnimationFrame(r); r = requestAnimationFrame(() => this.synced()); }, { passive: true });
@@ -698,7 +777,7 @@ const Ticket = {
 
   /** Show photo k: the track glides there; the thumbnail is marked at once. */
   go(k, instant) {
-    const t = this.track;
+    const t = this.track2;
     const s = t && t.children[k];
     if (!s) return;
     this.mark(k);
@@ -715,7 +794,7 @@ const Ticket = {
 
   /** After a swipe / drag / glide: mark the photo that sits in the track. */
   synced() {
-    const t = this.track;
+    const t = this.track2;
     if (!t || !this.open) return;
     const x = t.getBoundingClientRect().left;
     let k = 0;
@@ -749,7 +828,7 @@ const Ticket = {
   },
 
   err(msg, order = false) {
-    const el = $(order ? '.qqv-order-err' : '.qqv-prod .qqv-err', this.wrap);
+    const el = $(order ? '.qqv-order-err' : '.qqv-prod .qqv-err', this.bk);
     el.textContent = msg || '';
     el.hidden = !msg;
   },
@@ -761,18 +840,19 @@ const Ticket = {
     this.tk.classList.toggle('is-ordered', order);
     this.prod.inert = order;
     this.order.inert = !order;
-    const [s1, s2] = $$('.qqv-steps li[data-st]', this.wrap);
+    const [s1, s2] = $$('.qqv-steps li[data-st]', this.bk);
     s1.classList.toggle('is-on', !order);
     s1.classList.toggle('is-done', order);
     s2.classList.toggle('is-on', order);
     s1.toggleAttribute('aria-current', !order);
     s2.toggleAttribute('aria-current', order);
     (order ? s2 : s1).setAttribute('aria-current', 'step');
-    this.scroller.scrollTop = 0;
-    if (this.open) this.place();
     const h1 = this.tk.offsetHeight;
-    if (!RM.matches && this.open && h0 && h0 !== h1) this.tk.animate([{ height: `${h0}px` }, { height: `${h1}px` }], { duration: 440, easing: E_IN });
-    if (focus) $(order ? '#qqv-order-h' : '#qqv-title').focus({ preventScroll: true });
+    if (!RM.matches && this.open && h0 && h0 !== h1) this.tk.animate([{ height: `${h0}px` }, { height: `${h1}px` }], { duration: 440, easing: E_OUT });
+    if (!focus) return;
+    $(order ? '#qqv-order-h' : '#qqv-title', this.bk).focus({ preventScroll: true });
+    // The back got shorter (or taller) around the shopper: keep its top in view.
+    if (this.open) this.reveal(true);
   },
 
   renderOrder(cart) {
@@ -815,7 +895,7 @@ const Ticket = {
       if (!(c.items || []).length) { this.step(false); return; }
       this.renderOrder(c);
       const again = $(`[data-lq="${CSS.escape(String(itemId))}"][data-d="${d}"]`, this.order);
-      (again || $('#qqv-order-h')).focus({ preventScroll: true });
+      (again || $('#qqv-order-h', this.order)).focus({ preventScroll: true });
       if (btn) announce(next > 0 ? T.qtySr(item.product_name || '', latin(next)) : T.removedSr(item.product_name || ''));
     }).catch(error => {
       this.busy = false;
@@ -845,7 +925,7 @@ const Ticket = {
     btn.classList.add('is-busy');
     btn.setAttribute('aria-busy', 'true');
     const id = String(this.data.id);
-    quiet(() => salla.cart.addItem({ id, quantity: this.q }))
+    mute(quiet(() => salla.cart.addItem({ id, quantity: this.q })))
       .then(res => {
         const cart = res && res.data && res.data.cart;
         return cart && Array.isArray(cart.items) ? cart : salla.cart.api.details(null, []).then(r => r.data.cart);
@@ -890,186 +970,155 @@ const Ticket = {
     const guest = salla.config.isGuest && salla.config.isGuest();
     Promise.resolve()
       .then(() => salla.cart.submit())
-      // A guest gets Salla's login modal (z-index 200, above the ticket);
-      // a signed-in customer is on the way to checkout.
+      // A guest gets Salla's login modal (z-index 200); a signed-in customer
+      // is on the way to checkout.
       .then(() => { setTimeout(done, guest ? 600 : 8000); })
       .catch(error => { done(); this.err(errorText(error), true); });
   },
 
-  /* ---- open / place / close ---- */
+  /* ---- turn over / turn back ---- */
 
-  toggle(card, trig) {
-    if (this.open && this.card === card) { this.close(); return; }
-    this.show(card, trig);
+  async show(card) {
+    if (this.turning || this.card === card) return;
+    this.turning = true;
+    try {
+      if (this.card) await this.flipBack(false);
+      await this.flipOver(card);
+    } finally { this.turning = false; }
   },
 
-  show(card, trig) {
-    this.build();
-    if (this.closing) { this.closing.cancel(); this.closing = null; this.finishClose(); }
-    const again = this.open;
-    if (!again) this.back = trig || $('.qqv-trig', card);
-    if (this.card && this.card !== card) this.unlight(this.card);
-    this.card = card;
-    card.classList.add('qqv-lit');
-    const t = $('.qqv-trig', card);
-    if (t) t.setAttribute('aria-expanded', 'true');
+  async hide(refocus) {
+    if (this.turning || !this.card) return;
+    this.turning = true;
+    try { await this.flipBack(refocus); } finally { this.turning = false; }
+  },
 
+  async flipOver(card) {
+    this.build();
     const id = card.dataset.qqvId;
-    const cached = details.get(id);
+    const ear = $('.qqv-ear', card);
+    let got = null;
+    const det = getDetails(id).then(d => { got = d; return d; });
+    det.catch(() => {});
+    this.card = card;
+    if (ear) ear.setAttribute('aria-expanded', 'true');
+    card.classList.add('qqv-turn');
+    const a1 = turn(card, 0, 90, 210, E_ACC);
+    await settle(a1);
+    // A request in flight gets a moment more, never long enough to stall.
+    await Promise.race([det.catch(() => {}), wait(a1 ? 60 : 0)]);
+    const keep = d => { this._last = Object.assign({}, d, { id: String(d.id), plain: '' }); };
+    if (got) keep(got);
     this.fill(Object.assign(cardData(card), this._last && this._last.id === id ? this._last : {}), true);
     this.step(false, false);
-    if (!this.open && !PHONE.matches) ensureVisible(card);
-
+    const lay = layoutOf(card);
+    const before = snapshot(lay.grid);
+    card.appendChild(this.bk);
     this.open = true;
-    document.documentElement.classList.add('qqv-open');
-    lockScroll(true);
-    this.wrap.hidden = false;
-    this.veil.hidden = false;
-    this.wrap.getAnimations().forEach(a => a.cancel());
-    this.place();
-    this.loop();
-
-    if (RM.matches) this.wrap.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 180 });
-    else if (again) this.wrap.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: E_IN });
-    else {
-      // Drop the clip once it has spread: details arriving later can make the
-      // ticket taller than the circle it was drawn with.
-      const ink = this.ink(true);
-      ink.finished.then(() => { if (this.open && !this.closing) ink.cancel(); }).catch(() => {});
-      this.prod.animate([{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 480, delay: 140, easing: E_IN, fill: 'backwards' });
-      this.veil.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300 });
+    this.lay(lay);
+    if (ear) ear.setAttribute('aria-controls', 'qqv-bk');
+    playFlip(before, lay.item);
+    const a2 = turn(card, -90, 0, 380, E_OUT);
+    if (a1) a1.cancel();
+    $('#qqv-title', this.bk).focus({ preventScroll: true });
+    this.reveal();
+    await settle(a2);
+    if (a2) a2.cancel();
+    card.classList.remove('qqv-turn');
+    // Drawn from the card's own data: fill it in once the details land.
+    if (!got) {
+      det.then(d => {
+        if (!d || this.card !== card || !this.open) return;
+        keep(d);
+        this.fill(Object.assign(cardData(card), this._last), false);
+      }).catch(() => { /* card data stays; the PDP link is there */ });
     }
-    $('#qqv-title').focus({ preventScroll: true });
-
-    (cached || getDetails(id)).then(d => {
-      if (!d || this.card !== card || !this.open) return;
-      this._last = Object.assign({}, d, { id: String(d.id), plain: '' });
-      this.fill(Object.assign(cardData(card), this._last), false);
-      this.place();
-    }).catch(() => { /* card data stays; the PDP link is there */ });
   },
 
-  place() {
+  async flipBack(refocus) {
     const card = this.card;
-    const wrap = this.wrap;
-    const tk = this.tk;
-    if (!card) return;
-    tk.style.maxHeight = '';
-    const c = card.getBoundingClientRect();
-    const trig = $('.qqv-trig', card);
-    const t = (trig || card).getBoundingClientRect();
-    const hdrEl = $('.qheader');
-    const hdr = hdrEl ? Math.max(0, hdrEl.getBoundingClientRect().bottom) : 0;
-    const vw = document.documentElement.clientWidth;
-    const vh = window.innerHeight;
-    const W = tk.offsetWidth;
-    const H = tk.offsetHeight;
-    let x;
-    let y;
-    let side;
-    if (PHONE.matches) {
-      side = 'none';
-      x = 10;
-      y = Math.max(10, Math.min(c.top, vh - H - 10));
-    } else {
-      side = 'left';
-      x = c.left - 18 - W;
-      if (x < 16) { side = 'right'; x = c.right + 18; }
-      if (x + W > vw - 16) { side = 'none'; x = Math.max(16, (vw - W) / 2); }
-      y = Math.max(hdr + 8, Math.min(c.top, vh - H - 16));
-      y = Math.max(12, Math.min(y, vh - 160));
-      wrap.style.setProperty('--qqv-ny', `${Math.max(34, Math.min(H - 34, t.top + t.height / 2 - y))}px`);
+    const item = this.item;
+    let a1 = null;
+    if (card.isConnected) {
+      card.classList.add('qqv-turn');
+      a1 = turn(card, 0, -90, 190, E_ACC);
+      await settle(a1);
     }
-    wrap.dataset.side = side;
-    wrap.style.left = `${x}px`;
-    wrap.style.top = `${y}px`;
-    tk.style.maxHeight = `${vh - y - (PHONE.matches ? 10 : 14)}px`;
-    this.origin = { x: t.left + t.width / 2 - x, y: t.top + t.height / 2 - y };
-    this.hole();
-  },
-
-  /** The veil leaves the card lit: a rounded hole cut where the card sits. */
-  hole() {
-    const card = this.card;
-    if (!card || PHONE.matches) { this.veil.style.clipPath = ''; return; }
-    const r = card.getBoundingClientRect();
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const pad = 3;
-    const x = r.left - pad;
-    const y = r.top - pad;
-    const w = r.width + pad * 2;
-    const h = r.height + pad * 2;
-    const rad = Math.min(parseFloat(getComputedStyle(card).borderTopLeftRadius) || 0, w / 2, h / 2) + pad;
-    const key = [x, y, w, h, vw, vh].map(Math.round).join(',');
-    if (key === this._hole) return;
-    this._hole = key;
-    const f = n => Math.round(n * 10) / 10;
-    const p = `M0 0H${vw}V${vh}H0Z M${f(x + rad)} ${f(y)}H${f(x + w - rad)}A${f(rad)} ${f(rad)} 0 0 1 ${f(x + w)} ${f(y + rad)}V${f(y + h - rad)}A${f(rad)} ${f(rad)} 0 0 1 ${f(x + w - rad)} ${f(y + h)}H${f(x + rad)}A${f(rad)} ${f(rad)} 0 0 1 ${f(x)} ${f(y + h - rad)}V${f(y + rad)}A${f(rad)} ${f(rad)} 0 0 1 ${f(x + rad)} ${f(y)}Z`;
-    this.veil.style.clipPath = `path(evenodd, "${p}")`;
-  },
-
-  /** Sliders can move the card while the ticket is open — keep the hole on it. */
-  loop() {
-    cancelAnimationFrame(this.raf);
-    const tick = () => {
-      if (!this.open) return;
-      this.hole();
-      this.raf = requestAnimationFrame(tick);
-    };
-    this.raf = requestAnimationFrame(tick);
-  },
-
-  ink(outward) {
-    const W = this.tk.offsetWidth;
-    const H = this.tk.offsetHeight;
-    const o = this.origin || { x: W / 2, y: 0 };
-    const R = Math.ceil(Math.max(...[[0, 0], [W, 0], [0, H], [W, H]].map(([a, b]) => Math.hypot(a - o.x, b - o.y)))) + 30;
-    const from = `circle(0px at ${o.x}px ${o.y}px)`;
-    const to = `circle(${R}px at ${o.x}px ${o.y}px)`;
-    return this.wrap.animate([{ clipPath: outward ? from : to }, { clipPath: outward ? to : from }], {
-      duration: outward ? 620 : 320,
-      easing: outward ? E_IN : 'cubic-bezier(.5,0,.75,0)',
-      fill: 'forwards',
-    });
-  },
-
-  close() {
-    if (!this.open) return;
+    const before = snapshot(this.grid);
+    this.unlay();
+    this.bk.remove();
     this.open = false;
-    cancelAnimationFrame(this.raf);
-    lockScroll(false);
-    const back = this.back;
-    if (back && back.isConnected) back.focus({ preventScroll: true });
-    if (RM.matches) { this.finishClose(); return; }
-    this.closing = this.ink(false);
-    this.veil.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, fill: 'forwards' });
-    this.closing.finished.then(() => this.finishClose()).catch(() => {});
-  },
-
-  finishClose() {
-    this.closing = null;
-    if (this.open) return;
-    this.wrap.hidden = true;
-    this.veil.hidden = true;
-    this.veil.style.clipPath = '';
-    this._hole = '';
-    this.wrap.getAnimations().forEach(a => a.cancel());
-    this.veil.getAnimations().forEach(a => a.cancel());
+    this.card = null;
     this.tk.classList.remove('is-ordered');
     this.prod.inert = false;
     this.order.inert = true;
-    document.documentElement.classList.remove('qqv-open');
-    if (this.card) this.unlight(this.card);
-    this.card = null;
     const going = $('.is-going', this.order);
     if (going) { going.classList.remove('is-going'); going.removeAttribute('aria-busy'); $('.qqv-lbl', going).textContent = T.checkout; }
+    const ear = $('.qqv-ear', card);
+    if (ear) { ear.setAttribute('aria-expanded', 'false'); ear.removeAttribute('aria-controls'); }
+    if (!card.isConnected) return; // the list re-rendered underneath: nothing left to turn
+    playFlip(before, item);
+    const a2 = turn(card, 90, 0, 320, E_OUT);
+    if (a1) a1.cancel();
+    await settle(a2);
+    if (a2) a2.cancel();
+    card.classList.remove('qqv-turn');
+    if (refocus && ear) ear.focus({ preventScroll: true });
   },
 
-  unlight(card) {
-    card.classList.remove('qqv-lit');
-    const t = $('.qqv-trig', card);
-    if (t) t.setAttribute('aria-expanded', 'false');
+  /** The span (grid) or the own-width turn (flex), and the two-column back. */
+  lay(l) {
+    this.unlay();
+    const c = this.card;
+    this.item = l.item;
+    this.grid = l.grid || null;
+    this.track = l.track || null;
+    this.item.classList.add('qqv-item');
+    document.body.classList.add('qqv-flip');
+    if (this.grid) {
+      this.grid.classList.add('qqv-grid');
+      this.item.style.gridColumn = getComputedStyle(this.grid).gridTemplateColumns.split(' ').length >= 3 ? 'span 2' : '1 / -1';
+    } else if (this.track) this.track.classList.add('qqv-track');
+    c.classList.add('is-qv-open');
+    // Photos beside the details once the widened card has the room — every
+    // desktop grid. offsetWidth, not the box: mid-turn the card is a sliver.
+    c.classList.toggle('qqv-split', !!this.grid && c.offsetWidth >= 440);
+  },
+
+  unlay() {
+    if (this.item) { this.item.classList.remove('qqv-item'); this.item.style.gridColumn = ''; }
+    if (this.grid) this.grid.classList.remove('qqv-grid');
+    if (this.track) this.track.classList.remove('qqv-track');
+    if (this.card) this.card.classList.remove('is-qv-open', 'qqv-split');
+    document.body.classList.remove('qqv-flip');
+    this.item = this.grid = this.track = null;
+  },
+
+  /** Resize / rotate: the same card can move between a grid and a slider. */
+  relayout() {
+    if (this.open && !this.turning && this.card.isConnected) this.lay(layoutOf(this.card));
+  },
+
+  /** Bring the back into view below the sticky bar; soft = only when its top is hidden. */
+  reveal(soft) {
+    const c = this.card;
+    const it = this.item !== c ? this.item : null;
+    const box = () => (it ? it.getBoundingClientRect() : layoutRect(c));
+    let r = box();
+    // A slide half out of its slider comes in first.
+    const sw = this.track && this.track.closest('.swiper');
+    if (sw && sw.swiper && sw.swiper.slideTo) {
+      const v = sw.getBoundingClientRect();
+      if (r.left < v.left - 1 || r.right > v.right + 1) {
+        sw.swiper.slideTo(Array.prototype.indexOf.call(this.track.children, this.item));
+        r = box();
+      }
+    }
+    const top = headerBottom();
+    if (r.top < top || (!soft && r.bottom > innerHeight)) {
+      const y = !soft && innerWidth >= 1024 ? Math.max(top + 12, (innerHeight - r.height) / 2) : top + 8;
+      scrollTo({ top: scrollY + r.top - y, behavior: RM.matches ? 'auto' : 'smooth' });
+    }
   },
 };
 
@@ -1084,49 +1133,6 @@ function totals(cart) {
   const productDisc = regular > sub + 0.01 ? regular - sub : 0;
   const discount = Math.round((productDisc + num(cart.total_discount)) * 100) / 100;
   return { regular: Math.round(regular * 100) / 100, discount, total: num(cart.total) || sub };
-}
-
-/* Page scroll is held while the ticket is open without touching overflow:
-   overflow:hidden on <html> turns <body> (overflow-x:hidden) into the scroll
-   container and the sticky header scrolls away under the veil. Wheel and
-   touch are stopped instead, except inside the ticket's own scroller. */
-function scrollsInside(e) {
-  const t = e.target && e.target.closest ? e.target : null;
-  const sc = t && t.closest('.qqv-scroll');
-  return !!(t && t.closest('.qqv-gal')) || !!(sc && sc.scrollHeight > sc.clientHeight + 1);
-}
-function blockScroll(e) { if (!scrollsInside(e)) e.preventDefault(); }
-function blockKeys(e) {
-  if (!['PageUp', 'PageDown', 'Home', 'End', ' ', 'ArrowUp', 'ArrowDown'].includes(e.key)) return;
-  const t = e.target;
-  if (t && t.closest && (t.closest('.qqv-wrap') || /^(INPUT|TEXTAREA|SELECT|BUTTON|A)$/.test(t.tagName))) return;
-  e.preventDefault();
-}
-function lockScroll(on) {
-  const m = on ? 'addEventListener' : 'removeEventListener';
-  document[m]('wheel', blockScroll, { passive: false });
-  document[m]('touchmove', blockScroll, { passive: false });
-  document[m]('keydown', blockKeys);
-}
-
-function ensureVisible(card) {
-  const r = card.getBoundingClientRect();
-  const hdrEl = $('.qheader');
-  const hdr = hdrEl ? Math.max(0, hdrEl.getBoundingClientRect().bottom) : 0;
-  if (r.top < hdr + 8 || r.bottom > window.innerHeight - 8) {
-    window.scrollBy({ top: r.top - hdr - 16, behavior: 'auto' });
-  }
-}
-
-function trapTab(root, e) {
-  if (e.key !== 'Tab') return;
-  const f = $$('a[href],button:not([disabled]),input,select,textarea,[tabindex]:not([tabindex="-1"])', root)
-    .filter(x => x.getClientRects().length && !x.closest('[inert],[hidden]') && getComputedStyle(x).visibility !== 'hidden');
-  if (!f.length) return;
-  const a = f[0];
-  const z = f[f.length - 1];
-  if (e.shiftKey && (document.activeElement === a || !root.contains(document.activeElement))) { e.preventDefault(); z.focus(); }
-  else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
 }
 
 /* ================================================================== boot */
@@ -1153,41 +1159,46 @@ function onClickCapture(e) {
       return;
     }
   }
-  const trig = e.target.closest('.qqv-trig');
-  if (trig) {
-    const card = trig.closest('.qqv-card');
+  const ear = e.target.closest('.qqv-ear');
+  if (ear) {
+    const card = ear.closest('.qqv-card');
     if (!card || !qvOnFor(card)) return;
     e.preventDefault();
-    Ticket.toggle(card, trig);
+    e.stopPropagation();
+    Ticket.show(card);
   }
 }
 
 function onIntent(e) {
-  const trig = e.target && e.target.closest && e.target.closest('.qqv-trig');
-  if (!trig || !sdkReady()) return;
-  const card = trig.closest('.qqv-card');
+  const ear = e.target && e.target.closest && e.target.closest('.qqv-ear');
+  if (!ear || !sdkReady()) return;
+  const card = ear.closest('.qqv-card');
   const id = card && card.dataset.qqvId;
   if (id && !details.has(id)) getDetails(id).catch(() => {});
 }
 
-/* Eye colour — theme setting `quick_view_button_color` (master.twig, a #rrggbb
-   from the colour picker). Unset, invalid or the default navy: nothing is set
-   and the CSS defaults draw today's eye. A colour dark enough for 3:1 on white
-   (relative luminance ≤ .3) draws the eye's edge and icon, and on hover/open
-   fills the button under a white icon; a lighter one becomes the button's
-   background under a navy icon (> 4.7:1). Tailwind scans this file: keep
-   utility names out of these comments. */
+function onKey(e) {
+  // Salla's own sheets and the cart drawer close on Escape too; leave them be.
+  if (e.key === 'Escape' && Ticket.open && !document.body.matches('.modal-is-open,.qcd-open')) Ticket.hide(true);
+}
+
+/* Corner colour — theme setting `quick_view_button_color` (master.twig, a
+   #rrggbb from the colour picker). Unset, invalid or the default navy: nothing
+   is set and the CSS defaults draw today's corner. Otherwise the corner takes
+   it, and the eye on it is white or the brand navy, whichever has the higher
+   contrast ratio on that colour (WCAG relative luminance — Bareq's rule).
+   Tailwind scans this file: keep utility names out of these comments. */
 function tint() {
   const m = /^#?([0-9a-f]{6})$/i.exec(String(window.quick_view_button_color || '').trim());
   if (!m || /^2e3793$/i.test(m[1])) return;
-  const c = `#${m[1]}`;
-  const lum = [0, 2, 4].reduce((s, i, j) => {
-    const v = parseInt(m[1].substr(i, 2), 16) / 255;
+  const lum = h => [0, 2, 4].reduce((s, i, j) => {
+    const v = parseInt(h.substr(i, 2), 16) / 255;
     return s + [0.2126, 0.7152, 0.0722][j] * (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
   }, 0);
+  const l = lum(m[1]) + 0.05;
   const st = document.body.style;
-  if (lum <= 0.3) { st.setProperty('--qqv-tc', c); st.setProperty('--qqv-th', c); }
-  else { st.setProperty('--qqv-tb', c); st.setProperty('--qqv-tc', '#172951'); }
+  st.setProperty('--qqv-ear', `#${m[1]}`);
+  if (1.05 / l < l / (lum('172951') + 0.05)) st.setProperty('--qqv-ink', '#172951');
 }
 
 let booted = false;
@@ -1201,13 +1212,22 @@ function boot() {
   if (qvGlobalOn()) {
     document.addEventListener('pointerover', onIntent, { passive: true });
     document.addEventListener('focusin', onIntent);
+    document.addEventListener('keydown', onKey);
+    let rz = 0;
+    window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => Ticket.relayout(), 150); }, { passive: true });
   }
-  // Server-rendered grids that arrive later (filters, lazy sections).
+  // Server-rendered grids that arrive later (filters, lazy sections); a grid
+  // re-rendered under an open card lets the card go.
   const main = document.getElementById('main-content') || document.body;
   if ('MutationObserver' in window) {
     let t = null;
-    new MutationObserver(() => { clearTimeout(t); t = setTimeout(() => Cards.scan(), 120); })
-      .observe(main, { childList: true, subtree: true });
+    new MutationObserver(() => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        Cards.scan();
+        if (Ticket.card && !Ticket.card.isConnected) Ticket.hide(false);
+      }, 120);
+    }).observe(main, { childList: true, subtree: true });
   }
 }
 
@@ -1220,6 +1240,12 @@ export function bootQuickView() {
 export function enhanceJsCard(card) {
   if (!booted) return; // boot() → Cards.scan() does not reach JS cards; render after ready will.
   Cards.enhanceJs(card);
+  // A re-render (language pack) replaced the card's insides: put the back again.
+  if (Ticket.card === card && Ticket.open && !Ticket.bk.isConnected) {
+    card.appendChild(Ticket.bk);
+    const ear = $('.qqv-ear', card);
+    if (ear) { ear.setAttribute('aria-expanded', 'true'); ear.setAttribute('aria-controls', 'qqv-bk'); }
+  }
 }
 
 export { insideLines };
