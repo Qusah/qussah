@@ -556,7 +556,7 @@
                        which would otherwise render the price as 0 — fall back to the normal price.
                        Use TRUTHINESS, never `> 0`: a relational compare on a price field aborts
                        Salla's server-side Twig render (blanks the page). Mirrors the
-                       `product.is_on_sale and product.promotion_title` idiom in qissa-all-products. #}
+                       `product.is_on_sale and product.promotion_title` idiom in partials/qprod-card. #}
                     {% set has_real_sale = product.is_on_sale and product.sale_price %}
                     {# Deliberately NOT `.sticky-product-bar`: that class makes Twilight pin this
                        whole section to the viewport bottom at <=640px whenever the merchant has

@@ -78,6 +78,32 @@ $qprods-phi: .0062, .0228, .0668, .1587, .3085, .5, .6915, .8413, .9332, .9772, 
 
     > .qprod { min-height: 455.21px; }   // Figma's card frame height
   }
+
+  // ---- optional «عرض الكل» under the grid ----
+  // Not in the Figma frames: the design's cyan button (the Product Hero's
+  // «اشترِ الآن» — same fill, text, height, radius, type) at a card button's
+  // width, one box gap below the grid.
+  &__more {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 260.48px;
+    height: 48.38px;
+    padding: 0 26.05px;
+    border-radius: 7.44px;
+    background: #91e6f7;
+    color: #2c348e;
+    font-size: 14.89px;
+    font-weight: 700;
+    line-height: 22.33px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color .15s ease, color .15s ease;
+
+    .sicon-arrow-left { font-size: 16px; }
+    &:hover { background: #2c348e; color: #fff; }
+  }
 }
 
 @media (min-width: 769px) {
@@ -136,10 +162,18 @@ $qprods-phi: .0062, .0228, .0668, .1587, .3085, .5, .6915, .8413, .9332, .9772, 
 
     > .qprod { min-height: 343.91px; }   // Figma's mobile grid rows
   }
+
+  // «عرض الكل»: the grid's full width, at the phone card button's height/radius
+  .qprods__more {
+    align-self: stretch;
+    min-width: 0;
+    height: 43.66px;
+    border-radius: 12px;
+  }
 }
 
 // ====================================================================
-// Background variant — the dashboard's «الخلفية الكحلية» (show_background).
+// Background variant — the dashboard's «خلفية كحلية» (show_background).
 // Figma desktop 326:681 (1400 × 1200 frame at x 20), mobile 290:8236 (402 ×
 // 1205): the same heading and grid on a navy block carrying the brand
 // pattern. The pattern is Figma's mask image (images/qissa-pattern.png, 2×,
@@ -182,11 +216,17 @@ $qprods-phi: .0062, .0228, .0668, .1587, .3085, .5, .6915, .8413, .9332, .9772, 
 
   .qprods__title { color: #fff; }
   .qprods__subtitle { color: rgba(255, 255, 255, .7); }
+
+  // navy-on-navy would vanish: the button turns white on hover here
+  .qprods__more:hover { background: #fff; color: #2c348e; }
 }
 
 @media (min-width: 769px) {
   // the navy block carries the frame's own space
   .s-block.qprods--bg { padding-block: 0; }
+
+  // same grid → button space as the plain look (57.38 box gap − 28.84 = 28.54)
+  .qprods--bg .qprods__more { margin-top: -28.84px; }
 }
 
 @media (max-width: 768px) {

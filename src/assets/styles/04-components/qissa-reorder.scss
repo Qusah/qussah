@@ -1,0 +1,304 @@
+// ====================================================================
+// Qissa Reorder — «أعد طلبك بسرعة». Figma "Qusah Re-Vamp": desktop 326:2882
+// (1400 × 370.66 navy box, radius 24, at x 20 of the 1440 page), mobile
+// 290:8834 (402 × 468, edge to edge). Values are the scaled file's (2 dp).
+//
+// Desktop: the text column (title, line, «أعد طلب الكل») on the right, a row
+// of three 303.67-wide cards on the left, the pair centred in the box.
+// Phones: heading, a centred card slider (the neighbours peek), the button.
+//
+// The cards are the shared qprod card (Twig partial, or the JS card when
+// qissa-reorder.js swaps in a customer's last order) drawn at the frame's
+// 0.718 scale with only the photo, name, price and button — rules raised by
+// the section class so they beat qprod-card.scss on every width.
+// ====================================================================
+
+$qreorder-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
+$qreorder-navy: #2c348e;
+$qreorder-cyan: #91e6f7;
+
+.qreorder {
+  // no picks and no last order yet: Salla's `.s-block { display: block }`
+  // would otherwise beat the [hidden] the Twig sets
+  &[hidden] { display: none; }
+
+  .container {
+    max-width: none;
+    padding-inline: 20px;   // the frame sits 20px in from the page edges
+  }
+
+  // ---- the navy box: text column right, cards left (rtl grid) ----
+  &__box {
+    display: grid;
+    // Figma's text column is 273 (the head's min-width); it may grow to 360 so
+    // the title keeps one line in the fallback face, which runs a little wider
+    grid-template-columns: fit-content(360px) minmax(0, 937px);
+    grid-template-rows: 1fr auto auto 1fr;   // the text + button pair centred on the cards
+    grid-template-areas:
+      ".    track"
+      "head track"
+      "all  track"
+      ".    track";
+    justify-content: center;
+    column-gap: 48px;
+    padding: 48.83px 48px;
+    border-radius: 24px;
+    background: $qreorder-navy;
+    direction: rtl;
+  }
+
+  &__head {
+    grid-area: head;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;   // rtl → right
+    min-width: 273px;
+    text-align: right;
+  }
+  // Figma: the 62.13 title line overlaps the 40.38 line under it by 14
+  &__title {
+    margin: 0 0 -14px;
+    color: #fff;
+    font-family: $qreorder-font !important;
+    font-size: 36px;
+    font-weight: 500;
+    line-height: 62.13px;
+  }
+  &__subtitle {
+    margin: 0;
+    color: #fff;
+    font-family: $qreorder-font !important;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 40.38px;
+  }
+
+  // «أعد طلب الكل» — the design's cyan button
+  &__all {
+    grid-area: all;
+    justify-self: start;   // rtl → right
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 199px;
+    height: 48px;
+    margin-top: 14px;
+    padding: 0 26.05px;
+    border: 0;
+    border-radius: 7.44px;
+    background: $qreorder-cyan;
+    color: #30378e;
+    font-size: 14.89px;
+    font-weight: 700;
+    line-height: 22.33px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color .15s ease, opacity .15s ease;
+
+    &:hover { background: #fff; }   // navy would vanish into the box
+    &[aria-busy='true'] { opacity: .7; cursor: progress; }
+    &:disabled { opacity: .5; cursor: not-allowed; }
+  }
+
+  // ---- the cards: three to a row, more scroll sideways ----
+  &__track {
+    grid-area: track;
+    display: flex;
+    gap: 13px;
+    min-width: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    direction: rtl;
+
+    &::-webkit-scrollbar { display: none; }
+    &.is-dragging { scroll-snap-type: none; cursor: grabbing; user-select: none; }
+    img { -webkit-user-drag: none; }   // a mouse drag scrolls the row (qissa-reorder.js)
+
+    > .qprod,
+    > custom-salla-product-card {
+      flex: 0 0 calc((100% - 26px) / 3);
+      scroll-snap-align: start;
+    }
+  }
+
+  // ---- the small card: Figma 338:323 (303.67 × 273) ----
+  .qprod,
+  custom-salla-product-card.qprod-js {
+    min-height: 273px;
+    padding: 5.35px;
+    border-width: .67px;
+    border-color: rgba(0, 0, 0, .08);
+    border-radius: 10.69px;
+  }
+  .qprod__img {
+    height: 157.69px;
+    margin-bottom: 0;
+    border-radius: 5.35px;
+  }
+  .qprod__badge {
+    top: 7.76px;
+    right: 9.24px;
+    max-width: calc(100% - 50px);
+    height: 19.51px;
+    padding: 3.34px 8.02px;
+    font-size: 8.02px;
+    line-height: 12.83px;
+  }
+  .qprod__img .qprod__like {
+    top: 8.02px;
+    left: 8.02px;
+    width: 25.39px;
+    height: 25.39px;
+    filter: drop-shadow(0 5.35px 8.02px rgba(8, 32, 51, .06));
+  }
+  .qprod__like-ic {
+    width: 11.36px;
+    height: 11.36px;
+  }
+  .qprod__img .qpc-dots {
+    bottom: 6.84px;
+    gap: 3.34px;
+    padding: 3.34px 4.68px;
+    -webkit-backdrop-filter: blur(4.01px);
+    backdrop-filter: blur(4.01px);
+  }
+  .qprod__img .qpc-dot {
+    width: 4.01px;
+    height: 4.01px;
+    &.is-active { width: 10.69px; }
+  }
+
+  // name only — the frames draw no description, rating or sold line
+  .qprod__info {
+    gap: 0;
+    padding-top: 10.69px;
+  }
+  .qprod__name {
+    font-size: 9.36px;
+    font-weight: 500;
+    line-height: 15.03px;
+  }
+  .qprod__desc,
+  .qprod__rating,
+  .qprod__sold { display: none; }
+
+  .qprod__price {
+    gap: 5.35px;
+    margin: 0;
+    padding: 10.69px 5.35px;
+  }
+  .qprod__price .qprod__price-now {
+    font-size: 18.71px;
+    line-height: 18.71px;
+    .sicon-sar { font-size: .64em; }   // Figma: a 11.97 riyal beside 18.71 digits
+  }
+  .qprod__price .qprod__price-old {
+    font-size: 9.36px;
+    line-height: 14.97px;
+  }
+
+  .qprod__add {
+    height: 35px;
+    padding: 0 8px;
+    border-radius: 5.35px;
+    font-size: 10.69px;
+    line-height: 16.04px;
+  }
+  .qprod__btns salla-add-product-button {
+    &::part(base),
+    button,
+    .s-button-btn,
+    .s-button-element {
+      height: 35px !important;
+      min-height: 35px !important;
+      padding: 0 8px !important;
+      border-radius: 5.35px !important;
+      font-size: 10.69px !important;
+      line-height: 16.04px !important;
+    }
+  }
+}
+
+// ---- tablet: no frame — beside the text the three cards would shrink to
+// ~110px, so the phone order (heading, cards, button) in the desktop box ----
+@media (min-width: 769px) and (max-width: 1100px) {
+  .qreorder__box {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas: "head" "track" "all";
+    justify-items: center;
+    row-gap: 25px;
+  }
+  .qreorder__head {
+    align-items: center;
+    min-width: 0;
+    text-align: center;
+  }
+  .qreorder__track { width: 100%; }
+  .qreorder__all {
+    justify-self: center;
+    margin-top: 0;
+  }
+}
+
+// ---- mobile: Figma 290:8834 ----------------------------------------
+@media (max-width: 768px) {
+  .qreorder .container { padding-inline: 0; }   // the navy runs edge to edge
+
+  .qreorder__box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    padding: 15px 0;
+    border-radius: 0;
+  }
+
+  // a 78.93 frame (8 / 16 padding) with the two lines centred in it; Figma's
+  // text lines overflow their frames (49.96 in 41.96, 25.58 in 20.98)
+  .qreorder__head {
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    min-height: 78.93px;
+    padding: 7.99px 15.99px;
+    text-align: center;
+  }
+  .qreorder__title {
+    height: 41.96px;
+    margin: 0;
+    font-size: 23.98px;
+    font-weight: 400;
+    line-height: 49.96px;
+  }
+  .qreorder__subtitle {
+    height: 20.98px;
+    font-size: 15.99px;
+    line-height: 25.58px;
+  }
+
+  // one 201.44 card centred, its neighbours peeking at the screen edges
+  .qreorder__track {
+    width: 100%;
+    padding-inline: calc(50% - 100.72px);
+
+    > .qprod,
+    > custom-salla-product-card {
+      flex: 0 0 201.44px;
+      scroll-snap-align: center;
+    }
+  }
+
+  .qreorder__all {
+    width: 150px;
+    height: 36px;
+    margin-top: 0;
+    padding: 0 19.54px;
+    border-radius: 5.58px;
+    font-size: 11.16px;
+    line-height: 16.75px;
+  }
+}

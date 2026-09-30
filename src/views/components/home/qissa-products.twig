@@ -7,12 +7,16 @@
 | component.subtitle        | string    | subheading                                        |
 | component.products        | Product[] | merchant-selected products (dropdown source)      |
 | component.show_background | bool      | navy block with the Qussah pattern (default off)  |
+| component.show_display_all| bool      | «عرض الكل» button under the grid (default off)     |
+| component.display_all_url | string    | where it goes (Salla link picker); empty hides it |
 | position                  | int       | sorting block                                     |
 
 Figma "Qusah Re-Vamp": desktop 326:1110, mobile 290:7925 — centred heading over
 a 4-col (2 on mobile) grid of the shared Qussah card (partials/qprod-card).
 With show_background: desktop 326:681, mobile 290:8236 — the same heading and
 grid on a navy block carrying the brand pattern (images/qissa-pattern.png).
+The «عرض الكل» button isn't in those frames: it takes the design's cyan button
+(the Product Hero's «اشترِ الآن») and replaces the retired «جميع منتجات قصة».
 #}
 {# Quick view switch for this section (default on; sections saved before the
    field existed carry null, which reads as on). qissa-quick-view.js skips
@@ -42,6 +46,15 @@ grid on a navy block carrying the brand pattern (images/qissa-pattern.png).
             {% else %}
             {# fallback: auto-show latest products when merchant hasn't selected any #}
             <salla-products-list source="latest" limit="8" class="qprods__fallback"></salla-products-list>
+            {% endif %}
+
+            {# optional «عرض الكل» — only with a link to go to #}
+            {% set all_url = component.display_all_url %}
+            {% if component.show_display_all and all_url and all_url != '#' %}
+                <a href="{{ all_url }}" class="qprods__more">
+                    <span>{{ trans('blocks.qissa.view_all') }}</span>
+                    <i class="sicon-arrow-left" aria-hidden="true"></i>
+                </a>
             {% endif %}
 
         </div>

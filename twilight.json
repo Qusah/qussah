@@ -1206,6 +1206,162 @@
                     "required": false,
                     "value": false,
                     "selected": false
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_display_all",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Show \"View all\" button",
+                        "ar": "إظهار زر عرض الكل"
+                    },
+                    "required": false,
+                    "value": false,
+                    "selected": false
+                },
+                {
+                    "type": "items",
+                    "icon": "sicon-link",
+                    "label": "رابط زر عرض الكل",
+                    "id": "display_all_url",
+                    "value": [],
+                    "description": "الصفحة أو التصنيف الذي يفتحه زر عرض الكل — عند تركه فارغاً يختفي الزر",
+                    "required": false,
+                    "format": "variable-list",
+                    "searchable": true,
+                    "source": "custom",
+                    "sources": [
+                        {
+                            "label": "منتج",
+                            "key": "products",
+                            "value": "products"
+                        },
+                        {
+                            "label": "منتجات مع وسم",
+                            "key": "products_tags",
+                            "value": "products_tags"
+                        },
+                        {
+                            "label": "تصنيف",
+                            "key": "categories",
+                            "value": "categories"
+                        },
+                        {
+                            "label": "ماركة تجارية",
+                            "key": "brands",
+                            "value": "brands"
+                        },
+                        {
+                            "label": "صفحة تعريفية",
+                            "key": "pages",
+                            "value": "pages"
+                        },
+                        {
+                            "label": "مقالة",
+                            "key": "blog_articles",
+                            "value": "blog_articles"
+                        },
+                        {
+                            "label": "تصنيف ضمن المدونة",
+                            "key": "blog_categories",
+                            "value": "blog_categories"
+                        },
+                        {
+                            "label": "التخفيضات",
+                            "key": "offers_link",
+                            "value": "offers_link"
+                        },
+                        {
+                            "label": "الماركات التجارية",
+                            "key": "brands_link",
+                            "value": "brands_link"
+                        },
+                        {
+                            "label": "المدونة",
+                            "key": "blog_link",
+                            "value": "blog_link"
+                        },
+                        {
+                            "label": "رابط خارجي",
+                            "key": "custom",
+                            "value": "custom"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "aaa70456-b030-47aa-b537-212982bb3368",
+            "title": {
+                "en": "Qissa Quick Reorder",
+                "ar": "أعد طلبك بسرعة"
+            },
+            "icon": "sicon-refresh",
+            "path": "home.qissa-reorder",
+            "fields": [
+                {
+                    "id": "title",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Title",
+                        "ar": "العنوان"
+                    },
+                    "value": "أعد طلبك بسرعة"
+                },
+                {
+                    "id": "subtitle",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Subtitle",
+                        "ar": "النص الفرعي"
+                    },
+                    "description": "يظهر مع المنتجات المختارة أدناه",
+                    "value": "الأكثر طلبًا هذا الأسبوع"
+                },
+                {
+                    "id": "subtitle_returning",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Subtitle for a returning customer",
+                        "ar": "النص الفرعي للعميل العائد"
+                    },
+                    "description": "يظهر بدل النص الفرعي عندما يعرض القسم منتجات آخر طلب للعميل",
+                    "value": "من طلبك الأخير"
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_personal",
+                    "format": "switch",
+                    "icon": "sicon-user",
+                    "label": {
+                        "en": "Show the customer's last order",
+                        "ar": "اعرض منتجات آخر طلب للعميل"
+                    },
+                    "description": "للعميل المسجل الذي سبق له الطلب — بقية الزوار يرون المنتجات المختارة",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "products",
+                    "type": "items",
+                    "icon": "sicon-keyboard_arrow_down",
+                    "label": "المنتجات المختارة",
+                    "format": "dropdown-list",
+                    "description": "تظهر للزوار وللعملاء الذين لم يطلبوا بعد. بدونها يختفي القسم عنهم ويظهر فقط للعميل الذي له طلب سابق",
+                    "selected": [],
+                    "options": [],
+                    "required": false,
+                    "multichoice": true,
+                    "source": "products",
+                    "searchable": true,
+                    "maxLength": 12,
+                    "minLength": 0,
+                    "value": []
                 }
             ]
         },
@@ -1769,87 +1925,6 @@
                     "maxLength": 2,
                     "minLength": 2,
                     "value": []
-                }
-            ]
-        },
-        {
-            "key": "5fdf1f78-22c1-4eef-9180-48c976f4f553",
-            "title": {
-                "en": "All Qusah Products",
-                "ar": "جميع منتجات قصة"
-            },
-            "icon": "sicon-bag",
-            "path": "home.qissa-all-products",
-            "fields": [
-                {
-                    "id": "title_highlight",
-                    "type": "string",
-                    "format": "text",
-                    "label": {
-                        "en": "Highlighted word",
-                        "ar": "الكلمة المميزة"
-                    },
-                    "value": "منتجات"
-                },
-                {
-                    "id": "title",
-                    "type": "string",
-                    "format": "text",
-                    "label": {
-                        "en": "Title",
-                        "ar": "العنوان"
-                    },
-                    "value": " وصل حديثا في قصة"
-                },
-                {
-                    "id": "subtitle",
-                    "type": "string",
-                    "format": "textarea",
-                    "label": {
-                        "en": "Subtitle",
-                        "ar": "النص الفرعي"
-                    },
-                    "value": "تسوق احدث المنتجات المميزة المضافة جديد"
-                },
-                {
-                    "id": "products",
-                    "type": "items",
-                    "icon": "sicon-keyboard_arrow_down",
-                    "label": "المنتجات",
-                    "format": "dropdown-list",
-                    "description": null,
-                    "selected": [],
-                    "options": [],
-                    "required": true,
-                    "multichoice": true,
-                    "source": "products",
-                    "searchable": true,
-                    "maxLength": 8,
-                    "minLength": 1,
-                    "value": []
-                },
-                {
-                    "id": "button_url",
-                    "type": "string",
-                    "format": "text",
-                    "label": {
-                        "en": "Button URL",
-                        "ar": "رابط الزر"
-                    },
-                    "value": "/products"
-                },
-                {
-                    "type": "boolean",
-                    "id": "show_quick_view",
-                    "format": "switch",
-                    "icon": "sicon-eye",
-                    "label": {
-                        "en": "Show quick view",
-                        "ar": "إظهار النظرة السريعة"
-                    },
-                    "required": false,
-                    "value": true,
-                    "selected": true
                 }
             ]
         },
