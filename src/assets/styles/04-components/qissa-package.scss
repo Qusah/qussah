@@ -443,6 +443,113 @@ $qpack-cyan: #91e6f7;
   .qpack__card { @include qpack-stacked; }
 }
 
+// ---- compact wide layout: half-row cards (qissa-dual-hero) ------------
+// Not in the Figma frames. The wide layout sized for a ~580px card, so two
+// sit side by side and each is seen whole (~300px tall): equal columns, the
+// Figma mobile type scale, one-line pack boxes, the price beside the button.
+// The ribbon moves to the gallery's corner — on the details side, at this
+// size, it would run over the name. Details fill the card's height and the
+// buy row sits at the bottom, so cards in a row line their buttons up.
+// Phones get the stacked layout like every card.
+@media (min-width: 769px) {
+  .qpack__card--compact {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 20px;
+    align-items: stretch;
+    max-width: none;
+    padding: 20px;
+
+    .qpack__gallery {
+      align-self: start;
+      gap: 8px;
+    }
+    .qpack__main { border-radius: 16px; }
+    .qpack__thumbs { gap: 8px; }
+    .qpack__thumb {
+      flex-basis: calc((100% - 3 * 8px) / 4);
+      border-radius: 10px;
+    }
+
+    .qpack__ribbon {
+      right: -101.7px;
+      left: auto;
+      transform: rotate(45deg);
+    }
+
+    .qpack__info {
+      gap: 10px;
+      margin-top: 0;
+    }
+    .qpack__name {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      min-height: 0;
+      padding-top: 0;
+      overflow: hidden;
+      font-size: 22px;
+      line-height: 28px;
+    }
+
+    // rating (right) and sold (left) share one row
+    .qpack__meta {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .qpack__rating {
+      gap: 2.7px;
+      height: auto;
+    }
+    .qpack__rate { font-size: 11px; }
+    .qpack__sold {
+      gap: 1.54px;
+      height: 16.22px;
+      font-size: 12.36px;
+      line-height: 14.78px;
+      img { width: 19.3px; height: 19.3px; }
+    }
+
+    // one-line boxes, the full line on hover (title)
+    .qpack__inside { gap: 6px; }
+    .qpack__inside-item {
+      height: 30px;
+      padding: 4px 6px;
+      border-radius: 5px;
+      font-size: 10px;
+      line-height: 22px;
+      text-align: right;
+    }
+
+    .qpack__buy {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: auto;
+    }
+    .qpack__price { flex-wrap: nowrap; gap: 4px; }
+    .qpack__price .qpack__price-now {
+      font-size: 26px;
+      line-height: 26px;
+      .sicon-sar { font-size: 12px; }
+    }
+    .qpack__price .qpack__price-old,
+    .qpack__price .qpack__tax { display: none; }
+    .qpack__buy-btn {
+      flex: 1 1 auto;
+      max-width: 223px;
+      width: auto;
+      height: 44px;
+      padding: 0 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 22px;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .qpack__card .qpack__ribbon-track { animation: none; }
 }

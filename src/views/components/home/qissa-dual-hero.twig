@@ -18,9 +18,10 @@
 | position               | int       | sorting block                                      |
 
 Two featured products side by side, each in the shared Product Hero card
-(partials/qpack-card, the design of qissa-package) in its stacked layout — the
-Figma mobile card (290:8165), which fits a half-width column. Every element is
-merchant-toggleable. Dynamic Salla data only.
+(partials/qpack-card, the design of qissa-package) in its compact wide layout
+(.qpack__card--compact: gallery beside the details, sized so both cards are
+seen whole, same height, buttons aligned); phones get the stacked Figma mobile
+card (290:8165). Every element is merchant-toggleable. Dynamic Salla data only.
 #}
 <section class="s-block qdhero" id="qdhero-{{ position }}">
     <div class="container">
@@ -43,7 +44,7 @@ merchant-toggleable. Dynamic Salla data only.
             {% for product in component.products|slice(0, 2) %}
                 {% include 'components.partials.qpack-card' with {
                     product: product,
-                    card_class: 'qdhero__card qpack__card--stacked',
+                    card_class: 'qdhero__card qpack__card--compact',
                     name_tag: component.heading ? 'h3' : 'h2',
                     ribbon: component.show_marquee ? component.marquee_text|default(trans('blocks.qissa.best_seller')) : false,
                     show_thumbnails: component.show_thumbnails,

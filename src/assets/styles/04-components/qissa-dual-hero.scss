@@ -1,18 +1,19 @@
 // ====================================================================
 // Qissa Dual Hero — two Product Hero cards side-by-side.
 // The cards are the shared Product Hero card (partials/qpack-card.twig,
-// styled in qissa-package.scss) in its stacked layout (.qpack__card--stacked,
-// the Figma mobile card 290:8165). This file only adds: the section wrapper,
-// a centered heading, the 2-up grid, the card width, and the phones' two
-// merchant-chosen layouts. Loaded AFTER qissa-package, so equal selectors
-// here win on order.
+// styled in qissa-package.scss): its compact wide layout from 769px
+// (.qpack__card--compact — gallery beside the details, ~300px tall), the
+// stacked Figma mobile card below. This file only adds: the section wrapper,
+// a centered heading, the 2-up grid (both cards the same height), and the
+// phones' two merchant-chosen layouts. Loaded AFTER qissa-package, so equal
+// selectors here win on order.
 // ====================================================================
 
 .qdhero {
   font-family: 'GE SS Two', sans-serif;
   padding-block: 24px;
 
-  .container { max-width: none; padding-inline: 50px; }
+  .container { max-width: none; padding-inline: 20px; }   // the Product Hero's own edges
 
   // ---- centered heading ----
   &__head {
@@ -28,33 +29,34 @@
     color: #6c757d; margin: 0;
   }
 
-  // ---- 2-up grid (capped + centered) ----
-  // Without a cap each card stretched to ~half the full page → an enormous
-  // gallery. Cap the pair so the two hero cards stay a comfortable size.
+  // ---- 2-up grid: the Product Hero's width, cards the same height ----
+  // stretch (not start): both cards take the row's height whatever their
+  // content, and each card's buy row sits at its bottom, so the buttons align.
   &__grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 24px;
-    align-items: start;
+    align-items: stretch;
     width: 100%;
-    max-width: 880px;
+    max-width: 1190.88px;
     margin-inline: auto;
     direction: rtl;
   }
 
-  // Each card at most 428px (the Figma mobile card is 379), centred when the
-  // grid collapses to one column on tablets.
   &__card {
-    max-width: 428px;
-    margin-inline: auto;
     width: 100%;
     min-width: 0;   // grid item: allow shrink below content (no RTL edge cut)
   }
+
+  // stacked cards (phones): the details grow and the buy row drops to the
+  // bottom — the compact layout does the same with its own grid
+  &__card .qpack__info { flex: 1 1 auto; }
+  &__card .qpack__buy { margin-top: auto; }
 }
 
-// ---- tablet: stack to one column ----
-@media (max-width: 900px) {
-  .qdhero__grid { grid-template-columns: 1fr; }
+// ---- tablet: one card per row (a half row is too narrow for two columns) ----
+@media (max-width: 1100px) {
+  .qdhero__grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 // ---- mobile (<=768) ----
@@ -68,10 +70,6 @@
   .qdhero__title { font-size: 24px; line-height: 30px; }
   .qdhero__subtitle { font-size: 14px; line-height: 20px; }
   .qdhero__grid { gap: 16px; }
-
-  // The card caps at 428px for the desktop hero; on mobile both modes need it
-  // to fill whatever track it lands in, or the grid columns go uneven.
-  .qdhero__card { max-width: none; }
 
   // ── SLIDER: one card + a peek of the next ──────────────────────────────
   //

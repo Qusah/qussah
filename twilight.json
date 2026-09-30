@@ -1192,6 +1192,20 @@
                     "required": false,
                     "value": true,
                     "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_background",
+                    "format": "switch",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Navy background",
+                        "ar": "خلفية كحلية"
+                    },
+                    "description": "يعرض القسم على خلفية كحلية بنقوش قصة. عند إيقافها يظهر القسم بدون خلفية",
+                    "required": false,
+                    "value": false,
+                    "selected": false
                 }
             ]
         },

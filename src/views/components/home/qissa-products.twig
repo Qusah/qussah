@@ -6,18 +6,21 @@
 | component.title_highlight | string    | heading's leading word(s) — same colour since the revamp |
 | component.subtitle        | string    | subheading                                        |
 | component.products        | Product[] | merchant-selected products (dropdown source)      |
+| component.show_background | bool      | navy block with the Qussah pattern (default off)  |
 | position                  | int       | sorting block                                     |
 
 Figma "Qusah Re-Vamp": desktop 326:1110, mobile 290:7925 — centred heading over
 a 4-col (2 on mobile) grid of the shared Qussah card (partials/qprod-card).
+With show_background: desktop 326:681, mobile 290:8236 — the same heading and
+grid on a navy block carrying the brand pattern (images/qissa-pattern.png).
 #}
 {# Quick view switch for this section (default on; sections saved before the
    field existed carry null, which reads as on). qissa-quick-view.js skips
    the eye trigger for cards inside [data-qv="off"]. #}
 {% set qv_on = (component.show_quick_view is defined and component.show_quick_view is not null) ? component.show_quick_view : true %}
-<section class="s-block qprods" id="qprods-{{ position }}"{% if not qv_on %} data-qv="off"{% endif %}>
+<section class="s-block qprods{% if component.show_background %} qprods--bg{% endif %}" id="qprods-{{ position }}"{% if not qv_on %} data-qv="off"{% endif %}>
     <div class="container">
-        <div class="qprods__box">
+        <div class="qprods__box"{% if component.show_background %} style="--qprods-pattern: url('{{ 'images/qissa-pattern.png' | asset }}')"{% endif %}>
 
             {# centered title #}
             <div class="qprods__head">

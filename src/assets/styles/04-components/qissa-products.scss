@@ -9,6 +9,22 @@
 // own stack until then. !important: qusah-overrides forces `body *`.
 $qprods-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
 
+// Mask stops for one band with soft Gaussian edges — Figma draws the pattern
+// through a blurred rectangle, whose edge is the normal CDF (z → Φ(z)).
+// $from / $to are the rectangle's edges, $sigma the blur's spread.
+$qprods-z:   -2.5, -2, -1.5, -1, -.5, 0, .5, 1, 1.5, 2, 2.5;
+$qprods-phi: .0062, .0228, .0668, .1587, .3085, .5, .6915, .8413, .9332, .9772, .9938;
+@function qprods-band($from, $to, $sigma) {
+  $stops: ();
+  @for $i from 1 through length($qprods-z) {
+    $stops: append($stops, rgba(0, 0, 0, nth($qprods-phi, $i)) ($from + nth($qprods-z, $i) * $sigma), comma);
+  }
+  @for $i from 1 through length($qprods-z) {
+    $stops: append($stops, rgba(0, 0, 0, 1 - nth($qprods-phi, $i)) ($to + nth($qprods-z, $i) * $sigma), comma);
+  }
+  @return $stops;
+}
+
 .qprods {
   .container {
     max-width: none;
@@ -119,5 +135,96 @@ $qprods-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     row-gap: 9.92px;
 
     > .qprod { min-height: 343.91px; }   // Figma's mobile grid rows
+  }
+}
+
+// ====================================================================
+// Background variant — the dashboard's «الخلفية الكحلية» (show_background).
+// Figma desktop 326:681 (1400 × 1200 frame at x 20), mobile 290:8236 (402 ×
+// 1205): the same heading and grid on a navy block carrying the brand
+// pattern. The pattern is Figma's mask image (images/qissa-pattern.png, 2×,
+// already turned the way the frames show it) in #d9d9d9, drawn through a
+// blurred rectangle — the blur is the mask gradients below. Opacity and
+// spread are fitted to Figma's render of the frames (15% fill × the blur's
+// peak; σ 74 desktop / 146 mobile). Pattern positions are the frames' own,
+// anchored to the block's top centre so wider/narrower screens crop evenly.
+// ====================================================================
+.qprods--bg {
+  .qprods__box {
+    position: relative;
+    isolation: isolate;   // the pattern layer (z -1) stays above the navy fill
+    overflow: hidden;
+    // 20 inline: not in Figma (its grid never nears the edge at 1440) — keeps
+    // the 3- and 2-col tablet grids off the navy block's edges
+    padding: 63.26px 20px 84.51px;
+    gap: 57.38px;   // heading block → grid
+    background-color: #2c348e;
+
+    // the pattern: 1600 × 1066.59 from x −140 / y 136.30 of the frame
+    &::before {
+      content: '';
+      position: absolute;
+      top: 136.3px;
+      left: calc(50% - 840px);
+      z-index: -1;
+      width: 1600px;
+      height: 1066.59px;
+      background: var(--qprods-pattern) 0 0 / 100% 100% no-repeat;
+      opacity: .145;
+      pointer-events: none;
+      // blurred rectangle x 62.39–1340.92, y 278.32–1203.09 of the frame
+      mask-image:
+        linear-gradient(to right, qprods-band(202.39px, 1480.92px, 74px)),
+        linear-gradient(to bottom, qprods-band(142.02px, 1066.79px, 74px));
+      mask-composite: intersect;
+    }
+  }
+
+  .qprods__title { color: #fff; }
+  .qprods__subtitle { color: rgba(255, 255, 255, .7); }
+}
+
+@media (min-width: 769px) {
+  // the navy block carries the frame's own space
+  .s-block.qprods--bg { padding-block: 0; }
+}
+
+@media (max-width: 768px) {
+  .qprods--bg {
+    .container { padding-inline: 0; }   // the navy runs edge to edge on phones
+
+    .qprods__box {
+      padding: 27.64px 14.76px 30.78px;
+      gap: 20px;
+      background-color: #30378e;
+
+      // 1759 × 1172.67 from x −678 / y 16.33 of the 402 frame; at phone
+      // widths only the rectangle's top and bottom edges show
+      &::before {
+        top: 16.33px;
+        left: calc(50% - 879px);
+        width: 1759px;
+        height: 1172.67px;
+        opacity: .1475;
+        mask-image: linear-gradient(to bottom, qprods-band(156.16px, 1172.9px, 146px));
+      }
+    }
+
+    // a 75.01 frame with the two lines centred in it
+    .qprods__head {
+      min-height: 75.01px;
+      justify-content: center;
+      padding: 0;
+    }
+    .qprods__title {
+      height: auto;
+      font-size: 25.66px;
+      line-height: 32.08px;
+    }
+    .qprods__subtitle {
+      height: auto;
+      font-size: 15.79px;
+      line-height: 25.27px;
+    }
   }
 }
