@@ -121,7 +121,6 @@
 //      above the spec chips. Same rule for the Twig cards (.qprod / .qpack) and
 //      the JS card. An empty element (no text after hydration) takes no space.
 .qprod__desc,
-.qpack__desc,
 .s-product-card-content-desc {
   display: -webkit-box;
   -webkit-line-clamp: 2;

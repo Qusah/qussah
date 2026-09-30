@@ -1557,8 +1557,8 @@
                     "format": "switch",
                     "icon": "sicon-list",
                     "label": {
-                        "en": "Show spec chips",
-                        "ar": "إظهار مواصفات المنتج"
+                        "en": "Show pack contents",
+                        "ar": "إظهار محتويات البكج"
                     },
                     "required": false,
                     "value": true,
@@ -1583,8 +1583,8 @@
                     "format": "switch",
                     "icon": "sicon-shopping-bag",
                     "label": {
-                        "en": "Show add-to-cart button",
-                        "ar": "إظهار زر الإضافة للسلة"
+                        "en": "Show buy-now button",
+                        "ar": "إظهار زر اشترِ الآن"
                     },
                     "required": false,
                     "value": true,
@@ -1977,7 +1977,7 @@
                             "icon": "sicon-image",
                             "id": "slides.image",
                             "label": "صورة البانر (سطح المكتب)",
-                            "description": "الأبعاد المقترحة 2800×950 بكسل",
+                            "description": "الأبعاد الثابتة 2817×949 بكسل — الصورة بأبعاد مختلفة تُقص من الوسط",
                             "value": null,
                             "required": false
                         },
@@ -1987,7 +1987,7 @@
                             "icon": "sicon-mobile",
                             "id": "slides.image_mobile",
                             "label": "صورة البانر للجوال (اختياري)",
-                            "description": "اتركها فارغة لاستخدام صورة سطح المكتب. المقترح 860×860 أو 860×1075",
+                            "description": "اتركها فارغة لاستخدام صورة سطح المكتب. الأبعاد الثابتة 773×618 بكسل",
                             "value": null,
                             "required": false
                         },

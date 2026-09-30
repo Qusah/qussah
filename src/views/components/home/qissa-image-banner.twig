@@ -16,11 +16,13 @@
 
 Qissa banners — one or more full-image banners in a swipeable slider.
 
-SIZING. The image sizes its own card: it is a normal flow item, so the banner
-is exactly as tall as the artwork and nothing letterboxes. With several slides
-they must share ONE height or the block would jump on every transition, so the
-tallest slide sets it (the others are absolutely positioned over that). Fixed
-mode instead pins a height and crops, with `focus` choosing what survives.
+SIZING. Fixed shapes from the Figma frames: 1408.46 × 474.45 on desktop and,
+for a slide with its own mobile file, 386.25 × 309 on phones. Designers export
+to them (2817×949 / 773×618 at 2×, the sizes the dashboard fields ask for); a
+file that doesn't match is cropped from the centre, never reflowing the page.
+With several slides the first sets the height and the rest fill it. The
+merchant's fixed mode instead pins a pixel height and crops, with `focus`
+choosing what survives.
 
 TEXT ABOVE BUTTON, ALWAYS. The content stack is a column: title, subtitle, then
 the CTA — the merchant picks WHERE the stack sits, never the order inside it.
@@ -123,7 +125,7 @@ content re-isolates its own RTL for the Arabic text.
                         {% set ov_raw = slide.overlay is iterable ? slide.overlay|first : slide.overlay %}
                         {% set ov = ov_raw.value|default(ov_raw)|default('light') %}
 
-                        <div class="qibanner__slide{{ loop.index0 == (start - 1) ? ' is-active' : '' }}"
+                        <div class="qibanner__slide{{ loop.index0 == (start - 1) ? ' is-active' : '' }}{{ slide.image_mobile ? ' has-mobile-img' : '' }}"
                              data-qib-slide="{{ loop.index0 }}"
                              {% if loop.index0 != (start - 1) %}aria-hidden="true"{% endif %}>
 

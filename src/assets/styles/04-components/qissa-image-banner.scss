@@ -1,9 +1,10 @@
 // ====================================================================
 // Qissa banners — one or more full-image banners in a slider.
-// Desktop frame: Figma "Qusah Re-Vamp" Hero Banner 182:30993.
+// Figma "Qusah Re-Vamp": desktop Hero Banner 182:30993, mobile image 386.25×309.
 //
-// The image sizes its own card (no ratio guess, no letterboxing). Text and CTA
-// sit on a 3×3 placement grid, always stacked title → subtitle → button.
+// Fixed shapes: the banner is the design's frame, and artwork is exported to
+// it (see FIXED SHAPE below). Text and CTA sit on a 3×3 placement grid, always
+// stacked title → subtitle → button.
 // ====================================================================
 
 .qibanner {
@@ -53,15 +54,22 @@
     line-height: 0;                          // no descender gap under the img
   }
 
-  // The image is a normal flow item, so the slide is exactly as tall as the
-  // artwork — nothing crops and nothing letterboxes.
-  &__slide > picture { display: block; }
+  // FIXED SHAPE. Every slide is the Figma frame: 1408.46 × 474.45 (2817×949
+  // artwork at 2×), and on phones 386.25 × 309 (773×618) when the slide has
+  // its own mobile file — without one the desktop artwork keeps its shape
+  // rather than losing half its width to a 5:4 crop. Artwork made to size
+  // shows whole; a file that doesn't match is cropped from the centre instead
+  // of changing the page layout. The merchant's fixed-height mode (--fixed,
+  // below) still wins: its explicit height overrides the ratio.
+  &__slide { aspect-ratio: 1408.46 / 474.45; }
+  &__slide > picture { position: absolute; inset: 0; display: block; }
 
   &__img {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
     max-width: 100%;
+    object-fit: cover;
   }
 
   // MULTI-SLIDE HEIGHT. Slides of different heights would make the block jump
@@ -263,10 +271,15 @@
   }
 
   // ── breakpoints ─────────────────────────────────────────────────
+  // Up to 1150px the navbar is its phone bar, so the banner takes the phone
+  // frame's edges and radius too (Figma: image at x 8, 386.25 wide in 402)
   @media (max-width: 1150px) {
-    .container { padding-inline: 15px; }   // navbar's own breakpoint + value
+    .container {
+      padding-left: 8px;
+      padding-right: 7.75px;
+    }
 
-    &__viewport { border-radius: 24px; }
+    &__viewport { border-radius: 15.76px; }
     &--fixed &__viewport { height: var(--qib-height-md, 460px); }
 
     &__overlay { padding: 28px 32px; }
@@ -274,14 +287,12 @@
     &__sub { font-size: 16px; }
   }
 
-  // MOBILE — a rounded card, not full bleed. The 15px gutter is already set at
-  // ≤1150px above (the navbar's own value); this block only softens the radius
-  // to 24px, matching qissa-banner and the theme's other mobile cards (hero,
-  // video banner, values, media) so the banners read as part of the same set.
+  // MOBILE — the phone artwork (<picture> swaps it in at 768px) gets the phone
+  // frame's 5:4 shape; edges and radius come from the ≤1150px block above.
   @media (max-width: 768px) {
     padding-block: 8px;
 
-    &__viewport { border-radius: 24px; }
+    &__slide.has-mobile-img { aspect-ratio: 386.25 / 309; }
     &--fixed &__viewport { height: var(--qib-height-sm, 380px); }
 
     &__overlay { padding: 20px; }

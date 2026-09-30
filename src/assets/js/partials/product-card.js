@@ -1,10 +1,16 @@
 import BasePage from '../base-page';
 import { enhanceCarousels } from './card-carousel';
 import { bootQuickView, enhanceJsCard } from './qissa-quick-view';
+import { initPackCards } from './qissa-pack-card';
 
 // Card add → «✓ أُضيف» → stepper, and the quick-view ticket (every page loads
 // this file). Waits for theme::ready itself — nothing touches salla.* here.
 bootQuickView();
+
+// Product Hero cards (qissa-package / qissa-dual-hero): gallery, pack contents,
+// «اشترِ الآن». They only need the DOM, so they don't wait for the SDK.
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => initPackCards());
+else initPackCards();
 
 /* Plain text out of a product's HTML description — shared by the JS card here
    and the server-rendered cards (app.js hydrates [data-qdesc] with the same). */
