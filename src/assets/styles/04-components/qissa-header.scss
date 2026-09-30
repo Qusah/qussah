@@ -5,16 +5,19 @@ body, main, #app { background: transparent; }
 
 .qheader {
   position: sticky;
-  top: 0;
+  // pinned, the top inset scrolls away so the bar sits flush with the viewport
+  // top — the header's own height never changes, so the page doesn't jump
+  top: -21.4px;
   z-index: 100;
   // Figma: bar at x 15.81 / y 21.40 in the 1440 frame, 1408.46 wide → 15.73 on the right
   padding: 21.4px 15.73px 0 15.81px;
-  margin-bottom: 24px;   // gap to the page below — not in the frame; revisit with the hero node
+  margin-bottom: 18.6px;   // Figma: the hero banner starts 18.6 below the bar (y 123.73)
   font-family: 'GE SS Two', sans-serif;
   color: #fff;
   // once pinned, the transparent inset around the floating bar must not
   // swallow clicks on the page scrolling underneath it
   pointer-events: none;
+  transition: padding .3s ease;
 
   .qheader-nav {
     pointer-events: auto;
@@ -26,6 +29,7 @@ body, main, #app { background: transparent; }
     padding: 17.68px 31.96px 17.68px 37px;
     border-radius: 14.89px;
     background: linear-gradient(174.12deg, #172951 7.735%, #25307a 54.226%, #30378e 92.265%);
+    transition: padding .3s ease, border-radius .3s ease;
   }
 
   // logo — the wordmark (93.03×32.97) sits at the top of a 92.95×44.65 link box
@@ -138,6 +142,26 @@ body, main, #app { background: transparent; }
   }
 }
 
+// ---- pinned — the bar grows to the full viewport width ----
+// .is-stuck is toggled by header.twig once the top inset has scrolled away.
+// The side insets fold into the bar's own padding, so the logo, menu and
+// buttons stay exactly where they were while the navy edges spread out.
+.qheader.is-stuck {
+  padding-left: 0;
+  padding-right: 0;
+
+  .qheader-nav {
+    border-radius: 0;
+    padding-left: 52.81px;    // 37 + 15.81
+    padding-right: 47.69px;   // 31.96 + 15.73
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qheader,
+  .qheader .qheader-nav { transition: none; }
+}
+
 // hero starts right after the nav
 .qissa-hero {
   margin: 0 50px !important;
@@ -160,7 +184,11 @@ body, main, #app { background: transparent; }
 // The pill menu, wishlist and account move into the .qside drawer.
 @media (max-width: 1150px) {
   // Figma: bar at x 6 / y 16, 389 wide (402 frame → 7 on the right)
-  .qheader { padding: 16px 7px 0 6px; }
+  .qheader {
+    top: -16px;
+    padding: 16px 7px 0 6px;
+    margin-bottom: 24px;   // gap to the page below — confirm with the mobile banner node
+  }
 
   .qheader .qheader-nav {
     height: 64.7px;
@@ -193,6 +221,12 @@ body, main, #app { background: transparent; }
     border-radius: 9.68px;
     font-size: 10.65px;
     line-height: 17.04px;
+  }
+
+  // pinned: fold the 6 / 7 side insets into the bar's padding
+  .qheader.is-stuck .qheader-nav {
+    padding-left: 17.05px;    // 11.05 + 6
+    padding-right: 13.28px;   // 6.28 + 7
   }
 }
 

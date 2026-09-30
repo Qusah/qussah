@@ -157,6 +157,20 @@
 </div>
 
 <script>
+(function () {
+  // pinned state — the header is sticky at top: -inset, so once the page has
+  // scrolled past the inset the bar touches the viewport top; .is-stuck then
+  // spreads it to the full width. Only the side padding changes, never the
+  // height, so toggling it cannot move the page.
+  var qh = document.querySelector('.qheader');
+  if (!qh) { return; }
+  var inset = 0;
+  function measure() { inset = parseFloat(getComputedStyle(qh).paddingTop) || 0; }
+  function onScroll() { qh.classList.toggle('is-stuck', window.scrollY >= inset); }
+  measure(); onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', function () { measure(); onScroll(); }, { passive: true });
+})();
 (function(){
   // mobile burger → open the offcanvas sidebar (Figma 6036:12721)
   var burger = document.querySelector('[data-qburger]');
