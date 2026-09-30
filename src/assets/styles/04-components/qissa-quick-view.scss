@@ -83,26 +83,13 @@ $cyan: #91e6f7;
   transition: opacity .22s, clip-path .32s var(--qe), visibility 0s linear .32s;
 }
 
-// Phones: the heart sits on the image corner (as since the quick view first
-// shipped) and the add row is 44px tall.
+// Phones. The heart's place on the photo and the add row's height belong to
+// the card now (qprod-card.scss); so does the eye button that replaces the
+// corner there.
 @media (max-width: 768px) {
   .qqv-card { --qqv-r: 8px; }
   .qqv-done { font-size: 14px; }
   .qqv-step output { font-size: 16px; }
-  .qqv-has-trig {
-    position: relative;
-    .qprod__add { height: 44px; }
-    salla-add-product-button .s-button-element { height: 44px !important; min-height: 44px !important; }
-    .qprod__like, .s-product-card-wishlist-btn {
-      position: absolute !important; top: 18px; right: 18px; left: auto; z-index: 4;
-      flex: none !important;
-      width: 36px !important; height: 36px !important; min-width: 36px !important; min-height: 36px !important;
-      border-radius: 50% !important;
-      box-shadow: 0 2px 8px rgba(23, 41, 81, .14) !important;
-      &::after { content: ''; position: absolute; top: -4px; right: -4px; bottom: -4px; left: -4px; }
-      i { font-size: 17px; }
-    }
-  }
 }
 
 // ====================================================================

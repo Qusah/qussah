@@ -1,461 +1,123 @@
 // ====================================================================
-// Qissa Products grid — "منتجات مميزة خصيصاً من قصة" (Figma node 102:2119)
-// EXACT values from Figma. 4 cols desktop, 2 cols mobile.
-// Section: pad 50, radius 50, gradient #daeff7 -> #fff. Title→grid gap 30.
+// Qissa Products — "منتجات قد تهمك". Figma "Qusah Re-Vamp": desktop 326:1110
+// (1440 page, the frame at x 20 / 1400 wide), mobile 290:7925 (402 page).
+// Centred heading over a 4-col grid of the Qussah card (qprod-card.scss);
+// no background box. Values are the scaled file's (2 dp).
 // ====================================================================
 
-.qprods {
-  font-family: "GE SS Two", sans-serif;
-  padding-block: 24px;
+// Expo Arabic once its files are embedded (see qprod-card.scss); the theme's
+// own stack until then. !important: qusah-overrides forces `body *`.
+$qprods-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
 
+.qprods {
   .container {
     max-width: none;
-    padding-inline: 50px;
+    padding-inline: 20px;   // the section frame sits 20px in from the page edges
   }
 
-  // gradient box wrapper
   &__box {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 30px; // Figma title→grid gap
-    padding: 50px; // Figma section padding
-    background: linear-gradient(180deg, #daeff7 0%, #ffffff 100%);
-    border-radius: 50px; // Figma
+    gap: 28.54px;   // heading block → grid
+    width: 100%;
   }
 
-  // ---- centered title ----
+  // ---- centred heading ----
+  // (Figma nudges the heading block 19px off the grid's centre; centred here)
   &__head {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
     text-align: center;
   }
   &__title {
-    font-size: 32px;
-    font-weight: 500;
-    line-height: 38px; // H4 Medium
-    letter-spacing: -0.2px;
-    color: #0a1f30;
     margin: 0;
+    color: #082033;
+    font-family: $qprods-font !important;
+    font-size: 37.21px;
+    font-weight: 400;
+    line-height: 46.51px;
   }
-  &__title-hl {
-    color: #30378e;
-  } // highlighted "منتجات مميزة"
+  // the dashboard's «الكلمة المميزة» — the new design draws the heading in one colour
+  &__title-hl { color: inherit; }
   &__subtitle {
-    font-size: 16px;
-    font-weight: 300;
-    line-height: 25px;
-    color: #6c757d;
-    width: 554px;
-    max-width: 100%;
     margin: 0;
+    color: #5a6874;
+    font-family: $qprods-font !important;
+    font-size: 14.89px;
+    font-weight: 400;
+    line-height: 23.82px;
   }
 
-  // ---- grid: 4 cols, col-gap 16, row-gap 24 ----
+  // ---- grid: 4 cols of 280.99, gaps 16.70 × 15.82 (1174.07 in all) ----
   &__grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    column-gap: 16px;
-    row-gap: 24px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 16.7px;
+    row-gap: 15.82px;
     width: 100%;
+    max-width: 1174.07px;
     direction: rtl;
-  }
 
-  // fewer than 4 products → center them instead of stretching across the row
-  &__grid:not(:has(> .qprod:nth-child(4))) {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    > .qprod { flex: 0 1 280px; max-width: 320px; }
+    > .qprod { min-height: 455.21px; }   // Figma's card frame height
   }
 }
 
-// ---- single product card (Figma node 102:2408) ----
-.qprod {
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-  border-radius: 24px; // Figma 3xl
-  padding: 15px; // Figma
-  direction: rtl;
-  min-width: 0; // grid item: allow shrink below content
-  // → no track expansion / horizontal overflow (RTL left-edge cut)
-
-  // image area — cream bg, radius 15, height 228
-  &__img {
-    position: relative;
-    display: block;
-    width: 100%;
-    height: 228px;
-    background: #fff9ec;
-    border-radius: 15px;
-    overflow: hidden;
-    img {
-      width: 100%;
-      height: 224px;
-      object-fit: cover;
-      border-radius: 10px;
-    }
+@media (min-width: 769px) {
+  // the desktop frame's own top/bottom space stands in for the generic block
+  // gap (Salla's .s-block mt-8 / sm:mt-16 — raised selector, its order in
+  // app.css isn't ours to rely on)
+  .s-block.qprods {
+    margin-top: 0;
+    padding-block: 63.26px 53.36px;
   }
 
-  // discount badge — unified red tag (Figma 102:2413 / 107:12598), left-pointing folded tail
-  // z-index is load-bearing: the badge is emitted BEFORE .qpc-carousel in
-  // qprod-image.twig, and .qpc-slide is position:relative — two positioned
-  // elements at z-index:auto paint in tree order, so without this the slides
-  // cover the badge on every multi-image product. Matches .qpack__badge.
-  &__badge {
-    // Merchant promotion_title labels run far longer than the short discount text
-    // this pill was drawn for, and as a nowrap badge with no cap it grew past the
-    // card. Hold it to one line at a fixed height and truncate with an ellipsis.
-    //
-    // Truncating needs overflow:hidden, which would also clip a tail drawn outside
-    // the box — so the tail now sits inside the padding box and ::after paints the
-    // pill behind the text. The badge is offset by the width of the tail so the
-    // pill itself still starts on the design's 16px line, and isolation keeps that
-    // z-index:-1 layer inside this badge instead of dropping behind the card.
-    position: absolute;
-    z-index: 3;
-    isolation: isolate;
-    top: 16px;
-    left: 10px;                    // 16px pill edge − 6px tail
-    height: 30px;
-    line-height: 30px;             // one line, vertically centred
-    min-width: 73px;               // 67px pill + tail
-    max-width: calc(100% - 26px);  // pill stops 16px short of the far edge
-    display: block;
-    padding: 0 10px 0 16px;        // 10px gutter each side, +6px for the tail
-    background: none;              // the pill is ::after now
-    color: #fff;
-    font-size: 12px;
-    font-weight: 300;
-    text-align: center;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    &::before {                    // folded tail, inside the box
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 0;
-      transform: translateY(-50%);
-      border-block: 6px solid transparent;
-      border-inline-end: 6px solid #f55157;
-    }
-    &::after {                     // the pill, behind the text
-      content: "";
-      position: absolute;
-      inset: 0 0 0 6px;
-      z-index: -1;
-      background: #f55157;
-      border-radius: 4px;
-    }
-  }
-
-  // info block — py16 gap8 between rows, everything right-aligned (RTL)
-  // (.qprod is direction:rtl → flex-start = visual RIGHT)
-  &__info {
+  // fewer than 4 products → centre them at card width instead of stretching
+  // across the row
+  .qprods__grid:not(:has(> .qprod:nth-child(4))) {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding-block: 16px;
-    gap: 8px;
-    text-align: right;
-    width: 100%;
-  }
-  &__cat {
-    font-size: 14px;
-    font-weight: 300;
-    color: #30378e;
-    line-height: 1;
-    width: 100%;
-    text-align: right;
-  }
-  &__name {
-    font-size: 16px;
-    font-weight: 500;
-    color: #0a1f30;
-    line-height: 1.4;
-    width: 100%;
-    text-align: right;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    &:hover {
-      color: #30378e;
-    }
-  }
-
-  // spec chips — blue bg, royal-blue text, radius 4, gap 10 (Figma 106:3474)
-  // (.qprod is direction:rtl → flex-start = visual RIGHT)
-  &__chips {
-    display: flex;
-    justify-content: flex-start;
     flex-wrap: wrap;
-    gap: 10px;
-    width: 100%;
-    min-width: 0;
-    margin-top: 4px;
-  }
-  &__chip {
-    background: #e8fcff;
-    color: #30378e;
-    font-size: 14px;
-    line-height: 1;
-    padding: 6px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  // price row — right-aligned (flex-start in rtl = right), sale first then struck
-  &__price {
-    display: flex;
-    flex-direction: row;
-    align-items: baseline;
-    justify-content: flex-start;
-    gap: 6px;
-    margin-top: 4px;
-    width: 100%;
-  }
-  &__price-now {
-    font-family: "Poppins", "GE SS Two", sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    color: #30378e;
-    line-height: 25px;
-  }
-  &__price-old {
-    font-family: "Poppins", "GE SS Two", sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    color: #a5a5a5;
-    line-height: 24px;
-    text-decoration: line-through;
-  }
-
-  // buttons row — like LEFT (50px), add-to-cart fills RIGHT
-  // margin-top:auto pins the row to the card BOTTOM so it lines up across cards
-  // regardless of title length / chips presence (the grid stretches cards to
-  // equal height, so the extra space collapses above the buttons, not below).
-  &__btns {
-    margin-top: auto;
-    display: flex;
-    flex-direction: row;
-    direction: ltr;
-    align-items: stretch;
-    gap: 8px;
-    width: 100%;
-  }
-  &__add {
-    flex: 1 1 auto;
-    min-width: 1px;
-    height: 50px;
-    display: inline-flex;
-    align-items: center;
     justify-content: center;
-    gap: 8px;
-    background: #30378e !important;
-    border: 1px solid #30378e !important;
-    color: #fff !important;
-    font-family: "GE SS Two", sans-serif;
-    font-size: 16px;
-    font-weight: 500;
-    border-radius: 12px;
-    --salla-button-primary-background-color: #30378e;
-    i {
-      font-size: 16px;
-    }
-    &:hover {
-      background: #91e6f7 !important;
-      border-color: #91e6f7 !important;
-      color: #30378e !important;
-    }
-  }
-  // out of stock — greyed out, no hover, not clickable
-  &__add--oos {
-    &,
-    &:hover {
-      background: #e6e7ef !important;
-      border-color: #e6e7ef !important;
-      color: #8a8fa8 !important;
-      cursor: not-allowed;
-    }
-  }
-  &__like {
-    flex: 0 0 50px;
-    width: 50px;
-    height: 50px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: #fff;
-    border: 1px solid #e9ecef;
-    border-radius: 12px;
-    color: #0a1f30;
-    cursor: pointer;
-    i {
-      font-size: 18px;
-    }
-    &:hover {
-      color: #f55157;
-      border-color: #f55157;
-    }
-    // active / wishlisted → match the wishlist-page heart (filled red square, white heart)
-    &.s-product-card-wishlisted,
-    &[wishlisted] {
-      background: #dc3545;
-      border-color: #dc3545;
-      color: #fff;
-      i { color: #fff; }
-      &:hover { background: #c92f3d; border-color: #c92f3d; color: #fff; i { color: #fff; } }
-    }
+    gap: 15.82px 16.7px;
+    > .qprod { flex: 0 1 280.99px; }
   }
 }
 
 // ---- tablet: 3 then 2 cols ----
 @media (max-width: 1200px) {
-  .qprods__grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  .qprods__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 900px) {
-  .qprods__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .qprods__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-// ---- mobile (Figma node 6036:21611 @428): 2 cols, col-gap 8, row-gap 10 ----
+// ---- mobile: Figma 290:7925 — heading block, 24 gap, 2-col grid ----
 @media (max-width: 768px) {
-  .qprods {
-    padding-block: 8px;
-  }
-  .qprods .container {
-    padding-inline: 15px;
-  }
-  .qprods__box {
-    padding: 30px 10px 20px;
-    border-radius: 30px;
-    gap: 20px;
-  }
+  // the mobile frame is drawn tight around its content: no padding of its
+  // own, and the theme's block gap (.s-block) keeps separating sections
+  .qprods .container { padding-inline: 14.76px; }
+  .qprods__box { gap: 24px; }
+
+  .qprods__head { padding: 7.99px 15.99px; }
+  // Figma's text lines overflow their frames (49.96 in 41.96, 25.58 in 20.98):
+  // the frames set the rhythm, the line heights place the glyphs
   .qprods__title {
-    font-size: 24px;
-    line-height: 30px;
+    height: 41.96px;
+    font-size: 23.98px;
+    line-height: 49.96px;
   }
   .qprods__subtitle {
-    font-size: 14px;
-    line-height: 20px;
-    width: 100%;
+    height: 20.98px;
+    font-size: 15.99px;
+    line-height: 25.58px;
   }
+
   .qprods__grid {
-    grid-template-columns: repeat(2, 1fr);
-    column-gap: 8px;
-    row-gap: 10px;
-  }
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 12.9px;
+    row-gap: 9.92px;
 
-  .qprod {
-    padding: 10px;
-    border-radius: 20px;
-  }
-  // Figma mobile image area = light blue (#f0fcff), not the cream desktop bg
-  .qprod__img {
-    height: 180px;
-    background: #f0fcff;
-  }
-  .qprod__img img {
-    height: 178px;
-  }
-  .qprod__info {
-    padding-block: 10px;
-    gap: 6px;
-  }
-  .qprod__cat {
-    font-size: 12px;
-  }
-  .qprod__name {
-    font-size: 14px;
-    line-height: 1.3;
-  }
-
-  // compact chips so two fit a narrow card without overflow
-  .qprod__chips {
-    gap: 4px;
-    margin-top: 2px;
-  }
-  .qprod__chip {
-    font-size: 12px;
-    padding: 4px 8px;
-  }
-
-  .qprod__price {
-    margin-top: 2px;
-  }
-  .qprod__price-now {
-    font-size: 14px;
-  }
-  .qprod__price-old {
-    font-size: 12px;
-  }
-
-  // add-to-cart — Figma mobile button (node 6036:21712): navy #30378e, radius 8,
-  // text 14 + cart icon. Side padding trimmed so "أضف للسلة" stays on ONE line
-  // inside the narrow 2-col cards (16px would force it to wrap).
-  .qprod__add {
-    height: 41px;
-    padding: 8px 8px;
-    font-size: 14px;
-    gap: 6px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    white-space: nowrap;
-    overflow: hidden;
-    span {
-      white-space: nowrap;
-    }
-    i {
-      flex: 0 0 auto;
-      font-size: 15px;
-    }
-  }
-  .qprod__like {
-    flex-basis: 41px;
-    width: 41px;
-    height: 41px;
-    border-radius: 12px;
-  }
-  .qprod__badge {
-    top: 12px;
-    left: 6px;                     // 12px pill edge − 6px tail
-    max-width: calc(100% - 18px);
-    height: 26px;
-    line-height: 26px;
-    min-width: 58px;
-    font-size: 11px;
-    padding: 0 8px 0 14px;
-  }
-}
-
-// smallest phones: shrink the add-to-cart text/gap so "أضف للسلة" + icon fits
-// the narrow 2-col card without clipping (390 / 375 / 360)
-@media (max-width: 400px) {
-  .qprod__add {
-    font-size: 12px;
-    gap: 4px;
-    padding: 8px 6px;
-  }
-  .qprod__add i {
-    font-size: 12px;
-  }
-}
-@media (max-width: 374px) {
-  .qprod__add {
-    font-size: 12px;
-    padding: 8px 4px;
+    > .qprod { min-height: 343.91px; }   // Figma's mobile grid rows
   }
 }

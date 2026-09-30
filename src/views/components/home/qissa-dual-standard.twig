@@ -43,72 +43,16 @@ initCardCarousels() in home.js.
         {% if component.products|length %}
         <div class="qdstd__grid">
             {% for product in component.products|slice(0, 2) %}
-                <article class="qprod qdstd__card">
-                    {# image + discount badge (main image always shown; swipe carousel when multi-image) #}
-                    {% set badge_text = null %}
-                    {% if component.show_badge %}
-                        {% if product.is_on_sale and product.promotion_title %}
-                            {% set badge_text = product.promotion_title %}
-                        {% elseif product.is_on_sale %}
-                            {% set badge_text = trans('blocks.qissa.sale') %}
-                        {% endif %}
-                    {% endif %}
-                    {% include 'components.partials.qprod-image' with { product: product, badge_text: badge_text } %}
-
-                    {# info #}
-                    <div class="qprod__info">
-                        {% if component.show_brand and product.brand.name %}
-                            <span class="qprod__cat">{{ product.brand.name }}</span>
-                        {% endif %}
-                        <a href="{{ product.url }}" class="qprod__name">{{ product.name }}</a>
-                        {% if theme.settings.get('card_show_description', true) and product.description %}<p class="qprod__desc" data-qdesc="{{ product.description|slice(0, 500) }}"></p>{% endif %}
-
-                        {# spec chips (from product subtitle, split on the Arabic comma ، ) #}
-                        {% if component.show_chips and product.subtitle %}
-                            <div class="qprod__chips">
-                                {% for chip in product.subtitle|split('،') %}
-                                    {% if chip|trim %}<span class="qprod__chip">{{ chip|trim }}</span>{% endif %}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-
-                        {# price #}
-                        {% if component.show_price %}
-                            <div class="qprod__price">
-                                {% if product.is_on_sale %}
-                                    <b class="qprod__price-now">{{ product.sale_price|money }}</b>
-                                    <s class="qprod__price-old">{{ product.regular_price|money }}</s>
-                                {% else %}
-                                    <b class="qprod__price-now">{{ product.price|money }}</b>
-                                {% endif %}
-                            </div>
-                        {% endif %}
-                    </div>
-
-                    {# buttons — like LEFT, add-to-cart fills RIGHT #}
-                    {% if component.show_add or component.show_wishlist %}
-                        <div class="qprod__btns">
-                            {% if component.show_wishlist %}
-                                <button class="qprod__like" data-id="{{ product.id }}" onclick="salla.wishlist.toggle('{{ product.id }}')" aria-label="{{ trans('blocks.qissa.wishlist') }}">
-                                    <i class="sicon-heart"></i>
-                                </button>
-                            {% endif %}
-                            {% if component.show_add %}
-                                {% if product.is_out_of_stock %}
-                                    <button class="qprod__add qprod__add--oos" type="button" disabled>
-                                        <span>{{ trans('blocks.qissa.out_of_stock') }}</span>
-                                    </button>
-                                {% else %}
-                                    <button class="qprod__add" type="button"
-                                        onclick="salla.cart.addItem({ id: '{{ product.id }}', quantity: 1 })">
-                                        <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
-                                        <i class="sicon-shopping-bag"></i>
-                                    </button>
-                                {% endif %}
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                </article>
+                {# brand line and chips are gone from the card design, so show_brand /
+                   show_chips no longer have anything to switch #}
+                {% include 'components.partials.qprod-card' with {
+                    product: product,
+                    card_class: 'qdstd__card',
+                    show_badge: component.show_badge,
+                    show_price: component.show_price,
+                    show_add: component.show_add,
+                    show_wishlist: component.show_wishlist
+                } %}
             {% endfor %}
         </div>
         {% endif %}

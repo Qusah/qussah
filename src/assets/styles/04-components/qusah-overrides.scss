@@ -12,11 +12,6 @@
 .s-blocks-wrapper.s-after-testimonials { margin-top: 0; }
 .s-block.qlist { margin-top: 0; padding-top: 0; }
 
-/* Instance-specific: tighten the products block at home position 6.
-   NOTE: tied to the block's render position — revisit if the home order changes. */
-#qprods-6 { margin-top: -20px; padding-top: 0; }
-#qprods-6 .qprods__box { padding-top: 0; margin-top: 0; }
-
 /* ---- Hide platform UI this store doesn't use ---- */
 /* Coupon-code input on the cart (store does not take coupon codes here) */
 .s-cart-coupons-input-section { display: none !important; }

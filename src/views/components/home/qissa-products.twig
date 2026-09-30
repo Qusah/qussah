@@ -2,11 +2,14 @@
 | Variable                  | Type      | Description                                       |
 |---------------------------|-----------|---------------------------------------------------|
 | component                 | object    | merchant settings from twilight.json              |
-| component.title           | string    | heading first part                                |
-| component.title_highlight | string    | highlighted heading word(s) (royal blue)          |
+| component.title           | string    | heading, after the leading word(s)                |
+| component.title_highlight | string    | heading's leading word(s) — same colour since the revamp |
 | component.subtitle        | string    | subheading                                        |
 | component.products        | Product[] | merchant-selected products (dropdown source)      |
 | position                  | int       | sorting block                                     |
+
+Figma "Qusah Re-Vamp": desktop 326:1110, mobile 290:7925 — centred heading over
+a 4-col (2 on mobile) grid of the shared Qussah card (partials/qprod-card).
 #}
 {# Quick view switch for this section (default on; sections saved before the
    field existed carry null, which reads as on). qissa-quick-view.js skips
@@ -30,62 +33,7 @@
             {% if component.products|length %}
             <div class="qprods__grid">
                 {% for product in component.products %}
-                    <article class="qprod">
-                        {# image + discount badge (swipe carousel when multi-image) #}
-                        {% set badge_text = null %}
-                        {% if product.is_on_sale and product.promotion_title %}
-                            {% set badge_text = product.promotion_title %}
-                        {% elseif product.is_on_sale %}
-                            {% set badge_text = trans('blocks.qissa.sale') %}
-                        {% endif %}
-                        {% include 'components.partials.qprod-image' with { product: product, badge_text: badge_text } %}
-
-                        {# info #}
-                        <div class="qprod__info">
-                            {% if product.brand.name %}
-                                <span class="qprod__cat">{{ product.brand.name }}</span>
-                            {% endif %}
-                            <a href="{{ product.url }}" class="qprod__name">{{ product.name }}</a>
-                            {% if theme.settings.get('card_show_description', true) and product.description %}<p class="qprod__desc" data-qdesc="{{ product.description|slice(0, 500) }}"></p>{% endif %}
-
-                            {# spec chips (from product subtitle, split by | or ، ) #}
-                            {% if product.subtitle %}
-                                <div class="qprod__chips">
-                                    {% for chip in product.subtitle|split('،') %}
-                                        {% if chip|trim %}<span class="qprod__chip">{{ chip|trim }}</span>{% endif %}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-
-                            {# price #}
-                            <div class="qprod__price">
-                                {% if product.is_on_sale %}
-                                    <b class="qprod__price-now">{{ product.sale_price|money }}</b>
-                                    <s class="qprod__price-old">{{ product.regular_price|money }}</s>
-                                {% else %}
-                                    <b class="qprod__price-now">{{ product.price|money }}</b>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        {# buttons — like LEFT, add-to-cart fills RIGHT #}
-                        <div class="qprod__btns">
-                            <button class="qprod__like" data-id="{{ product.id }}" onclick="salla.wishlist.toggle({{ product.id }})" aria-label="{{ trans('blocks.qissa.wishlist') }}">
-                                <i class="sicon-heart"></i>
-                            </button>
-                            {% if product.is_out_of_stock %}
-                                <button class="qprod__add qprod__add--oos" type="button" disabled>
-                                    <span>{{ trans('blocks.qissa.out_of_stock') }}</span>
-                                </button>
-                            {% else %}
-                                <button class="qprod__add" type="button"
-                                    onclick="salla.cart.addItem({ id: {{ product.id }}, quantity: 1 })">
-                                    <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
-                                    <i class="sicon-shopping-bag"></i>
-                                </button>
-                            {% endif %}
-                        </div>
-                    </article>
+                    {% include 'components.partials.qprod-card' with { product: product } %}
                 {% endfor %}
             </div>
             {% else %}

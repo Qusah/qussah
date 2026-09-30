@@ -1,0 +1,102 @@
+{#
+  Qussah product card — Figma "Qusah Re-Vamp": desktop 182:30936, mobile 290:7511.
+
+  One card for every hand-built grid (qissa-products, qissa-all-products,
+  qissa-listing, qissa-dual-standard). product-card.js draws the same design,
+  with the same classes, for the JS card (custom-salla-product-card); both are
+  styled by 04-components/qprod-card.scss.
+
+  Params:
+    product        Product  required
+    card_class     string   extra classes on the <article>
+    price_attr     bool     data-price, which qissa-listing sorts by
+    body_wrap      bool     wrap text + buttons in .qprod__body (qissa-listing's list view)
+    show_badge, show_price, show_add, show_wishlist
+                   bool     qissa-dual-standard's per-element switches; the other
+                            sections don't pass them, so they read as on
+
+  Hooks other scripts rely on — keep them: .qprod__like[data-id] and
+  .qprod__add[onclick] (qissa-quick-view.js reads the product id from them),
+  .qprod__name, .qprod__img, .qprod__btns > .qprod__add, .qprod__price-now/-old
+  (the quick view's first paint), data-qdesc (app.js fills the description).
+#}
+{% set sb = show_badge is not defined or show_badge %}
+{% set sp = show_price is not defined or show_price %}
+{% set sa = show_add is not defined or show_add %}
+{% set sw = show_wishlist is not defined or show_wishlist %}
+
+{# the merchant's promotion title when there is one, otherwise «خصم» on sale #}
+{% set badge_text = null %}
+{% if sb and product.promotion_title %}
+    {% set badge_text = product.promotion_title %}
+{% elseif sb and product.is_on_sale %}
+    {% set badge_text = trans('blocks.qissa.sale') %}
+{% endif %}
+
+<article class="qprod{{ card_class ? ' ' ~ card_class : '' }}"{% if price_attr %} data-price="{{ product.is_on_sale ? product.sale_price : product.price }}"{% endif %}>
+    {% include 'components.partials.qprod-image' with { product: product, badge_text: badge_text, like: sw } %}
+
+    {% if body_wrap %}<div class="qprod__body">{% endif %}
+
+    <div class="qprod__info">
+        <div class="qprod__head">
+            <a href="{{ product.url }}" class="qprod__name">{{ product.name }}</a>
+            {# one line under the name: the product subtitle, else the description excerpt #}
+            {% if product.subtitle %}
+                <p class="qprod__desc qprod__desc--sub">{{ product.subtitle }}</p>
+            {% elseif theme.settings.get('card_show_description', true) and product.description %}
+                <p class="qprod__desc" data-qdesc="{{ product.description|slice(0, 500) }}"></p>
+            {% endif %}
+        </div>
+
+        {# rating — whole stars filled (Figma shows 4 of 5 for 4.5), value beside #}
+        {% if product.rating and product.rating.stars %}
+            {% set filled = product.rating.stars|round(0, 'floor') %}
+            <div class="qprod__rating">
+                <span class="qprod__stars" role="img" aria-label="{{ product.rating.stars }} / 5">
+                    {%- for i in 1..5 -%}
+                        <img src="{{ (i <= filled ? 'images/qcard/star.svg' : 'images/qcard/star-empty.svg') | asset }}" alt="" width="12" height="12"/>
+                    {%- endfor -%}
+                </span>
+                <span class="qprod__rate">({{ product.rating.stars|number_format(1, '.', '') }})</span>
+            </div>
+        {% endif %}
+
+        {% if product.sold_quantity %}
+            <p class="qprod__sold">
+                <img src="{{ 'images/qcard/fire.svg' | asset }}" alt="" width="20" height="20"/>
+                <span>{{ trans('blocks.qissa.sold') }} {{ product.sold_quantity }} {{ trans('blocks.qissa.times') }}</span>
+            </p>
+        {% endif %}
+    </div>
+
+    {# price — sale first (right), the struck regular price after it #}
+    {% if sp %}
+        <div class="qprod__price">
+            {% if product.is_on_sale %}
+                <b class="qprod__price-now">{{ product.sale_price|money }}</b>
+                <s class="qprod__price-old">{{ product.regular_price|money }}</s>
+            {% else %}
+                <b class="qprod__price-now">{{ product.price|money }}</b>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {# qissa-quick-view.js wraps .qprod__add in its stepper slot and, on phones,
+       adds the eye button beside it #}
+    {% if sa %}
+        <div class="qprod__btns">
+            {% if product.is_out_of_stock %}
+                <button class="qprod__add qprod__add--oos" type="button" disabled>
+                    <span>{{ trans('blocks.qissa.out_of_stock') }}</span>
+                </button>
+            {% else %}
+                <button class="qprod__add" type="button" onclick="salla.cart.addItem({ id: '{{ product.id }}', quantity: 1 })">
+                    <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
+                </button>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if body_wrap %}</div>{% endif %}
+</article>

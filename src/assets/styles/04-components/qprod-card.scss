@@ -1,0 +1,495 @@
+// ====================================================================
+// Qussah product card — Figma "Qusah Re-Vamp": desktop 182:30936 (280.46
+// wide), mobile 290:7511 (179.6 wide, ≤768px). The file is scaled ≈0.93, so
+// the values are fractional; they are kept as Figma gives them (2 dp).
+//
+// One set of rules draws both implementations: the Twig card
+// (components/partials/qprod-card.twig → article.qprod) and the JS card
+// (product-card.js → custom-salla-product-card.qprod-js), which renders the
+// same .qprod__* elements. The JS card still carries Salla's
+// .s-product-card-* classes on its root and heart, so a few selectors below
+// are raised to beat Salla's own card CSS.
+//
+// Type: Figma sets Expo Arabic for the name, description, badge and prices.
+// Its faces are declared once the licensed files are embedded; until then
+// the stack falls through to the theme's digits + GE SS Two. qusah-overrides
+// forces the theme stack on `body *` with !important, so these need it too.
+// ====================================================================
+
+$qcard-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
+$qcard-ink: #082033;
+$qcard-navy: #2c348e;
+$qcard-muted: #5a6874;
+
+// ---- the card ------------------------------------------------------
+.qprod,
+custom-salla-product-card.qprod-js {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 7.44px;
+  background: #fff;
+  border: .93px solid rgba(0, 0, 0, .08);
+  border-radius: 14.89px;
+  box-shadow: none;
+  direction: rtl;
+  text-align: right;
+}
+
+// ---- photo box -----------------------------------------------------
+.qprod__img {
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  width: 100%;
+  height: 219.55px;
+  overflow: hidden;
+  background: #f4f5f6;
+  border-radius: 7.44px;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  img.s-product-card-image-contain { object-fit: contain; }   // JS card: store fit setting / placeholder
+}
+.qprod__img-link { display: block; height: 100%; }
+
+// promotion title / «خصم» — top right of the photo
+.qprod__badge {
+  position: absolute;
+  z-index: 3;
+  top: 11.16px;
+  right: 16.26px;
+  max-width: calc(100% - 67px);   // stops short of the heart on the left
+  height: 27.16px;
+  padding: 4.65px 11.16px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #91e6f7;
+  color: $qcard-navy;
+  font-family: $qcard-font !important;
+  font-size: 11.16px;
+  font-weight: 500;
+  line-height: 17.86px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+// wishlist heart — top left of the photo. Raised selector: Salla's
+// `.s-product-card-vertical .s-product-card-wishlist-btn` dims and moves it.
+.qprod__img .qprod__like {
+  position: absolute;
+  z-index: 3;
+  top: 11.16px;
+  right: auto;
+  left: 11.16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35.35px;
+  height: 35.35px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: $qcard-ink;
+  opacity: 1;
+  filter: drop-shadow(0 7.44px 11.16px rgba(8, 32, 51, .06));
+  cursor: pointer;
+  transition: color .15s ease;
+
+  &:hover,
+  &[wishlisted],
+  &.s-product-card-wishlist-added { color: #dc3545; }
+}
+// the Figma heart as a mask, painted in currentColor (url set inline)
+.qprod__like-ic {
+  display: block;
+  width: 15.81px;
+  height: 15.81px;
+  background: currentColor;
+  -webkit-mask: var(--qprod-heart) center / contain no-repeat;
+  mask: var(--qprod-heart) center / contain no-repeat;
+}
+
+// photo dots — a frosted pill, bottom centre. Scoped to the card: the quick
+// view's gallery uses the same carousel markup.
+.qprod__img .qpc-dots {
+  z-index: 2;
+  right: 0;
+  bottom: 7.45px;
+  left: 0;              // quick-view moves this to 44px beside its corner
+  width: max-content;
+  margin-inline: auto;
+  gap: 4.65px;
+  padding: 4.65px 6.51px;
+  border-radius: 999px;
+  background: rgba(244, 245, 246, .7);
+  -webkit-backdrop-filter: blur(5.58px);
+  backdrop-filter: blur(5.58px);
+}
+.qprod__img .qpc-dot {
+  width: 5.58px;
+  height: 5.58px;
+  background: rgba(44, 52, 142, .24);
+  box-shadow: none;
+
+  &.is-active {
+    width: 14.89px;
+    background: $qcard-navy;
+  }
+}
+
+// ---- text ----------------------------------------------------------
+.qprod__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;   // rtl → right
+  gap: 11.16px;
+  width: 100%;
+  min-width: 0;
+  padding-top: 14.89px;
+}
+
+// name + one line under it, with no gap between them
+.qprod__head {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+.qprod__name {
+  display: block;
+  overflow: hidden;
+  color: $qcard-ink;
+  font-family: $qcard-font !important;
+  font-size: 13.02px;
+  font-weight: 500;
+  line-height: 20.93px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  &:hover { color: $qcard-navy; }
+}
+.qprod__desc {
+  display: block;
+  -webkit-line-clamp: unset;
+  color: $qcard-muted;
+  font-family: $qcard-font !important;
+  font-size: 11.16px;
+  font-weight: 400;
+  line-height: 18.75px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+// ★★★★☆ (4.5) — stars on the right, the value beside them
+.qprod__rating {
+  display: flex;
+  align-items: center;
+  gap: 6.98px;
+  height: 15.81px;
+}
+.qprod__stars {
+  display: flex;
+  align-items: center;
+  gap: 1.86px;
+
+  img {
+    display: block;
+    width: 12.09px;
+    height: 11.54px;
+  }
+}
+.qprod__rate {
+  color: #6c757d;
+  font-size: 10.23px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+// 🔥 مباع 250 مرة — Figma's row is 16.75 tall; the 19.94 icon overflows it
+.qprod__sold {
+  display: flex;
+  align-items: center;
+  gap: 1.6px;
+  height: 16.75px;
+  margin: 0;
+  color: $qcard-navy;
+  font-size: 12.76px;
+  font-weight: 500;
+  line-height: 15.27px;
+
+  img {
+    display: block;
+    width: 19.94px;
+    height: 19.94px;
+  }
+}
+
+// ---- price ---------------------------------------------------------
+// sale price (right), the struck regular price after it. Raised selectors:
+// qusah-overrides names .qprod__price-now/-old in its !important font rule.
+.qprod__price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 7.44px;
+  width: 100%;
+  margin: 0;
+  padding: 14.89px 7.44px;
+}
+.qprod__price .qprod__price-now {
+  color: $qcard-navy;
+  font-family: $qcard-font !important;
+  font-size: 26.05px;
+  font-weight: 700;
+  line-height: 26.05px;
+
+  .sicon-sar { font-size: .64em; }   // Figma: a 16.67px riyal beside 26px digits
+}
+.qprod__price .qprod__price-old {
+  color: #e90000;
+  font-family: $qcard-font !important;
+  font-size: 13.02px;
+  font-weight: 400;
+  line-height: 20.84px;
+  text-decoration: line-through;
+}
+.qprod__price-from {                     // JS card: «يبدأ من» before a starting price
+  color: $qcard-muted;
+  font-size: 11.16px;
+}
+
+// ---- buttons -------------------------------------------------------
+// «أضف للسلة» fills the row. qissa-quick-view.js wraps it in its stepper slot
+// and, on phones, adds the eye button beside it (left).
+.qprod__btns {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
+  margin-top: auto;   // pins the row to the card bottom across a grid row
+  direction: rtl;
+}
+.qprod__add {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: 48.38px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 7.44px;
+  background: $qcard-navy;
+  color: #fff;
+  font-size: 14.89px;
+  font-weight: 700;
+  line-height: 22.33px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease;
+
+  &:hover { background: #91e6f7; color: $qcard-navy; }
+}
+.qprod__add--oos {
+  &,
+  &:hover {
+    background: #e6e7ef;
+    color: #8a8fa8;
+    cursor: not-allowed;
+  }
+}
+
+// JS card: the same button drawn by <salla-add-product-button>
+.qprod__btns salla-add-product-button {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+
+  &::part(base),
+  button,
+  .s-button-btn,
+  .s-button-element {
+    width: 100% !important;
+    height: 48.38px !important;
+    min-height: 48.38px !important;
+    margin: 0 !important;
+    padding: 0 12px !important;
+    border: 0 !important;
+    border-radius: 7.44px !important;
+    background: $qcard-navy !important;
+    color: #fff !important;
+    box-shadow: none !important;
+    font-size: 14.89px !important;
+    font-weight: 700 !important;
+    line-height: 22.33px !important;
+  }
+  .s-button-text {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  &:hover::part(base),
+  &:hover button,
+  &:hover .s-button-btn,
+  &:hover .s-button-element {
+    background: #91e6f7 !important;
+    color: $qcard-navy !important;
+  }
+}
+
+// the phones' quick-view trigger — hidden until the mobile layout below
+.qqv-eye { display: none; }
+
+// ---- mobile: Figma 290:7511 ----------------------------------------
+@media (max-width: 768px) {
+  .qprod,
+  custom-salla-product-card.qprod-js {
+    padding: 3.97px;
+    border-width: .5px;
+    border-color: rgba(0, 0, 0, .1);
+    border-radius: 15.88px;
+  }
+
+  .qprod__img {
+    height: 148.84px;
+    margin-bottom: 11.91px;
+    border-radius: 11.91px;
+  }
+  .qprod__badge {
+    top: 3.97px;
+    right: 3.87px;
+    max-width: calc(100% - 46px);
+    height: 23.82px;
+    padding: 3.97px 7.94px;
+    font-size: 9.92px;
+    line-height: 15.88px;
+  }
+  .qprod__img .qprod__like {
+    top: 4.47px;
+    left: 4.46px;
+    width: 33.74px;
+    height: 33.74px;
+    filter: drop-shadow(0 7.94px 11.91px rgba(8, 32, 51, .06));
+  }
+  .qprod__like-ic {
+    width: 16.87px;
+    height: 16.87px;
+  }
+  .qprod__img .qpc-dots {
+    bottom: 4.96px;
+    gap: 4.96px;
+    padding: 4.96px 6.95px;
+    -webkit-backdrop-filter: blur(5.95px);
+    backdrop-filter: blur(5.95px);
+  }
+  .qprod__img .qpc-dot {
+    width: 4.96px;
+    height: 4.96px;
+    &.is-active { width: 13.89px; }
+  }
+
+  // mobile order: name, sold, rating (desktop has the rating first)
+  .qprod__info {
+    gap: 5.95px;
+    padding-top: 0;
+  }
+  .qprod__sold { order: 1; }
+  .qprod__rating { order: 2; }
+
+  .qprod__name {
+    font-size: 14.88px;
+    font-weight: 400;
+    line-height: 18.61px;
+  }
+  .qprod__desc {
+    font-size: 9.92px;
+    line-height: 20px;
+  }
+  .qprod__rating {
+    gap: 7.47px;
+    height: 16.87px;
+  }
+  .qprod__stars {
+    gap: 1.99px;
+    img { width: 12.9px; height: 12.31px; }
+  }
+  .qprod__rate {
+    font-family: $qcard-font !important;   // Figma mobile: Expo Arabic Medium
+    font-size: 10.92px;
+  }
+  .qprod__sold {
+    gap: 1.34px;
+    height: 14.09px;
+    font-size: 10.73px;
+    line-height: 12.84px;
+    img { width: 16.77px; height: 16.77px; }
+  }
+
+  .qprod__price {
+    margin-block: 5.95px;
+    padding: 3.97px 7.94px;
+  }
+  .qprod__price .qprod__price-now {
+    font-size: 15.88px;
+    line-height: 23.82px;   // Figma's price box; the 27.78 text frame overflows it
+    .sicon-sar { font-size: .95em; }   // Figma: a 15px riyal beside 16px digits
+  }
+  .qprod__price .qprod__price-old {
+    font-size: 11.91px;
+    line-height: 22.23px;
+  }
+
+  .qprod__add {
+    height: 43.66px;
+    padding: 0 8px;
+    border-radius: 12px;
+    font-size: 11.91px;
+    line-height: 23.82px;
+  }
+  .qprod__btns salla-add-product-button {
+    &::part(base),
+    button,
+    .s-button-btn,
+    .s-button-element {
+      height: 43.66px !important;
+      min-height: 43.66px !important;
+      padding: 0 8px !important;
+      border-radius: 12px !important;
+      font-size: 11.91px !important;
+      line-height: 23.82px !important;
+    }
+  }
+
+  // the eye in the button row replaces the photo corner
+  .qqv-has-eye .qprod__img .qqv-ear { display: none; }
+  .qqv-has-eye .qprod__img .qpc-dots { left: 0; }
+  .qqv-eye {
+    display: inline-flex;
+    flex: 0 0 42px;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 43px;
+    padding: 0;
+    border: 1px solid #172951;
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+
+    img {
+      display: block;
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
