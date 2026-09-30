@@ -5,7 +5,11 @@
 | cart.items_count | int     |                                 |
 | cart.total       | string  |                                 |
 #}
-<header class="store-header qheader qheader--solid">
+{# Nav bar — Figma "Qusah Re-Vamp": desktop 182:30750, mobile 295:182.
+   RTL row: [burger — mobile] · logo · pill menu — desktop · actions.
+   Desktop actions read left→right avatar · cart · wishlist, so in RTL DOM
+   order they go wishlist → cart → account. #}
+<header class="store-header qheader">
 
   {# The packs countdown moved into the hero banner's LED frame
      (home.qissa-image-banner → "عرض العداد داخل البانر"). The promo bar
@@ -13,98 +17,65 @@
      are retired from the header; their files stay in the repo, so restoring
      either is a one-line include here plus its script tag in master.twig. #}
 
-  {# top bar — sits ABOVE hero (not overlaid) #}
-  <div class="qheader-topwrap">
-   <div class="container">
-    <div class="qheader-topbar">
-      <div class="qheader-topbar__links">
-        <a href="{{ store.url }}/%D8%B3%D9%8A%D8%A7%D8%B3%D8%A9-%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D8%B1%D8%AC%D8%A7%D8%B9-%D9%88-%D8%A7%D9%84%D8%B6%D9%85%D8%A7%D9%86/page-510446325">{{ trans('blocks.qissa.return_policy') }}</a>
-        <span class="qheader-sep"></span>
-        <a href="{{ link('/wishlist') }}">{{ trans('blocks.qissa.wishlist') }}</a>
-        <span class="qheader-sep"></span>
-        <span class="qheader-lang">{{ trans('blocks.qissa.lang_currency_display') }}</span>
-      </div>
-      <div class="qheader-topbar__contact">
-        <span>{{ store.email|default('info@qusahstore.com') }}</span>
-        <i class="sicon-mail"></i>
-        <span class="qheader-sep"></span>
-        <span dir="ltr">{{ store.mobile|default('+966550085002') }}</span>
-        <i class="sicon-phone"></i>
-      </div>
-    </div>
-   </div>
-  </div>
+  <div class="qheader-nav">
 
-  {# main nav #}
-  <div class="container">
-    <div class="qheader-nav">
+    {# hamburger — mobile/tablet only; opens the .qside drawer below #}
+    <button type="button" class="qheader-burger" aria-label="{{ trans('blocks.qissa.menu') }}" aria-expanded="false" data-qburger>
+      <img src="{{ 'images/qheader/menu.svg' | asset }}" alt="" width="21" height="21"/>
+    </button>
 
-      {# cart + profile (left) #}
-      <div class="qheader-actions">
-        {# Required Twilight components. The visible cart/account controls below are the
-           custom Qussah (Figma) header, so Salla's own cart-summary & user-menu are kept
-           here hidden — present for the platform's cart/login wiring without duplicating
-           the custom UI. #}
-        <div class="hidden" aria-hidden="true">
-          <salla-user-menu avatar-only show-header show-trigger></salla-user-menu>
-          <salla-cart-summary>
-            <i slot="icon" class="header-btn__icon icon sicon-shopping-bag"></i>
-          </salla-cart-summary>
-        </div>
-        <a href="{{ link('/cart') }}" class="qheader-act qheader-act--cart{{ (cart.items_count|default(0) > 0) ? '' : ' is-empty' }}"{% if theme.settings.get('cart_drawer_enabled', true) %} data-qcd-open{% endif %}>
-          <span class="qheader-act__txt">
-            <b>{{ trans('blocks.qissa.checkout_cta') }}</b>
-          </span>
-          <span class="qheader-act__ic">
-            <i class="sicon-shopping-bag"></i>
-            <span class="qheader-act__badge" data-cart-count>{{ cart.items_count|default(0) }}</span>
-          </span>
+    {# logo (right) — the merchant's Salla logo, shown white on the navy bar #}
+    <a class="qheader-logo" href="{{ store.url }}">
+      <img src="{{ store.logo|cdn(175) }}" alt="{{ store.name }}" width="93" height="33"/>
+      {% if is_page('index') %}<h1 class="sr-only">{{ store.name }}</h1>{% endif %}
+    </a>
+
+    {# pill menu (center) — desktop only #}
+    <nav class="qheader-menu" data-qmenu>
+      <a href="{{ store.url }}" {{ is_page('index') ? 'class="is-active"' : '' }}>{{ trans('blocks.qissa.nav_home') }}</a>
+      <a href="{{ store.url }}/كل-المنتجات/c1390845573">{{ trans('blocks.qissa.nav_products') }}</a>
+      <a href="{{ store.url }}/%D8%B9%D9%86-%D9%82%D8%B5%D8%A9/page-944077204">{{ trans('blocks.qissa.nav_about') }}</a>
+    </nav>
+
+    {# actions (left) — wishlist + account are desktop only (the drawer has them on mobile) #}
+    <div class="qheader-actions">
+      {# Required Twilight components. The visible cart/account controls below are the
+         custom Qussah (Figma) header, so Salla's own cart-summary & user-menu are kept
+         here hidden — present for the platform's cart/login wiring without duplicating
+         the custom UI. #}
+      <div class="hidden" aria-hidden="true">
+        <salla-user-menu avatar-only show-header show-trigger></salla-user-menu>
+        <salla-cart-summary>
+          <i slot="icon" class="header-btn__icon icon sicon-shopping-bag"></i>
+        </salla-cart-summary>
+      </div>
+      <a href="{{ link('/wishlist') }}" class="qheader-act qheader-act--wishlist" aria-label="{{ trans('blocks.qissa.wishlist') }}">
+        <img src="{{ 'images/qheader/heart.svg' | asset }}" alt="" width="20" height="20"/>
+      </a>
+      {# `is-empty` hides the badge; app.js (initAddToCart) keeps it and the count in sync live #}
+      <a href="{{ link('/cart') }}" class="qheader-act qheader-act--cart{{ (cart.items_count|default(0) > 0) ? '' : ' is-empty' }}" aria-label="{{ trans('blocks.header.cart') }}"{% if theme.settings.get('cart_drawer_enabled', true) %} data-qcd-open{% endif %}>
+        <img src="{{ 'images/qheader/cart.svg' | asset }}" alt="" width="17" height="17"/>
+        <span class="qheader-act__badge" data-cart-count>{{ cart.items_count|default(0) }}</span>
+      </a>
+      {# account: the customer's photo when they have one, otherwise a user icon;
+         guests open Salla's login modal (<salla-login-modal> in master). #}
+      {% if user.type == 'user' %}
+        <a href="{{ link('/profile') }}" class="qheader-act qheader-act--account{{ user.avatar ? ' has-avatar' : '' }}" aria-label="{{ trans('blocks.qissa.my_account') }}">
+          {% if user.avatar %}
+            <img class="qheader-act__avatar" src="{{ user.avatar }}" alt="" width="41" height="41"/>
+          {% else %}
+            <i class="sicon-user"></i>
+          {% endif %}
         </a>
-        {# account: real login state — show the customer's name when logged in,
-           otherwise open Salla's login modal (<salla-login-modal> in master). #}
-        {% if user.type == 'user' %}
-          <a href="{{ link('/profile') }}" class="qheader-act qheader-act--account">
-            <span class="qheader-act__txt">
-              <b>{{ trans('blocks.qissa.welcome') }}</b>
-              <em>{{ user.first_name|default(trans('blocks.qissa.my_account')) }}</em>
-            </span>
-            <span class="qheader-act__ic"><i class="sicon-user"></i></span>
-          </a>
-        {% else %}
-          <a href="#" onclick="event.preventDefault(); salla.event.dispatch('login::open')" class="qheader-act qheader-act--account">
-            <span class="qheader-act__txt">
-              <b>{{ trans('blocks.qissa.welcome') }}</b>
-              <em>{{ trans('blocks.qissa.login') }}</em>
-            </span>
-            <span class="qheader-act__ic"><i class="sicon-user"></i></span>
-          </a>
-        {% endif %}
-      </div>
-
-      {# pill menu (center) — static links, exact Figma pill #}
-      <nav class="qheader-menu" data-qmenu>
-        <a href="{{ store.url }}" {{ is_page('index') ? 'class="is-active"' : '' }}>{{ trans('blocks.qissa.nav_home') }}</a>
-        <a href="{{ store.url }}/كل-المنتجات/c1390845573">{{ trans('blocks.qissa.nav_products') }}</a>
-        <a href="{{ store.url }}/%D8%B9%D9%86-%D9%82%D8%B5%D8%A9/page-944077204">{{ trans('blocks.qissa.nav_about') }}</a>
-      </nav>
-
-      {# logo (right) + hamburger (mobile only) #}
-      <div class="qheader-brand">
-        <button type="button" class="qheader-burger" aria-label="{{ trans('blocks.qissa.menu') }}" aria-expanded="false" data-qburger>
-          <i class="sicon-menu"></i>
-        </button>
-        <a class="qheader-logo" href="{{ store.url }}">
-          <img src="{{ store.logo|cdn(175) }}" alt="{{ store.name }}"/>
-          {% if is_page('index') %}<h1 class="sr-only">{{ store.name }}</h1>{% endif %}
+      {% else %}
+        <a href="#" onclick="event.preventDefault(); salla.event.dispatch('login::open')" class="qheader-act qheader-act--account" aria-label="{{ trans('blocks.qissa.login') }}">
+          <i class="sicon-user"></i>
         </a>
-      </div>
-
+      {% endif %}
     </div>
+
   </div>
 </header>
-
-
-<div class="qheader-space" aria-hidden="true"></div>
 
 {# ---- mobile sidebar / offcanvas (Figma node 6036:12721) ----
    Kept OUTSIDE <header> so it is fully independent of the navbar/header. #}
@@ -186,27 +157,6 @@
 </div>
 
 <script>
-(function () {
-  // sticky header — let the utility bar scroll away and pin only the slim nav.
-  // Pull the whole header up by the utility-bar height (sticky top: -offset) so the
-  // top bar scrolls off-screen and the nav locks to the top of the viewport.
-  var qh  = document.querySelector('.qheader');
-  if (!qh) { return; }
-  var nav = qh.querySelector('.qheader-nav');
-  var offset = 0;
-  function measure() {
-    if (!nav) { return; }
-    offset = Math.max(0, Math.round(nav.getBoundingClientRect().top - qh.getBoundingClientRect().top));
-    qh.style.top = (-offset) + 'px';
-  }
-  function onHeaderScroll() {
-    qh.classList.toggle('is-stuck', window.scrollY > offset + 2);
-  }
-  measure(); onHeaderScroll();
-  window.addEventListener('scroll', onHeaderScroll, { passive: true });
-  window.addEventListener('resize', function () { measure(); onHeaderScroll(); }, { passive: true });
-  window.addEventListener('load', function () { measure(); onHeaderScroll(); });
-})();
 (function(){
   // mobile burger → open the offcanvas sidebar (Figma 6036:12721)
   var burger = document.querySelector('[data-qburger]');
