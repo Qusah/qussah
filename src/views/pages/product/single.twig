@@ -430,10 +430,6 @@
                     </div>
                 {% endif %}
 
-                {% if product.is_taxable %}
-                    <small class="color-grey">{{ trans('pages.products.tax_included') }}</small>
-                {% endif %}
-
                 <div class="product__description qpd__desc p-2 px-5 sm:p-1 leading-7 mb-3">
                     {% set product_desc = product.description|replace({"&nbsp;":"\n"}) %}
                     {% if product.has_read_more %}

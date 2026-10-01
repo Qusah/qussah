@@ -264,14 +264,6 @@ $qpack-cyan: #91e6f7;
 
     .sicon-sar { font-size: 11.16px; }
   }
-  .qpack__price .qpack__tax {
-    margin-inline-start: 5.46px;   // Figma: 12.91 from the old price
-    color: #5a6874;
-    font-family: $qpack-font !important;
-    font-size: 14.89px;
-    font-weight: 400;
-    line-height: 23.82px;
-  }
   .qpack__buy-btn {
     display: flex;
     align-items: center;
@@ -424,8 +416,7 @@ $qpack-cyan: #91e6f7;
     line-height: 26px;
     .sicon-sar { font-size: 12px; }
   }
-  .qpack__price .qpack__price-old,
-  .qpack__price .qpack__tax { display: none; }
+  .qpack__price .qpack__price-old { display: none; }
   .qpack__buy-btn {
     flex: 0 1 223px;
     width: auto;
@@ -535,8 +526,7 @@ $qpack-cyan: #91e6f7;
       line-height: 26px;
       .sicon-sar { font-size: 12px; }
     }
-    .qpack__price .qpack__price-old,
-    .qpack__price .qpack__tax { display: none; }
+    .qpack__price .qpack__price-old { display: none; }
     .qpack__buy-btn {
       flex: 1 1 auto;
       max-width: 223px;
