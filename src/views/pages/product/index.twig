@@ -16,10 +16,73 @@
 | sort_options[].is_selected | bool        | Is current page sorted by it                                         |
 | search_query               | ?string     |                                                                      |
 #}
+{#
+  Product listing — Figma "Qusah Re-Vamp" desktop 113:34565, mobile 290:8927.
+  Breadcrumb, then a bar with two dropdown pills — «تصفية» lists the store's
+  categories (products.js fetches them on first open), «ترتيب» Salla's sort
+  options — then the page's own products in Salla's list, drawn with the
+  theme card (custom-salla-product-card). Styles: 04-components/qissa-listing.scss
+#}
 {% extends "layouts.master" %}
 {% block content %}
-	{# Hooks kept so editor-placed components can render on this page #}
+	{% if theme.settings.get('product_index_show_breadcrumbs', true) %}
+		<nav class="qlisting-crumbs" aria-label="{{ trans('blocks.qissa.breadcrumb') }}">
+			<salla-breadcrumb></salla-breadcrumb>
+		</nav>
+	{% endif %}
+
+	{#
+    Hook: product.index.before_products_group_with_filter
+    Fires before the products grid. Use it to inject content above the listing.
+  #}
 	<div class="s-blocks-wrapper s-before-products-list !mt-0">{% hook 'product.index.before_products_group_with_filter' %}</div>
+
+	{# the selected sort, else Salla's first (its default order) #}
+	{% set sort_on = sort_options|length ? sort_options|first : null %}
+	{% for sort in sort_options %}
+		{% if sort.is_selected %}{% set sort_on = sort %}{% endif %}
+	{% endfor %}
+
+	<section class="qlisting" data-qlisting>
+		<div class="qlisting__bar">
+			{# «تصفية: …» — the category being shown; the menu switches category #}
+			<div class="qlisting__drop" data-qlisting-drop>
+				<button type="button" class="qlisting__pill" aria-haspopup="true" aria-expanded="false" aria-controls="qlisting-cats">
+					<img class="qlisting__icon" src="{{ 'images/qlisting/filter.svg'|asset }}" alt="" width="16" height="16"/>
+					<span class="qlisting__label">{{ trans('blocks.qissa.filter') }}<span class="qlisting__value">: {{ category ? category.name : trans('blocks.qissa.listing_all') }}</span></span>
+					<img class="qlisting__chev" src="{{ 'images/qlisting/chevron.svg'|asset }}" alt="" width="15" height="15"/>
+				</button>
+				<ul class="qlisting__menu" id="qlisting-cats" data-qlisting-cats hidden>
+					<li><a class="qlisting__opt" href="{{ store.url ~ '/كل-المنتجات/c1390845573' }}">{{ trans('blocks.qissa.listing_all') }}</a></li>
+				</ul>
+			</div>
+
+			{# «ترتيب: …» — Salla's sort options; products.js re-sorts the list in place #}
+			{% if sort_options|length %}
+				<div class="qlisting__drop qlisting__drop--sort" data-qlisting-drop>
+					<button type="button" class="qlisting__pill" aria-haspopup="true" aria-expanded="false" aria-controls="qlisting-sort">
+						<img class="qlisting__icon" src="{{ 'images/qlisting/sort.svg'|asset }}" alt="" width="16" height="16"/>
+						<span class="qlisting__label">{{ trans('blocks.qissa.listing_sort') }}<span class="qlisting__value">: <span data-qlisting-sort-name>{{ sort_on.name }}</span></span></span>
+						<img class="qlisting__chev" src="{{ 'images/qlisting/chevron.svg'|asset }}" alt="" width="15" height="15"/>
+					</button>
+					<ul class="qlisting__menu" id="qlisting-sort" hidden>
+						{% for sort in sort_options %}
+							<li><button type="button" class="qlisting__opt{{ sort.id == sort_on.id ? ' is-on' : '' }}" data-qlisting-sort="{{ sort.id }}"{{ sort.id == sort_on.id ? ' aria-current="true"' : '' }}>{{ sort.name }}</button></li>
+						{% endfor %}
+					</ul>
+				</div>
+			{% endif %}
+		</div>
+
+		{% hook 'product:index.items.start' %}
+		<salla-products-list class="qlisting__list" source="{{ page.slug }}" source-value="{{ page.id }}" product-card-component="custom-salla-product-card"></salla-products-list>
+		{% hook 'product:index.items.end' %}
+	</section>
+
+	{#
+    Hook: product.index.after_products_group_with_filter
+    Fires after the products grid. Use it to inject content below the listing.
+  #}
 	<div class="s-blocks-wrapper s-after-products-list">{% hook 'product.index.after_products_group_with_filter' %}</div>
 	<div class="s-blocks-wrapper s-after-testimonials">{% hook 'product.index.after_testimonials' %}</div>
 {% endblock %}
