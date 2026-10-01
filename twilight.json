@@ -3337,29 +3337,29 @@
                         "en": "Subtitle",
                         "ar": "النص الفرعي"
                     },
-                    "value": "بيتم استعراض بعض آراء وتعليقات المستخدمين"
+                    "value": "تقييمات حقيقية من متجر قصة"
                 },
                 {
-                    "id": "count",
-                    "type": "number",
-                    "format": "integer",
-                    "icon": "sicon-list",
+                    "type": "boolean",
+                    "id": "use_real_reviews",
+                    "format": "switch",
+                    "icon": "sicon-star",
                     "label": {
-                        "en": "Number of reviews to show",
-                        "ar": "عدد الآراء المعروضة"
+                        "en": "Show the store's real reviews",
+                        "ar": "عرض تقييمات المتجر الحقيقية"
                     },
-                    "placeholder": "9",
-                    "value": 9,
-                    "minimum": 1,
-                    "maximum": 30
+                    "description": "تعرض كل تقييمات المتجر المكتوبة، وتُحمَّل تدريجياً أثناء الحركة دون أن تُبطئ الصفحة. إذا لم توجد تقييمات تظهر الآراء التجريبية أدناه",
+                    "required": false,
+                    "value": true,
+                    "selected": true
                 },
                 {
                     "id": "items",
                     "key": "2bb58935-a2b4-4d86-af9f-9531d6af008b",
                     "type": "collection",
                     "format": "collection",
-                    "label": "آراء بديلة (عند عدم وجود تقييمات)",
-                    "description": "تُعرض هذه الآراء فقط عندما لا توجد تقييمات حقيقية للمتجر. أضف بعض الآراء هنا كي لا يظهر القسم فارغًا.",
+                    "label": "آراء تجريبية",
+                    "description": "تظهر عند إيقاف «عرض تقييمات المتجر الحقيقية» أو إذا لم يكن للمتجر تقييمات مكتوبة بعد.",
                     "labelHTML": null,
                     "item_label": "رأي",
                     "icon": "sicon-list-add",
@@ -3384,10 +3384,10 @@
                             "key": "66423a29-7851-4af3-89aa-367a171b701c",
                             "type": "string",
                             "format": "text",
-                            "label": "المسمى / المكان",
+                            "label": "المدينة",
                             "description": null,
                             "labelHTML": null,
-                            "placeholder": "المسمى الوظيفي أو المكان",
+                            "placeholder": "مثال: الرياض",
                             "icon": "sicon-format-text-alt",
                             "value": null,
                             "multilanguage": false,
@@ -3398,7 +3398,7 @@
                             "key": "51e3de71-13fc-43e1-a689-d2c6c0a5d849",
                             "type": "string",
                             "format": "textarea",
-                            "label": "نص الرأي",
+                            "label": "نص الرأي (مطلوب ليظهر)",
                             "description": null,
                             "labelHTML": null,
                             "placeholder": "نص الرأي",
@@ -3421,21 +3421,51 @@
                             "required": false,
                             "minimum": 1,
                             "maximum": 5
-                        },
-                        {
-                            "id": "items.avatar",
-                            "key": "a44e0ca6-5eaa-477a-8e5c-372689fd9583",
-                            "type": "string",
-                            "format": "image",
-                            "label": "صورة العميل",
-                            "description": "المقاس المناسب للصورة هو 40*40 بكسل",
-                            "labelHTML": null,
-                            "placeholder": "e.g. https://hostname.com/image.png",
-                            "icon": "sicon-image",
-                            "value": null,
-                            "required": false
                         }
                     ]
+                },
+                {
+                    "type": "boolean",
+                    "id": "two_rows",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Two rows on desktop",
+                        "ar": "صفّان على الكمبيوتر"
+                    },
+                    "description": "كما في التصميم — يتحرك كل صف في اتجاه معاكس. الجوال صف واحد دائماً",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "speed",
+                    "type": "number",
+                    "format": "integer",
+                    "icon": "sicon-clock",
+                    "label": {
+                        "en": "Seconds for one card to pass",
+                        "ar": "مدة مرور البطاقة الواحدة (ثانية)"
+                    },
+                    "description": "كلما زاد الرقم كانت الحركة أبطأ. الافتراضي 9",
+                    "value": 9,
+                    "minimum": 3,
+                    "maximum": 30,
+                    "required": false
+                },
+                {
+                    "type": "boolean",
+                    "id": "pause_on_hover",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Pause under the mouse",
+                        "ar": "إيقاف الحركة عند المرور بالمؤشر"
+                    },
+                    "description": "مغلق افتراضياً ليستمر الشريط دون توقف. يمكن للعميل دائماً سحب البطاقات بالإصبع أو المؤشر",
+                    "required": false,
+                    "value": false,
+                    "selected": false
                 }
             ]
         },

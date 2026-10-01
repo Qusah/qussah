@@ -1,187 +1,283 @@
 // ====================================================================
-// Qissa Testimonials — "آراء العملاء في قصة"
-// Figma: desktop 6036:1129 (1440) · mobile 6036:21971 (428).
-//   Desktop: transparent section, right title, 3 static cards (no arrows).
-//   Mobile : gradient box, centered title, swipe carousel + prev/next arrows.
-// Stars use the project ★/☆ gold glyphs; quote uses the theme inline SVG.
+// Qissa Testimonials — «آراء العملاء». Figma "Qusah Re-Vamp": desktop 326:1655
+// (1400 frame at x 20 of the 1440 page; the rows run to the PAGE edges),
+// mobile 290:8617. Latafa's testimonials at this file's sizes: desktop cards
+// are Latafa's card × 1.306 (350.09 × 314.81), phones use it as drawn
+// (268 × 241, but 40 apart).
+//
+// The rows are VIRTUAL (qissa-testimonials.js): a fixed-height window, a
+// track the script moves by a compositor transform, and a handful of
+// absolutely placed cards it recycles. Sizes the script needs are custom
+// properties here (--qtest-card-w, --qtest-gap) so CSS stays the one source.
+//
+// Type: Figma sets Expo Arabic for the heading and IBM Plex Sans Arabic in the
+// cards; neither is embedded yet, so both stacks fall through to the theme's
+// digits + GE SS Two. !important: qusah-overrides forces `body *`.
 // ====================================================================
+
+$qtest-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
+$qtest-card-font: 'IBM Plex Sans Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
 
 .qtest {
-  font-family: 'GE SS Two', sans-serif;
-  padding-block: 24px;
+  --qtest-card-w: 350.09px;
+  --qtest-card-h: 314.81px;
+  --qtest-gap: 20.9px;
 
-  // hidden until real reviews are fetched & rendered (the class is removed on
-  // success; the section removes itself entirely when the store has no reviews)
-  &.is-loading { display: none; }
+  overflow: hidden;   // the rows are wider than the page
 
-  .container { max-width: none; padding-inline: 80px; }
+  // mock reviews off and none written: Salla's `.s-block { display: block }`
+  // would otherwise beat the [hidden] the Twig sets
+  &[hidden] { display: none; }
 
-  &__box {
-    display: flex; flex-direction: column; align-items: flex-end;
-    gap: 24px;
+  .container {
+    max-width: none;
+    padding-inline: 20px;
   }
 
-  // ---- title (right-aligned, RTL) ----
+  // ---- heading (326:1656) ----
   &__head {
-    direction: rtl; width: 100%;
-    display: flex; flex-direction: column; align-items: flex-start; // flex-start = RIGHT in RTL
-    gap: 12px; text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 39.84px;   // heading block → rows
+    text-align: center;
   }
   &__title {
-    font-size: 32px; font-weight: 500; line-height: 38px; letter-spacing: -0.2px;  // H4 Medium
-    color: #0a1f30; margin: 0;
+    margin: 0;
+    color: #082033;
+    font-family: $qtest-font !important;
+    font-size: 39.74px;
+    font-weight: 400;
+    line-height: 49.67px;
   }
-  &__title-hl { color: #30378e; }
+  &__title-hl { color: inherit; }   // the dashboard's «الكلمة المميزة» — one colour now
   &__subtitle {
-    font-size: 16px; font-weight: 300; line-height: 24px; color: #6c757d; margin: 0;
+    margin: 0;
+    color: #5a6874;
+    font-family: $qtest-font !important;
+    font-size: 15.9px;
+    font-weight: 400;
+    line-height: 25.43px;
   }
 
-  // ---- cards: horizontal swipe carousel (3 per view on desktop) ----
-  &__row {
-    display: flex; direction: rtl;
-    gap: 24px; width: 100%;
-    overflow-x: auto; scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch; scrollbar-width: none;
-    padding: 12px 2px;                       // room so card shadows aren't clipped
-    &::-webkit-scrollbar { display: none; }
+  // ---- the rows: page wide, 41.8 apart ----
+  &__rows {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 41.8px;
+    margin-inline: -20px;   // out of the container's gutter to the page edges
+  }
+  &__viewport {
+    position: relative;
+    height: var(--qtest-card-h);
+    overflow: hidden;
+    touch-action: pan-y;   // a finger still scrolls the page; sideways is ours
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+
+    &.is-dragging { cursor: grabbing; }
+  }
+  &__track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    will-change: transform;
   }
 
-  // ---- footer: "view all" link (right) + prev/next arrows (left) ----
-  &__foot {
-    display: flex; align-items: center; justify-content: space-between;
-    width: 100%; direction: rtl; gap: 16px; margin-top: 4px;
-  }
-  &__all {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 15px; font-weight: 500; color: #30378e; line-height: 1;
-    transition: color .2s ease;
-    i { font-size: 14px; }
-    &:hover { color: #172951; }
-  }
-  &__nav { display: flex; direction: ltr; gap: 8px; }
-  &__arrow {
-    width: 44px; height: 44px; border-radius: 30px; padding: 8px;
-    display: inline-flex; align-items: center; justify-content: center;
-    cursor: pointer; border: 1px solid transparent; transition: opacity .2s ease;
-    i { font-size: 16px; }
-    &:disabled { opacity: .35; cursor: default; }
-  }
-  &__arrow--prev { background: #30378e; border-color: #30378e; color: #fff; }
-  &__arrow--next { background: #daeff7; border-color: #daeff7; color: #0a1f30; }
-}
+  // ---- the card (326:2024) ----
+  &__card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: var(--qtest-card-w);
+    height: var(--qtest-card-h);
+    margin: 0;
+    padding: 15.68px;
+    border-radius: 31.35px;
+    background: #f4f5f7;
+    direction: rtl;
+    text-align: right;
 
-// ---- single testimonial card ----
-.qtcard {
-  display: flex; flex-direction: column; align-items: flex-start;  // right in RTL
-  gap: 12px; padding: 18px;
-  // Figma card decoration (Vector 3): soft cyan glow fading to white.
-  // The glow alternates by card order — odd cards bottom-LEFT, even cards top-LEFT.
-  background:
-    radial-gradient(120% 120% at 0% 100%,
-      rgba(145, 230, 247, .40) 0%,
-      rgba(145, 230, 247, .12) 30%,
-      rgba(145, 230, 247, 0) 58%),
-    #ffffff;
-  border: 1px solid #e6ebf2; border-radius: 12px;
-  direction: rtl; text-align: right; overflow: hidden;
-
-  // carousel item — 3 cards per view on desktop
-  flex: 0 0 calc((100% - 48px) / 3); max-width: calc((100% - 48px) / 3);
-  scroll-snap-align: start;
-  // UX: lift the card off the light background with a soft shadow + hover
-  box-shadow: 0 6px 22px rgba(23, 41, 81, .07);
-  transition: box-shadow .2s ease, transform .2s ease;
-  @media (hover: hover) {
-    &:hover { box-shadow: 0 12px 30px rgba(23, 41, 81, .12); transform: translateY(-2px); }
+    // a shell until its review arrives
+    &.is-empty > * { visibility: hidden; }
   }
-
-  // even (middle) card moves the glow to the TOP-LEFT
-  &:nth-child(even) {
-    background:
-      radial-gradient(120% 120% at 0% 0%,
-        rgba(145, 230, 247, .40) 0%,
-        rgba(145, 230, 247, .12) 30%,
-        rgba(145, 230, 247, 0) 58%),
-      #ffffff;
+  &__quote-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;   // rtl → the rule sits right
+    gap: 26.13px;
   }
-
-  // top: quote LEFT, rating RIGHT
-  &__top {
-    direction: ltr;
-    display: flex; align-items: center; justify-content: space-between;
-    width: 100%; gap: 10px;
-  }
+  // the 20.9 / 1.6 quote: six lines fit above the foot
   &__quote {
-    flex: 0 0 auto; line-height: 0;
-    svg { width: 22px; height: 22px; display: block; fill: #d7dce4; }   // smaller, subtle
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 6;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    color: #314158;
+    font-family: $qtest-card-font !important;
+    font-size: 20.9px;
+    font-weight: 600;
+    line-height: 1.6;
+    quotes: none;
   }
-  // rating — RTL so filled stars sit on the right (Figma)
-  &__rating { direction: rtl; display: inline-flex; gap: 2px; }
-  &__star { font-size: 12px; line-height: 1; color: #f5b50a; }
-
-  // testimonial text — the primary element, larger than the name
-  &__text {
-    font-size: 15px; font-weight: 400; line-height: 24px; color: #4b5563;
-    width: 100%; margin: 0; text-align: right;
-    // clamp long reviews so cards stay compact and uniform
-    display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
+  // 326:2029 — a short rule, black at 5%
+  &__divider {
+    width: 87.52px;
+    height: 0;
+    margin: 0;
+    border: 0;
+    border-top: 1.31px solid rgba(0, 0, 0, .05);
   }
-
-  // user — name block (right) + avatar (far right)
-  &__user {
-    direction: ltr;
-    display: flex; align-items: center; gap: 8px; width: 100%;
+  &__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  &__who {
+    display: flex;
+    flex-direction: column;
+    gap: 2.61px;
+    min-width: 0;
+  }
+  &__name,
+  &__meta {
+    margin: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-family: $qtest-card-font !important;
   }
   &__name {
-    flex: 1 1 auto; min-width: 0;
-    display: flex; flex-direction: column; align-items: flex-end; text-align: right;
+    color: #0f172b;
+    font-size: 18.29px;
+    font-weight: 600;
+    line-height: 26.13px;
   }
-  &__name-main { font-size: 14px; font-weight: 600; line-height: 20px; color: #172951; width: 100%; }
-  &__name-role { font-size: 12px; font-weight: 300; line-height: normal; color: #30378e; width: 100%; }
-  &__avatar {
-    flex: 0 0 40px; width: 40px; height: 40px;
-    border-radius: 50%; overflow: hidden; background: #daeff7;
-    display: inline-flex; align-items: center; justify-content: center;
-    img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    // fallback when a review has no avatar → the customer's initial
-    &--initial { color: #30378e; font-weight: 600; font-size: 15px; }
+  &__meta {
+    color: #90a1b9;
+    font-size: 15.68px;
+    font-weight: 400;
+    line-height: 20.9px;
+  }
+  &__stars {
+    display: flex;
+    flex-shrink: 0;
+    gap: 2.61px;
+    color: #f5b301;
+  }
+  &__star {
+    display: block;
+    width: 18.28px;
+    height: 18.28px;
+
+    &.is-off {
+      color: #90a1b9;
+      opacity: .35;
+    }
+  }
+
+  // ---- the edge fades (326:2880 right, 326:2881 left): white thinning to
+  // 10% across 68.81% of the layer; their widths are the frame's against the
+  // 1440 page. Figma lays a 6.47 backdrop blur under them too — left out at
+  // the user's request (2026-10-01), the white fade alone ----
+  &__fade {
+    display: none;
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+  // the layer's last 20% is masked in, so its flat 10% white doesn't end in a
+  // visible edge over the moving cards (Latafa softens its fades the same way)
+  &__fade--left {
+    left: -.43%;              // -6.12 of 1440
+    width: 32.48%;            // 467.64
+    background: linear-gradient(90deg, #fff .63%, rgba(255, 255, 255, .1) 68.81%);
+    -webkit-mask-image: linear-gradient(90deg, #000 80%, transparent);
+    mask-image: linear-gradient(90deg, #000 80%, transparent);
+  }
+  &__fade--right {
+    right: -.41%;             // -5.89 of 1440
+    width: 26.13%;            // 376.20
+    background: linear-gradient(270deg, #fff .63%, rgba(255, 255, 255, .1) 68.81%);
+    -webkit-mask-image: linear-gradient(270deg, #000 80%, transparent);
+    mask-image: linear-gradient(270deg, #000 80%, transparent);
   }
 }
 
-// ====================================================================
-// Tablet / in-between (769–1024): 3 columns under the heavy 80px container
-// padding get too narrow; trim padding and drop to a 2-column grid.
-// ====================================================================
-@media (min-width: 769px) and (max-width: 1024px) {
-  .qtest .container { padding-inline: 40px; }
-  // 2 cards per view
-  .qtcard { flex-basis: calc((100% - 24px) / 2); max-width: calc((100% - 24px) / 2); }
+@media (min-width: 769px) {
+  // the frame's own top space stands in for the generic block gap (Salla's
+  // .s-block mt-8 / sm:mt-16 — raised selector)
+  .s-block.qtest {
+    margin-top: 0;
+    padding-top: 45.15px;
+  }
+  .qtest__fade { display: block; }
 }
 
-// ====================================================================
-// Mobile (Figma 6036:21971): gradient box, centered title, swipe carousel
-// ====================================================================
+// ---- mobile: Figma 290:8617 — one row, no fades ----
 @media (max-width: 768px) {
-  .qtest { padding-block: 8px; }
-  .qtest .container { padding-inline: 15px; }
+  .qtest {
+    --qtest-card-w: 268.01px;
+    --qtest-card-h: 241px;
+    --qtest-gap: 40px;
 
-  .qtest__box {
-    align-items: center; gap: 20px;
-    padding: 50px 10px 30px;
-    background: linear-gradient(180deg, #daeff7 0%, #ffffff 100%);
-    border-radius: 50px;
+    .container { padding-inline: 0; }
   }
 
-  .qtest__head { align-items: center; text-align: center; }
-  .qtest__title { font-size: 24px; line-height: 30px; letter-spacing: -0.15px; }  // H5
-  .qtest__subtitle { font-size: 16px; line-height: 24px; }
+  .qtest__head {
+    gap: 7px;
+    margin-bottom: 18px;
+  }
+  // Figma's text lines overflow their frames (41.93 in 35.22, 21.47 in 17.61)
+  .qtest__title {
+    height: 35.22px;
+    font-size: 20.13px;
+    line-height: 41.93px;
+  }
+  .qtest__subtitle {
+    height: 17.61px;
+    font-size: 13.42px;
+    line-height: 21.47px;
+  }
 
-  // one card per view (with a peek of the next)
-  .qtest__row { gap: 20px; }
-  .qtcard { flex: 0 0 85%; max-width: 85%; scroll-snap-align: center; }
+  .qtest__rows { margin-inline: 0; }
+  .qtest__viewport--second { display: none; }
 
-  // footer stacks: centered arrows above the "view all" link
-  .qtest__foot { flex-direction: column-reverse; align-items: center; gap: 14px; }
-  .qtest__nav { justify-content: center; }
-  .qtest__arrow { width: 46px; height: 46px; }
+  .qtest__card {
+    padding: 12px;
+    border-radius: 24px;
+  }
+  .qtest__quote-wrap { gap: 20px; }
+  .qtest__quote { font-size: 16px; }
+  .qtest__divider {
+    width: 67px;
+    border-top-width: 1px;
+  }
+  .qtest__who { gap: 2px; }
+  .qtest__name {
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .qtest__meta {
+    font-size: 12px;
+    line-height: 16px;
+  }
+  .qtest__stars { gap: 2px; }
+  .qtest__star {
+    width: 13.99px;
+    height: 13.99px;
+  }
 }
