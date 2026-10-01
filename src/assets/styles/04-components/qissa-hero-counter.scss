@@ -174,22 +174,26 @@ $qibc-digits: (
   }
 
   /* ── Lighting: which segments burn per numeral ───────────────────── */
+  // ONE rule over the 49 digit/segment selectors, not one rule each: the
+  // build can't merge the per-pair copies (the color-mix fallback splits
+  // them), and the 49 copies cost ~15KB of the theme's 1MB. Same selectors,
+  // same specificity, same place in the cascade.
+  $qibc-lit: ();
   @each $digit, $segs in $qibc-digits {
-    &__glyph[data-d='#{$digit}'] {
-      @each $s in $segs {
-        .qibc__seg--#{$s} {
-          background: var(--qibc-ink);
-          box-shadow:
-            0 0 0.07em rgba(210, 230, 255, 0.95),
-            0 0 0.28em rgba(130, 175, 255, 0.6),
-            0 0 0.55em rgba(80, 130, 255, 0.35);
-          box-shadow:
-            0 0 0.07em color-mix(in srgb, var(--qibc-ink) 95%, transparent),
-            0 0 0.28em color-mix(in srgb, var(--qibc-glow) 60%, transparent),
-            0 0 0.55em color-mix(in srgb, var(--qibc-glow) 35%, transparent);
-        }
-      }
+    @each $s in $segs {
+      $qibc-lit: append($qibc-lit, ".qibc__glyph[data-d='#{$digit}'] .qibc__seg--#{$s}", comma);
     }
+  }
+  @at-root #{$qibc-lit} {
+    background: var(--qibc-ink);
+    box-shadow:
+      0 0 0.07em rgba(210, 230, 255, 0.95),
+      0 0 0.28em rgba(130, 175, 255, 0.6),
+      0 0 0.55em rgba(80, 130, 255, 0.35);
+    box-shadow:
+      0 0 0.07em color-mix(in srgb, var(--qibc-ink) 95%, transparent),
+      0 0 0.28em color-mix(in srgb, var(--qibc-glow) 60%, transparent),
+      0 0 0.55em color-mix(in srgb, var(--qibc-glow) 35%, transparent);
   }
 
   /* ── Thousands separator — a lit comma block, baseline-hung ──────── */
