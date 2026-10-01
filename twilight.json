@@ -1929,6 +1929,71 @@
             ]
         },
         {
+            "key": "85405476-35ac-4e8c-8a01-07324a07f319",
+            "title": {
+                "en": "Qissa Bundles",
+                "ar": "بكجات قصة"
+            },
+            "icon": "sicon-box-bankers",
+            "path": "home.qissa-bundles",
+            "fields": [
+                {
+                    "id": "title",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": {
+                        "en": "Title",
+                        "ar": "العنوان"
+                    },
+                    "required": false,
+                    "value": "بكجات قصة"
+                },
+                {
+                    "id": "subtitle",
+                    "type": "string",
+                    "format": "textarea",
+                    "icon": "sicon-format-text-alt",
+                    "label": {
+                        "en": "Subtitle",
+                        "ar": "النص الفرعي"
+                    },
+                    "required": false,
+                    "value": "مناديل قصة ، أعلي جودة وتوفير أكثر"
+                },
+                {
+                    "id": "products",
+                    "type": "items",
+                    "icon": "sicon-keyboard_arrow_down",
+                    "label": "البكجات",
+                    "format": "dropdown-list",
+                    "description": "تظهر بطاقتان في كل صف على الكمبيوتر، وبطاقتان صغيرتان على الجوال",
+                    "selected": [],
+                    "options": [],
+                    "required": true,
+                    "multichoice": true,
+                    "source": "products",
+                    "searchable": true,
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "value": []
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_quick_view",
+                    "format": "switch",
+                    "icon": "sicon-eye",
+                    "label": {
+                        "en": "Show quick view",
+                        "ar": "إظهار النظرة السريعة"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                }
+            ]
+        },
+        {
             "key": "9e3d8876-805d-41fc-a156-1751712f6a74",
             "title": {
                 "en": "Qissa Banner",

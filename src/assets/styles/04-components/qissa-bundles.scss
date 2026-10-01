@@ -1,0 +1,73 @@
+// ====================================================================
+// Qissa Bundles — «بكجات قصة». Figma "Qusah Re-Vamp": desktop 326:565 (1400
+// frame at x 20 of the 1440 page), mobile 290:7685 (402 page).
+//
+// The section wears the products section's heading and container
+// (.qprods — qissa-products.scss: type, 20/16px side space, phone heading);
+// only the grid is its own: two wide cards to a row on desktop, the
+// products section's two-column grid on phones. The card is the shared one
+// (qprod-card.scss); on desktop Figma draws it 677.25 wide with a taller
+// photo, tighter corners and a larger rating — those few values are scoped
+// here. Values are the scaled file's (2 dp).
+// ====================================================================
+
+.qbund__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12.75px;   // Figma's column gap; it shows one row, rows take the same
+  width: 100%;
+  max-width: 1367.25px;   // 2 × 677.25 + 12.75 — centred (Figma's row sits 6px right of centre)
+  direction: rtl;
+}
+
+@media (min-width: 769px) {
+  // the frame's own top/bottom space stands in for the generic block gap
+  // (as .s-block.qprods does — raised selector)
+  .s-block.qbund {
+    margin-top: 0;
+    padding-block: 24.19px 21.66px;
+  }
+  .qbund .qprods__box { gap: 45.28px; }   // heading block → cards
+
+  .qbund__grid {
+    > .qprod { min-height: 535.59px; }   // Figma's card frame
+
+    // the wide card (326:573)
+    .qprod { border-radius: 12.75px; }
+    .qprod__img {
+      height: 297.69px;
+      border-radius: 6.39px;
+    }
+    .qprod__badge {
+      top: 14.88px;
+      right: 12.48px;
+    }
+    .qprod__img .qpc-dots { bottom: 12.1px; }
+
+    // ★★★★☆ (4.5): 13.91 stars 2.14 apart, the value 8.04 beside them
+    .qprod__rating {
+      gap: 8.04px;
+      height: 18.2px;
+    }
+    .qprod__stars {
+      gap: 2.14px;
+
+      img {
+        width: 13.91px;
+        height: 13.27px;
+      }
+    }
+    .qprod__rate { font-size: 11.77px; }
+    .qprod__sold { height: 20.72px; }   // the row is the 19.94 icon's height here
+  }
+}
+
+// ---- mobile: Figma 290:7685 — the products section's grid (290:7925) ----
+@media (max-width: 768px) {
+  .qbund__grid {
+    column-gap: 12.9px;
+    row-gap: 9.92px;
+
+    > .qprod { min-height: 343.91px; }
+  }
+}

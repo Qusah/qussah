@@ -116,14 +116,22 @@ $qprods-phi: .0062, .0228, .0668, .1587, .3085, .5, .6915, .8413, .9332, .9772, 
   }
 
   // fewer than 4 products → centre them at card width instead of stretching
-  // across the row
+  // across the row. Still a grid (card-wide tracks, the empty ones collapse):
+  // the quick view widens an opened card by spanning two tracks, which a flex
+  // row would leave at one card's width.
+  // No max-width here: four tracks fill the 1174.07 cap to 0.02px, and the
+  // fourth must fit for a widened card to sit beside the other two.
   .qprods__grid:not(:has(> .qprod:nth-child(4))) {
-    display: flex;
-    flex-wrap: wrap;
+    grid-template-columns: repeat(auto-fit, 280.99px);
     justify-content: center;
-    gap: 15.82px 16.7px;
-    > .qprod { flex: 0 1 280.99px; }
+    max-width: none;
   }
+}
+
+// ---- phones and tablets: 16 from both page edges (the user's call,
+// 2026-10-01 — Figma has 14.76 on phones, the navy block ran edge to edge) ----
+@media (max-width: 1024px) {
+  .qprods .container { padding-inline: 16px; }
 }
 
 // ---- tablet: 3 then 2 cols ----
@@ -137,8 +145,8 @@ $qprods-phi: .0062, .0228, .0668, .1587, .3085, .5, .6915, .8413, .9332, .9772, 
 // ---- mobile: Figma 290:7925 — heading block, 24 gap, 2-col grid ----
 @media (max-width: 768px) {
   // the mobile frame is drawn tight around its content: no padding of its
-  // own, and the theme's block gap (.s-block) keeps separating sections
-  .qprods .container { padding-inline: 14.76px; }
+  // own, and the theme's block gap (.s-block) keeps separating sections.
+  // Side spacing: the 16 above.
   .qprods__box { gap: 24px; }
 
   .qprods__head { padding: 7.99px 15.99px; }
@@ -193,6 +201,7 @@ $qprods-phi: .0062, .0228, .0668, .1587, .3085, .5, .6915, .8413, .9332, .9772, 
     padding: 63.26px 20px 84.51px;
     gap: 57.38px;   // heading block → grid
     background-color: #2c348e;
+    border-radius: 24px;   // the user's call (2026-10-01); overflow clips the pattern to it
 
     // the pattern: 1600 × 1066.59 from x −140 / y 136.30 of the frame
     &::before {
@@ -231,8 +240,6 @@ $qprods-phi: .0062, .0228, .0668, .1587, .3085, .5, .6915, .8413, .9332, .9772, 
 
 @media (max-width: 768px) {
   .qprods--bg {
-    .container { padding-inline: 0; }   // the navy runs edge to edge on phones
-
     .qprods__box {
       padding: 27.64px 14.76px 30.78px;
       gap: 20px;

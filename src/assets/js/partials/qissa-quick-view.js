@@ -22,12 +22,13 @@
  *      and its back is the navy ticket. Product step: gallery (every photo: a
  *      swipeable scroll-snap track from card-carousel.js + a row of
  *      thumbnails), name, subtitle, rating, «ماذا يوجد في البكج» read from the
- *      description (3 lines, then «عرض N عناصر أخرى» opens the rest in place),
+ *      description (4 boxes, then «عرض N عناصر أخرى» opens the rest in place),
  *      price + saving, qty + add, buy now, trust lines. After an add it slides
  *      to «طلبك», built from the cart the add returned. ×, «أكمل التسوق» and Esc
  *      turn it back and hand focus to the corner. One card open at a time.
  *      Choreography, timing and layout rules are Bareq's (bareq-quick-view.js);
- *      the ticket's look is unchanged. The corner takes the colour
+ *      the ticket keeps its navy but wears the revamp card's type, buttons,
+ *      badges and the Product Hero's «ماذا يوجد» boxes. The corner takes the colour
  *      `quick_view_button_color`. Off when the theme setting
  *      `quick_view_enabled` is off, or for one section when it carries
  *      data-qv="off" — then no corner is drawn and the ticket is never built.
@@ -720,8 +721,9 @@ const Ticket = {
     const box = $('.qqv-in', prod);
     box.hidden = !list.length;
     $('#qqv-in-h', prod).textContent = T.inside(/بكج|باقة|مجموعة|بكجات/.test(name) ? 'البكج' : 'الكرتون');
-    $('.qqv-in-list', prod).innerHTML = list.map((t, k) => `<li${k >= 3 ? ' class="is-more"' : ''}>${IC.check}<span>${esc(latin(t))}</span></li>`).join('');
-    $('.qqv-more', prod).hidden = list.length < 4;
+    // the Product Hero's boxes, two to a row: two rows, then «عرض N عناصر أخرى»
+    $('.qqv-in-list', prod).innerHTML = list.map((t, k) => `<li${k >= 4 ? ' class="is-more"' : ''}>${esc(latin(t))}</li>`).join('');
+    $('.qqv-more', prod).hidden = list.length < 5;
     this.more(box.classList.contains('is-open') && !first);
 
     // price + saving
@@ -836,7 +838,7 @@ const Ticket = {
     if (dx) ths.scrollBy(dx, 0);
   },
 
-  /** «ماذا يوجد»: three lines, then «عرض N عناصر أخرى» opens the rest in place. */
+  /** «ماذا يوجد»: four boxes, then «عرض N عناصر أخرى» opens the rest in place. */
   more(on) {
     const box = $('.qqv-in', this.prod);
     const b = $('.qqv-more', box);
