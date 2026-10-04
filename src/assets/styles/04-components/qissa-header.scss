@@ -1,183 +1,168 @@
-// Qissa header — exact Figma layout, overlays hero.
+// Qissa header nav bar — Figma "Qusah Re-Vamp": desktop 182:30750 (1440 frame),
+// mobile 295:182. The design is scaled ≈0.93, so its values are fractional;
+// they are kept as Figma gives them (2 dp).
 body, main, #app { background: transparent; }
 
 .qheader {
   position: sticky;
-  top: 0;
+  // pinned, the top inset scrolls away so the bar sits flush with the viewport
+  // top — the header's own height never changes, so the page doesn't jump
+  top: -21.4px;
   z-index: 100;
+  // Figma: bar at x 15.81 / y 21.40 in the 1440 frame, 1408.46 wide → 15.73 on the right
+  padding: 21.4px 15.73px 0 15.81px;
+  margin-bottom: 18.6px;   // Figma: the hero banner starts 18.6 below the bar (y 123.73)
   font-family: 'GE SS Two', sans-serif;
   color: #fff;
-  padding-top: 40px;   // push the whole header (top bar + nav) down from the page top
+  // once pinned, the transparent inset around the floating bar must not
+  // swallow clicks on the page scrolling underneath it
+  pointer-events: none;
+  transition: padding .3s ease;
 
-  // The promo bar replaces the utility strip and brings its own bottom gap,
-  // so the header stops padding itself away from the page top — otherwise the
-  // 40px above lands between the bar and the navbar as an unexplained void.
-  &:has(.qpbar) { padding-top: 12px; }
-  transition: background-color .5s ease, box-shadow .5s ease;
-
-  // full-bleed edges aligned to the hero (hero = margin 0 50px, no max-width)
-  .container { max-width: none; margin-inline: auto; padding-inline: 50px; }
-
-  // top bar: normal flow ABOVE hero
-  .qheader-topwrap { background: #fff; padding: 0 0 12px; }
-
-  // main nav wrapper: normal flow, then hero pulls up to overlap it
-  > .container:last-of-type {
-    position: relative;
-    z-index: 50;
-    transition: padding .5s ease;   // eases to full-bleed when pinned
-  }
-
-  // ---- top bar ----
-  .qheader-topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    background: #172951; border: 1px solid #daeff7;
-    border-radius: 100px; padding: 8px 40px; margin-top: 12px;
-    font-size: 12px;
-
-    &__links, &__contact { display: flex; align-items: center; gap: 16px; }
-    a, span { color: #fff; }
-    a:hover { color: #daeff7; }
-    i { font-size: 14px; }
-    // language/currency here is a static display, not a selector
-    .qheader-lang { cursor: default; }
-  }
-  .qheader-sep { width: 1px; height: 12px; background: rgba(255,255,255,.4); }
-
-  // ---- main nav ----
-  // Figma: inside the 1340-wide menu, Cart/Profile sits at x=50 and Logo's
-  // right edge at x=1290 → 50px inset on each side, in addition to the
-  // 50px the container already has. So add 50px inner padding here.
   .qheader-nav {
-    position: relative;
-    display: flex; align-items: center; justify-content: space-between;
-    height: 90px; padding: 12px 50px;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;   // Figma: equal 387px gaps between logo · menu · actions
+    height: 83.73px;
+    // physical sides: the logo ends 31.96 from the right edge, the actions start 37 from the left
+    padding: 17.68px 31.96px 17.68px 37px;
+    border-radius: 14.89px;
+    background: linear-gradient(174.12deg, #172951 7.735%, #25307a 54.226%, #30378e 92.265%);
+    transition: padding .3s ease, border-radius .3s ease;
   }
-  // RTL order: logo right, actions left
-  .qheader-logo    { order: 1; }
-  .qheader-actions { order: 3; }
-  // pill perfectly centered regardless of side widths
+
+  // logo — the wordmark (93.03×32.97) sits at the top of a 92.95×44.65 link box
+  .qheader-logo {
+    display: flex;
+    align-items: flex-start;
+    width: 92.95px;
+    height: 44.65px;
+  }
+  .qheader-logo img {
+    display: block;
+    width: 93.03px;
+    height: 32.97px;
+    object-fit: contain;
+    object-position: right center;
+    filter: brightness(0) invert(1);   // merchant logo → white on the navy bar
+  }
+
+  // pill menu
   .qheader-menu {
-    order: 2;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  // cart + profile (smaller)
-  .qheader-actions { display: flex; align-items: center; gap: 20px; }
-  .qheader-act {
-    display: flex; flex-direction: row-reverse; align-items: center; gap: 6px;   // icon on the right (RTL lead), title on the left
-    &__txt { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.2; }  // RTL start = right → hugs the icon (which sits on the right after row-reverse)
-    &__txt b { font-size: 12px; font-weight: 300; color: #e8fcff; }
-    &__txt em { font-size: 13px; font-weight: 300; font-style: normal; color: #fff; }
-    &__ic {
-      position: relative; display: inline-flex; align-items: center; justify-content: center;
-      width: 34px; height: 34px; border-radius: 50%; background: rgba(48,55,142,.33); color: #fff;
-      i { font-size: 16px; }
-    }
-    &__badge {
-      position: absolute; top: -4px; inset-inline-end: -4px;
-      min-width: 18px; height: 18px; padding: 0 4px;
-      background: #fd7e14; border: 1px solid #fff; border-radius: 30px;
-      color: #fff; font-size: 10px; display: flex; align-items: center; justify-content: center;
-    }
-  }
-
-  // cart CTA "إتمام الطلب" — centered label beside the icon (desktop + mobile).
-  .qheader-act--cart .qheader-act__txt { justify-content: center; }
-  .qheader-act--cart .qheader-act__txt b { font-size: 13px; color: #fff; }
-  // PM: reveal the "إتمام الطلب" label only when the cart has items. The `is-empty`
-  // modifier is set server-side from cart.items_count and kept in sync live by JS
-  // (see app.js initAddToCart → syncCartCta), so it survives a full-page-cached header.
-  .qheader-act--cart.is-empty .qheader-act__txt { display: none; }
-
-  // pill menu (Figma px-25 py-15)
-  .qheader-menu {
-    display: flex; align-items: center; gap: 20px;
-    background: linear-gradient(to right, rgba(51,84,143,.19), rgba(255,255,255,0));
-    border: 1px solid rgba(255,255,255,.06); border-radius: 100px; padding: 15px 25px;
+    display: flex;
+    align-items: center;
+    gap: 36.12px;
+    padding: 13.95px 23.26px;
+    background: rgba(255, 255, 255, .06);
+    border: .93px solid rgba(255, 255, 255, .06);
+    border-radius: 7.44px;
 
     a {
-      position: relative;
-      display: inline-block;
-      margin: 0 12px;
-      color: rgba(255,255,255,.7);       // inactive = dimmed white
-      font-size: 14px; font-weight: 500; line-height: 20px; white-space: nowrap;
+      padding-inline: 11.16px;
+      color: rgba(255, 255, 255, .7);
+      font-size: 13.02px;
+      font-weight: 500;
+      line-height: 18.61px;
+      white-space: nowrap;
       transition: color .15s ease;
       &:hover { color: #fff; }
-
-      // active page — full white + accent underline
-      &.is-active {
-        color: #fff; font-weight: 600;
-        &::after {
-          content: ''; position: absolute; left: 0; right: 0; bottom: -8px;
-          height: 2px; border-radius: 2px; background: #91e6f7;
-        }
-      }
+      &.is-active { color: #91e6f7; font-weight: 700; }
     }
   }
 
-  // logo
-  .qheader-brand  { display: flex; align-items: center; gap: 12px; order: 1; }
-  .qheader-logo   { display: flex; align-items: center; }
-  .qheader-logo img { width: 98px; height: auto; object-fit: contain; filter: brightness(0) invert(1); }
+  // actions — 40.93 white circles, 9.3 apart
+  .qheader-actions {
+    display: flex;
+    align-items: center;
+    gap: 9.3px;
+  }
+  .qheader-act {
+    position: relative;
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 40.93px;
+    height: 40.93px;
+    border-radius: 50%;
+    background: #fff;
+    filter: drop-shadow(0 7.44px 11.16px rgba(8, 32, 51, .06));
 
-  // hamburger — hidden on desktop, shown on mobile (Figma node 187:20038)
+    > img { display: block; }
+    // guest / no-photo account — not in the frame; sized and coloured like the heart
+    i { font-size: 19.54px; line-height: 1; color: #172951; }
+  }
+  .qheader-act--wishlist > img { width: 19.54px; height: 19.54px; }
+  .qheader-act--cart > img { width: 16.91px; height: 16.75px; }
+
+  // customer photo — Figma avatar: cover-fit circle with its own soft shadow
+  .qheader-act--account.has-avatar {
+    overflow: hidden;
+    filter: none;
+    box-shadow: 0 7.44px 22.33px rgba(8, 32, 51, .06);
+  }
+  .qheader-act__avatar { width: 100%; height: 100%; object-fit: cover; }
+
+  // cart count — sits on the circle's top-left corner
+  .qheader-act__badge {
+    position: absolute;
+    top: -2.79px;
+    left: -2.79px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18.61px;
+    height: 18.61px;
+    padding-inline: 3px;   // lets 2-digit counts grow into a pill
+    border-radius: 9.3px;
+    background: #ce1f3c;
+    color: #fff;
+    // Figma sets Expo Arabic Bold, which the theme doesn't load; the digit takes the
+    // site-wide WesternDigits face that qusah-overrides.scss forces on `body *`
+    font-size: 10.23px;
+    font-weight: 700;
+    line-height: 16.37px;
+  }
+  .qheader-act--cart.is-empty .qheader-act__badge { display: none; }
+
+  // hamburger — mobile/tablet only
   .qheader-burger {
     display: none;
-    width: 37px; height: 37px; border-radius: 50%;
-    background: rgba(48,55,142,.33); color: #fff;
-    align-items: center; justify-content: center;
-    border: none; cursor: pointer;
-    i { font-size: 21px; }
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 42.59px;
+    height: 42.59px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    img { display: block; width: 21.3px; height: 21.3px; }
   }
 }
 
-// ---- pinned/sticky state on scroll 
-// JS (header.twig) pulls the header up by the utility-bar height so that bar
-// scrolls off and only the nav stays pinned; .is-stuck is added once it locks.
-// On pin the navy bar eases (0.5s) into a slightly more compact bar and a
-// spacer grows by the exact height lost, so the page content never jumps.
-.qheader-nav {
-  transition: height .5s ease, padding .5s ease, background-color .5s ease,
-              box-shadow .5s ease, border-radius .5s ease;
-}
-.qheader-logo img { transition: width .5s ease, filter .5s ease; }
-
-// compensating spacer — 0 at rest, grows to the compaction delta when pinned
-.qheader-space { height: 0; transition: height .5s ease; }
-
+// ---- pinned — the bar grows to the full viewport width ----
+// .is-stuck is toggled by header.twig once the top inset has scrolled away.
+// The side insets fold into the bar's own padding, so the logo, menu and
+// buttons stay exactly where they were while the navy edges spread out.
 .qheader.is-stuck {
-  // pinned bar breaks out to the full viewport width and goes flat (no radius)
-  > .container:last-of-type { padding-inline: 0; }
-  // desktop compaction: 90px → 76px (delta 14px, matched by the spacer below)
+  padding-left: 0;
+  padding-right: 0;
+
   .qheader-nav {
-    height: 76px;
     border-radius: 0;
-    box-shadow: 0 6px 22px rgba(10, 31, 48, .18);
+    padding-left: 52.81px;    // 37 + 15.81
+    padding-right: 47.69px;   // 31.96 + 15.73
   }
-  .qheader-logo img { width: 84px; }
-  & + .qheader-space { height: 14px; }
 }
 
-// ---- SOLID variant (all pages, home included) ----
-// Navy rounded nav bar with a bottom margin. Same on the homepage now —
-// the nav no longer overlays the hero.
-.qheader--solid {
-  padding-top: 0;
-  .qheader-topwrap { padding: 24px 0 12px; }   // breathing room above the top bar
-  // the nav becomes a solid navy rounded bar
-  .qheader-nav {
-    background: linear-gradient(120deg, #172951 0%, #25307a 55%, #30378e 100%);
-    border-radius: 100px;
-    margin-bottom: 24px;
-    padding-inline: 50px;
-  }
-  // pill menu loses its faint gradient so it blends into the solid bar
-  .qheader-menu { background: rgba(255,255,255,.06); }
+@media (prefers-reduced-motion: reduce) {
+  .qheader,
+  .qheader .qheader-nav { transition: none; }
 }
-// hero starts right after the nav, top bar stays fully above on white
+
+// hero starts right after the nav
 .qissa-hero {
   margin: 0 50px !important;
   border-radius: 30px !important;
@@ -194,75 +179,55 @@ body, main, #app { background: transparent; }
   .qissa-hero { margin: 0 16px !important; border-radius: 24px !important; }
 }
 
-// ---- MOBILE + TABLET — exact Figma "Home Mobile" header (node 187:19970) ----
-// Applied up to 1150px so the tablet nav matches the mobile screen: no top bar,
-// the pill menu collapses to a hamburger, actions become icons-only and the logo
-// centers. Cart keeps its badge; profile collapses to a plain user icon.
+// ---- MOBILE + TABLET — Figma 295:182 ----
+// Up to 1150px (the existing tablet switch): burger · centred logo · cart.
+// The pill menu, wishlist and account move into the .qside drawer.
 @media (max-width: 1150px) {
-  .qheader { padding-top: 15px; }
-  .qheader .container { padding-inline: 15px; }
+  // Figma: bar at x 6 / y 16, 389 wide (402 frame → 7 on the right)
+  .qheader {
+    top: -16px;
+    padding: 16px 7px 0 6px;
+    margin-bottom: 8.3px;   // Figma: bar ends y 80.7, the banner image starts y 89
+  }
 
-  // remove desktop chrome
-  .qheader .qheader-topwrap { display: none; }   // no utility top bar on mobile
-  .qheader .qheader-menu    { display: none; }    // pill replaced by hamburger
-  .qheader .qheader-burger  { display: inline-flex; }
-
-  // nav: Figma mobile header is a 398px banner in a 428px frame.
   .qheader .qheader-nav {
-    direction: ltr;
-    height: 70px;
-    min-height: 70px;
-    padding: 15px;
-    border-radius: 15px;
-    overflow: hidden;
-  }
-  .qheader--solid .qheader-nav { margin-bottom: 24px; }
-
-  // mobile actions (Figma node 6345:7289): cart is a label + total pill, and
-  // the profile/account is relocated to the sidebar.
-  .qheader .qheader-actions { order: 1; gap: 20px; direction: rtl; }
-  .qheader .qheader-act { gap: 7px; }
-  .qheader .qheader-act--account { display: none; }               // profile → sidebar
-  // mobile CTA pill: centered "إتمام الطلب" (no price); the icon/title reversal
-  // comes from the base .qheader-act rule.
-  .qheader .qheader-act--cart .qheader-act__txt {
-    display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.15;
-  }
-  .qheader .qheader-act--cart .qheader-act__txt b { font-size: 13px; font-weight: 500; color: #fff; white-space: nowrap; }
-  .qheader .qheader-act__ic { width: 36px; height: 36px; }
-
-  .qheader .qheader-brand { order: 3; direction: rtl; }
-  .qheader .qheader-logo {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    z-index: 1;
-    transform: translate(-50%, -50%);
+    height: 64.7px;
+    // physical sides, as drawn: the cart starts 11.05 from the left, the burger ends 6.28 from the right
+    padding: 11px 6.28px 11.11px 11.05px;
+    border-radius: 11.05px;
+    background: #30378e;
   }
 
-  // smaller logo (Figma target is about 76px wide).
-  .qheader .qheader-logo img {
-    display: block;
-    width: 76px;
-    max-height: 40px;
-    object-fit: contain;
+  .qheader .qheader-menu,
+  .qheader .qheader-act--wishlist,
+  .qheader .qheader-act--account { display: none; }
+  .qheader .qheader-burger { display: inline-flex; }
+
+  // burger and cart are both 42.59 wide, so space-between centres the logo
+  .qheader .qheader-logo { width: 64.49px; height: 22.85px; }
+  .qheader .qheader-logo img { width: 64.49px; height: 22.85px; object-position: center; }
+
+  .qheader .qheader-act--cart {
+    width: 42.59px;
+    height: 42.59px;
+    filter: none;   // the mobile frame has no shadow on the cart
+    > img { width: 17.6px; height: 17.42px; }
+  }
+  .qheader .qheader-act__badge {
+    top: -2.9px;
+    left: -2.9px;
+    min-width: 19.36px;
+    height: 19.36px;
+    border-radius: 9.68px;
+    font-size: 10.65px;
+    line-height: 17.04px;
   }
 
-  .qheader--solid > .container:last-of-type { margin-bottom: 0; }
-
-  // mobile/tablet compaction: 70px → 62px (delta 8px). Override min-height so
-  // the bar can actually shrink, and match the spacer to the 8px delta.
-  .qheader.is-stuck .qheader-nav { height: 62px; min-height: 62px; }
-  .qheader.is-stuck .qheader-logo img { width: 68px; }
-  .qheader.is-stuck + .qheader-space { height: 8px; }
-}
-
-// very small phones - keep the controls compact without changing layout.
-@media (max-width: 420px) {
-  .qheader .container { padding-inline: 15px; }
-  .qheader .qheader-nav { padding: 15px; }
-  .qheader .qheader-actions { gap: 12px; }
-  .qheader .qheader-logo img { width: 68px; }
+  // pinned: fold the 6 / 7 side insets into the bar's padding
+  .qheader.is-stuck .qheader-nav {
+    padding-left: 17.05px;    // 11.05 + 6
+    padding-right: 13.28px;   // 6.28 + 7
+  }
 }
 
 // ====================================================================

@@ -1,107 +1,402 @@
 // ====================================================================
-// Qissa Listing — product-listing page styling (Figma node 160:2500)
-// SCOPED to .container--products-list (the real product/index.twig) ONLY,
-// so the homepage/offers product grids are NOT affected.
-// CSS-ONLY — does not touch the working Salla components' markup.
-// RTL: grid LEFT (4 cols), filter sidebar RIGHT (282) + banner under.
+// Product listing page — pages/product/index.twig. Figma "Qusah Re-Vamp"
+// desktop 113:34565 (1440 page), mobile 290:8927 (402 page).
+//
+// Breadcrumb, a white bar with two grey dropdown pills («تصفية» right,
+// «ترتيب» left), then Salla's own list of the theme card (qprod-card.scss).
+// Figma draws the card 323.59 wide here — the shared card's values ×1.15,
+// with a larger rating and «مباع» line — so those are scoped below (desktop
+// only; the phone card is the shared one as is). Values are the scaled
+// file's (2 dp). Physical left/right on purpose: the build turns logical
+// properties into LTR sides.
 // ====================================================================
 
-.container--products-list {
-  font-family: 'GE SS Two', sans-serif;
-  max-width: none;
-  padding-inline: 50px;
-  gap: 30px;
-  align-items: flex-start;
+// Figma sets Expo Arabic Book on the breadcrumb and the pills; the theme's
+// stack until it's embedded. !important: qusah-overrides forces `body *`.
+$qlisting-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
 
-  // ----- main content (grid side) -----
-  .main-content { min-width: 0; }
+.qlisting-crumbs,
+.qlisting__bar {
+  &, & * { font-family: $qlisting-font !important; }
+}
 
-  // ----- sort bar (the row with #product-filter) -----
-  .main-content > .mb-4,
-  .main-content > .sm\:mb-6 {
-    padding: 16px;
-    border: 1px solid #ebf6fb;
-    border-radius: 15px;
-    background: linear-gradient(90deg, #ffffff 0%, #f3fafd 100%);
-    margin-bottom: 24px;
-  }
-  // hide the default bold page title in the sort row (breadcrumb already shows it)
-  #page-main-title { display: none; }
+// ---- breadcrumb (113:35227): «الرئيسية / …», grey, from the right ----
+// Figma's line sits 14.94 below where <main> starts (the header's 18.6
+// margin) and 25.3 in from the page edge — further out than the bar.
+.qlisting-crumbs {
+  width: 100%;   // <main> is a flex column: auto margins would shrink it to fit
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 14.94px 25.3px 18.61px;
 
-  // sort label + select → Figma pill text
-  .main-content label[for="product-filter"] {
-    color: #a5a5a5; font-size: 12px; font-weight: 500;
-    margin: 0 0 0 6px;
+  .s-breadcrumb-wrapper {
+    gap: 7.45px;
+    color: #5a6874;
+    font-size: 12.1px;
+    font-weight: 400;
+    line-height: 19.36px;
   }
-  #product-filter {
-    appearance: none; -webkit-appearance: none;
-    background: none; border: none; box-shadow: none;
-    color: #333; font-size: 12px; font-weight: 500;
-    padding: 0 18px 0 4px; cursor: pointer;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23333' stroke-width='2'%3E%3Cpath d='M3 5l3 3 3-3'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: left center;
-    &:focus { outline: none; }
+  a {
+    color: inherit;
+    &:hover { color: #2c348e; }
   }
-
-  // ----- product grid: 4 columns on desktop -----
-  salla-products-list::part(base),
-  .s-products-list-wrapper {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px 16px;
-  }
-  // fallback: if products render in a flex/wrap container
-  salla-products-list {
-    .s-products-list-wrapper { grid-template-columns: repeat(4, 1fr); }
-  }
-
-  // ----- filter sidebar (salla-filters) → Figma look -----
-  #filters-menu {
-    width: 282px; flex: 0 0 282px;
-    background: #fff; border: 1px solid #e9ecef; border-radius: 12px;
-    padding: 17px;
-    --salla-filter-title-color: #172951;
-    --salla-filter-text-color: #6c757d;
-    --salla-filter-active-color: #30378e;
-  }
-
-  // ----- side banner (added in twig, optional) -----
-  .qlist-banner {
-    position: relative; display: block;
-    margin-top: 16px; height: 420px; border-radius: 16px; overflow: hidden;
-    background: linear-gradient(160deg, #172951 0%, #25307a 60%, #30378e 100%);
-    color: #fff;
-    &__body {
-      position: relative; z-index: 2; padding: 24px;
-      display: flex; flex-direction: column; align-items: flex-end;
-      text-align: right; gap: 12px; direction: rtl;
-    }
-    &__eyebrow { font-size: 14px; color: #91e6f7; width: 100%; text-align: right; }
-    &__title { font-size: 18px; font-weight: 700; line-height: 1.4; margin: 0; width: 100%; text-align: right; }
-    &__btn { font-size: 14px; font-weight: 500; width: 100%; text-align: right; &:hover { color: #91e6f7; } }
-    &__img {
-      position: absolute; left: 0; right: 0; bottom: 0; z-index: 1;
-      width: 100%; max-height: 280px; object-fit: contain; object-position: bottom center;
-      pointer-events: none;
-    }
-  }
-
-  // ----- responsive -----
-  @media (max-width: 1280px) {
-    salla-products-list .s-products-list-wrapper { grid-template-columns: repeat(3, 1fr); }
-  }
-  @media (max-width: 1024px) {
-    padding-inline: 16px;
-    #filters-menu { width: 100%; flex-basis: auto; }
-  }
-  @media (max-width: 768px) {
-    salla-products-list .s-products-list-wrapper { grid-template-columns: repeat(2, 1fr); gap: 8px 8px; }
+  // Salla draws a ‹ between the items; Figma has a slash
+  .s-breadcrumb-arrow {
+    margin: 0;
+    svg { display: none; }
+    &::before { content: '/'; }
   }
 }
 
-// ===== homepage qissa-listing component styles (.qlist) =====
+.qlisting {
+  width: 100%;
+  max-width: 1440px;
+  // !important: <main> spaces product.index children with Tailwind's
+  // space-y-16 (64px), which would push the bar off Figma's 8.37 gap
+  margin: 8.57px auto 0 !important;
+  padding: 0 44.44px 131.43px;   // Figma: the grid ends 131.43 above the footer
+
+  // ---- the bar (113:34597) ----
+  &__bar {
+    position: relative;
+    z-index: 5;   // the menus open over the cards (their photo layers sit at 3)
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13.03px 16.75px;
+    border: .93px solid rgba(0, 0, 0, .08);
+    border-radius: 22.34px;
+    background: #fff;
+    direction: rtl;
+  }
+  &__drop { position: relative; }
+  // icon (right) · «تصفية: كل المنتجات» · chevron (left)
+  &__pill {
+    display: flex;
+    align-items: center;
+    gap: 7.45px;
+    height: 40.95px;
+    padding: 0 14.89px;
+    border: 0;
+    border-radius: 999px;
+    background: #f4f5f6;
+    color: #082033;
+    font-size: 13.03px;
+    font-weight: 400;
+    line-height: 20.85px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  &__icon {
+    display: block;
+    flex: none;
+    width: 15.82px;
+    height: 15.82px;
+  }
+  &__chev {
+    display: block;
+    flex: none;
+    width: 14.89px;
+    height: 14.89px;
+    transition: transform .2s ease;
+  }
+  &__drop.is-open &__chev { transform: rotate(180deg); }
+
+  // the open list — not in the Figma frames: the bar's own white, hairline,
+  // pill grey hover and type; the current choice in the card navy
+  &__menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 100%;
+    max-height: 320px;
+    overflow-y: auto;
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    border: .93px solid rgba(0, 0, 0, .08);
+    border-radius: 14.89px;
+    background: #fff;
+    box-shadow: 0 8.57px 12.85px rgba(8, 32, 51, .06);
+
+    &[hidden] { display: none; }
+  }
+  &__drop--sort &__menu {   // the sort pill sits at the bar's left end
+    right: auto;
+    left: 0;
+  }
+  &__opt {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 8.57px;
+    background: none;
+    color: #082033;
+    font-size: 13.03px;
+    line-height: 20.85px;
+    text-align: right;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover { background: #f4f5f6; }
+    &.is-on { color: #2c348e; font-weight: 500; }
+  }
+  &__opt--sub { padding-right: 24px; }
+
+  // «تصفية» open with the store's product filtering on: Salla's own filters
+  // (salla-filters — the old design's sidebar: categories, price, rating, …)
+  // and «إعادة ضبط». The frames don't draw it open; the notes under them
+  // (356:3712) say only the bar was restyled, so the menus' panel carries
+  // Salla's widgets, tightened to fit it.
+  &__menu--filters {
+    width: 320px;
+    max-height: min(70vh, 600px);
+    padding-bottom: 12px;
+
+    // Still laid out while closed, at no height: Salla's widgets measure
+    // themselves when they load, and under display:none they would stay
+    // 0 tall and lose «عرض المزيد».
+    &[hidden] {
+      display: block;
+      visibility: hidden;
+      height: 0;
+      overflow: hidden;
+    }
+
+    .s-filters-widget-container {
+      margin-bottom: 0;
+      padding: 12px 12px 8px;
+    }
+    .s-filters-widget-title {
+      color: #082033;
+      font-size: 14.89px;
+      font-weight: 500;
+    }
+    .s-filters-widget-values { padding-top: 10px; }
+    .s-filters-option-name {
+      color: #5a6874;
+      font-size: 13.03px;
+    }
+  }
+  // the pills' grey; navy on hover like the theme's buttons
+  &__reset {
+    display: block;
+    width: calc(100% - 24px);
+    height: 40.95px;
+    margin: 8px 12px 0;
+    border: 0;
+    border-radius: 999px;
+    background: #f4f5f6;
+    color: #082033;
+    font-size: 13.03px;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease;
+
+    &:hover { background: #2c348e; color: #fff; }
+  }
+
+  // ---- the grid (113:34624): 4 × 323.59, 19.13 apart; Figma's rows meet ----
+  &__list {
+    display: block;
+    margin-top: 51.77px;
+  }
+  .s-products-list-wrapper {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0 19.13px;
+    margin-bottom: 0;
+    direction: rtl;
+  }
+  custom-salla-product-card { min-height: 524.05px; }   // Figma's card frame
+}
+
+// ---- the card at 323.59 (113:34625) ----
+@media (min-width: 769px) {
+  .qlisting custom-salla-product-card.qprod-js {
+    padding: 8.57px;
+    border-width: 1.07px;
+    border-radius: 17.13px;
+  }
+  .qlisting {
+    .qprod__img {
+      height: 252.72px;
+      border-radius: 8.57px;
+    }
+    .qprod__badge {
+      top: 12.85px;
+      right: 19.47px;
+      max-width: calc(100% - 80px);
+      height: 31.26px;
+      padding: 5.35px 12.85px;
+      font-size: 12.85px;
+      line-height: 20.56px;
+    }
+    .qprod__img .qprod__like {
+      top: 12.85px;
+      left: 12.85px;
+      width: 40.69px;
+      height: 40.69px;
+      filter: drop-shadow(0 8.57px 12.85px rgba(8, 32, 51, .06));
+    }
+    .qprod__like-ic {
+      width: 18.2px;
+      height: 18.2px;
+    }
+    .qprod__img .qpc-dots {
+      bottom: 8.57px;
+      gap: 5.35px;
+      padding: 5.35px 7.5px;
+      -webkit-backdrop-filter: blur(6.43px);
+      backdrop-filter: blur(6.43px);
+    }
+    .qprod__img .qpc-dot {
+      width: 6.43px;
+      height: 6.43px;
+      &.is-active { width: 17.13px; }
+    }
+
+    .qprod__info {
+      gap: 12.85px;
+      padding-top: 17.13px;
+    }
+    .qprod__name {
+      font-size: 14.99px;
+      line-height: 24.09px;
+    }
+    .qprod__desc {
+      font-size: 12.85px;
+      line-height: 21.58px;
+    }
+    // ★★★★☆ (4.5): 17.07 stars 2.63 apart; Figma starts them 38.09 from the
+    // value's far edge — 7.94 past the theme digits' 30.15-wide «(4.5)»
+    .qprod__rating {
+      gap: 7.94px;
+      height: 22.33px;
+    }
+    .qprod__stars {
+      gap: 2.63px;
+      img {
+        width: 17.07px;
+        height: 16.29px;
+      }
+    }
+    .qprod__rate { font-size: 14.45px; }
+    .qprod__sold {
+      gap: 1.9px;
+      height: 19.97px;
+      font-size: 15.22px;
+      line-height: 18.2px;
+      img {
+        width: 23.77px;
+        height: 23.77px;
+      }
+    }
+
+    .qprod__price {
+      gap: 8.57px;
+      padding: 17.13px 8.57px;
+    }
+    .qprod__price .qprod__price-now {
+      font-size: 29.98px;
+      line-height: 29.98px;
+    }
+    .qprod__price .qprod__price-old {
+      font-size: 14.99px;
+      line-height: 23.99px;
+    }
+    .qprod__btns salla-add-product-button {
+      &::part(base),
+      button,
+      .s-button-btn,
+      .s-button-element {
+        height: 55.68px !important;
+        min-height: 55.68px !important;
+        padding: 0 29.98px !important;
+        border-radius: 8.57px !important;
+        font-size: 17.13px !important;
+        line-height: 25.7px !important;
+      }
+    }
+  }
+}
+
+// ---- tablets: 3 then 2 columns (as the products section), 15 from the
+// edges — Figma's phone gutter; the frames don't draw a tablet ----
+@media (max-width: 1200px) {
+  .qlisting .s-products-list-wrapper { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 1024px) {
+  .qlisting-crumbs { padding-right: 18px; padding-left: 18px; }
+  .qlisting { padding-right: 15px; padding-left: 15px; }
+}
+@media (max-width: 900px) {
+  .qlisting .s-products-list-wrapper { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+// ---- mobile: Figma 290:8927 — the pills drop their values ----
+@media (max-width: 768px) {
+  // 12.26 below <main> (the header's 8.3 margin), 18 from the right
+  .qlisting-crumbs {
+    padding-top: 12.26px;
+    padding-bottom: 8.26px;
+
+    .s-breadcrumb-wrapper {
+      gap: 7.23px;
+      font-size: 11.75px;
+      line-height: 18.8px;
+    }
+  }
+
+  .qlisting {
+    margin-top: 12.48px !important;
+    padding-bottom: 60.1px;
+
+    &__bar {
+      padding: 14.04px 8.05px;
+      border-width: 1px;
+      border-radius: 15px;
+    }
+    &__pill {
+      gap: 8.02px;
+      height: 44.12px;
+      padding: 0 16.04px;
+      font-size: 14.04px;
+      line-height: 22.46px;
+    }
+    &__value { display: none; }   // «تصفية» / «ترتيب» only
+    &__icon {
+      width: 17.05px;
+      height: 17.05px;
+    }
+    &__chev {
+      width: 16.04px;
+      height: 16.04px;
+    }
+    &__opt {
+      font-size: 14.04px;
+      line-height: 22.46px;
+    }
+    // Salla's filters open across the bar, not hung off the pill
+    &__drop--filters { position: static; }
+    &__menu--filters {
+      left: 0;
+      width: auto;
+    }
+
+    // 290:9027 — the products section's phone grid
+    &__list { margin-top: 11.8px; }
+    .s-products-list-wrapper {
+      column-gap: 12.9px;
+      row-gap: 9.92px;
+    }
+    custom-salla-product-card { min-height: 343.91px; }
+  }
+}
+
 // ====================================================================
-// Qissa Listing — full product-listing page (Figma node 160:2500)
+// Qissa Listing — the editor's «قائمة المنتجات» component (Figma node 160:2500,
+// the old design; hand-picked products, not the listing page above)
 // RTL: grid LEFT (1028, 4 cols), filter sidebar RIGHT (282) + banner under.
 // Gap 30, page gutter 50. Reuses .qprod product card.
 // ====================================================================
@@ -216,51 +511,11 @@
   &__empty-title { font-size: 30px; font-weight: 600; color: #0a1f30; margin: 0 0 8px; }
   &__empty-sub { font-size: 16px; font-weight: 300; color: #6c757d; margin: 0; }
 
-  // ---- filter card ----
+  // ---- filter card (<salla-filters class="qlist__filter">) ----
   &__filter {
+    display: block;
     background: #fff; border: 1px solid #e9ecef; border-radius: 12px;
     padding: 17px;
-  }
-  &__fgroup { & + & { margin-top: 16px; } }
-  &__fhead {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 20px; font-weight: 600; line-height: 24px; color: #172951;
-    margin-bottom: 8px;
-    i { font-size: 16px; color: #172951; }
-  }
-  &__frows { list-style: none; margin: 0; padding: 0; }
-  &__frow {
-    display: flex; align-items: center; gap: 8px;
-    height: 37px;
-    .qlist__fcount { font-size: 13px; color: #30378e; min-width: 38px; }
-    .qlist__fname  { flex: 1; font-size: 17px; color: #6c757d; }
-    &.is-active .qlist__fname { color: #172951; font-weight: 500; }
-  }
-  // radio
-  &__radio {
-    flex: 0 0 18px; width: 18px; height: 18px; border-radius: 50%;
-    border: 1.5px solid #ced4da; position: relative;
-    &.is-on {
-      border-color: #30378e;
-      &::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: #30378e; }
-    }
-  }
-  // rating stars in filter
-  &__stars {
-    flex: 1; display: inline-flex; gap: 2px;
-    span { font-size: 13px; &.on { color: #fd7e14; } &.off { color: #d9dce3; } }
-  }
-  &__more {
-    display: block; text-align: right; font-size: 17px; color: #30378e;
-    margin-top: 6px; padding-block: 6px;
-    &:hover { text-decoration: underline; }
-  }
-  &__divider { display: block; height: 1px; background: #dee2e6; margin: 16px 0; }
-  &__reset {
-    width: 100%; height: 38px; margin-top: 16px;
-    background: #daeff7; color: #30378e; border: none; border-radius: 8px;
-    font-size: 15px; font-weight: 500; cursor: pointer;
-    &:hover { background: #c5e6f2; }
   }
 
   // ---- side banner (under the filter; uploadable image) ----
@@ -286,27 +541,6 @@
     position: absolute; left: 0; right: 0; bottom: 0; z-index: 1;
     width: 100%; max-height: 280px; object-fit: contain; object-position: bottom center;
     pointer-events: none;
-  }
-
-  // ===== functional listing page (real Salla components) =====
-  // sort dropdown styled to match the static sort text
-  &__sort-select {
-    background: none; border: none; cursor: pointer;
-    font-family: 'GE SS Two', sans-serif; font-size: 12px; font-weight: 500;
-    color: #333; padding: 0 4px; appearance: none;
-    &:focus { outline: none; }
-  }
-  // style Salla's native filters to match our card
-  &__filter {
-    display: block;
-    --salla-filters-bg: #fff;
-    background: #fff; border: 1px solid #e9ecef; border-radius: 12px;
-    padding: 17px;
-  }
-  // style Salla's native products list grid to 4 cols
-  &__products {
-    display: block;
-    &::part(products) { /* fallback if shadow parts exposed */ }
   }
 
   // ===== responsive =====

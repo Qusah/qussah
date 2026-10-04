@@ -49,53 +49,7 @@
                 {% if component.products|length %}
                 <div class="qlist__grid">
                     {% for product in component.products %}
-                        <article class="qprod" data-price="{{ product.is_on_sale ? product.sale_price : product.price }}">
-                            {% set badge_text = null %}
-                            {% if product.is_on_sale and product.promotion_title %}
-                                {% set badge_text = product.promotion_title %}
-                            {% elseif product.is_on_sale %}
-                                {% set badge_text = trans('blocks.qissa.sale') %}
-                            {% endif %}
-                            {% include 'components.partials.qprod-image' with { product: product, badge_text: badge_text } %}
-                            <div class="qprod__body">
-                                <div class="qprod__info">
-                                    {% if product.brand.name %}<span class="qprod__cat">{{ product.brand.name }}</span>{% endif %}
-                                    <a href="{{ product.url }}" class="qprod__name">{{ product.name }}</a>
-                                    {% if theme.settings.get('card_show_description', true) and product.description %}<p class="qprod__desc" data-qdesc="{{ product.description|slice(0, 500) }}"></p>{% endif %}
-                                    {% if product.subtitle %}
-                                        <div class="qprod__chips">
-                                            {% for chip in product.subtitle|split('،') %}
-                                                {% if chip|trim %}<span class="qprod__chip">{{ chip|trim }}</span>{% endif %}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                    <div class="qprod__price">
-                                        {% if product.is_on_sale %}
-                                            <b class="qprod__price-now">{{ product.sale_price|money }}</b>
-                                            <s class="qprod__price-old">{{ product.regular_price|money }}</s>
-                                        {% else %}
-                                            <b class="qprod__price-now">{{ product.price|money }}</b>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="qprod__btns">
-                                    <button class="qprod__like" data-id="{{ product.id }}" onclick="salla.wishlist.toggle({{ product.id }})" aria-label="{{ trans('blocks.qissa.wishlist') }}">
-                                        <i class="sicon-heart"></i>
-                                    </button>
-                                    {% if product.is_out_of_stock %}
-                                        <button class="qprod__add qprod__add--oos" type="button" disabled>
-                                            <span>{{ trans('blocks.qissa.out_of_stock') }}</span>
-                                        </button>
-                                    {% else %}
-                                        <button class="qprod__add" type="button"
-                                            onclick="salla.cart.addItem({ id: {{ product.id }}, quantity: 1 })">
-                                            <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
-                                            <i class="sicon-shopping-bag"></i>
-                                        </button>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </article>
+                        {% include 'components.partials.qprod-card' with { product: product, price_attr: true, body_wrap: true } %}
                     {% endfor %}
                 </div>
                 {% else %}

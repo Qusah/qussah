@@ -298,7 +298,7 @@
             "selected": true
         },
         {
-            "id": "slider_background_size",
+            "id": "gallery_image_fit",
             "type": "items",
             "format": "dropdown-list",
             "label": "طريقة عرض الصور في سليدر صور المنتج",
@@ -307,9 +307,9 @@
             "icon": "sicon-list",
             "selected": [
                 {
-                    "label": "اظهار الصورة كاملةً في المنتصف (Contain)",
-                    "value": "contain",
-                    "key": "f4adec13-6e4c-433b-b141-b2807935ced9"
+                    "label": "تغطية الصورة كامل المساحة مع المحافظة على أبعاد الصورة (Cover)",
+                    "value": "cover",
+                    "key": "e9c8ea8f-c5c6-438e-9d45-3bce269afde4"
                 }
             ],
             "options": [
@@ -1203,6 +1203,176 @@
                     "required": false,
                     "value": true,
                     "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_background",
+                    "format": "switch",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Navy background",
+                        "ar": "خلفية كحلية"
+                    },
+                    "description": "يعرض القسم على خلفية كحلية بنقوش قصة. عند إيقافها يظهر القسم بدون خلفية",
+                    "required": false,
+                    "value": false,
+                    "selected": false
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_display_all",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Show \"View all\" button",
+                        "ar": "إظهار زر عرض الكل"
+                    },
+                    "required": false,
+                    "value": false,
+                    "selected": false
+                },
+                {
+                    "type": "items",
+                    "icon": "sicon-link",
+                    "label": "رابط زر عرض الكل",
+                    "id": "display_all_url",
+                    "value": [],
+                    "description": "الصفحة أو التصنيف الذي يفتحه زر عرض الكل — عند تركه فارغاً يختفي الزر",
+                    "required": false,
+                    "format": "variable-list",
+                    "searchable": true,
+                    "source": "custom",
+                    "sources": [
+                        {
+                            "label": "منتج",
+                            "key": "products",
+                            "value": "products"
+                        },
+                        {
+                            "label": "منتجات مع وسم",
+                            "key": "products_tags",
+                            "value": "products_tags"
+                        },
+                        {
+                            "label": "تصنيف",
+                            "key": "categories",
+                            "value": "categories"
+                        },
+                        {
+                            "label": "ماركة تجارية",
+                            "key": "brands",
+                            "value": "brands"
+                        },
+                        {
+                            "label": "صفحة تعريفية",
+                            "key": "pages",
+                            "value": "pages"
+                        },
+                        {
+                            "label": "مقالة",
+                            "key": "blog_articles",
+                            "value": "blog_articles"
+                        },
+                        {
+                            "label": "تصنيف ضمن المدونة",
+                            "key": "blog_categories",
+                            "value": "blog_categories"
+                        },
+                        {
+                            "label": "التخفيضات",
+                            "key": "offers_link",
+                            "value": "offers_link"
+                        },
+                        {
+                            "label": "الماركات التجارية",
+                            "key": "brands_link",
+                            "value": "brands_link"
+                        },
+                        {
+                            "label": "المدونة",
+                            "key": "blog_link",
+                            "value": "blog_link"
+                        },
+                        {
+                            "label": "رابط خارجي",
+                            "key": "custom",
+                            "value": "custom"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "aaa70456-b030-47aa-b537-212982bb3368",
+            "title": {
+                "en": "Qissa Quick Reorder",
+                "ar": "أعد طلبك بسرعة"
+            },
+            "icon": "sicon-refresh",
+            "path": "home.qissa-reorder",
+            "fields": [
+                {
+                    "id": "title",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Title",
+                        "ar": "العنوان"
+                    },
+                    "value": "أعد طلبك بسرعة"
+                },
+                {
+                    "id": "subtitle",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Subtitle",
+                        "ar": "النص الفرعي"
+                    },
+                    "description": "يظهر مع المنتجات المختارة أدناه",
+                    "value": "الأكثر طلبًا هذا الأسبوع"
+                },
+                {
+                    "id": "subtitle_returning",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Subtitle for a returning customer",
+                        "ar": "النص الفرعي للعميل العائد"
+                    },
+                    "description": "يظهر بدل النص الفرعي عندما يعرض القسم منتجات آخر طلب للعميل",
+                    "value": "من طلبك الأخير"
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_personal",
+                    "format": "switch",
+                    "icon": "sicon-user",
+                    "label": {
+                        "en": "Show the customer's last order",
+                        "ar": "اعرض منتجات آخر طلب للعميل"
+                    },
+                    "description": "للعميل المسجل الذي سبق له الطلب — بقية الزوار يرون المنتجات المختارة",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "products",
+                    "type": "items",
+                    "icon": "sicon-keyboard_arrow_down",
+                    "label": "المنتجات المختارة",
+                    "format": "dropdown-list",
+                    "description": "تظهر للزوار وللعملاء الذين لم يطلبوا بعد. بدونها يختفي القسم عنهم ويظهر فقط للعميل الذي له طلب سابق",
+                    "selected": [],
+                    "options": [],
+                    "required": false,
+                    "multichoice": true,
+                    "source": "products",
+                    "searchable": true,
+                    "maxLength": 12,
+                    "minLength": 0,
+                    "value": []
                 }
             ]
         },
@@ -1388,6 +1558,113 @@
             ]
         },
         {
+            "key": "85047fd7-872c-474e-93da-0cab13daa87a",
+            "title": {
+                "en": "Qissa Package Contents (product page)",
+                "ar": "محتويات البكج (صفحة المنتج)"
+            },
+            "icon": "sicon-box-bankers",
+            "path": "home.qissa-pack-contents",
+            "fields": [
+                {
+                    "id": "title",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Package name",
+                        "ar": "اسم البكج"
+                    },
+                    "description": "يظهر هذا العنصر في صفحة المنتج التي تضيفه إليها: من (صفحة تفاصيل المنتج) اختر (تخصيص منتج محدد) ثم البكج، وضعه قبل (تقييمات العملاء).",
+                    "value": ""
+                },
+                {
+                    "id": "tagline",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Line under the package name",
+                        "ar": "العبارة تحت اسم البكج"
+                    },
+                    "value": "كل احتياجات البيت في كرتون واحد، من المصنع إلى بابك"
+                },
+                {
+                    "id": "count",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Total count (big number)",
+                        "ar": "العدد الإجمالي (الرقم الكبير)"
+                    },
+                    "description": "اتركه فارغاً لإخفاء سطر العدد.",
+                    "value": ""
+                },
+                {
+                    "id": "count_label",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Words beside the count",
+                        "ar": "النص بجانب العدد"
+                    },
+                    "value": "عبوة داخل الكرتون"
+                },
+                {
+                    "id": "image",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "en": "Package photo",
+                        "ar": "صورة البكج"
+                    },
+                    "description": "الصورة العريضة تحت العدد — يفضّل بنسبة 2:1",
+                    "value": null
+                },
+                {
+                    "id": "items",
+                    "type": "collection",
+                    "format": "collection",
+                    "maxLength": 10,
+                    "label": "محتويات البكج",
+                    "item_label": "منتج",
+                    "value": [],
+                    "fields": [
+                        {
+                            "type": "string",
+                            "icon": "sicon-image",
+                            "label": "صورة المنتج",
+                            "id": "items.image",
+                            "value": null,
+                            "required": false,
+                            "format": "image",
+                            "description": "صورة مربعة"
+                        },
+                        {
+                            "type": "string",
+                            "icon": "sicon-format-text-alt",
+                            "label": "الكمية",
+                            "id": "items.qty",
+                            "value": null,
+                            "required": false,
+                            "format": "text",
+                            "multilanguage": true,
+                            "placeholder": "32 عبوة"
+                        },
+                        {
+                            "type": "string",
+                            "icon": "sicon-format-text-alt",
+                            "label": "اسم المنتج",
+                            "id": "items.name",
+                            "value": null,
+                            "required": false,
+                            "format": "text",
+                            "multilanguage": true,
+                            "placeholder": "اسم المنتج"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "key": "20dbf092-ba3c-4145-b712-96608270c2b9",
             "title": {
                 "en": "Dual Product Hero",
@@ -1568,8 +1845,8 @@
                     "format": "switch",
                     "icon": "sicon-list",
                     "label": {
-                        "en": "Show spec chips",
-                        "ar": "إظهار مواصفات المنتج"
+                        "en": "Show pack contents",
+                        "ar": "إظهار محتويات البكج"
                     },
                     "required": false,
                     "value": true,
@@ -1594,8 +1871,8 @@
                     "format": "switch",
                     "icon": "sicon-shopping-bag",
                     "label": {
-                        "en": "Show add-to-cart button",
-                        "ar": "إظهار زر الإضافة للسلة"
+                        "en": "Show buy-now button",
+                        "ar": "إظهار زر اشترِ الآن"
                     },
                     "required": false,
                     "value": true,
@@ -1770,70 +2047,54 @@
             ]
         },
         {
-            "key": "5fdf1f78-22c1-4eef-9180-48c976f4f553",
+            "key": "85405476-35ac-4e8c-8a01-07324a07f319",
             "title": {
-                "en": "All Qusah Products",
-                "ar": "جميع منتجات قصة"
+                "en": "Qissa Bundles",
+                "ar": "بكجات قصة"
             },
-            "icon": "sicon-bag",
-            "path": "home.qissa-all-products",
+            "icon": "sicon-box-bankers",
+            "path": "home.qissa-bundles",
             "fields": [
-                {
-                    "id": "title_highlight",
-                    "type": "string",
-                    "format": "text",
-                    "label": {
-                        "en": "Highlighted word",
-                        "ar": "الكلمة المميزة"
-                    },
-                    "value": "منتجات"
-                },
                 {
                     "id": "title",
                     "type": "string",
                     "format": "text",
+                    "icon": "sicon-format-text-alt",
                     "label": {
                         "en": "Title",
                         "ar": "العنوان"
                     },
-                    "value": " وصل حديثا في قصة"
+                    "required": false,
+                    "value": "بكجات قصة"
                 },
                 {
                     "id": "subtitle",
                     "type": "string",
                     "format": "textarea",
+                    "icon": "sicon-format-text-alt",
                     "label": {
                         "en": "Subtitle",
                         "ar": "النص الفرعي"
                     },
-                    "value": "تسوق احدث المنتجات المميزة المضافة جديد"
+                    "required": false,
+                    "value": "مناديل قصة ، أعلي جودة وتوفير أكثر"
                 },
                 {
                     "id": "products",
                     "type": "items",
                     "icon": "sicon-keyboard_arrow_down",
-                    "label": "المنتجات",
+                    "label": "البكجات",
                     "format": "dropdown-list",
-                    "description": null,
+                    "description": "تظهر بطاقتان في كل صف على الكمبيوتر، وبطاقتان صغيرتان على الجوال",
                     "selected": [],
                     "options": [],
                     "required": true,
                     "multichoice": true,
                     "source": "products",
                     "searchable": true,
-                    "maxLength": 8,
+                    "maxLength": 100,
                     "minLength": 1,
                     "value": []
-                },
-                {
-                    "id": "button_url",
-                    "type": "string",
-                    "format": "text",
-                    "label": {
-                        "en": "Button URL",
-                        "ar": "رابط الزر"
-                    },
-                    "value": "/products"
                 },
                 {
                     "type": "boolean",
@@ -1988,7 +2249,7 @@
                             "icon": "sicon-image",
                             "id": "slides.image",
                             "label": "صورة البانر (سطح المكتب)",
-                            "description": "الأبعاد المقترحة 2800×950 بكسل",
+                            "description": "الأبعاد الثابتة 2817×949 بكسل — الصورة بأبعاد مختلفة تُقص من الوسط",
                             "value": null,
                             "required": false
                         },
@@ -1998,7 +2259,7 @@
                             "icon": "sicon-mobile",
                             "id": "slides.image_mobile",
                             "label": "صورة البانر للجوال (اختياري)",
-                            "description": "اتركها فارغة لاستخدام صورة سطح المكتب. المقترح 860×860 أو 860×1075",
+                            "description": "اتركها فارغة لاستخدام صورة سطح المكتب. الأبعاد الثابتة 773×618 بكسل",
                             "value": null,
                             "required": false
                         },
@@ -2047,8 +2308,20 @@
                             "type": "string",
                             "format": "text",
                             "id": "slides.button_url",
-                            "label": "رابط الزر",
+                            "label": "رابط البانر والزر",
+                            "description": "الرابط الذي يفتحه الزر، والبانر كاملاً عند تفعيل الخيار التالي",
                             "value": null,
+                            "required": false
+                        },
+                        {
+                            "type": "boolean",
+                            "format": "switch",
+                            "icon": "sicon-link",
+                            "id": "slides.link_banner",
+                            "label": "جعل البانر كاملاً قابلاً للنقر",
+                            "description": "عند التفعيل ينتقل الزائر إلى الرابط أعلاه بالضغط على أي مكان في البانر، حتى لو تُرك نص الزر فارغاً",
+                            "value": true,
+                            "selected": true,
                             "required": false
                         },
                         {
@@ -3259,29 +3532,29 @@
                         "en": "Subtitle",
                         "ar": "النص الفرعي"
                     },
-                    "value": "بيتم استعراض بعض آراء وتعليقات المستخدمين"
+                    "value": "تقييمات حقيقية من متجر قصة"
                 },
                 {
-                    "id": "count",
-                    "type": "number",
-                    "format": "integer",
-                    "icon": "sicon-list",
+                    "type": "boolean",
+                    "id": "use_real_reviews",
+                    "format": "switch",
+                    "icon": "sicon-star",
                     "label": {
-                        "en": "Number of reviews to show",
-                        "ar": "عدد الآراء المعروضة"
+                        "en": "Show the store's real reviews",
+                        "ar": "عرض تقييمات المتجر الحقيقية"
                     },
-                    "placeholder": "9",
-                    "value": 9,
-                    "minimum": 1,
-                    "maximum": 30
+                    "description": "تعرض كل تقييمات المتجر المكتوبة، وتُحمَّل تدريجياً أثناء الحركة دون أن تُبطئ الصفحة. إذا لم توجد تقييمات تظهر الآراء التجريبية أدناه",
+                    "required": false,
+                    "value": true,
+                    "selected": true
                 },
                 {
                     "id": "items",
                     "key": "2bb58935-a2b4-4d86-af9f-9531d6af008b",
                     "type": "collection",
                     "format": "collection",
-                    "label": "آراء بديلة (عند عدم وجود تقييمات)",
-                    "description": "تُعرض هذه الآراء فقط عندما لا توجد تقييمات حقيقية للمتجر. أضف بعض الآراء هنا كي لا يظهر القسم فارغًا.",
+                    "label": "آراء تجريبية",
+                    "description": "تظهر عند إيقاف «عرض تقييمات المتجر الحقيقية» أو إذا لم يكن للمتجر تقييمات مكتوبة بعد.",
                     "labelHTML": null,
                     "item_label": "رأي",
                     "icon": "sicon-list-add",
@@ -3306,10 +3579,10 @@
                             "key": "66423a29-7851-4af3-89aa-367a171b701c",
                             "type": "string",
                             "format": "text",
-                            "label": "المسمى / المكان",
+                            "label": "المدينة",
                             "description": null,
                             "labelHTML": null,
-                            "placeholder": "المسمى الوظيفي أو المكان",
+                            "placeholder": "مثال: الرياض",
                             "icon": "sicon-format-text-alt",
                             "value": null,
                             "multilanguage": false,
@@ -3320,7 +3593,7 @@
                             "key": "51e3de71-13fc-43e1-a689-d2c6c0a5d849",
                             "type": "string",
                             "format": "textarea",
-                            "label": "نص الرأي",
+                            "label": "نص الرأي (مطلوب ليظهر)",
                             "description": null,
                             "labelHTML": null,
                             "placeholder": "نص الرأي",
@@ -3343,21 +3616,51 @@
                             "required": false,
                             "minimum": 1,
                             "maximum": 5
-                        },
-                        {
-                            "id": "items.avatar",
-                            "key": "a44e0ca6-5eaa-477a-8e5c-372689fd9583",
-                            "type": "string",
-                            "format": "image",
-                            "label": "صورة العميل",
-                            "description": "المقاس المناسب للصورة هو 40*40 بكسل",
-                            "labelHTML": null,
-                            "placeholder": "e.g. https://hostname.com/image.png",
-                            "icon": "sicon-image",
-                            "value": null,
-                            "required": false
                         }
                     ]
+                },
+                {
+                    "type": "boolean",
+                    "id": "two_rows",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Two rows on desktop",
+                        "ar": "صفّان على الكمبيوتر"
+                    },
+                    "description": "كما في التصميم — يتحرك كل صف في اتجاه معاكس. الجوال صف واحد دائماً",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "speed",
+                    "type": "number",
+                    "format": "integer",
+                    "icon": "sicon-clock",
+                    "label": {
+                        "en": "Seconds for one card to pass",
+                        "ar": "مدة مرور البطاقة الواحدة (ثانية)"
+                    },
+                    "description": "كلما زاد الرقم كانت الحركة أبطأ. الافتراضي 9",
+                    "value": 9,
+                    "minimum": 3,
+                    "maximum": 30,
+                    "required": false
+                },
+                {
+                    "type": "boolean",
+                    "id": "pause_on_hover",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Pause under the mouse",
+                        "ar": "إيقاف الحركة عند المرور بالمؤشر"
+                    },
+                    "description": "مغلق افتراضياً ليستمر الشريط دون توقف. يمكن للعميل دائماً سحب البطاقات بالإصبع أو المؤشر",
+                    "required": false,
+                    "value": false,
+                    "selected": false
                 }
             ]
         },

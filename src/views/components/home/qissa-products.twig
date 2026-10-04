@@ -2,19 +2,29 @@
 | Variable                  | Type      | Description                                       |
 |---------------------------|-----------|---------------------------------------------------|
 | component                 | object    | merchant settings from twilight.json              |
-| component.title           | string    | heading first part                                |
-| component.title_highlight | string    | highlighted heading word(s) (royal blue)          |
+| component.title           | string    | heading, after the leading word(s)                |
+| component.title_highlight | string    | heading's leading word(s) — same colour since the revamp |
 | component.subtitle        | string    | subheading                                        |
 | component.products        | Product[] | merchant-selected products (dropdown source)      |
+| component.show_background | bool      | navy block with the Qussah pattern (default off)  |
+| component.show_display_all| bool      | «عرض الكل» button under the grid (default off)     |
+| component.display_all_url | string    | where it goes (Salla link picker); empty hides it |
 | position                  | int       | sorting block                                     |
+
+Figma "Qusah Re-Vamp": desktop 326:1110, mobile 290:7925 — centred heading over
+a 4-col (2 on mobile) grid of the shared Qussah card (partials/qprod-card).
+With show_background: desktop 326:681, mobile 290:8236 — the same heading and
+grid on a navy block carrying the brand pattern (images/qissa-pattern.png).
+The «عرض الكل» button isn't in those frames: it takes the design's cyan button
+(the Product Hero's «اشترِ الآن») and replaces the retired «جميع منتجات قصة».
 #}
 {# Quick view switch for this section (default on; sections saved before the
    field existed carry null, which reads as on). qissa-quick-view.js skips
    the eye trigger for cards inside [data-qv="off"]. #}
 {% set qv_on = (component.show_quick_view is defined and component.show_quick_view is not null) ? component.show_quick_view : true %}
-<section class="s-block qprods" id="qprods-{{ position }}"{% if not qv_on %} data-qv="off"{% endif %}>
+<section class="s-block qprods{% if component.show_background %} qprods--bg{% endif %}" id="qprods-{{ position }}"{% if not qv_on %} data-qv="off"{% endif %}>
     <div class="container">
-        <div class="qprods__box">
+        <div class="qprods__box"{% if component.show_background %} style="--qprods-pattern: url('{{ 'images/qissa-pattern.png' | asset }}')"{% endif %}>
 
             {# centered title #}
             <div class="qprods__head">
@@ -30,67 +40,21 @@
             {% if component.products|length %}
             <div class="qprods__grid">
                 {% for product in component.products %}
-                    <article class="qprod">
-                        {# image + discount badge (swipe carousel when multi-image) #}
-                        {% set badge_text = null %}
-                        {% if product.is_on_sale and product.promotion_title %}
-                            {% set badge_text = product.promotion_title %}
-                        {% elseif product.is_on_sale %}
-                            {% set badge_text = trans('blocks.qissa.sale') %}
-                        {% endif %}
-                        {% include 'components.partials.qprod-image' with { product: product, badge_text: badge_text } %}
-
-                        {# info #}
-                        <div class="qprod__info">
-                            {% if product.brand.name %}
-                                <span class="qprod__cat">{{ product.brand.name }}</span>
-                            {% endif %}
-                            <a href="{{ product.url }}" class="qprod__name">{{ product.name }}</a>
-                            {% if theme.settings.get('card_show_description', true) and product.description %}<p class="qprod__desc" data-qdesc="{{ product.description|slice(0, 500) }}"></p>{% endif %}
-
-                            {# spec chips (from product subtitle, split by | or ، ) #}
-                            {% if product.subtitle %}
-                                <div class="qprod__chips">
-                                    {% for chip in product.subtitle|split('،') %}
-                                        {% if chip|trim %}<span class="qprod__chip">{{ chip|trim }}</span>{% endif %}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-
-                            {# price #}
-                            <div class="qprod__price">
-                                {% if product.is_on_sale %}
-                                    <b class="qprod__price-now">{{ product.sale_price|money }}</b>
-                                    <s class="qprod__price-old">{{ product.regular_price|money }}</s>
-                                {% else %}
-                                    <b class="qprod__price-now">{{ product.price|money }}</b>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        {# buttons — like LEFT, add-to-cart fills RIGHT #}
-                        <div class="qprod__btns">
-                            <button class="qprod__like" data-id="{{ product.id }}" onclick="salla.wishlist.toggle({{ product.id }})" aria-label="{{ trans('blocks.qissa.wishlist') }}">
-                                <i class="sicon-heart"></i>
-                            </button>
-                            {% if product.is_out_of_stock %}
-                                <button class="qprod__add qprod__add--oos" type="button" disabled>
-                                    <span>{{ trans('blocks.qissa.out_of_stock') }}</span>
-                                </button>
-                            {% else %}
-                                <button class="qprod__add" type="button"
-                                    onclick="salla.cart.addItem({ id: {{ product.id }}, quantity: 1 })">
-                                    <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
-                                    <i class="sicon-shopping-bag"></i>
-                                </button>
-                            {% endif %}
-                        </div>
-                    </article>
+                    {% include 'components.partials.qprod-card' with { product: product } %}
                 {% endfor %}
             </div>
             {% else %}
             {# fallback: auto-show latest products when merchant hasn't selected any #}
             <salla-products-list source="latest" limit="8" class="qprods__fallback"></salla-products-list>
+            {% endif %}
+
+            {# optional «عرض الكل» — only with a link to go to #}
+            {% set all_url = component.display_all_url %}
+            {% if component.show_display_all and all_url and all_url != '#' %}
+                <a href="{{ all_url }}" class="qprods__more">
+                    <span>{{ trans('blocks.qissa.view_all') }}</span>
+                    <i class="sicon-arrow-left" aria-hidden="true"></i>
+                </a>
             {% endif %}
 
         </div>

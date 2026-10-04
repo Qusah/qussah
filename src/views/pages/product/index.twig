@@ -16,10 +16,96 @@
 | sort_options[].is_selected | bool        | Is current page sorted by it                                         |
 | search_query               | ?string     |                                                                      |
 #}
+{#
+  Product listing — Figma "Qusah Re-Vamp" desktop 113:34565, mobile 290:8927.
+  Breadcrumb, then a bar with two dropdown pills — «تصفية» and «ترتيب» (Salla's
+  sort options) — then the page's own products in Salla's list, drawn with the
+  theme card (custom-salla-product-card). Styles: 04-components/qissa-listing.scss
+
+  «تصفية» is the old design's filter sidebar behind a pill (the designer's
+  notes under the frames, 356:3712: only the bar's styling changed). With the
+  store's product filtering on (`filters`) it opens Salla's own filters —
+  categories, price, rating, … — which narrow the list in place. With it off
+  Salla sends no filters at all, so the pill lists the store's categories
+  instead (products.js fetches them on first open).
+#}
 {% extends "layouts.master" %}
 {% block content %}
-	{# Hooks kept so editor-placed components can render on this page #}
+	{% if theme.settings.get('product_index_show_breadcrumbs', true) %}
+		<nav class="qlisting-crumbs" aria-label="{{ trans('blocks.qissa.breadcrumb') }}">
+			<salla-breadcrumb></salla-breadcrumb>
+		</nav>
+	{% endif %}
+
+	{#
+    Hook: product.index.before_products_group_with_filter
+    Fires before the products grid. Use it to inject content above the listing.
+  #}
 	<div class="s-blocks-wrapper s-before-products-list !mt-0">{% hook 'product.index.before_products_group_with_filter' %}</div>
+
+	{# the selected sort, else Salla's first (its default order) #}
+	{% set sort_on = sort_options|length ? sort_options|first : null %}
+	{% for sort in sort_options %}
+		{% if sort.is_selected %}{% set sort_on = sort %}{% endif %}
+	{% endfor %}
+
+	{# «كل المنتجات» — the page behind the header's «المنتجات» link (c1390845573, the id
+	   every shop link in the theme uses). Salla's products API does not serve that
+	   category (422: it is not among the store's listed categories), so a list asking
+	   for it stays empty. Its page shows every product instead — source "latest".
+	   Salla ignores sorting for that source, so products.js moves the list onto all
+	   of the store's categories once a sort is picked. #}
+	{% set all_page = page.slug == 'product.index' and page.id == 1390845573 %}
+
+	<section class="qlisting" data-qlisting>
+		<div class="qlisting__bar">
+			{# «تصفية: …» — what is being shown; once filters are picked, their
+			   number instead («تصفية (2)», set by products.js) #}
+			<div class="qlisting__drop{{ filters ? ' qlisting__drop--filters' : '' }}" data-qlisting-drop>
+				<button type="button" class="qlisting__pill" aria-haspopup="true" aria-expanded="false" aria-controls="qlisting-filter">
+					<img class="qlisting__icon" src="{{ 'images/qlisting/filter.svg'|asset }}" alt="" width="16" height="16"/>
+					<span class="qlisting__label">{{ trans('blocks.qissa.filter') }}<span class="qlisting__value" data-qlisting-filter-all>: {{ category ? category.name : trans('blocks.qissa.listing_all') }}</span><span data-qlisting-filter-count hidden></span></span>
+					<img class="qlisting__chev" src="{{ 'images/qlisting/chevron.svg'|asset }}" alt="" width="15" height="15"/>
+				</button>
+				{% if filters %}
+					<div class="qlisting__menu qlisting__menu--filters" id="qlisting-filter" hidden>
+						<salla-filters></salla-filters>
+						<button type="button" class="qlisting__reset" data-qlisting-reset>{{ trans('blocks.qissa.listing_reset') }}</button>
+					</div>
+				{% else %}
+					<ul class="qlisting__menu" id="qlisting-filter" data-qlisting-cats hidden>
+						<li><a class="qlisting__opt" href="{{ store.url ~ '/كل-المنتجات/c1390845573' }}">{{ trans('blocks.qissa.listing_all') }}</a></li>
+					</ul>
+				{% endif %}
+			</div>
+
+			{# «ترتيب: …» — Salla's sort options; products.js re-sorts the list in place #}
+			{% if sort_options|length %}
+				<div class="qlisting__drop qlisting__drop--sort" data-qlisting-drop>
+					<button type="button" class="qlisting__pill" aria-haspopup="true" aria-expanded="false" aria-controls="qlisting-sort">
+						<img class="qlisting__icon" src="{{ 'images/qlisting/sort.svg'|asset }}" alt="" width="16" height="16"/>
+						<span class="qlisting__label">{{ trans('blocks.qissa.listing_sort') }}<span class="qlisting__value">: <span data-qlisting-sort-name>{{ sort_on.name }}</span></span></span>
+						<img class="qlisting__chev" src="{{ 'images/qlisting/chevron.svg'|asset }}" alt="" width="15" height="15"/>
+					</button>
+					<ul class="qlisting__menu" id="qlisting-sort" hidden>
+						{% for sort in sort_options %}
+							<li><button type="button" class="qlisting__opt{{ sort.id == sort_on.id ? ' is-on' : '' }}" data-qlisting-sort="{{ sort.id }}"{{ sort.id == sort_on.id ? ' aria-current="true"' : '' }}>{{ sort.name }}</button></li>
+						{% endfor %}
+					</ul>
+				</div>
+			{% endif %}
+		</div>
+
+		{% hook 'product:index.items.start' %}
+		{# filters-results: the list then hands Salla's filters to <salla-filters> and re-fetches on its changes #}
+		<salla-products-list class="qlisting__list"{% if all_page %} source="latest" data-qlisting-all{% else %} source="{{ page.slug }}" source-value="{{ page.id }}"{% endif %} product-card-component="custom-salla-product-card"{{ filters ? ' filters-results' : '' }}></salla-products-list>
+		{% hook 'product:index.items.end' %}
+	</section>
+
+	{#
+    Hook: product.index.after_products_group_with_filter
+    Fires after the products grid. Use it to inject content below the listing.
+  #}
 	<div class="s-blocks-wrapper s-after-products-list">{% hook 'product.index.after_products_group_with_filter' %}</div>
 	<div class="s-blocks-wrapper s-after-testimonials">{% hook 'product.index.after_testimonials' %}</div>
 {% endblock %}

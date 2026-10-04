@@ -193,42 +193,54 @@
 <salla-search></salla-search>
 <salla-login-modal></salla-login-modal>
 
-{# Cart drawer (the approved «الإجمالي أولاً» design). The header's cart button
+{# Cart drawer — Figma "Qusah Re-Vamp" 339:3416 (empty 339:3553, free shipping
+   to go 341:463, free shipping reached 339:3489). The header's cart button
    opens it from anywhere, so it lives here beside the other global components.
    qissa-cart-drawer.js builds the panel from `salla.cart.api.details()` and
-   keeps it current through the SDK's cart events; nothing in the panel is
-   server-rendered. The empty state IS server-rendered — the cart page's own
-   basket illustration, copy and button — as a <template> the script clones. #}
+   keeps it current through the SDK's cart events. The empty state is
+   server-rendered as a <template> the script clones; the icons' URLs come
+   in with the strings («تصفح المنتجات» goes to the all-products category, the
+   other sections' fallback). #}
 {% if theme.settings.get('cart_drawer_enabled', true) %}
 <div class="qcd" data-qcd hidden>
     <div class="qcd__backdrop" data-qcd-close></div>
     <aside class="qcd__panel" role="dialog" aria-modal="true" aria-label="{{ trans('blocks.qissa.cart_drawer.title') }}"></aside>
     <template data-qcd-empty>
         <div class="qcd__empty">
-            <span class="qcd__empty-icon">{% include 'components.partials.empty-bag' %}</span>
-            <h3 class="qcd__empty-title">{{ trans('pages.cart.empty_cart') }}</h3>
-            <p class="qcd__empty-sub">{{ trans('blocks.qissa.cart_empty_sub') }}</p>
-            <a href="{{ link('/') }}" class="qcd__empty-btn">{{ trans('common.elements.back_home') }}</a>
+            <div class="qcd__empty-text">
+                <h3 class="qcd__empty-title">{{ trans('blocks.qissa.cart_drawer.empty_title') }}</h3>
+                <p class="qcd__empty-sub">{{ trans('blocks.qissa.cart_drawer.empty_sub') }}</p>
+            </div>
+            <div class="qcd__empty-art"><img src="{{ 'images/qcart/empty.jpg'|asset }}" alt="" width="281" height="281" decoding="async"/></div>
+        </div>
+        <div class="qcd__empty-foot">
+            <a href="{{ store.url ~ '/كل-المنتجات/c1390845573' }}" class="qcd__btn">{{ trans('blocks.qissa.cart_drawer.browse') }}</a>
         </div>
     </template>
     <script type="application/json" data-qcd-i18n>{{ {
         'title': trans('blocks.qissa.cart_drawer.title'),
         'count': trans('blocks.qissa.cart_drawer.count'),
-        'none': trans('blocks.qissa.cart_drawer.none'),
         'remaining': trans('blocks.qissa.cart_drawer.remaining'),
-        'free_at': trans('blocks.qissa.cart_drawer.free_at'),
-        'free_done': trans('pages.cart.has_free_shipping'),
-        'before': trans('blocks.qissa.cart_drawer.before'),
+        'free_done': trans('blocks.qissa.cart_drawer.free_done'),
+        'subtotal': trans('blocks.qissa.cart_drawer.subtotal'),
         'discount': trans('blocks.qissa.cart_drawer.discount'),
-        'coupon': trans('blocks.qissa.cart_drawer.coupon'),
-        'final': trans('blocks.qissa.cart_drawer.final'),
+        'shipping': trans('blocks.qissa.cart_drawer.shipping'),
+        'shipping_free': trans('blocks.qissa.cart_drawer.shipping_free'),
+        'shipping_later': trans('blocks.qissa.cart_drawer.shipping_later'),
+        'total': trans('blocks.qissa.cart_drawer.total'),
         'checkout': trans('blocks.qissa.cart_drawer.checkout'),
-        'clear': trans('blocks.qissa.cart_drawer.clear'),
+        'inc': trans('blocks.qissa.cart_drawer.inc'),
+        'dec': trans('blocks.qissa.cart_drawer.dec'),
         'remove': trans('blocks.qissa.cart_drawer.remove'),
         'close': trans('blocks.qissa.cart_drawer.close'),
         'out': trans('pages.cart.out_of_stock'),
         'qty_failed': trans('blocks.qissa.cart_drawer.qty_failed'),
-        'clear_failed': trans('blocks.qissa.cart_drawer.clear_failed')
+        'icons': {
+            'close': 'images/qcart/close.svg'|asset,
+            'minus': 'images/qcart/minus.svg'|asset,
+            'plus': 'images/qcart/plus.svg'|asset,
+            'truck': 'images/qcart/truck.svg'|asset
+        }
     }|json_encode|raw }}</script>
 </div>
 {% endif %}

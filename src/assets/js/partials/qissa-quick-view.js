@@ -13,19 +13,22 @@
  *      button. This part runs whatever the quick-view switches say.
  *
  *   2. The ticket. A folded corner with the eye sits on the card's photo
- *      (always there on phones and touch screens; with a pointer it folds out
- *      on hover/focus). It turns THAT card over, in place: at the edge-on
+ *      (always there on touch screens; with a pointer it folds out on
+ *      hover/focus). On phones (≤768px) the card design puts an eye button
+ *      beside «أضف للسلة» instead, and the corner is hidden (qprod-card.scss).
+ *      Either one turns THAT card over, in place: at the edge-on
  *      moment the card widens — two grid columns, or the whole row when the
  *      grid has fewer than three; its own width inside a slider or a flex row —
  *      and its back is the navy ticket. Product step: gallery (every photo: a
  *      swipeable scroll-snap track from card-carousel.js + a row of
  *      thumbnails), name, subtitle, rating, «ماذا يوجد في البكج» read from the
- *      description (3 lines, then «عرض N عناصر أخرى» opens the rest in place),
+ *      description (4 boxes, then «عرض N عناصر أخرى» opens the rest in place),
  *      price + saving, qty + add, buy now, trust lines. After an add it slides
  *      to «طلبك», built from the cart the add returned. ×, «أكمل التسوق» and Esc
  *      turn it back and hand focus to the corner. One card open at a time.
  *      Choreography, timing and layout rules are Bareq's (bareq-quick-view.js);
- *      the ticket's look is unchanged. The corner takes the colour
+ *      the ticket keeps its navy but wears the revamp card's type, buttons,
+ *      badges and the Product Hero's «ماذا يوجد» boxes. The corner takes the colour
  *      `quick_view_button_color`. Off when the theme setting
  *      `quick_view_enabled` is off, or for one section when it carries
  *      data-qv="off" — then no corner is drawn and the ticket is never built.
@@ -378,6 +381,11 @@ const Cards = {
       }
       box.insertAdjacentHTML('beforeend',
         `<button type="button" class="qqv-ear" aria-expanded="false" aria-label="${esc(T.qvOn(name))}">${IC.eye}<span aria-hidden="true">${T.flip}</span></button>`);
+      // Phones: the Figma card opens the ticket from an eye beside «أضف للسلة»
+      // instead of the corner (qprod-card.scss swaps the two at 768px).
+      slot.insertAdjacentHTML('afterend',
+        `<button type="button" class="qqv-eye" aria-expanded="false" aria-label="${esc(T.qvOn(name))}"><img src="${esc(salla.url.asset('images/qcard/eye.svg'))}" alt="" width="24" height="24"></button>`);
+      card.classList.add('qqv-has-eye');
     }
     this.sync(card);
   },
@@ -519,6 +527,15 @@ function cardName(card) {
 function addBtn(slot) {
   return slot.querySelector(':scope > .qprod__add, :scope > salla-add-product-button');
 }
+/* A card's ticket triggers: the photo corner, and the phones' eye in the
+   button row. Only one is on screen at a time; state goes on both, focus on
+   the one that shows. */
+const TRIG = '.qqv-ear, .qqv-eye';
+function triggers(card) { return $$(TRIG, card); }
+function shownTrigger(card) {
+  const all = triggers(card);
+  return all.find(t => t.getClientRects().length) || all[0] || null;
+}
 function focusable(el) {
   if (!el) return null;
   return el.matches('button') ? el : el.querySelector('button');
@@ -581,7 +598,9 @@ function cardData(card) {
   const now = price($('.qprod__price-now', card));
   const old = price($('.qprod__price-old', card));
   const chips = $$('.qprod__chip', card).map(c => clean(c.textContent)).filter(Boolean);
-  const desc = $('.qprod__desc', card);
+  const sub = $('.qprod__desc--sub', card);   // the card's line under the name, when it is the subtitle
+  if (!chips.length && sub) chips.push(clean(sub.textContent));
+  const desc = $('.qprod__desc:not(.qprod__desc--sub)', card);
   return {
     id,
     name: nameEl ? clean(nameEl.textContent) : '',
@@ -764,8 +783,9 @@ const Ticket = {
     const box = $('.qqv-in', prod);
     box.hidden = !list.length;
     $('#qqv-in-h', prod).textContent = T.inside(/بكج|باقة|مجموعة|بكجات/.test(name) ? 'البكج' : 'الكرتون');
-    $('.qqv-in-list', prod).innerHTML = list.map((t, k) => `<li${k >= 3 ? ' class="is-more"' : ''}>${IC.check}<span>${esc(latin(t))}</span></li>`).join('');
-    $('.qqv-more', prod).hidden = list.length < 4;
+    // the Product Hero's boxes, two to a row: two rows, then «عرض N عناصر أخرى»
+    $('.qqv-in-list', prod).innerHTML = list.map((t, k) => `<li${k >= 4 ? ' class="is-more"' : ''}>${esc(latin(t))}</li>`).join('');
+    $('.qqv-more', prod).hidden = list.length < 5;
     this.more(box.classList.contains('is-open') && !first);
 
     // price + saving
@@ -881,7 +901,7 @@ const Ticket = {
     if (dx) ths.scrollBy(dx, 0);
   },
 
-  /** «ماذا يوجد»: three lines, then «عرض N عناصر أخرى» opens the rest in place. */
+  /** «ماذا يوجد»: four boxes, then «عرض N عناصر أخرى» opens the rest in place. */
   more(on) {
     const box = $('.qqv-in', this.prod);
     const b = $('.qqv-more', box);
@@ -1059,14 +1079,14 @@ const Ticket = {
   async flipOver(card) {
     this.build();
     const id = card.dataset.qqvId;
-    const ear = $('.qqv-ear', card);
+    const trigs = triggers(card);
     let got = null;
     const det = getDetails(id).then(d => { got = d; return d; });
     det.catch(() => {});
     this.card = card;
     // a cart line shows the short ticket: no price, no buttons, no «طلبك»
     this.bk.classList.toggle('qqv-lite', card.classList.contains('qqv-row'));
-    if (ear) ear.setAttribute('aria-expanded', 'true');
+    trigs.forEach(t => t.setAttribute('aria-expanded', 'true'));
     card.classList.add('qqv-turn');
     const a1 = turn(card, 0, 90, 210, E_ACC);
     await settle(a1);
@@ -1081,7 +1101,7 @@ const Ticket = {
     card.appendChild(this.bk);
     this.open = true;
     this.lay(lay);
-    if (ear) ear.setAttribute('aria-controls', 'qqv-bk');
+    trigs.forEach(t => t.setAttribute('aria-controls', 'qqv-bk'));
     playFlip(before, lay.item);
     const a2 = turn(card, -90, 0, 380, E_OUT);
     if (a1) a1.cancel();
@@ -1119,8 +1139,7 @@ const Ticket = {
     this.order.inert = true;
     const going = $('.is-going', this.order);
     if (going) { going.classList.remove('is-going'); going.removeAttribute('aria-busy'); $('.qqv-lbl', going).textContent = T.checkout; }
-    const ear = $('.qqv-ear', card);
-    if (ear) { ear.setAttribute('aria-expanded', 'false'); ear.removeAttribute('aria-controls'); }
+    triggers(card).forEach(t => { t.setAttribute('aria-expanded', 'false'); t.removeAttribute('aria-controls'); });
     if (!card.isConnected) return; // the list re-rendered underneath: nothing left to turn
     playFlip(before, item);
     const a2 = turn(card, 90, 0, 320, E_OUT);
@@ -1128,7 +1147,9 @@ const Ticket = {
     await settle(a2);
     if (a2) a2.cancel();
     card.classList.remove('qqv-turn');
-    if (refocus && ear) ear.focus({ preventScroll: true });
+    // measured now: the front is back on screen, so the visible trigger is findable
+    const back = refocus && shownTrigger(card);
+    if (back) back.focus({ preventScroll: true });
   },
 
   /** The span (grid) or the own-width turn (flex), and the two-column back. */
@@ -1225,7 +1246,7 @@ function onClickCapture(e) {
       return;
     }
   }
-  const ear = e.target.closest('.qqv-ear');
+  const ear = e.target.closest(TRIG);
   if (ear) {
     const card = ear.closest('.qqv-card');
     if (!card || !qvOnFor(card)) return;
@@ -1236,7 +1257,7 @@ function onClickCapture(e) {
 }
 
 function onIntent(e) {
-  const ear = e.target && e.target.closest && e.target.closest('.qqv-ear');
+  const ear = e.target && e.target.closest && e.target.closest(TRIG);
   if (!ear || !sdkReady()) return;
   const card = ear.closest('.qqv-card');
   const id = card && card.dataset.qqvId;
@@ -1311,8 +1332,7 @@ export function enhanceJsCard(card) {
   // A re-render (language pack) replaced the card's insides: put the back again.
   if (Ticket.card === card && Ticket.open && !Ticket.bk.isConnected) {
     card.appendChild(Ticket.bk);
-    const ear = $('.qqv-ear', card);
-    if (ear) { ear.setAttribute('aria-expanded', 'true'); ear.setAttribute('aria-controls', 'qqv-bk'); }
+    triggers(card).forEach(t => { t.setAttribute('aria-expanded', 'true'); t.setAttribute('aria-controls', 'qqv-bk'); });
   }
 }
 

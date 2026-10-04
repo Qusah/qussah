@@ -1,306 +1,490 @@
 // ====================================================================
-// Global Store Footer — Qussah
-// Figma: desktop 6036:1308 (1440) · mobile 6036:22124 (428).
-// White footer, 5 RTL columns (right → left):
-//   About · Account · Links · Contact · Social.
-//   Desktop: single row of 5 columns (About widest, on the right).
-//   Mobile : About full-width, then 2×2 grid (Account+Links, Contact+Social).
-// Dynamic data: store.logo/description, <salla-menu source="footer">,
-// store.contacts.*, <salla-social>, <salla-payments>, copyright hook.
-// The payments/copyright bar is preserved (not part of the selected Figma nodes).
+// Global Store Footer — Qussah revamp. Figma "Qusah Re-Vamp":
+// desktop 113:35234 (frame ≈ the 1440 page), mobile 290:8762 (402).
+//   1. navy help bar   — «تحتاج مساعدة؟» · social / WhatsApp / email
+//   2. white body      — About · important links · account (RTL, right → left);
+//                        phones stack them, the lists as closed accordions
+//   3. bottom          — payment logos · CR / copyright + VAT lines
+// Dynamic data: store.logo/description, store.contacts.*, <salla-social>,
+// <salla-menu source="footer">, <salla-payments>, CR/VAT store settings.
+//
+// Type: the bar, About text and legal lines are Expo Arabic in Figma (not
+// embedded yet — the stack falls through to the theme's digits + GE SS Two);
+// the column titles and links are GE SS Two, which `body *` already applies.
+// !important on the Expo stacks: qusah-overrides forces `body *`.
 // ====================================================================
 
+$qfooter-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
+
 .qfooter {
-  font-family: 'GE SS Two', sans-serif;
   background: #fff;
   direction: rtl;
 
-  // align footer edges with every other section (50px page gutter)
-  .container { max-width: none; padding-inline: 50px; }
-
-  // ---- columns row (desktop: 5 across; RTL order = right→left) ----
-  &__cols {
-    display: flex; align-items: flex-start; gap: 24px;
-    padding-block: 48px;
+  // ---- 1. help bar (113:35235) ----
+  // 20.48 + the 39.08 pills + 20.48 = Figma's 80.02; wraps only when a
+  // store lists more social links than the row holds
+  &__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;   // only once the row is tight; Figma spreads them
+    min-height: 80.02px;
+    padding: 20.48px 40.95px;
+    background: #2c348e;
   }
-
-  // each column is right-aligned (flex-start = RIGHT in RTL)
-  &__col {
-    display: flex; flex-direction: column; align-items: flex-start;
-    gap: 16px; min-width: 0;
+  &__help {
+    margin: 0;
+    color: #fff;
+    font-family: $qfooter-font !important;
+    font-size: 15.82px;
+    font-weight: 600;
+    line-height: 22.34px;
+    white-space: nowrap;
   }
-
-  // column widths from Figma
-  &__about    { flex: 1 1 0; }
-  &__links-col,
-  &__contact  { flex: 0 0 175px; }
-  &__social   { flex: 0 0 200px; }
-
-  // ---- column heading ----
-  &__title {
-    margin: 0; width: 100%;
-    font-weight: 500; font-size: 18px; line-height: 25px;
-    color: #30378e; text-align: right;
+  // DOM: social · WhatsApp · email → right to left in RTL
+  &__reach {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 13.03px;
+    min-width: 0;
   }
-
-  // ---- generic link list ----
-  &__list {
-    list-style: none; margin: 0; padding: 0; width: 100%;
-    display: flex; flex-direction: column; gap: 8px;
-  }
-
-  // ---- link / contact rows ----
-  &__link, &__contact-item {
-    display: flex; flex-direction: row; justify-content: flex-end;
-    gap: 4px; width: 100%;
-    color: #6c757d; font-weight: 300; font-size: 16px; line-height: 25px;
-    text-align: right; transition: color .2s ease;
-    &:hover { color: #30378e; }              // Figma hover state = royal-blue
-  }
-  &__link { align-items: center; }
-  &__contact-item { align-items: flex-start; }
-  &__link span { flex: 1 1 0; min-width: 0; }
-
-  // hover also recolours the chevron + contact label/value to royal-blue
-  &__link:hover &__arrow,
-  &__contact-item:hover &__arrow { color: #30378e; }
-  &__contact-item:hover &__contact-label,
-  &__contact-item:hover &__contact-val { color: #30378e; }
-
-  // » chevron — small double-angle mark, gray/400.
-  // Sits BEFORE the link text (first child → visual right / line start in RTL).
-  &__arrow {
-    flex: 0 0 auto; font-style: normal; line-height: 25px; color: #ced4da;
-    transition: color .2s ease;
-    &::before { content: '\00BB'; font-size: 12px; }
-  }
-
-  // ---- Links column (dynamic merchant footer menu) ----
-  // <salla-menu source="footer"> renders <a class="s-menu-footer-item">.
-  // Give each the same » chevron before the text as the manual links above.
-  &__menu .s-menu-footer-item {
-    display: flex; flex-direction: row; align-items: center;
-    justify-content: flex-start; gap: 4px;
-    color: #6c757d; font-weight: 300; font-size: 16px; line-height: 25px;
-    text-align: right; transition: color .2s ease;
-    &::before {
-      content: '\00BB'; flex: 0 0 auto;
-      font-size: 12px; color: #ced4da; transition: color .2s ease;
-    }
-    &:hover { color: #30378e; &::before { color: #30378e; } }
-  }
-
-  // ---- About column ----
-  &__logo {
+  // 113:35237 / 113:35244 — white pill: icon (right) + LTR text
+  &__pill {
     display: inline-flex;
-    img { height: 40px; width: auto; display: block; }
+    flex: none;
+    align-items: center;
+    gap: 7.45px;
+    height: 39.08px;
+    padding: 0 16.75px;
+    border-radius: 929.79px;
+    background: #fff;
+  }
+  &__pill-icon {
+    display: block;
+    flex: none;
+    width: 18.61px;
+    height: 18.61px;
+  }
+  &__pill-text {
+    color: #2c348e;
+    font-family: $qfooter-font !important;
+    font-size: 13.03px;
+    font-weight: 600;
+    line-height: 13.03px;
+    white-space: nowrap;
+  }
+
+  // 113:35251 — <salla-social>: ul.s-social-list > li.s-social-link > a > span > svg
+  // (Salla's own icons; its component CSS draws round outlined 2rem links)
+  &__social {
+    display: block;
+    flex: none;
+
+    .s-social-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7.45px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .s-social-link a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 35.37px;
+      height: 35.37px;
+      border: 0;
+      border-radius: 9.31px;
+      background: rgba(255, 255, 255, .16);
+      color: #fff;
+    }
+    .s-social-icon { display: flex; }
+    .s-social-link svg {
+      width: 16.75px;
+      height: 16.75px;
+      fill: currentColor;
+    }
+  }
+
+  // ---- 2. body (113:35267) ----
+  &__main {
+    padding: 37.23px 40.95px 16.88px;   // bottom: what Figma draws below the logos
+  }
+  // the columns row is 5.59 wider than its three columns + gaps and starts
+  // them at the far end, so About sits that much in from the gutter.
+  // Physical sides on purpose: the build turns logical ones into LTR sides.
+  &__cols {
+    display: flex;
+    align-items: flex-start;
+    gap: 87.49px;
+    min-height: 208.48px;
+    padding-right: 5.59px;
+  }
+  &__col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;   // RTL → right
+    gap: 14.89px;
+    min-width: 0;
+  }
+
+  // About (113:35299): logo frame 93.07 × 44.67 with the mark in its top 32.98,
+  // drawn like the header's (qissa-header.scss) — the merchant's own logo
+  &__about {
+    flex: 0 0 383.46px;
+    gap: 13.03px;
+  }
+  &__logo {
+    display: flex;
+    align-items: flex-start;
+    width: 93.07px;
+    height: 44.67px;
+
+    img {
+      display: block;
+      width: 93.07px;
+      height: 32.98px;
+      object-fit: contain;
+      object-position: right center;
+    }
   }
   &__about-text {
-    margin: 0; max-width: 336px;
-    color: #6c757d; font-weight: 300; font-size: 16px; line-height: 25px;
+    width: 302.48px;
+    max-width: 100%;
+    margin: 0;
+    color: #292929;
+    font-family: $qfooter-font !important;
+    font-size: 12.1px;
+    font-weight: 400;
+    line-height: 22.34px;
     text-align: right;
   }
 
-  // ---- Contact column ----
-  &__contact-text { display: flex; flex-direction: column; flex: 1 1 0; min-width: 0; }
-  &__contact-label { color: #6c757d; font-size: 16px; line-height: 25px; }
-  &__contact-val {
-    font-family: 'Poppins', sans-serif; font-weight: 300;
-    color: #6c757d; font-size: 16px; line-height: 25px;
+  // link columns: each 186.14 list sits at its column's right. Figma's
+  // account column (541.68) runs into the left gutter; here it takes what is
+  // left instead, so every right edge stays where Figma has it. Under ~1040
+  // the pages column gives way too.
+  &__links-col--pages   { flex: 0 1 295.97px; min-width: 186.14px; }
+  &__links-col--account { flex: 1 1 0; min-width: 186.14px; }
+
+  // titles and links sit in 24-tall rows (their 23.27 leading) — 38.89 apart
+  &__title {
+    width: 186.14px;
+    min-height: 24px;
+    margin: 0;
+    color: #30378e;
+    font-size: 16.75px;
+    font-weight: 500;
+    line-height: 23.27px;
+    text-align: right;
+  }
+  &__list {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14.89px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  // <salla-menu source="footer">: div > div.s-menu-footer-list > a.s-menu-footer-item
+  &__menu {
+    display: block;
+
+    .s-menu-footer-list {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14.89px;
+    }
+  }
+  &__link,
+  &__menu .s-menu-footer-item {
+    display: block;
+    min-height: 24px;
+    margin: 0;
+    color: #6c757d;
+    font-size: 14.89px;
+    font-weight: 500;
+    line-height: 23.27px;
+    text-align: right;
+    transition: color .2s ease;
+
+    &:hover { color: #30378e; }
   }
 
-  // ---- Social column (salla-social renders the store's links) ----
-  &__social salla-social { display: block; width: 100%; }
-  &__social .social-link {
-    width: 34px; height: 34px;
-    display: inline-flex; align-items: center; justify-content: center;
+  // ---- 3. bottom (113:35309): payments RIGHT · legal lines LEFT ----
+  &__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22.34px;   // only once the row is tight
+    margin-top: 22.34px;
+    padding-top: 18.61px;
+    border-top: .58px solid rgba(0, 0, 0, .08);
   }
 
-  // ---- bottom bar lives in its own `.qissa-footer-bottom` block (below) ----
+  // <salla-payments>: ul.s-payments-list > div#…-slot > li.s-payments-list-item > img
+  // (made-in-KSA's li sits in the ul directly; the SBC one wraps its img in a link)
+  &__payments {
+    min-width: 0;
 
-  // ============ tablet / in-between (769–1100) ============
-  // 5 columns can't fit (Account/Links/Contact/Social are fixed 175/175/200px),
-  // so About was squeezed to ~0 and the fixed columns overlapped each other.
-  // Put About on its own row, then let the other four share the row as equal
-  // flexible columns.
-  @media (min-width: 769px) and (max-width: 1100px) {
-    &__cols { flex-wrap: wrap; gap: 24px; }
-    &__about { flex: 0 0 100%; }
-    &__about-text { max-width: 100%; }
-    &__links-col,
-    &__contact,
-    &__social { flex: 1 1 0; min-width: 0; }
+    // both frames run Salla's list left → right (mada first, COD last)
+    .s-payments-list {
+      direction: ltr;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 7.45px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .s-payments-list > div { display: contents; }   // the slot wrappers
+    // 113:35315 — boxes as drawn: white at 5% on white, so only the logo shows
+    .s-payments-list-item {
+      display: flex;
+      flex: none;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      width: auto;
+      height: 30.93px;
+      margin: 0;
+      padding: 6.52px 11.17px;
+      border: .58px solid rgba(255, 255, 255, .1);
+      border-radius: 7.45px;
+      background: rgba(255, 255, 255, .05);
+    }
+    .s-payments-list-item a { display: flex; }
+    .s-payments-list-item img {
+      display: block;
+      flex: none;
+      width: auto;
+      max-width: none;
+      height: 16.75px;
+      max-height: none;
+      border-radius: 0;
+      object-fit: contain;
+    }
   }
 
-  // ================= mobile (Figma 6036:22124) =================
-  @media (max-width: 768px) {
-    .container { padding-inline: 15px; }
-    &__cols { flex-wrap: wrap; gap: 24px; padding-block: 32px; }
+  // Figma's desktop copyright line (113:35311), now with the CR line above it
+  &__legal {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;   // RTL → hugs the left gutter like the copyright
+    flex: none;
+  }
+  &__legal-line {
+    margin: 0;
+    color: #292929;
+    font-family: $qfooter-font !important;
+    font-size: 11.17px;
+    font-weight: 400;
+    line-height: 16.75px;
+    white-space: nowrap;
 
-    // About on its own row; the other four pair up 2-per-row
-    &__about { flex: 0 0 100%; }
-    &__about-text { max-width: 100%; }
-    &__links-col,
-    &__contact,
-    &__social { flex: 1 1 calc(50% - 12px); }
-
-    &__title { font-size: 16px; }
+    span { vertical-align: top; }   // the digit spans would deepen the line
   }
 }
 
-// ====================================================================
-// Footer bottom bar — Figma desktop 6036:1409 / mobile 6036:22227.
-// Royal-blue pill: payment icons (left) · VAT number+badge · copyright (right).
-//   Desktop: single row, radius 100px.
-//   Mobile : stacked column, radius 20px (payments top → copyright bottom).
-// Payment icons come from <salla-payments> (dynamic; no local assets exist and
-// Figma temp URLs are not used). VAT number/badge from store.settings.tax.*.
-// ====================================================================
-.qissa-footer-bottom {
-  font-family: 'GE SS Two', sans-serif;
-  direction: rtl;
-  display: flex; flex-direction: row; align-items: center;
-  gap: 24px;
-  margin-bottom: 24px;
-  padding: 16px 80px;
-  background: #30378e; border-radius: 100px;
+// ---- in between (769–1023): the three columns no longer fit one row —
+// About takes its own row, the two lists share the next ----
+@media (min-width: 769px) and (max-width: 1023px) {
+  .qfooter__cols {
+    flex-wrap: wrap;
+    row-gap: 37.23px;
+  }
+  .qfooter__about { flex-basis: 100%; }
+  .qfooter__bottom { flex-wrap: wrap; }
+  .qfooter__legal-line { white-space: normal; }
+}
 
-  // copyright (RIGHT on desktop) — fills remaining space
-  &__copyright {
-    flex: 1 1 0; min-width: 0; margin: 0;
-    color: #fff; font-weight: 300; font-size: 14px; line-height: normal; text-align: right;
+// ---- mobile: Figma 290:8762 ----
+@media (max-width: 768px) {
+  // help bar (290:8805): 86 tall (24 + the 38 squares + 24), 12 in on the
+  // right, 7 on the left
+  .qfooter__bar {
+    min-height: 86px;
+    padding: 24px 12px 24px 7px;
   }
-  &__year { font-family: 'Poppins', sans-serif; font-weight: 300; }
-
-  // VAT number + badge
-  &__tax {
-    flex: 0 0 auto;
-    display: flex; flex-direction: row; align-items: center; gap: 8px;
+  .qfooter__help {
+    font-size: 17px;
+    line-height: 24px;
   }
-  &__tax-num {
-    color: #f8f8f8; font-weight: 300; font-size: 14px; line-height: normal; white-space: nowrap;
+  .qfooter__reach { gap: 8px; }
+  // WhatsApp / email become white icon squares (290:8808, 290:8813)
+  .qfooter__pill {
+    position: relative;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border-radius: 10px;
   }
-  &__tax-badge {
-    flex: 0 0 auto; width: 22.5px; height: 30px;
-    border-radius: 2px; object-fit: cover;
+  .qfooter__pill-icon {
+    width: 20px;
+    height: 20px;
   }
-
-  // payment methods (LEFT on desktop) — Figma logos in white rounded boxes
-  &__payments {
-    flex: 0 0 auto;
-    display: flex; flex-direction: row; align-items: center; gap: 8px;
+  .qfooter__pill-text {   // still the link's name for screen readers
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
   }
-  // Logos now come from <salla-payments>, which renders
-  // <ul.s-payments-list><li.s-payments-list-item>. Each li keeps the Figma white
-  // rounded box the static logos used (w60 h31 r5, p10).
-  &__payments .s-payments-list {
-    display: flex; flex-direction: row; align-items: center; flex-wrap: wrap;
-    gap: 8px; margin: 0; padding: 0; list-style: none;
-  }
-  &__payments .s-payments-list-item {
-    box-sizing: border-box;
-    flex: 0 0 auto; width: 60px; height: 31px; padding: 0 7px; margin: 0;
-    background: #fff; border-radius: 5px;
-    display: inline-flex; align-items: center; justify-content: center;
-    img { max-width: 100%; max-height: 25px; width: auto; height: auto; object-fit: contain; display: block; }
-    // the SBC badge is wrapped in a link to the official certificate page
-    a { display: inline-flex; align-items: center; justify-content: center; max-width: 100%; }
-  }
-
-  // ---- tablet / in-between (769–1024): keep the horizontal pill but trim the
-  //      heavy 80px side padding so payments + VAT + copyright stop colliding ----
-  @media (min-width: 769px) and (max-width: 1024px) {
-    padding: 16px 32px;
-    gap: 16px;
-  }
-
-  // ---- mobile (Figma 6036:15433): stacked, radius 20 ----
-  @media (max-width: 768px) {
-    box-sizing: border-box;
-    width: 100%;
-    flex-direction: column-reverse;      // payments top, copyright bottom
-    gap: 12px;
-    margin: 0 0 24px;
-    padding: 16px clamp(24px, 12vw, 64px);
-    border-radius: 20px;
-
-    .qissa-footer-bottom__copyright {
-      flex: 0 0 auto;
-      width: 100%;
-      text-align: center;
-      white-space: nowrap;
+  .qfooter__social {
+    .s-social-list { gap: 8px; }
+    .s-social-link a {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
     }
-    .qissa-footer-bottom__tax { justify-content: center; }
-    .qissa-footer-bottom__tax-num { white-space: nowrap; }
-    .qissa-footer-bottom__payments {
-      width: 100%;
+    .s-social-link svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  // body: 24 under the bar, the 375 column of the 402 frame
+  .qfooter__main { padding: 24px 13.5px 21.63px; }
+  .qfooter__cols {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    min-height: 0;
+    padding: 0;
+  }
+
+  // About (290:8766): logo 100 × 51, the text 13 under it; the first
+  // accordion rule falls 165.98 below the logo's top (two lines of text:
+  // 51 + 13 + 51.2 + 50.78)
+  .qfooter__about {
+    flex: none;
+    gap: 13px;
+    padding-bottom: 50.78px;
+  }
+  .qfooter__logo {
+    width: 100px;
+    height: 51px;
+
+    img {
+      width: 100px;
+      height: 51px;
+    }
+  }
+  .qfooter__about-text {
+    width: 100%;
+    color: #5a6874;
+    font-size: 16px;
+    line-height: 25.6px;
+  }
+
+  // accordions (290:8770 account first, 290:8776 links): a 12% navy rule on
+  // top, 14 above and below the 18 / 22.5 title
+  .qfooter__links-col {
+    flex: none;
+    min-width: 0;
+    gap: 0;
+    padding-block: 14px;
+    border-top: 1px solid rgba(44, 52, 142, .12);
+  }
+  .qfooter__links-col--account { order: 1; }
+  .qfooter__links-col--pages   { order: 2; }
+  .qfooter__title {
+    width: 100%;
+    min-height: 0;
+    color: #082033;
+    font-family: $qfooter-font !important;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 22.5px;
+  }
+  // the open list — Figma draws the lists closed only; these are the
+  // desktop links at the mobile frame's 1:1 scale (16 / 25, 16 apart)
+  .qfooter__list,
+  .qfooter__menu .s-menu-footer-list { gap: 16px; }
+  .qfooter__list,
+  .qfooter__menu { padding-top: 14px; }
+  .qfooter__link,
+  .qfooter__menu .s-menu-footer-item {
+    font-size: 16px;
+    line-height: 25px;
+  }
+
+  // payments 40 under the last rule (290:8782), the legal lines (290:8801)
+  // 12 under the logos' 33 row
+  .qfooter__bottom {
+    display: block;
+    margin-top: 40px;
+    padding-top: 0;
+    border-top: 0;
+  }
+  .qfooter__payments {
+    .s-payments-list {
       flex-wrap: nowrap;
       justify-content: center;
+      gap: 8px;
     }
+    // Figma's eight boxes are squeezed to fit the 375 row, logos untouched
+    .s-payments-list-item {
+      flex: 0 1 auto;
+      min-width: 0;
+      height: 33px;
+      padding: 7px 12px;
+      border-width: .625px;
+      border-radius: 8px;
+    }
+    .s-payments-list-item img { height: 18px; }
   }
-
-  @media (max-width: 390px) {
-    padding-inline: 32px;
-
-    .qissa-footer-bottom__payments .s-payments-list-item { width: 52px; padding-inline: 6px; }
-    .qissa-footer-bottom__copyright,
-    .qissa-footer-bottom__tax-num { font-size: 13px; }
+  .qfooter__legal {
+    align-items: flex-start;   // RTL → right, as drawn
+    gap: 16px;
+    margin-top: 12px;
   }
-
-  @media (max-width: 360px) {
-    padding-inline: 24px;
-
-    .qissa-footer-bottom__payments .s-payments-list-item { width: 50px; }
+  .qfooter__legal-line {
+    color: #5a6874;
+    font-size: 12px;
+    line-height: 19.2px;
+    white-space: normal;
+    text-align: right;
   }
 }
 
-// ====================================================================
-// Trust line above the bottom pill — legal entity name + CR number.
-// CR comes from store.settings.commercial_number; the legal name is a theme
-// setting (theme.settings.get('legal_entity_name')) because Salla exposes no
-// legal-entity field. Sits on the white footer, so muted grey rather than white.
-// ====================================================================
-.qissa-footer-trust {
-  direction: rtl;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-start; // RTL: flex-start = visual RIGHT
-  gap: 8px 20px;
-  margin-bottom: 12px;
-  padding-inline: 80px;
-  color: #6c757d;
-  font-family: 'GE SS Two', sans-serif;
-  font-size: 14px;
-  font-weight: 300;
-  line-height: normal;
-  text-align: right;
-
-  &__item { white-space: nowrap; }
-
-  @media (min-width: 769px) and (max-width: 1024px) {
-    padding-inline: 32px;
-  }
-
-  @media (max-width: 768px) {
-    justify-content: center;
-    text-align: center;
-    padding-inline: clamp(24px, 12vw, 64px);
-    font-size: 13px;
-  }
+// ---- under the 375 phones: five 38 squares + the title need 360 with
+// Figma's 8 gaps — 5 keeps them on one row at 360 ----
+@media (max-width: 374px) {
+  .qfooter__reach,
+  .qfooter__social .s-social-list { gap: 5px; }
 }
 
 // ====================================================================
 // Footer accordion (mobile only) — assets/js/partials/footer-accordion.js.
 // Each titled column collapses under its heading; the chevron points down
-// when closed and up when open. Closed by default on the cart page.
+// when closed and up when open (290:8772 — 18px, 1.5 stroke at 18).
 // ====================================================================
 .qfooter__title.ftg-head {
-  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 .qfooter .ftg-chev {
-  display: none; flex: 0 0 auto; width: 18px; height: 18px;
-  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  display: none;
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
   transition: transform .2s ease;
 }
 @media (max-width: 768px) {
