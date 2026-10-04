@@ -299,6 +299,8 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
   border-radius: 7.44px; overflow: hidden; aspect-ratio: 1.9;
   background: #f4f5f6;
   .qpc-carousel { scroll-behavior: auto; }   // the JS picks smooth or instant
+  // a photo opens the zoomable viewer (image-viewer.js); set only while it is on
+  &.is-zoomable .qpc-slide { cursor: zoom-in; }
 }
 // padding keeps the current ring and the focus ring inside the strip's scroll box
 .qqv-ths {

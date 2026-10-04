@@ -3,6 +3,7 @@ import BasePage from './base-page';
 import Fslightbox from 'fslightbox';
 window.fslightbox = Fslightbox;
 import { zoom } from './partials/image-zoom';
+import { bindGallery } from './partials/image-viewer';
 
 const quiet = fn => (salla.api && typeof salla.api.withoutNotifier === 'function' ? salla.api.withoutNotifier(fn) : fn());
 
@@ -20,6 +21,10 @@ class Product extends BasePage {
         this.initPack();
         this.initRelated();
         this.initComments();
+
+        // A click on a gallery photo opens the zoomable viewer instead of
+        // fslightbox (videos still go to fslightbox) — partials/image-viewer.js.
+        bindGallery('.image-slider');
 
         if(imageZoom){
             // call the function when the page is ready

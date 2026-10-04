@@ -103,3 +103,8 @@ body.qpd-has-sticky{
     bottom: calc(var(--qpd-sticky-h, 76px) + 12px) !important;
   }
 }
+// The full-screen photo viewer (image-viewer.scss, z-index 100000): the chat
+// buttons float above it (GetButton sits at 16000160) and would lie on the photo.
+html:has(.imgv.is-open) {
+  [id^="gb-widget"], #tidio-chat, a.wa-s-n { visibility: hidden !important; }
+}

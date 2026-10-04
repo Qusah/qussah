@@ -1,0 +1,168 @@
+/* ==========================================================================
+   Image viewer — the product photo, full screen, with a real zoom
+   --------------------------------------------------------------------------
+   Script : src/assets/js/partials/image-viewer.js (product page gallery and
+            the quick view's photo)
+
+   A dark stage, like the fslightbox it replaces for photos, so opening a
+   picture looks the way it always has. The controls are plain white glyphs on
+   the dark: the viewer belongs to no one section, so it carries no brand
+   colour of its own.
+
+   Layer: above the theme's sticky bar, the cart drawer and the quick view;
+   still under Salla's own modals (999999).
+
+   Physical left/right for the two arrows on purpose: the script maps them to
+   previous/next by the page direction, so the stylesheet needs no [dir] pair.
+   ========================================================================== */
+
+.imgv {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  color: #fff;
+  background: rgb(12 14 18 / 96%);
+  opacity: 0;
+  transition: opacity .2s ease;
+  -webkit-tap-highlight-color: transparent;
+
+  &[hidden] { display: none; }
+  &.is-open { opacity: 1; }
+
+  /* ---- top bar: the count at the inline start, the tools at the end ---- */
+  &__bar {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 60px;
+    padding: 8px 12px;
+    padding-top: max(8px, env(safe-area-inset-top));
+  }
+
+  &__count {
+    padding-inline: 8px;
+    font-size: 14px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: rgb(255 255 255 / 80%);
+  }
+
+  &__tools {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__btn,
+  &__nav {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    color: #fff;
+    cursor: pointer;
+    background: rgb(255 255 255 / 10%);
+    border: 0;
+    border-radius: 50%;
+    transition: background-color .2s ease;
+
+    &:hover { background: rgb(255 255 255 / 20%); }
+    &:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  }
+
+  /* ---- stage ----------------------------------------------------------
+     `touch-action: none`: the stage reads every gesture itself — pinch, pan
+     and swipe — so the browser must not scroll or zoom the page under it. */
+  &__stage {
+    position: relative;
+    /* flex, not grid: a grid here would size its one track to the picture, and
+       the picture's `max-height: 100%` would then have nothing to hold it to —
+       a 1000px photo ran off a 700px stage. */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 0;
+    padding: 8px 12px 28px;
+    overflow: hidden;
+    touch-action: none;
+    cursor: default;
+    user-select: none;
+  }
+
+  &__img {
+    display: block;
+    flex: none;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    cursor: zoom-in;
+    transform-origin: center;
+    transition: transform .28s cubic-bezier(.2, .8, .2, 1), opacity .2s ease;
+    will-change: transform;
+    -webkit-user-drag: none;
+  }
+
+  &.is-zoomed &__img { cursor: grab; }
+  &.is-dragging &__img { cursor: grabbing; }
+  &.is-loading &__img { opacity: .35; }
+
+  /* ---- previous / next ---- */
+  &__nav {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    margin-top: -22px;
+
+    &--l { left: 12px; }
+    &--r { right: 12px; }
+  }
+
+  &.is-single &__nav { display: none; }
+
+  /* On a zoomed picture the arrows would sit on what the shopper is looking
+     at, and a drag moves the picture rather than turning the page. */
+  &.is-zoomed &__nav {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* ---- the one-line hint, until the first zoom ---- */
+  &__hint {
+    position: absolute;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    left: 50%;
+    z-index: 2;
+    margin: 0;
+    padding: 6px 12px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: rgb(255 255 255 / 85%);
+    white-space: nowrap;
+    pointer-events: none;
+    background: rgb(0 0 0 / 45%);
+    border-radius: 999px;
+    transform: translateX(-50%);
+    transition: opacity .2s ease;
+  }
+
+  &.is-touched &__hint { opacity: 0; }
+
+  /* Phones: swiping turns the page, so the arrows only take room. */
+  @media (hover: none) and (max-width: 767px) {
+    &__nav { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &__img { transition: none; }
+  }
+}

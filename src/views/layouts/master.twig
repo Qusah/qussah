@@ -105,6 +105,10 @@
     <script data-cfasync="false">
         window.header_is_sticky = "{{theme.settings.get('header_is_sticky', 'Default Value')}}"
         window.imageZoom = "{{theme.settings.get('imageZoom')}}"
+        {# The zoomable photo viewer (partials/image-viewer.js). `off` only when the
+           merchant switched it off; a store that never saved the setting keeps it on. #}
+        {% set image_viewer_setting = theme.settings.get('image_viewer', true) %}
+        window.image_viewer = "{{ (image_viewer_setting is not null and not image_viewer_setting) ? 'off' : 'on' }}"
         window.can_access_wallet = {{ user.can_access_wallet | json_encode }}
         window.enable_more_menu = "{{ theme.settings.get('enable_more_menu', true) }}"
         window.enable_add_product_toast = "{{ theme.settings.get('enable_add_product_toast', true) }}"
