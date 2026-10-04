@@ -11,8 +11,11 @@ const path = href => {
 
 /**
  * Product listing (pages/product/index.twig): the two pills over Salla's list.
- * «تصفية» lists the store's categories, fetched on first open; «ترتيب» re-sorts
- * the list in place and keeps ?sort= in the URL, as the native select did.
+ * «تصفية» opens Salla's own filters (<salla-filters>, which talks to the list
+ * itself) when the store has product filtering on — this only counts what is
+ * picked and resets it — and otherwise lists the store's categories, fetched
+ * on first open. «ترتيب» re-sorts the list in place and keeps ?sort= in the
+ * URL, as the native select did.
  */
 class Products extends BasePage {
     onReady() {
@@ -30,8 +33,10 @@ class Products extends BasePage {
             const option = event.target.closest('[data-qlisting-sort]');
             option && this.sortBy(option);
         });
+        // composedPath, not contains(): Salla's filter widgets re-render on a click,
+        // and a target already replaced would read as a click outside
         document.addEventListener('click', event => {
-            this.open && !this.open.contains(event.target) && this.toggle(this.open, false);
+            this.open && !event.composedPath().includes(this.open) && this.toggle(this.open, false);
         });
         document.addEventListener('keydown', event => {
             if (event.key !== 'Escape' || !this.open) {
@@ -42,12 +47,62 @@ class Products extends BasePage {
             pill.focus();
         });
 
-        // a ?sort= the page was opened with — Salla's list reads it itself
+        // a ?sort= the page was opened with — Salla's list reads it itself; the
+        // «كل المنتجات» page first needs the source Salla sorts (sortableSource)
         const sort = new URLSearchParams(location.search).get('sort');
         const option = sort && this.root.querySelector(`[data-qlisting-sort="${CSS.escape(sort)}"]`);
-        option && this.markSort(option);
+        if (option) {
+            this.markSort(option);
+            this.productsList.hasAttribute('data-qlisting-all') && customElements.whenDefined('salla-products-list')
+                .then(() => this.sortableSource())
+                .then(() => this.productsList.source === 'categories' && this.productsList.reload());
+        }
 
         this.markHere();
+        this.initFilters();
+    }
+
+    initFilters() {
+        this.filters = this.root.querySelector('salla-filters');
+        if (!this.filters) {
+            return;
+        }
+        const drop = this.filters.closest('[data-qlisting-drop]');
+        const sync = () => this.filters.getFilters && this.filters.getFilters().then(filters => this.markFilters(filters));
+
+        salla.event.on('salla-filters::changed', filters => this.markFilters(filters));
+        // after <salla-filters> has taken the new set in (it listens to the same event)
+        salla.event.on('filters::fetched', () => {
+            drop.hidden = false;
+            setTimeout(sync);
+        });
+        // Salla has no filters for this listing: nothing to open
+        salla.event.on('filters::hidden', () => {
+            this.open === drop && this.toggle(drop, false);
+            drop.hidden = true;
+        });
+        this.root.querySelector('[data-qlisting-reset]').addEventListener('click', () => this.filters.resetFilters && this.filters.resetFilters());
+        sync();
+    }
+
+    // «تصفية: كل المنتجات» with nothing picked, «تصفية (2)» otherwise
+    markFilters(filters) {
+        const page = String(salla.config.get('page.id'));
+        const filled = value => value != null && value !== '' && (typeof value !== 'object' || Object.keys(value).length > 0);
+        let count = 0;
+        Object.keys(filters || {}).forEach(key => {
+            const value = filters[key];
+            // Salla's payload carries extras (`event`, an empty `param`); the page's
+            // own category is the filter Salla adds by itself on a category page
+            if (key === 'event' || !filled(value) || (key === 'category_id' && [].concat(value).every(id => String(id) === page))) {
+                return;
+            }
+            count += key === 'variants' ? Object.keys(value || {}).length : 1;
+        });
+        const badge = this.root.querySelector('[data-qlisting-filter-count]');
+        this.root.querySelector('[data-qlisting-filter-all]').hidden = count > 0;
+        badge.hidden = !count;
+        badge.textContent = ` (${salla.helpers.number(count)})`;
     }
 
     toggle(drop, on) {
@@ -79,30 +134,60 @@ class Products extends BasePage {
         const sort = option.dataset.qlistingSort;
         this.markSort(option);
         window.history.replaceState(null, null, salla.helpers.addParamToUrl('sort', sort));
+        await this.sortableSource();
         this.productsList.sortBy = sort;
         await this.productsList.reload();
         this.productsList.setAttribute('filters', `{"sort": "${sort}"}`);
     }
 
-    // the store's categories (and their subcategories) after «كل المنتجات»
+    // The «كل المنتجات» page lists source "latest" (every product), which Salla
+    // never sorts. A sort moves it, once, onto all the store's categories — the
+    // widest source Salla does sort.
+    async sortableSource() {
+        const list = this.productsList;
+        if (!list.hasAttribute('data-qlisting-all') || list.source === 'categories') {
+            return;
+        }
+        const ids = (await this.categories()).map(([cat]) => cat.id_).filter(Boolean);
+        if (ids.length) {
+            list.source = 'categories';
+            list.sourceValue = JSON.stringify(ids);
+        }
+    }
+
+    // the store's categories with their subcategories: [category, is a sub] rows
+    categories() {
+        this.cats = this.cats || salla.product.api.categories().then(res => {
+            const rows = [];
+            (res?.data || []).forEach(cat => {
+                rows.push([cat, false]);
+                (cat.sub_categories || []).forEach(sub => rows.push([sub, true]));
+            });
+            return rows;
+        }).catch(() => {
+            this.cats = null;   // ask again next time
+            return [];
+        });
+        return this.cats;
+    }
+
+    // «تصفية» without Salla's filters: the categories, after «كل المنتجات»
     loadCategories(menu) {
         if (menu.dataset.loaded) {
             return;
         }
         menu.dataset.loaded = '1';
         const seen = new Set(Array.from(menu.querySelectorAll('a'), a => path(a.href)));
-        salla.product.api.categories().then(res => {
-            const rows = [];
-            (res?.data || []).forEach(cat => {
-                rows.push([cat, false]);
-                (cat.sub_categories || []).forEach(sub => rows.push([sub, true]));
-            });
+        this.categories().then(rows => {
+            if (!rows.length) {
+                return menu.removeAttribute('data-loaded');
+            }
             menu.insertAdjacentHTML('beforeend', rows
                 .filter(([cat]) => cat?.url && !seen.has(path(cat.url)))
                 .map(([cat, sub]) => `<li><a class="qlisting__opt${sub ? ' qlisting__opt--sub' : ''}" href="${esc(cat.url)}">${esc(cat.name)}</a></li>`)
                 .join(''));
             this.markHere();
-        }).catch(() => menu.removeAttribute('data-loaded'));
+        });
     }
 
     // the category this page shows

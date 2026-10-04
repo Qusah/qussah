@@ -34,6 +34,7 @@
       "filter": "Filter",
       "listing_all": "All products",
       "listing_sort": "Sort",
+      "listing_reset": "Reset",
       "breadcrumb": "Breadcrumb",
       "no_products_yet": "No products yet",
       "no_products_match": "Your search did not match any products",

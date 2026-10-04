@@ -145,6 +145,58 @@ $qlisting-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
   }
   &__opt--sub { padding-right: 24px; }
 
+  // «تصفية» open with the store's product filtering on: Salla's own filters
+  // (salla-filters — the old design's sidebar: categories, price, rating, …)
+  // and «إعادة ضبط». The frames don't draw it open; the notes under them
+  // (356:3712) say only the bar was restyled, so the menus' panel carries
+  // Salla's widgets, tightened to fit it.
+  &__menu--filters {
+    width: 320px;
+    max-height: min(70vh, 600px);
+    padding-bottom: 12px;
+
+    // Still laid out while closed, at no height: Salla's widgets measure
+    // themselves when they load, and under display:none they would stay
+    // 0 tall and lose «عرض المزيد».
+    &[hidden] {
+      display: block;
+      visibility: hidden;
+      height: 0;
+      overflow: hidden;
+    }
+
+    .s-filters-widget-container {
+      margin-bottom: 0;
+      padding: 12px 12px 8px;
+    }
+    .s-filters-widget-title {
+      color: #082033;
+      font-size: 14.89px;
+      font-weight: 500;
+    }
+    .s-filters-widget-values { padding-top: 10px; }
+    .s-filters-option-name {
+      color: #5a6874;
+      font-size: 13.03px;
+    }
+  }
+  // the pills' grey; navy on hover like the theme's buttons
+  &__reset {
+    display: block;
+    width: calc(100% - 24px);
+    height: 40.95px;
+    margin: 8px 12px 0;
+    border: 0;
+    border-radius: 999px;
+    background: #f4f5f6;
+    color: #082033;
+    font-size: 13.03px;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease;
+
+    &:hover { background: #2c348e; color: #fff; }
+  }
+
   // ---- the grid (113:34624): 4 × 323.59, 19.13 apart; Figma's rows meet ----
   &__list {
     display: block;
@@ -324,6 +376,12 @@ $qlisting-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     &__opt {
       font-size: 14.04px;
       line-height: 22.46px;
+    }
+    // Salla's filters open across the bar, not hung off the pill
+    &__drop--filters { position: static; }
+    &__menu--filters {
+      left: 0;
+      width: auto;
     }
 
     // 290:9027 — the products section's phone grid
