@@ -143,6 +143,32 @@ body { --qqv-ear: #{$navy}; --qqv-ink: #fff; }
 @media (max-width: 1023px), (hover: none) { .qqv-has-trig .qpc-dots { left: 44px; } }
 
 // ====================================================================
+// The cart page. A cart line's photo is 111 × 87, so its corner is a small
+// fixed one at every width — the card's hover fold (88px) would cover it —
+// and it carries no «قلّب» word. Both classes on purpose: these have to
+// outrank the card's hover rules above.
+// ====================================================================
+
+.qqv-card.qqv-row {
+  .qqv-ear,
+  &:hover .qqv-ear,
+  &:focus-within .qqv-ear { width: 36px; height: 36px; border-radius: 0 0 0 8px; }
+  .qqv-ear:hover,
+  .qqv-ear:focus-visible { width: 44px; height: 44px; }
+  .qqv-ear .qqv-i { bottom: 4px; left: 4px; width: 15px; height: 15px; }
+}
+
+// The short ticket a cart line turns into: photos, name, «ماذا يوجد» and the
+// description. Everything that sells — price, quantity, add, buy, the product
+// page link, the trust row, the steps — is left out; the cart already has it.
+.qqv-lite {
+  .qqv-steps, .qqv-price, .qqv-buy, .qqv-pdp, .qqv-trust { display: none !important; }
+  .qqv-top { justify-content: flex-end; }
+  // the description is what this ticket is for: six lines, not the card's two
+  .qqv-desc { -webkit-line-clamp: 6; }
+}
+
+// ====================================================================
 // The open card. Its front is hidden and its frame handed to the back; the
 // card stays the grid item and the whole thing turns as one. Nothing here
 // applies to a resting card.
