@@ -55,7 +55,9 @@ $qpd-muted: #5a6874;
     text-align: right;
   }
 
-  // ---- the photo (168:7926): 663.07 × 504.75, whatever the image's shape ----
+  // ---- the photo (168:7926): 663.07 × 504.75, whatever the image's shape. The
+  // frame crops a full-width photo (168:7927 is a 663 square) — the theme's
+  // «طريقة عرض الصور» setting, «Cover» by default; «Contain» letterboxes it. ----
   // .details-slider raises these over slider.scss, which is imported later
   .details-slider .s-slider-block__title { display: none; }
   .details-slider .s-slider-container {
@@ -709,7 +711,9 @@ $qpd-muted: #5a6874;
 
     &[hidden] { display: none; }
 
-    // two soft beams of light, top right and left
+    // two spotlights from the top corners onto the product (113:35930–31): each
+    // a strip hinged on its own top-left corner, white at the lamp end. Figma's
+    // layer blur (53.25) is twice CSS's.
     &::before,
     &::after {
       content: '';
@@ -718,10 +722,11 @@ $qpd-muted: #5a6874;
       right: -72.79px;
       width: 112.86px;
       height: 254.63px;
-      background: linear-gradient(90deg, #fff, rgba(145, 230, 247, .3));
+      background: linear-gradient(#fff, rgba(145, 230, 247, .3));
       opacity: .5;
-      filter: blur(53.25px);
+      filter: blur(26.63px);
       transform: rotate(45deg);
+      transform-origin: 0 0;
       pointer-events: none;
     }
     &::after {
@@ -780,6 +785,7 @@ $qpd-muted: #5a6874;
   }
   .qpd-pack__tiles {
     display: flex;
+    flex-wrap: wrap;   // five to a row, as drawn; a sixth starts the next row
     justify-content: center;
     gap: 14.92px;
     width: 100%;
@@ -787,7 +793,7 @@ $qpd-muted: #5a6874;
   }
   .qpd-pack__tile {
     display: flex;
-    flex: 0 1 131.51px;
+    flex: 0 0 min(131.51px, calc((100% - 59.68px) / 5 - .1px));
     flex-direction: column;
     align-items: center;
     gap: 13.06px;
@@ -1763,10 +1769,10 @@ $qpd-muted: #5a6874;
       &::before,
       &::after {
         top: -15.44px;
-        right: -36.61px;
+        right: -35.61px;
         width: 56.55px;
         height: 127.59px;
-        filter: blur(46.74px);
+        filter: blur(23.37px);
       }
       &::after {
         top: 23.66px;
@@ -1802,7 +1808,7 @@ $qpd-muted: #5a6874;
       margin-top: 11.22px;
     }
     .qpd-pack__tile {
-      flex-basis: 65px;
+      flex-basis: min(65px, calc((100% - 29.72px) / 5 - .1px));
       gap: 6.5px;
       padding: 7.43px 4px 3.36px;
       border-width: .46px;

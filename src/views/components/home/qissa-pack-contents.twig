@@ -7,7 +7,7 @@
 | component.count        | string  | the big number (empty → no count line)                   |
 | component.count_label  | string  | the words beside that number                             |
 | component.image        | string  | the wide photo                                           |
-| component.items        | array   | what is inside, in order (up to 6)                       |
+| component.items        | array   | what is inside, in order (up to 10; five to a row)       |
 | item.image             | string  | the tile's photo                                         |
 | item.qty               | string  | how many — «32 عبوة»                                     |
 | item.name              | string  | what it is                                               |
@@ -42,7 +42,7 @@ product.js shows it where Salla did not hand the block the page's product.
 
         {% if component.items|length %}
             <div class="qpd-pack__tiles">
-                {% for item in component.items|slice(0, 6) %}
+                {% for item in component.items|slice(0, 10) %}
                     <div class="qpd-pack__tile">
                         {% if item.image %}<img src="{{ item.image }}" alt="" loading="lazy"/>{% endif %}
                         {% if item.qty %}<b>{{ item.qty }}</b>{% endif %}

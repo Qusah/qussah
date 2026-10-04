@@ -298,7 +298,7 @@
             "selected": true
         },
         {
-            "id": "slider_background_size",
+            "id": "gallery_image_fit",
             "type": "items",
             "format": "dropdown-list",
             "label": "طريقة عرض الصور في سليدر صور المنتج",
@@ -307,9 +307,9 @@
             "icon": "sicon-list",
             "selected": [
                 {
-                    "label": "اظهار الصورة كاملةً في المنتصف (Contain)",
-                    "value": "contain",
-                    "key": "f4adec13-6e4c-433b-b141-b2807935ced9"
+                    "label": "تغطية الصورة كامل المساحة مع المحافظة على أبعاد الصورة (Cover)",
+                    "value": "cover",
+                    "key": "e9c8ea8f-c5c6-438e-9d45-3bce269afde4"
                 }
             ],
             "options": [
@@ -1612,7 +1612,7 @@
                     "id": "items",
                     "type": "collection",
                     "format": "collection",
-                    "maxLength": 6,
+                    "maxLength": 10,
                     "label": "محتويات البكج",
                     "item_label": "منتج",
                     "value": [],
