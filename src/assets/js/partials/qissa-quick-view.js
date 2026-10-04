@@ -54,6 +54,7 @@
  */
 
 import { enhanceCarousel } from './card-carousel';
+import { openImageViewer, imageViewerOn } from './image-viewer';
 
 const T = {
   add: 'أضف للسلة',
@@ -715,9 +716,21 @@ const Ticket = {
     this.prod = $('.qqv-prod', this.bk);
     this.order = $('.qqv-order', this.bk);
     this.bk.addEventListener('click', e => this.onClick(e));
+    // where the press began: a photo dragged aside is not a photo clicked
+    this.bk.addEventListener('pointerdown', e => { this.px = e.clientX; this.py = e.clientY; }, { passive: true });
   },
 
   onClick(e) {
+    // A photo opens full screen with a real zoom (image-viewer.js), on the photo
+    // pressed, with the product's whole gallery at full size. Not the placeholder.
+    const shot = e.target.closest('.qqv-img.is-zoomable .qpc-slide');
+    if (shot) {
+      if (Math.hypot(e.clientX - this.px, e.clientY - this.py) > 8) return;
+      const slides = Array.from(shot.parentElement.children);
+      openImageViewer(this.photos.map((url, k) => { const im = slides[k] && slides[k].querySelector('img'); return { url, alt: im ? im.alt : '' }; }),
+        slides.indexOf(shot), { trigger: $('.qqv-x', this.bk) });
+      return;
+    }
     const b = e.target.closest('[data-act],[data-img],[data-q],[data-lq]');
     if (!b || b.disabled) return;
     if (b.dataset.img) { this.go(+b.dataset.img); return; }
@@ -821,6 +834,7 @@ const Ticket = {
     if (!photos.length && d.image && d.image.url) photos.push(d.image.url);
     const seen = new Set();
     const ph = this.photos = photos.filter(u => !seen.has(u) && seen.add(u));
+    $('.qqv-img', prod).classList.toggle('is-zoomable', ph.length > 0 && imageViewerOn());
     if (!ph.length) ph.push(salla.url.asset(salla.config.get('theme.settings.placeholder') || 'images/placeholder.png'));
     const n = ph.length;
     const keep = first ? 0 : Math.min(this.im, n - 1);
