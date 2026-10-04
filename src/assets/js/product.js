@@ -35,22 +35,22 @@ class Product extends BasePage {
       });
     }
 
-    // A package is a product the merchant gave a «محتويات البكج» block
-    // (components/home/qissa-pack-contents) in this page's slot. Keep the one for
-    // this product — where Salla passed the product to the block it is the only
-    // one printed — and let it take the description's place.
+    // A package is a product whose page the merchant gave a «محتويات البكج» block
+    // (components/home/qissa-pack-contents; Salla prints it on that product's page
+    // only). Let it take the description's place.
     initPack() {
         const more = document.querySelector('[data-qpd-more]');
-        if (!more) {
+        const packs = document.querySelectorAll('[data-qpd-pack]');
+        if (!more || !packs.length) {
             return;
         }
         // wherever on the page the block was added, it belongs in the details column's slot
         const slot = more.querySelector('.qpd-more__details > .s-blocks-wrapper');
-        document.querySelectorAll('[data-qpd-pack]').forEach(pack => {
-            pack.hidden = pack.dataset.qpdPack !== more.dataset.id;
-            pack.hidden || slot.contains(pack) || slot.append(pack);
+        packs.forEach(pack => {
+            slot.contains(pack) || slot.append(pack);
+            pack.hidden = false;
         });
-        more.classList.toggle('is-pack', !!slot.querySelector('[data-qpd-pack]:not([hidden])'));
+        more.classList.add('is-pack');
     }
 
     // «يشترونها معها»: Salla's related products of this one, four in the theme card

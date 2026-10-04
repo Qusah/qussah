@@ -91,10 +91,11 @@
   · The boxes under the rating are the product's contents lines, read from its
     description by the Product Hero card's own filler (qissa-pack-card.js works
     on any [data-qpack] > [data-qpack-inside]); the subtitle is the fallback.
-  · «تفاصيل المنتج» is the description. A package is a product the merchant gave
-    a «محتويات البكج» block (components/home/qissa-pack-contents, added to this
-    page's «before reviews» slot): its navy graphic takes the description's place
-    on that product's page (.qpd-more.is-pack, set by product.js).
+  · «تفاصيل المنتج» is the description. A package is a product whose page the
+    merchant gave a «محتويات البكج» block (components/home/qissa-pack-contents,
+    added in the theme editor under «تخصيص منتج محدد», «before reviews» slot):
+    its navy graphic takes the description's place on that product's page
+    (.qpd-more.is-pack, set by product.js).
   · Everything Salla owns stays Salla's: slider + lightbox, options, price
     updates, add to cart, instalments, gifting, comments, offers, hooks.
 #}
@@ -715,7 +716,7 @@
        a product with a «محتويات البكج» block showing (.is-pack, set by product.js):
        the reviews card beside the navy graphic. The description stays in the
        markup either way. #}
-    <section class="qpd-more" data-qpd-more data-id="{{ product.id }}">
+    <section class="qpd-more" data-qpd-more>
         <div class="qpd-more__details">
             <h2 class="qpd-more__title">{{ trans('blocks.qissa.product_details') }}<span class="qpd-more__title-m"> {{ trans('blocks.qissa.product_details_more') }}</span></h2>
 
@@ -736,8 +737,8 @@
                 Hook: product.single.before_customer_reviews
                 Fires before the customer reviews/comments section.
                 This is the package slot: a «محتويات البكج» block (components/home/
-                qissa-pack-contents) added here shows on its own package's page, in
-                the description's place.
+                qissa-pack-contents) added here for one product shows on that
+                package's page, in the description's place.
             #}
             <div class="s-blocks-wrapper s-before-reviews">{% hook 'product.single.before_customer_reviews' %}</div>
         </div>

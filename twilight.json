@@ -1556,38 +1556,15 @@
             "path": "home.qissa-pack-contents",
             "fields": [
                 {
-                    "id": "package",
-                    "type": "items",
-                    "icon": "sicon-keyboard_arrow_down",
-                    "label": "البكج",
-                    "format": "dropdown-list",
-                    "description": "أضف هذا العنصر في صفحة المنتج (قبل التقييمات). يظهر في صفحة هذا البكج فقط، ولا يظهر في صفحات باقي المنتجات.",
-                    "selected": [],
-                    "options": [],
-                    "required": true,
-                    "multichoice": true,
-                    "source": "products",
-                    "searchable": true,
-                    "maxLength": 1,
-                    "minLength": 1,
-                    "value": []
-                },
-                {
-                    "id": "products",
-                    "type": "items",
-                    "icon": "sicon-keyboard_arrow_down",
-                    "label": "المنتجات داخل البكج",
-                    "format": "dropdown-list",
-                    "description": "حتى 6 منتجات بالترتيب. تظهر صورة كل منتج واسمه، والكمية من الوصف المختصر للمنتج (مثل: 32 عبوة).",
-                    "selected": [],
-                    "options": [],
-                    "required": true,
-                    "multichoice": true,
-                    "source": "products",
-                    "searchable": true,
-                    "maxLength": 6,
-                    "minLength": 1,
-                    "value": []
+                    "id": "title",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Package name",
+                        "ar": "اسم البكج"
+                    },
+                    "description": "يظهر هذا العنصر في صفحة المنتج التي تضيفه إليها: من (صفحة تفاصيل المنتج) اختر (تخصيص منتج محدد) ثم البكج، وضعه قبل (تقييمات العملاء).",
+                    "value": ""
                 },
                 {
                     "id": "tagline",
@@ -1607,7 +1584,7 @@
                         "en": "Total count (big number)",
                         "ar": "العدد الإجمالي (الرقم الكبير)"
                     },
-                    "description": "اتركه فارغاً لاستخدام الوصف المختصر للبكج إن بدأ برقم (مثل: 68 قطعة).",
+                    "description": "اتركه فارغاً لإخفاء سطر العدد.",
                     "value": ""
                 },
                 {
@@ -1619,6 +1596,60 @@
                         "ar": "النص بجانب العدد"
                     },
                     "value": "عبوة داخل الكرتون"
+                },
+                {
+                    "id": "image",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "en": "Package photo",
+                        "ar": "صورة البكج"
+                    },
+                    "description": "الصورة العريضة تحت العدد — يفضّل بنسبة 2:1",
+                    "value": null
+                },
+                {
+                    "id": "items",
+                    "type": "collection",
+                    "format": "collection",
+                    "maxLength": 6,
+                    "label": "محتويات البكج",
+                    "item_label": "منتج",
+                    "value": [],
+                    "fields": [
+                        {
+                            "type": "string",
+                            "icon": "sicon-image",
+                            "label": "صورة المنتج",
+                            "id": "items.image",
+                            "value": null,
+                            "required": false,
+                            "format": "image",
+                            "description": "صورة مربعة"
+                        },
+                        {
+                            "type": "string",
+                            "icon": "sicon-format-text-alt",
+                            "label": "الكمية",
+                            "id": "items.qty",
+                            "value": null,
+                            "required": false,
+                            "format": "text",
+                            "multilanguage": true,
+                            "placeholder": "32 عبوة"
+                        },
+                        {
+                            "type": "string",
+                            "icon": "sicon-format-text-alt",
+                            "label": "اسم المنتج",
+                            "id": "items.name",
+                            "value": null,
+                            "required": false,
+                            "format": "text",
+                            "multilanguage": true,
+                            "placeholder": "اسم المنتج"
+                        }
+                    ]
                 }
             ]
         },
