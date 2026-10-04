@@ -38,7 +38,6 @@ function initBanner(root) {
     slides.forEach(function (s, i) {
       var on = i === index;
       s.classList.toggle('is-active', on);
-      s.inert = !on;   /* a hidden banner's link and button leave the tab order */
       if (on) s.removeAttribute('aria-hidden');
       else s.setAttribute('aria-hidden', 'true');
     });

@@ -1,94 +1,283 @@
 {#
-| Variable                   | Type         | Description                                              |
-|----------------------------|--------------|----------------------------------------------------------|
-| component                  | object       | merchant settings from twilight.json                     |
-| component.title_highlight  | string       | heading's leading word(s) — same colour since the revamp |
-| component.title            | string       | heading rest                                             |
-| component.subtitle         | string       | line under the heading                                   |
-| component.use_real_reviews | bool         | the store's real reviews, every written one (default on) |
-| component.items            | Collection[] | mock reviews (name, role → the grey line, text, stars) — shown when the switch is off or the store has none |
-| component.two_rows         | bool         | two counter-scrolling rows on desktop (default on)       |
-| component.speed            | int          | seconds for one card to pass (default 9)                 |
-| component.pause_on_hover   | bool         | stop the rows under a mouse (default off)                |
-| position                   | int          | sorting block                                            |
+| Variable                  | Type   | Description                              |
+|---------------------------|--------|------------------------------------------|
+| component                 | object | merchant settings from twilight.json     |
+| component.title_highlight | string | highlighted heading word(s) (royal blue) |
+| component.title           | string | heading rest                             |
+| component.subtitle        | string | subheading                               |
+| component.count           | int    | how many reviews to show (default 9)     |
+| component.items           | Collection[] | fallback reviews (name, role, text, stars, avatar) |
+| position                  | int    | sorting block                            |
 
-Figma "Qusah Re-Vamp": desktop 326:1655 (1400 frame at x 20; the rows run to
-the page edges, two of them, counter-scrolling, a blurred white fade on each
-side), mobile 290:8617 (one row, the middle card centred). Latafa's
-testimonials, sized for this file.
+Figma: desktop 6036:1129 (1440) — right title + cards.
+       mobile  6036:21971 (428) — gradient box, centered title, swipe carousel + prev/next arrows.
 
-Nothing here moves or fills by itself: qissa-testimonials.js (run by home.js)
-builds VIRTUAL rows — only the cards that fit, recycled as they scroll out,
-filled from the store's reviews page by page — so every written review can
-pass through without the page growing. The rows have fixed heights, so the
-section never shifts while the reviews load; the card shells show first.
-
-The mock reviews ride in an inert <template> (Twig-escaped text, never run)
-and are copied to a plain array first: on Salla the collection is a one-shot
-iterable (the first list operation consumes it — see Latafa's testimonials).
+REAL customer reviews: cards are populated client-side from the store's reviews
+(salla.api `reviews` · type=store) into the qtcard design below. Most store reviews are
+stars-only with no written comment, so the JS pages through the endpoint (per_page/page)
+and keeps only reviews that have text, until it has `count` of them. When the store has
+NO reviews, the merchant-entered fallback (component.items, rendered server-side)
+stays; when the store has neither, the section removes itself. Stars use the project
+★/☆ glyphs; quote uses the theme inline quote-open SVG.
 #}
-{% set real     = component.use_real_reviews is not defined or component.use_real_reviews is null or component.use_real_reviews %}
-{% set two_rows = component.two_rows is not defined or component.two_rows is null or component.two_rows %}
-
-{% set mock = [] %}
-{% for item in component.items %}
-    {% if item.text %}{% set mock = mock|merge([item]) %}{% endif %}
-{% endfor %}
-
-<section class="s-block qtest" id="qtest-{{ position }}" data-qtest
-         {%- if real %} data-qtest-real{% endif %}
-         {%- if component.pause_on_hover %} data-qtest-pause{% endif %}
-         data-qtest-speed="{{ component.speed ?: 9 }}"
-         data-qtest-anon="{{ trans('blocks.qissa.customer') }}"
-         {%- if not real and not mock|length %} hidden{% endif %}>
+<section class="s-block qtest{% if not component.items|length %} is-loading{% endif %}" id="qtest-{{ position }}" data-qtest data-count="{{ component.count|default(9) }}">
     <div class="container">
+        <div class="qtest__box">
 
-        <div class="qtest__head">
-            <h2 class="qtest__title">
-                <span class="qtest__title-hl">{{ component.title_highlight }}</span> {{ component.title }}
-            </h2>
-            {% if component.subtitle %}
-                <p class="qtest__subtitle">{{ component.subtitle }}</p>
-            {% endif %}
-        </div>
-
-        {# row two runs the other way; phones show row one only. data-phase =
-           where each row starts on desktop, as the frame draws them (px past
-           the right edge) — phones centre the second card instead #}
-        <div class="qtest__rows">
-            <div class="qtest__viewport" data-qtest-row data-dir="1" data-phase="194.39"><div class="qtest__track"></div></div>
-            {% if two_rows %}
-                <div class="qtest__viewport qtest__viewport--second" data-qtest-row data-dir="-1" data-phase="11.56"><div class="qtest__track"></div></div>
-            {% endif %}
-            <span class="qtest__fade qtest__fade--left" aria-hidden="true"></span>
-            <span class="qtest__fade qtest__fade--right" aria-hidden="true"></span>
-        </div>
-
-    </div>
-
-    {# one card — the script clones it into the rows' slots #}
-    <template data-qtest-card>
-        <figure class="qtest__card">
-            <div class="qtest__quote-wrap">
-                <blockquote class="qtest__quote" data-f="text"></blockquote>
-                <hr class="qtest__divider">
+            {# title #}
+            <div class="qtest__head">
+                <h2 class="qtest__title">
+                    <span class="qtest__title-hl">{{ component.title_highlight }}</span> {{ component.title }}
+                </h2>
+                {% if component.subtitle %}
+                    <p class="qtest__subtitle">{{ component.subtitle }}</p>
+                {% endif %}
             </div>
-            {# rtl: the name first (right), the stars last (left) #}
-            <figcaption class="qtest__foot">
-                <div class="qtest__who">
-                    <p class="qtest__name" data-f="name"></p>
-                    <p class="qtest__meta" data-f="meta"></p>
-                </div>
-                {# the star (290:8636, Latafa 34:6730): filled AND stroked in one colour #}
-                <div class="qtest__stars" role="img" data-f="stars">{% for n in [1, 2, 3, 4, 5] %}<svg class="qtest__star" viewBox="0 0 13.9931 13.9931" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M6.7196 1.33809C6.74515 1.28647 6.78462 1.24301 6.83356 1.21263C6.8825 1.18225 6.93895 1.16615 6.99655 1.16615C7.05415 1.16615 7.1106 1.18225 7.15954 1.21263C7.20848 1.24301 7.24795 1.28647 7.2735 1.33809L8.62033 4.06616C8.70906 4.24572 8.84003 4.40107 9.00201 4.51887C9.16399 4.63667 9.35213 4.71341 9.55029 4.74249L12.5623 5.18328C12.6194 5.19155 12.673 5.21562 12.7171 5.25278C12.7612 5.28993 12.794 5.33869 12.8119 5.39353C12.8297 5.44837 12.8318 5.5071 12.818 5.56309C12.8042 5.61908 12.775 5.67009 12.7337 5.71035L10.5555 7.83147C10.4118 7.97146 10.3043 8.14427 10.2423 8.33501C10.1802 8.52575 10.1654 8.72871 10.1992 8.92643L10.7135 11.9233C10.7235 11.9803 10.7174 12.0391 10.6957 12.0928C10.674 12.1465 10.6376 12.193 10.5908 12.2271C10.5439 12.2611 10.4884 12.2813 10.4306 12.2853C10.3728 12.2893 10.3151 12.277 10.2639 12.2498L7.57143 10.8342C7.39402 10.741 7.19664 10.6923 6.99626 10.6923C6.79588 10.6923 6.59849 10.741 6.42108 10.8342L3.72916 12.2498C3.67805 12.2769 3.62036 12.289 3.56267 12.2849C3.50498 12.2808 3.4496 12.2606 3.40283 12.2266C3.35605 12.1926 3.31977 12.1461 3.29809 12.0925C3.27641 12.0389 3.27022 11.9803 3.28022 11.9233L3.79388 8.92701C3.82781 8.72921 3.81311 8.52611 3.75105 8.33525C3.68898 8.14439 3.58142 7.97149 3.43764 7.83147L1.25938 5.71093C1.21775 5.67072 1.18824 5.61963 1.17423 5.56347C1.16022 5.50731 1.16227 5.44834 1.18013 5.39329C1.198 5.33823 1.23097 5.2893 1.27528 5.25207C1.3196 5.21483 1.37348 5.1908 1.43079 5.18269L4.44223 4.74249C4.64061 4.71363 4.82901 4.637 4.99121 4.51918C5.15341 4.40136 5.28455 4.2459 5.37335 4.06616L6.7196 1.33809Z" fill="currentColor" stroke="currentColor" stroke-width="1.16609" stroke-linecap="round" stroke-linejoin="round"/></svg>{% endfor %}</div>
-            </figcaption>
-        </figure>
-    </template>
 
-    {# the merchant's mock reviews, as data #}
-    <template data-qtest-mock>
-        {%- for item in mock -%}
-            <p data-name="{{ item.name }}" data-meta="{{ item.role }}" data-stars="{{ item.stars ?: 5 }}">{{ item.text }}</p>
-        {%- endfor -%}
-    </template>
+            {# cards: swipe carousel. Real store reviews load here on the client;
+               the merchant-entered fallback below shows when the store has none. #}
+            <div class="qtest__row" data-qtest-row>
+                {% for item in component.items %}
+                    {# an empty collection row would render as a ghost card (5 default stars,
+                       no name, no text) — only render rows the merchant actually filled in #}
+                    {% if item.text or item.name %}
+                    <article class="qtcard">
+                        <div class="qtcard__top">
+                            <span class="qtcard__quote" aria-hidden="true">
+                                <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M8 12v-5.333c0-0.737-0.596-1.333-1.333-1.333-3.676 0-6.667 2.991-6.667 6.667v8c0 3.676 2.991 6.667 6.667 6.667h1.333c3.676 0 6.667-2.991 6.667-6.667v-1.333c0-3.676-2.991-6.667-6.667-6.667zM12 20c0 2.205-1.795 4-4 4h-1.333c-2.205 0-4-1.795-4-4v-8c0-1.739 1.115-3.221 2.667-3.772v5.105c0 0.737 0.596 1.333 1.333 1.333h1.333c2.205 0 4 1.795 4 4zM25.333 12v-5.333c0-0.737-0.596-1.333-1.333-1.333-3.676 0-6.667 2.991-6.667 6.667v8c0 3.676 2.991 6.667 6.667 6.667h1.333c3.676 0 6.667-2.991 6.667-6.667v-1.333c0-3.676-2.991-6.667-6.667-6.667zM29.333 20c0 2.205-1.795 4-4 4h-1.333c-2.205 0-4-1.795-4-4v-8c0-1.739 1.115-3.221 2.667-3.772v5.105c0 0.737 0.596 1.333 1.333 1.333h1.333c2.205 0 4 1.795 4 4z"></path></svg>
+                            </span>
+                            {% set stars = item.stars|default(5) %}
+                            <span class="qtcard__rating" aria-label="{{ stars }}/5">
+                                {% for i in 1..5 %}<span class="qtcard__star {{ i <= stars ? 'is-on' : 'is-off' }}">{{ i <= stars ? '★' : '☆' }}</span>{% endfor %}
+                            </span>
+                        </div>
+                        {% if item.text %}<p class="qtcard__text">{{ item.text }}</p>{% endif %}
+                        <div class="qtcard__user">
+                            <div class="qtcard__name">
+                                {% if item.name %}<span class="qtcard__name-main">{{ item.name }}</span>{% endif %}
+                                {% if item.role %}<span class="qtcard__name-role">{{ item.role }}</span>{% endif %}
+                            </div>
+                            {% if item.avatar %}
+                                <span class="qtcard__avatar"><img src="{{ item.avatar }}" alt="{{ item.name|default('') }}" width="40" height="40" loading="lazy"/></span>
+                            {% else %}
+                                <span class="qtcard__avatar qtcard__avatar--initial">{{ item.name|default('★')|slice(0, 1) }}</span>
+                            {% endif %}
+                        </div>
+                    </article>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {# footer: "view all reviews" link + carousel arrows #}
+            <div class="qtest__foot">
+                <a class="qtest__all" href="{{ link('testimonials') }}">
+                    <span>{{ trans('blocks.qissa.view_all_reviews') }}</span>
+                    <i class="sicon-arrow-left"></i>
+                </a>
+                <div class="qtest__nav">
+                    <button type="button" class="qtest__arrow qtest__arrow--prev" aria-label="{{ trans('blocks.qissa.prev') }}">
+                        <i class="sicon-arrow-left"></i>
+                    </button>
+                    <button type="button" class="qtest__arrow qtest__arrow--next" aria-label="{{ trans('blocks.qissa.next') }}">
+                        <i class="sicon-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </section>
+
+<script>
+(function () {
+  var sections = document.querySelectorAll('.qtest[data-qtest]');
+  if (!sections.length) { return; }
+
+  var QUOTE_SVG = '<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M8 12v-5.333c0-0.737-0.596-1.333-1.333-1.333-3.676 0-6.667 2.991-6.667 6.667v8c0 3.676 2.991 6.667 6.667 6.667h1.333c3.676 0 6.667-2.991 6.667-6.667v-1.333c0-3.676-2.991-6.667-6.667-6.667zM12 20c0 2.205-1.795 4-4 4h-1.333c-2.205 0-4-1.795-4-4v-8c0-1.739 1.115-3.221 2.667-3.772v5.105c0 0.737 0.596 1.333 1.333 1.333h1.333c2.205 0 4 1.795 4 4zM25.333 12v-5.333c0-0.737-0.596-1.333-1.333-1.333-3.676 0-6.667 2.991-6.667 6.667v8c0 3.676 2.991 6.667 6.667 6.667h1.333c3.676 0 6.667-2.991 6.667-6.667v-1.333c0-3.676-2.991-6.667-6.667-6.667zM29.333 20c0 2.205-1.795 4-4 4h-1.333c-2.205 0-4-1.795-4-4v-8c0-1.739 1.115-3.221 2.667-3.772v5.105c0 0.737 0.596 1.333 1.333 1.333h1.333c2.205 0 4 1.795 4 4z"></path></svg>';
+
+  // escape user-generated strings before injecting as HTML
+  function esc(s) { var d = document.createElement('div'); d.textContent = (s == null ? '' : String(s)); return d.innerHTML; }
+  // review content may arrive as HTML → take its plain text only
+  function toText(html) { var d = document.createElement('div'); d.innerHTML = (html == null ? '' : String(html)); return (d.textContent || d.innerText || '').trim(); }
+
+  function starsHtml(n) {
+    n = Math.max(0, Math.min(5, Math.round(Number(n) || 0)));
+    var out = '';
+    for (var i = 1; i <= 5; i++) {
+      out += '<span class="qtcard__star ' + (i <= n ? 'is-on' : 'is-off') + '">' + (i <= n ? '★' : '☆') + '</span>';
+    }
+    return out;
+  }
+
+  function fmtDate(created) {
+    var s = created && created.date ? created.date : created;
+    if (!s || typeof s !== 'string') { return ''; }
+    var p = s.split(' ')[0].split('-');
+    if (p.length < 3) { return ''; }
+    return parseInt(p[2], 10) + '/' + parseInt(p[1], 10) + '/' + parseInt(p[0], 10);
+  }
+
+  function cardHtml(r) {
+    var name = r.name || salla.lang.get('blocks.qissa.customer');
+    var text = toText(r.content || r.text || '');
+    var rating = r.rating || r.stars || 0;
+    var date = fmtDate(r.created_at);
+    var avatar = r.avatar
+      ? '<span class="qtcard__avatar"><img src="' + esc(r.avatar) + '" alt="' + esc(name) + '" width="40" height="40" loading="lazy"/></span>'
+      : '<span class="qtcard__avatar qtcard__avatar--initial">' + esc((name.trim().charAt(0) || '★')) + '</span>';
+
+    return '' +
+      '<article class="qtcard">' +
+        '<div class="qtcard__top">' +
+          '<span class="qtcard__quote" aria-hidden="true">' + QUOTE_SVG + '</span>' +
+          '<span class="qtcard__rating" aria-label="' + rating + '/5">' + starsHtml(rating) + '</span>' +
+        '</div>' +
+        (text ? '<p class="qtcard__text">' + esc(text) + '</p>' : '') +
+        '<div class="qtcard__user">' +
+          '<div class="qtcard__name">' +
+            '<span class="qtcard__name-main">' + esc(name) + '</span>' +
+            (date ? '<span class="qtcard__name-role">' + esc(date) + '</span>' : '') +
+          '</div>' +
+          avatar +
+        '</div>' +
+      '</article>';
+  }
+
+  // mobile swipe carousel arrows (same behaviour as the old static markup)
+  function initArrows(sec) {
+    var row = sec.querySelector('.qtest__row');
+    var prev = sec.querySelector('.qtest__arrow--prev');
+    var next = sec.querySelector('.qtest__arrow--next');
+    if (!row || !prev || !next) { return; }
+    function step() {
+      var card = row.querySelector('.qtcard');
+      var gap = parseInt(getComputedStyle(row).columnGap || getComputedStyle(row).gap || '20', 10) || 20;
+      return card ? card.getBoundingClientRect().width + gap : row.clientWidth;
+    }
+    function update() {
+      var cards = row.querySelectorAll('.qtcard');
+      if (!cards.length) { return; }
+      var r = row.getBoundingClientRect();
+      var first = cards[0].getBoundingClientRect();
+      var last = cards[cards.length - 1].getBoundingClientRect();
+      prev.disabled = Math.min(first.left, last.left) >= r.left - 1;
+      next.disabled = Math.max(first.right, last.right) <= r.right + 1;
+    }
+    prev.addEventListener('click', function () { row.scrollBy({ left: -step(), behavior: 'smooth' }); });
+    next.addEventListener('click', function () { row.scrollBy({ left: step(), behavior: 'smooth' }); });
+    row.addEventListener('scroll', function () { requestAnimationFrame(update); });
+    window.addEventListener('resize', update);
+    update();
+  }
+
+  // reveal the section (real reviews or the server-rendered fallback), or drop it
+  // entirely when there is nothing to show
+  function finalize(sec, row) {
+    if (row && row.querySelector('.qtcard')) {
+      sec.classList.remove('is-loading');
+      initArrows(sec);
+    } else {
+      sec.remove();
+    }
+  }
+
+  // Most store reviews are stars-only (no written comment) and can't fill a card, so ask for
+  // a large page and walk the pagination until we have enough reviews that DO have text.
+  //
+  // Measured on the live store (2026-07-22, 3780 store reviews) — both params are honoured:
+  //   {type:store}                  → 5 rows,  1 written  (perPage defaults to 5 → release 2's bug)
+  //   {type:store, per_page:30}     → 30 rows, 5 written
+  //   {type:store, per_page:30, page:2} → 30 rows, 7 written, different rows
+  // i.e. only ~17% of reviews carry text, and pagination.links.next is always present.
+  // per_page:30 is the value verified against the API; the bare-request fallback below stays
+  // for stores/versions that refuse it.
+  var PER_PAGE = 30;
+  var MAX_PAGES = 6;
+
+  function hasNextPage(resp) {
+    var p = (resp && resp.pagination) || {};
+    if (p.links && typeof p.links === 'object' && p.links.next) { return true; }
+    var current = p.currentPage || p.current_page || 0;
+    var total = p.totalPages || p.total_pages || 0;
+    return !!(current && total && current < total);
+  }
+
+  // never throws: the SDK validates params and can reject OR throw synchronously, and a
+  // synchronous throw would skip .catch() entirely and leave the section unfinalized
+  function ask(params) {
+    try {
+      var p = salla.api.request('reviews', { params: params }, 'get');
+      return (p && typeof p.then === 'function') ? p : Promise.reject(new Error('no promise'));
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  }
+  function rows(resp) { return (resp && Array.isArray(resp.data)) ? resp.data : []; }
+  function written(r) { return toText(r.content || r.text || ''); }
+  function key(r) { return (r.name || '') + '|' + fmtDate(r.created_at) + '|' + toText(r.content || r.text || '').slice(0, 40); }
+
+  function load(sec) {
+    var row = sec.querySelector('[data-qtest-row]');
+    var count = parseInt(sec.getAttribute('data-count'), 10) || 9;
+    if (!row) { return; }
+    if (!(window.salla && salla.api && salla.api.request)) { finalize(sec, row); return; }  // keep fallback if any
+
+    var reviews = [], seen = {}, bareTried = false;
+
+    // keep the written reviews we haven't already got. Returns how many rows on this page
+    // were NEW (written or not): 0 means the endpoint ignored `page` and handed back the
+    // same rows, so the loop stops instead of repeating cards. A page that is genuinely
+    // all stars-only still counts as progress and we move on to the next one.
+    function collect(data) {
+      var fresh = 0;
+      data.forEach(function (r) {
+        var k = key(r);
+        if (seen[k]) { return; }
+        seen[k] = 1; fresh++;
+        if (written(r)) { reviews.push(r); }
+      });
+      return fresh;
+    }
+
+    function done() {
+      if (reviews.length) { row.innerHTML = reviews.slice(0, count).map(cardHtml).join(''); }  // real reviews replace the fallback
+      finalize(sec, row);                                                                     // otherwise the fallback stays
+    }
+
+    // the plain call — no per_page, no page. Known to work; returns one short page.
+    function bare() {
+      bareTried = true;
+      ask({ type: 'store' })
+        .then(function (resp) { collect(rows(resp)); done(); })
+        .catch(done);
+    }
+
+    function loadPage(page) {
+      var params = { type: 'store', per_page: PER_PAGE };
+      if (page > 1) { params.page = page; }
+      ask(params)
+        .then(function (resp) {
+          var data = rows(resp);
+          // page 1 empty with our params → the endpoint likely ignored/refused them
+          if (page === 1 && !data.length && !bareTried) { bare(); return; }
+          var fresh = collect(data);
+          if (fresh && reviews.length < count && page < MAX_PAGES && hasNextPage(resp)) {
+            loadPage(page + 1);                                             // not enough written reviews yet → next page
+          } else {
+            done();
+          }
+        })
+        .catch(function (e) {
+          if (window.console) { console.warn('[qtest] reviews page ' + page + ' failed', e); }
+          if (page === 1 && !bareTried) { bare(); return; }                 // params rejected → retry without them
+          done();                                                           // later page failed → keep what we have
+        });
+    }
+
+    loadPage(1);
+  }
+
+  function boot() { sections.forEach(load); }
+  if (window.salla && salla.onReady) { salla.onReady(boot); } else { document.addEventListener('DOMContentLoaded', boot); }
+})();
+</script>

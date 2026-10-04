@@ -9,21 +9,11 @@
 // place-items (postcss-preset-env multiplies both), one easing variable.
 // RTL: postcss-preset-env downlevels logical properties as if LTR, so every
 // directional value here is physical (left / right).
-//
-// Revamp (1 Oct 2026, the user's call: navy kept, revamp details). The
-// revamp Figma has no quick view, so its parts take the coded revamp card's
-// values (qprod-card.scss: type, radii, badge, price, buttons) and the
-// Product Hero's (qissa-package.scss: «ماذا يوجد» boxes, phone buttons).
-// The fill stays the darker ticket navy — #2c348e itself would melt into
-// the navy products block it opens on.
 // ====================================================================
 
-$navy: #2c348e;
+$navy: #2e3793;
 $dk: #172951;
 $cyan: #91e6f7;
-// Expo Arabic once embedded; the theme's stack until then. !important:
-// qusah-overrides forces `body *`.
-$qqv-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
 
 .qqv-card { --qe: cubic-bezier(.16, 1, .3, 1); --qo: cubic-bezier(.33, 1, .68, 1); }
 
@@ -38,8 +28,7 @@ $qqv-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
 // Card: add slot · «✓ أُضيف» · − n + stepper
 // ====================================================================
 
-// --qqv-r: the revamp card's add button radius (7.44; 12 on phones)
-.qqv-card { container: qqvcard / inline-size; --qqv-r: 7.44px; }
+.qqv-card { container: qqvcard / inline-size; --qqv-r: 12px; }
 
 // The add button, the confirmation and the stepper share one cell — same
 // height, no layout jump. At rest the slot is exactly the old add button
@@ -56,7 +45,7 @@ $qqv-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
 .qqv-done {
   gap: 6px; direction: rtl;               // the check leads (the Twig row runs LTR)
   background: $dk; color: #fff;
-  font-size: 14.89px; font-weight: 700; line-height: 1; white-space: nowrap;   // the card button's type
+  font-size: 16px; font-weight: 500; line-height: 1; white-space: nowrap;
   pointer-events: none;
   clip-path: inset(0 round var(--qqv-r));
   transition: opacity .18s, visibility 0s linear .18s, clip-path .32s var(--qe);
@@ -83,7 +72,7 @@ $qqv-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     &:focus-visible { outline: 2px solid $navy; outline-offset: -3px; }
     .qqv-i { width: 18px; height: 18px; }
   }
-  output { font-size: 17px; font-weight: 700; line-height: 1; color: $navy; pointer-events: none; }
+  output { font-size: 17px; font-weight: 700; line-height: 1; color: #30378e; pointer-events: none; }
 }
 .qqv-slot[data-s="qty"] .qqv-step {
   opacity: 1; visibility: visible; clip-path: inset(0 round var(--qqv-r));
@@ -94,13 +83,26 @@ $qqv-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
   transition: opacity .22s, clip-path .32s var(--qe), visibility 0s linear .32s;
 }
 
-// Phones. The heart's place on the photo and the add row's height belong to
-// the card now (qprod-card.scss); so does the eye button that replaces the
-// corner there.
+// Phones: the heart sits on the image corner (as since the quick view first
+// shipped) and the add row is 44px tall.
 @media (max-width: 768px) {
-  .qqv-card { --qqv-r: 12px; }
-  .qqv-done { font-size: 11.91px; }
+  .qqv-card { --qqv-r: 8px; }
+  .qqv-done { font-size: 14px; }
   .qqv-step output { font-size: 16px; }
+  .qqv-has-trig {
+    position: relative;
+    .qprod__add { height: 44px; }
+    salla-add-product-button .s-button-element { height: 44px !important; min-height: 44px !important; }
+    .qprod__like, .s-product-card-wishlist-btn {
+      position: absolute !important; top: 18px; right: 18px; left: auto; z-index: 4;
+      flex: none !important;
+      width: 36px !important; height: 36px !important; min-width: 36px !important; min-height: 36px !important;
+      border-radius: 50% !important;
+      box-shadow: 0 2px 8px rgba(23, 41, 81, .14) !important;
+      &::after { content: ''; position: absolute; top: -4px; right: -4px; bottom: -4px; left: -4px; }
+      i { font-size: 17px; }
+    }
+  }
 }
 
 // ====================================================================
@@ -209,13 +211,11 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
 }
 .qqv-ticket [hidden] { display: none !important; }
 
-// not the riyal: sallaicons draws its ::before in the font it inherits
-.qqv-ticket, .qqv-ticket *:not([class*="sicon-"]) { font-family: $qqv-font !important; }
 .qqv-ticket {
   --perf: 62px;
   flex: 1 1 auto;
   display: flex; flex-direction: column;
-  border-radius: 14.89px;   // the card it turns from (15.88 on phones)
+  border-radius: 24px;
   background: radial-gradient(120% 60% at 100% 0, rgba(92, 104, 214, .45), rgba(92, 104, 214, 0) 60%), linear-gradient(170deg, #28348a, #1d2a66 45%, $dk);
   mask: radial-gradient(circle 11px at 0 var(--perf), #0000 97%, #000), radial-gradient(circle 11px at 100% var(--perf), #0000 97%, #000);
   mask-composite: intersect;
@@ -293,11 +293,10 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
 .qqv-split .qqv-img { aspect-ratio: 1; }
 .qqv-split .qqv-trust { grid-column: 1 / -1; }
 
-// gallery: the card's scroll-snap track (qissa-product-card.scss) + thumbnails,
-// framed like the revamp card's photo (7.44 on #f4f5f6; 11.91 on phones)
+// gallery: the card's scroll-snap track (qissa-product-card.scss) + thumbnails
 .qqv-img {
-  border-radius: 7.44px; overflow: hidden; aspect-ratio: 1.9;
-  background: #f4f5f6;
+  border-radius: 16px; overflow: hidden; aspect-ratio: 1.9;
+  background: linear-gradient(#d9e7f7, #a9c5e8);
   .qpc-carousel { scroll-behavior: auto; }   // the JS picks smooth or instant
   // a photo opens the zoomable viewer (image-viewer.js); set only while it is on
   &.is-zoomable .qpc-slide { cursor: zoom-in; }
@@ -308,7 +307,7 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
   margin: 3px -5px -5px; padding: 5px;
   overflow-x: auto; scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
-  button { flex: 1 0 44px; max-width: 56px; aspect-ratio: 1; border-radius: 7.44px; background: #f4f5f6; opacity: .6; transition: opacity .2s; }
+  button { flex: 1 0 44px; max-width: 56px; aspect-ratio: 1; border-radius: 10px; background: #fff9ec; opacity: .6; transition: opacity .2s; }
   [aria-pressed="true"] { opacity: 1; box-shadow: 0 0 0 2px $cyan; }
   img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; pointer-events: none; }
 }
@@ -319,16 +318,10 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
   .qqv-ths { flex-wrap: wrap; }
   .qqv-ths button:hover { opacity: 1; }
 }
-// the revamp card name's weight (500)
-.qqv-ticket h2 { font-size: 20px; font-weight: 500; line-height: 1.5; color: #fff; outline: 0; overflow-wrap: anywhere; }
+.qqv-ticket h2 { font-size: 20px; font-weight: 700; line-height: 1.5; color: #fff; outline: 0; overflow-wrap: anywhere; }
 .qqv-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; margin-top: -6px; }
-// the revamp card's badge (qprod__badge): cyan pill, navy 11.16 / 17.86
-.qqv-pill, .qqv-save {
-  display: inline-flex; align-items: center;
-  height: 27.16px; padding: 4.65px 11.16px; border-radius: 999px;
-  background: $cyan; color: $navy;
-  font-size: 11.16px; font-weight: 500; line-height: 17.86px; white-space: nowrap;
-}
+.qqv-pill, .qqv-save { font-size: 12.5px; font-weight: 500; line-height: 1; padding: 7px 10px 6px; border-radius: 999px; }
+.qqv-pill { background: rgba(145, 230, 247, .16); color: $cyan; }
 .qqv-rate { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: rgba(255, 255, 255, .72); }
 .qqv-stars { display: inline-flex; gap: 1px; color: #ffc62a; }
 .qqv-st { width: 13px; height: 13px; fill: currentColor; }
@@ -348,29 +341,19 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
 .is-open .qqv-more .qqv-i { transform: rotate(180deg); }
 .is-open .is-more { animation: qqv-rise .36s var(--qe) both; }
 @keyframes qqv-rise { from { opacity: 0; transform: translateY(-6px); } }
-// the Product Hero's boxes (qpack__inside, its stacked size): two to a row,
-// up to two lines each — in the ticket's own glass (its qty's fill and edge)
 .qqv-in-list {
-  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 8.47px;
-  margin-top: 8px !important;
-  li {
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-    height: 45.76px; padding: 5.75px; border-radius: 5.75px;
-    background: rgba(255, 255, 255, .08); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16);
-    color: rgba(255, 255, 255, .88); font-size: 10.17px; font-weight: 400; line-height: 1.5;
-    overflow-wrap: anywhere;
-  }
+  display: grid; gap: 2px; margin-top: 4px !important;
+  li { display: flex; align-items: flex-start; gap: 8px; font-size: 13.5px; font-weight: 500; line-height: 1.6; overflow-wrap: anywhere; }
+  .qqv-i { width: 16px; height: 16px; margin-top: 4px; color: $cyan; stroke-width: 2.6; }
 }
 .qqv-in:not(.is-open) .is-more { display: none; }
 
 .qqv-price { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; }
 .qqv-price:empty { display: none; }
-// the revamp card's price: 26.05 now (riyal .64em), 13.02 was — the was in
-// the ticket's light red, #e90000 doesn't read on navy
-.qqv-now { display: inline-flex; align-items: center; gap: 6px; font-size: 26.05px; font-weight: 700; line-height: 26.05px; color: #fff; }
-.qqv-now .sicon-sar { font-size: .64em; }
-.qqv-was { font-size: 13.02px; line-height: 20.84px; color: #ff9ea3; text-decoration: line-through; }
-.qqv-save { gap: 4px; font-weight: 700; }
+.qqv-now { display: inline-flex; align-items: center; gap: 6px; font-size: 36px; font-weight: 700; line-height: 1; color: #fff; }
+.qqv-now .sicon-sar { font-size: .72em; }
+.qqv-was { font-size: 16px; line-height: 1; color: #ff9ea3; text-decoration: line-through; }
+.qqv-save { display: inline-flex; align-items: center; gap: 4px; background: $cyan; color: $navy; font-weight: 700; }
 .qqv-desc {
   font-size: 14px; line-height: 1.8; color: rgba(255, 255, 255, .78);
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
@@ -381,14 +364,12 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
 .qqv-row { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; margin-top: 4px; }
 @container (max-width: 269px) { .qqv-row { grid-template-columns: minmax(0, 1fr); } }
 .qqv-qty[hidden] + .qqv-btn { grid-column: 1 / -1; }   // out of stock: the disabled button spans the row
-// qty and buttons: the revamp card button — 48.38 tall, 7.44 round, 14.89 /
-// 700 type (phones: the Product Hero's 52 / 8 / 16)
 .qqv-qty {
   display: inline-flex; align-items: center; justify-content: space-between; gap: 4px;
-  min-width: 134px; height: 48.38px; padding: 4px;
-  border-radius: 7.44px; direction: rtl;
+  min-width: 134px; height: 52px; padding: 4px;
+  border-radius: 10px; direction: rtl;
   background: rgba(255, 255, 255, .08); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16);
-  button { width: 40.38px; height: 40.38px; border-radius: 5.44px; color: #fff !important; transition: background-color .2s; }
+  button { width: 44px; height: 44px; border-radius: 8px; color: #fff !important; transition: background-color .2s; }
   button:hover { background: rgba(255, 255, 255, .12) !important; }
   button:disabled { opacity: .45; cursor: default; }
   .qqv-i { width: 18px; height: 18px; }
@@ -397,9 +378,9 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
 
 .qqv-btn {
   position: relative; overflow: hidden; gap: 8px;
-  width: 100%; min-height: 48.38px; padding: 0 18px !important;
-  border-radius: 7.44px;
-  font-size: 14.89px !important; font-weight: 700 !important; line-height: 22.33px !important;
+  width: 100%; min-height: 52px; padding: 0 18px !important;
+  border-radius: 10px;
+  font-size: 16px !important; font-weight: 700 !important; line-height: 1.2 !important;
   text-decoration: none !important;
   transition: background-color .2s, transform .14s var(--qe);
   &:active { transform: scale(.985); }
@@ -410,12 +391,10 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
 .qqv-btn.is-busy { opacity: 1; cursor: progress; }
 .is-busy .qqv-spin, .is-going .qqv-spin { display: block; }
 .is-busy .qqv-lbl { display: none; }
-// hovers swap like the revamp's (white → cyan); cyan turns white, not navy,
-// which would vanish on the ticket
 .qqv-w { background: #fff !important; color: $navy !important; }
-.qqv-w:hover { background: $cyan !important; }
+.qqv-w:hover { background: #eef0fb !important; }
 .qqv-cy { background: $cyan !important; color: $navy !important; }
-.qqv-cy:hover { background: #fff !important; }
+.qqv-cy:hover { background: #7ad9ee !important; }
 .qqv-gh { background: transparent !important; color: #fff !important; box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, .34); }
 .qqv-gh:hover { background: rgba(255, 255, 255, .08) !important; }
 // buy now → «جاري تحويلك لإتمام الطلب»
@@ -425,7 +404,7 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
   background: currentColor; opacity: .55; transform-origin: right;
   animation: qqv-fill 2.2s var(--qo) forwards;
 }
-.qqv-err { font-size: 13px; line-height: 1.6; color: #ffd2d4; background: rgba(227, 32, 42, .18); border-radius: 7.44px; padding: 8px 12px; }
+.qqv-err { font-size: 13px; line-height: 1.6; color: #ffd2d4; background: rgba(227, 32, 42, .18); border-radius: 10px; padding: 8px 12px; }
 
 .qqv-trust {
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -472,6 +451,7 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
   .is-ship dd { color: #8ee6b0; }
   .is-tot { border-top: 2px dashed rgba(255, 255, 255, .18); margin-top: 4px; padding-top: 8px; min-height: 52px; }
   .is-tot dt { font-size: 16px; font-weight: 700; color: #fff; }
+  .qqv-now { font-size: 30px; }
 }
 .qqv-cod { gap: 8px; font-size: 12.5px; color: rgba(255, 255, 255, .72); }
 .qqv-cod .qqv-i { width: 18px; height: 18px; color: $cyan; }
@@ -482,19 +462,15 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
   .qqv-i { width: 18px; height: 18px; }
 }
 
-// ---- phone sizes: the revamp card's phone radii, the Product Hero's phone
-// buttons (52 / 8 / 16) ----
+// ---- phone type sizes (as the phone ticket) ----
 @media (max-width: 768px) {
-  .qqv-ticket { border-radius: 15.88px; }
   .qqv-pane { padding: 14px 16px 18px; }
   .qqv-top { padding: 0 16px 0 10px; }
-  .qqv-img { aspect-ratio: 2; border-radius: 11.91px; }
-  .qqv-ths button { border-radius: 11.91px; }
+  .qqv-img { aspect-ratio: 2; }
   .qqv-ticket h2 { font-size: 18px; }
+  .qqv-now { font-size: 32px; }
   .qqv-desc { font-size: 13.5px; }
-  .qqv-qty { height: 52px; border-radius: 8px; }
-  .qqv-qty button { width: 44px; height: 44px; border-radius: 6px; }
-  .qqv-btn { min-height: 52px; border-radius: 8px; font-size: 16px !important; line-height: 24px !important; }
+  .qqv-in-list li { font-size: 13px; line-height: 1.55; }
 }
 // A card that turns at its own width in a slider (240–300px): the stub and the
 // order lines tighten so nothing is cut.

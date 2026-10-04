@@ -2,33 +2,46 @@
 | Variable                  | Type      | Description                                       |
 |---------------------------|-----------|---------------------------------------------------|
 | component                 | object    | merchant settings from twilight.json              |
-| component.title           | string    | heading first part                                |
 | component.title_highlight | string    | highlighted heading word(s) (royal blue)          |
+| component.title           | string    | heading rest                                      |
 | component.subtitle        | string    | subheading                                        |
+| component.button_url      | string    | "عرض كل المنتجات" link                            |
 | component.products        | Product[] | merchant-selected products (dropdown source)      |
 | position                  | int       | sorting block                                     |
+
+Figma: desktop 6036:767 (1440) — title RIGHT + cyan CTA LEFT, 4-col grid.
+       mobile  6036:21765 (428) — centered title, 2-col grid, navy CTA at BOTTOM.
+Static grid (prev/next arrows are hidden in both frames → no carousel).
+Cards reuse the shared .qprod card (identical to "منتجات مميزة").
 #}
 {# Quick view switch for this section (default on; sections saved before the
    field existed carry null, which reads as on). qissa-quick-view.js skips
    the eye trigger for cards inside [data-qv="off"]. #}
 {% set qv_on = (component.show_quick_view is defined and component.show_quick_view is not null) ? component.show_quick_view : true %}
-<section class="s-block qprods" id="qprods-{{ position }}"{% if not qv_on %} data-qv="off"{% endif %}>
+<section class="s-block qallprods" id="qallprods-{{ position }}"{% if not qv_on %} data-qv="off"{% endif %}>
     <div class="container">
-        <div class="qprods__box">
+        <div class="qallprods__box">
 
-            {# centered title #}
-            <div class="qprods__head">
-                <h2 class="qprods__title">
-                    <span class="qprods__title-hl">{{ component.title_highlight }}</span> {{ component.title }}
-                </h2>
-                {% if component.subtitle %}
-                    <p class="qprods__subtitle">{{ component.subtitle }}</p>
-                {% endif %}
+            {# top bar: title RIGHT, CTA LEFT (desktop) — CTA drops to the BOTTOM on mobile #}
+            <div class="qallprods__top">
+                <a href="{{ (component.button_url and component.button_url not in ['#', '/products']) ? component.button_url : store.url ~ '/كل-المنتجات/c1390845573' }}" class="qallprods__all">
+                    <i class="sicon-arrow-left"></i>
+                    <span>{{ trans('blocks.qissa.view_all_products') }}</span>
+                    <i class="sicon-shopping-bag"></i>
+                </a>
+                <div class="qallprods__head">
+                    <h2 class="qallprods__title">
+                        <span class="qallprods__title-hl">{{ component.title_highlight }}</span> {{ component.title }}
+                    </h2>
+                    {% if component.subtitle %}
+                        <p class="qallprods__subtitle">{{ component.subtitle }}</p>
+                    {% endif %}
+                </div>
             </div>
 
             {# 4-col grid (2 on mobile) #}
             {% if component.products|length %}
-            <div class="qprods__grid">
+            <div class="qallprods__grid">
                 {% for product in component.products %}
                     <article class="qprod">
                         {# image + discount badge (swipe carousel when multi-image) #}
@@ -48,7 +61,7 @@
                             <a href="{{ product.url }}" class="qprod__name">{{ product.name }}</a>
                             {% if theme.settings.get('card_show_description', true) and product.description %}<p class="qprod__desc" data-qdesc="{{ product.description|slice(0, 500) }}"></p>{% endif %}
 
-                            {# spec chips (from product subtitle, split by | or ، ) #}
+                            {# spec chips (from product subtitle, split by ، ) #}
                             {% if product.subtitle %}
                                 <div class="qprod__chips">
                                     {% for chip in product.subtitle|split('،') %}
@@ -90,7 +103,7 @@
             </div>
             {% else %}
             {# fallback: auto-show latest products when merchant hasn't selected any #}
-            <salla-products-list source="latest" limit="8" class="qprods__fallback"></salla-products-list>
+            <salla-products-list source="latest" limit="4" class="qallprods__fallback"></salla-products-list>
             {% endif %}
 
         </div>

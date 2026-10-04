@@ -2,21 +2,17 @@ import "lite-youtube-embed";
 import BasePage from "./base-page";
 import Lightbox from "fslightbox";
 import { enhanceCarousels } from "./partials/card-carousel";
-import { initReorder } from "./partials/qissa-reorder";
-import { initTestimonials } from "./partials/qissa-testimonials";
 window.fslightbox = Lightbox;
 
 class Home extends BasePage {
     onReady() {
         this.initFeaturedTabs();
         this.initCardCarousels();
-        initReorder();   // «أعد طلبك بسرعة»: a signed-in customer's last order + «أعد طلب الكل»
-        initTestimonials();   // «آراء العملاء»: virtual marquee over every written store review
     }
 
     /**
      * Swipe carousel + dot indicators for the hand-built qprod grid cards
-     * (qissa-products / qissa-listing). The reusable
+     * (qissa-products / qissa-all-products / qissa-listing). The reusable
      * <custom-salla-product-card> wires its own carousels; the shared helper's
      * per-element guard keeps them from being wired twice.
      */

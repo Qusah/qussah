@@ -1,59 +1,34 @@
 {#
-  Global store footer — Qussah revamp.
-  Figma "Qusah Re-Vamp": desktop 113:35234 · mobile 290:8762.
+  Global store footer — Qussah custom design.
+  Figma: desktop 6036:1308 (1440) · mobile 6036:22124 (428).
+  White footer, 5 RTL columns (right → left):
+    About · Account · Links · Contact · Social.
+  Desktop: single row of 5 columns (About widest, on the right).
+  Mobile : About full-width, then 2×2 grid (Account+Links, Contact+Social).
 
-  1. Navy help bar: «تحتاج مساعدة؟» (right) · social, WhatsApp, email (left).
-     Desktop shows WhatsApp/email as white pills with their text; phones as
-     white icon squares beside the social squares.
-  2. White body, RTL right → left: About (logo + description) · important links
-     (merchant footer menu) · account links. Phones stack them; the two link
-     lists become accordions (footer-accordion.js), closed as Figma draws them.
-  3. Bottom: payment logos · the legal lines. Figma's mobile frame carries
-     «legal name · السجل التجاري» and «الحقوق محفوظة … · الرقم الضريبي»; the
-     desktop frame only the copyright — the user had desktop show both lines too.
-
-  Dynamic Salla data:
+  Dynamic Salla data preserved:
     - logo / about : store.logo, store.description
-    - help bar     : store.contacts.{whatsapp,email}, <salla-social>
-    - links        : <salla-menu source="footer">
-    - payments     : <salla-payments> (enabled methods + SBC certificate)
-    - legal lines  : theme setting legal_entity_name, store.settings.commercial_number,
-                     store.settings.tax.number
-  Account links have no Salla data source → the standard customer pages.
-  The newsletter banner is the separate `qissa-footer-newsletter` component.
+    - footer links : <salla-menu source="footer">   (merchant footer pages)
+    - contact      : store.contacts.{whatsapp,mobile,email}
+    - social       : <salla-social>                  (merchant social links)
+    - VAT number   : store.settings.tax.number       (bottom bar)
+
+  Notes:
+   * The newsletter banner is the separate `qissa-footer-newsletter` component — NOT here.
+   * Bottom bar `qissa-footer-bottom` follows Figma 6036:1409 (desktop) / 6036:22227 (mobile):
+     payment logos (local assets in images/payments/, exported from Figma) +
+     VAT number (store.settings.tax.number) + ZATCA badge (local asset) + copyright.
+   * Account links have no Salla data source → linked to the standard customer pages.
 #}
-{% set whatsapp = store.contacts.whatsapp %}
-{% set email = store.contacts.email %}
-<footer class="qfooter" data-ftg-closed>
-
-  {# ---- help bar (desktop 113:35235 / mobile 290:8805) ---- #}
-  <div class="qfooter__bar">
-    <h3 class="qfooter__help">{{ trans('blocks.qissa.need_help') }}</h3>
-    <div class="qfooter__reach">
-      <salla-social class="qfooter__social"></salla-social>
-      {% if whatsapp %}
-        <a class="qfooter__pill" href="https://wa.me/{{ whatsapp|replace({'+': '', ' ': ''}) }}" target="_blank" rel="noopener">
-          <img class="qfooter__pill-icon" src="{{ 'images/qfooter/whatsapp.svg'|asset }}" alt="" width="20" height="20"/>
-          <span class="qfooter__pill-text" dir="ltr">{{ whatsapp }}</span>
-        </a>
-      {% endif %}
-      {% if email %}
-        <a class="qfooter__pill" href="mailto:{{ email }}">
-          <img class="qfooter__pill-icon" src="{{ 'images/qfooter/mail.svg'|asset }}" alt="" width="20" height="20"/>
-          <span class="qfooter__pill-text" dir="ltr">{{ email }}</span>
-        </a>
-      {% endif %}
-    </div>
-  </div>
-
-  <div class="qfooter__main">
+<footer class="qfooter"{% if page.slug starts with 'cart' %} data-ftg-closed{% endif %}>
+  <div class="container">
     <div class="qfooter__cols">
 
-      {# About (RIGHT) — 113:35299 / 290:8766 #}
+      {# About (RIGHT in RTL) — store logo + description #}
       <div class="qfooter__col qfooter__about">
         {% if store.logo %}
           <a class="qfooter__logo" href="{{ link('/') }}">
-            <img src="{{ store.logo|cdn(250) }}" alt="{{ store.name }}" loading="lazy"/>
+            <img src="{{ store.logo|cdn(175) }}" alt="{{ store.name }}" loading="lazy"/>
           </a>
         {% endif %}
         {% if store.description %}
@@ -61,54 +36,121 @@
         {% endif %}
       </div>
 
-      {# Important links (middle) — 113:35284 / 290:8776. Figma titles this
-         desktop column «إدارة الحساب» too; its mobile twin reads «روابط مهمة». #}
-      <nav class="qfooter__col qfooter__links-col qfooter__links-col--pages" aria-label="{{ trans('blocks.qissa.important_links') }}">
+      {# Account — حسابى #}
+      <nav class="qfooter__col qfooter__links-col" aria-label="{{ trans('blocks.qissa.account_manage') }}">
+        <h3 class="qfooter__title">{{ trans('blocks.qissa.account_manage') }}</h3>
+        <ul class="qfooter__list">
+          <li><a class="qfooter__link" href="{{ link('/profile') }}"><i class="qfooter__arrow" aria-hidden="true"></i><span>{{ trans('blocks.qissa.account') }}</span></a></li>
+          <li><a class="qfooter__link" href="{{ link('/orders') }}"><i class="qfooter__arrow" aria-hidden="true"></i><span>{{ trans('blocks.qissa.orders') }}</span></a></li>
+          <li><a class="qfooter__link" href="{{ link('/cart') }}"><i class="qfooter__arrow" aria-hidden="true"></i><span>{{ trans('blocks.qissa.cart_label') }}</span></a></li>
+          <li><a class="qfooter__link" href="{{ link('/wishlist') }}"><i class="qfooter__arrow" aria-hidden="true"></i><span>{{ trans('blocks.qissa.wishlist') }}</span></a></li>
+        </ul>
+      </nav>
+
+      {# Links — روابط مهمة (dynamic merchant footer menu) #}
+      <nav class="qfooter__col qfooter__links-col" aria-label="{{ trans('blocks.qissa.important_links') }}">
         <h3 class="qfooter__title">{{ trans('blocks.qissa.important_links') }}</h3>
         <salla-menu class="qfooter__menu" source="footer" with-cookie-preferences></salla-menu>
       </nav>
 
-      {# Account (LEFT; first list on phones) — 113:35269 / 290:8770 #}
-      <nav class="qfooter__col qfooter__links-col qfooter__links-col--account" aria-label="{{ trans('blocks.qissa.account_manage') }}">
-        <h3 class="qfooter__title">{{ trans('blocks.qissa.account_manage') }}</h3>
+      {# Contact — تواصل معنا (dynamic store contacts) #}
+      <div class="qfooter__col qfooter__contact">
+        <h3 class="qfooter__title">{{ trans('blocks.qissa.contact_us') }}</h3>
         <ul class="qfooter__list">
-          <li><a class="qfooter__link" href="{{ link('/profile') }}">{{ trans('blocks.qissa.account') }}</a></li>
-          <li><a class="qfooter__link" href="{{ link('/orders') }}">{{ trans('blocks.qissa.orders') }}</a></li>
-          <li><a class="qfooter__link" href="{{ link('/cart') }}">{{ trans('blocks.qissa.cart_label') }}</a></li>
-          <li><a class="qfooter__link" href="{{ link('/wishlist') }}">{{ trans('blocks.qissa.wishlist') }}</a></li>
+          {% if store.contacts.whatsapp %}
+            <li>
+              <a class="qfooter__contact-item" href="https://wa.me/{{ store.contacts.whatsapp|replace({'+': '', ' ': ''}) }}" target="_blank" rel="noopener">
+                <i class="qfooter__arrow" aria-hidden="true"></i>
+                <span class="qfooter__contact-text">
+                  <span class="qfooter__contact-label">{{ trans('blocks.qissa.whatsapp_label') }}</span>
+                  <span class="qfooter__contact-val" dir="ltr">{{ store.contacts.whatsapp }}</span>
+                </span>
+              </a>
+            </li>
+          {% endif %}
+          {% if store.contacts.email %}
+            <li>
+              <a class="qfooter__contact-item" href="mailto:{{ store.contacts.email }}">
+                <i class="qfooter__arrow" aria-hidden="true"></i>
+                <span class="qfooter__contact-text">
+                  <span class="qfooter__contact-label">{{ trans('blocks.qissa.email_label') }}</span>
+                  <span class="qfooter__contact-val" dir="ltr">{{ store.contacts.email }}</span>
+                </span>
+              </a>
+            </li>
+          {% endif %}
         </ul>
-      </nav>
+      </div>
+
+      {# Social — تابعنا على (LEFT in RTL; dynamic merchant social links) #}
+      <div class="qfooter__col qfooter__social">
+        <h3 class="qfooter__title">{{ trans('blocks.qissa.follow_us') }}</h3>
+        <salla-social></salla-social>
+      </div>
 
     </div>
+  </div>
 
-    {# ---- bottom: payments (RIGHT / top) · legal lines (LEFT / below) —
-       113:35309 / 290:8782 + 290:8801 ---- #}
-    <div class="qfooter__bottom">
-      <div class="qfooter__payments">
+  {# bottom bar — Figma desktop 6036:1409 / mobile 6036:22227 #}
+  <div class="container">
+
+    {# Trust line above the bottom pill — legal entity name + commercial registration.
+       CR is dynamic (store.settings.commercial_number). Salla exposes NO legal-entity
+       field, so the official company name is a theme setting the merchant fills in
+       (Theme settings → الاسم الرسمي للمنشأة). Both are hidden while empty. #}
+    {% set legal_entity_name = theme.settings.get('legal_entity_name', '') %}
+    {# Falls back to the store's registered CR while store.settings.commercial_number is
+       empty in the Salla dashboard — same |default() convention the VAT number uses
+       below. Populate السجل التجاري in the dashboard and the live value wins automatically. #}
+    {% set commercial_number = store.settings.commercial_number|default('7021220244') %}
+    {% if legal_entity_name or commercial_number %}
+      <div class="qissa-footer-trust">
+        {% if legal_entity_name %}
+          <span class="qissa-footer-trust__item">{{ legal_entity_name }}</span>
+        {% endif %}
+        {% if commercial_number %}
+          <span class="qissa-footer-trust__item">
+            {{ trans('blocks.qissa.cr_number_label') }}
+            <span dir="ltr">{{ commercial_number }}</span>
+          </span>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="qissa-footer-bottom">
+
+      {# copyright (RIGHT on desktop / BOTTOM on mobile) #}
+      <p class="qissa-footer-bottom__copyright">
+        {{ trans('blocks.qissa.copyright') }} <span class="qissa-footer-bottom__year">{{ "now"|date("Y") }}</span>
+      </p>
+
+      {# VAT badge (always) + number (dynamic; falls back to the store VAT) — Figma 6036:1419
+
+         The two footer identifiers are DIFFERENT numbers with different labels — do not
+         swap them (this line was mislabelled "الرقم التجاري" once already):
+           · السجل التجاري / CR No.  → cr_number_label  + store.settings.commercial_number
+                                        (trust line above)
+           · الرقم الضريبي / Tax no. → tax_number_label + store.settings.tax.number
+                                        (here, beside the ZATCA badge)
+         The ZATCA badge only makes sense next to the VAT number, so this label stays
+         الرقم الضريبي. #}
+      <div class="qissa-footer-bottom__tax">
+        <img class="qissa-footer-bottom__tax-badge" src="{{ 'images/payments/zatca-badge.jpg' | asset }}" alt="{{ trans('blocks.qissa.tax_alt') }}" loading="lazy"/>
+        <span class="qissa-footer-bottom__tax-num">{{ trans('blocks.qissa.tax_number_label') }} <span dir="ltr">{{ store.settings.tax.number|default('311345967400003') }}</span></span>
+      </div>
+
+      {# payment methods + Saudi Business Center badge (LEFT on desktop / TOP on mobile).
+         <salla-payments> renders the merchant's ACTUALLY enabled methods from
+         store.settings.payments, plus the SBC certificate badge from
+         store.settings.certificate.id (linked to the official
+         eauthenticate.saudibusiness.gov.sa certificate page) and the Made-in-KSA mark.
+         This replaces the previous hard-coded mada/PayPal/Mastercard/Visa images, which
+         could advertise a method the store does not actually accept. Each rendered
+         <li> keeps the Figma white rounded box via .s-payments-list-item in footer.scss. #}
+      <div class="qissa-footer-bottom__payments">
         <salla-payments></salla-payments>
       </div>
 
-      {# Two different numbers — do not swap them:
-           · السجل التجاري / CR  → cr_number_label  + store.settings.commercial_number
-           · الرقم الضريبي / VAT → tax_number_label + store.settings.tax.number
-         The legal name is a theme setting (Theme settings → الاسم الرسمي للمنشأة)
-         because Salla exposes no legal-entity field; hidden while empty. Both
-         numbers fall back to the store's registered values while the dashboard
-         fields are empty — fill them and the live values win. #}
-      {% set legal_entity_name = theme.settings.get('legal_entity_name', '') %}
-      {% set commercial_number = store.settings.commercial_number|default('7021220244') %}
-      <div class="qfooter__legal">
-        {% if legal_entity_name or commercial_number %}
-          <p class="qfooter__legal-line">
-            {%- if legal_entity_name %}{{ legal_entity_name }}{% endif -%}
-            {%- if legal_entity_name and commercial_number %} · {% endif -%}
-            {%- if commercial_number %}{{ trans('blocks.qissa.cr_number_label') }} <span dir="ltr">{{ commercial_number }}</span>{% endif -%}
-          </p>
-        {% endif %}
-        <p class="qfooter__legal-line">
-          {{- trans('blocks.qissa.copyright') }} <span dir="ltr">{{ "now"|date("Y") }}</span> · {{ trans('blocks.qissa.tax_number_label') }} <span dir="ltr">{{ store.settings.tax.number|default('311345967400003') }}</span>
-        </p>
-      </div>
     </div>
   </div>
 </footer>

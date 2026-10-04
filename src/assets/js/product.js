@@ -5,8 +5,6 @@ window.fslightbox = Fslightbox;
 import { zoom } from './partials/image-zoom';
 import { bindGallery } from './partials/image-viewer';
 
-const quiet = fn => (salla.api && typeof salla.api.withoutNotifier === 'function' ? salla.api.withoutNotifier(fn) : fn());
-
 class Product extends BasePage {
     onReady() {
         app.watchElements({
@@ -18,9 +16,6 @@ class Product extends BasePage {
         });
 
         this.initProductOptionValidations();
-        this.initPack();
-        this.initRelated();
-        this.initComments();
 
         // A click on a gallery photo opens the zoomable viewer instead of
         // fslightbox (videos still go to fslightbox) — partials/image-viewer.js.
@@ -38,72 +33,6 @@ class Product extends BasePage {
       document.querySelector('.product-form')?.addEventListener('change', function(){
         this.reportValidity() && salla.product.getPrice(new FormData(this));
       });
-    }
-
-    // A package is a product whose page the merchant gave a «محتويات البكج» block
-    // (components/home/qissa-pack-contents; Salla prints it on that product's page
-    // only). Let it take the description's place.
-    initPack() {
-        const more = document.querySelector('[data-qpd-more]');
-        const packs = document.querySelectorAll('[data-qpd-pack]');
-        if (!more || !packs.length) {
-            return;
-        }
-        // wherever on the page the block was added, it belongs in the details column's slot
-        const slot = more.querySelector('.qpd-more__details > .s-blocks-wrapper');
-        packs.forEach(pack => {
-            slot.contains(pack) || slot.append(pack);
-            pack.hidden = false;
-        });
-        more.classList.add('is-pack');
-    }
-
-    // «يشترونها معها»: Salla's related products of this one, four in the theme card
-    initRelated() {
-        const section = document.querySelector('[data-qpd-related]');
-        if (!section) {
-            return;
-        }
-        const id = section.dataset.qpdRelated;
-        quiet(() => salla.product.api.fetch({source: 'related', source_value: id, limit: 4})).then(res => {
-            const products = (res?.data || []).filter(product => String(product.id) !== id).slice(0, 4);
-            const grid = section.querySelector('[data-qpd-related-grid]');
-            products.forEach(product => grid.append(Object.assign(document.createElement('custom-salla-product-card'), {product})));
-            section.hidden = !products.length;
-        }).catch(() => {});
-    }
-
-    // The comments run in one row. Scrolled near its end, press Salla's own
-    // «عرض المزيد» (hidden) for the next page; scroll does not bubble — capture.
-    // Ratings left without words are not shown (the stylesheet hides them), so
-    // while fewer than four comments show, ask for more — a few pages at most.
-    initComments() {
-        const comments = document.querySelector('.qpd-more salla-comments');
-        if (!comments) {
-            return;
-        }
-        let busy = false, count = -1, tries = 0;
-        const more = () => {
-            const button = comments.querySelector('.s-infinite-scroll-btn');
-            if (busy || !button) {
-                return;
-            }
-            busy = true;
-            button.click();
-            setTimeout(() => { busy = false; }, 1500);
-        };
-        comments.addEventListener('scroll', ({target: row}) => {
-            row.matches?.('.s-comments-container > div') && Math.abs(row.scrollLeft) + row.clientWidth > row.scrollWidth - 400 && more();
-        }, true);
-        new MutationObserver(() => {
-            const items = comments.querySelectorAll('.s-comments-item');
-            if (items.length === count) {
-                return;
-            }
-            count = items.length;
-            busy = false;
-            Array.from(items).filter(item => item.offsetParent).length < 4 && tries++ < 6 && more();
-        }).observe(comments, {childList: true, subtree: true});
     }
 
     initImagesZooming() {

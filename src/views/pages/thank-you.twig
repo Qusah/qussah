@@ -208,15 +208,9 @@
     {% set ty_total = (order.total is defined and order.total is not null) ? order.total : null %}
     {% set ty_items = (order.items is defined and order.items and order.items|length) ? order.items : [] %}
     {% set ty_disc = (order.discounts is defined and order.discounts and order.discounts|length) ? order.discounts : [] %}
-    {# No numeric comparison on a money field: Salla hands them over as Money objects, and
-       `> 0` on one aborts the whole render (the blank thank-you page). The fee is shown when
-       its formatted amount has a non-zero digit outside the currency markup. #}
-    {% set ty_cod = (order.cod_cost is defined and order.cod_cost) ? order.cod_cost : null %}
-    {% if ty_cod is not null and not ((ty_cod|money ~ '') matches '/(^|>)[^<]*([1-9]|١|٢|٣|٤|٥|٦|٧|٨|٩)/') %}{% set ty_cod = null %}{% endif %}
+    {% set ty_cod = (order.cod_cost is defined and order.cod_cost and order.cod_cost > 0) ? order.cod_cost : null %}
     {% set ty_pay = (order.payment_method is defined and order.payment_method) ? order.payment_method : null %}
-    {% if ty_pay is not null and ty_pay.name is defined %}{% set ty_pay = ty_pay.name %}{% endif %}
-    {# printed only when it is plain text: echoing an object or a list would abort the render too #}
-    {% if ty_pay is not null and (ty_pay|json_encode)|first != '"' %}{% set ty_pay = null %}{% endif %}
+    {% if ty_pay is iterable %}{% set ty_pay = ty_pay.name is defined ? ty_pay.name : null %}{% endif %}
     {% set ty_receipt = ty_items|length or ty_sub is not null or ty_total is not null %}
     {% set ty_mobile = (store.contacts is defined and store.contacts and store.contacts.mobile is defined) ? store.contacts.mobile : null %}
     {% set ty_wa = (store.contacts is defined and store.contacts and store.contacts.whatsapp is defined) ? store.contacts.whatsapp : null %}
@@ -405,7 +399,7 @@
                         <div><dt>{{ trans('blocks.thank_you.cod') }}</dt><dd class="qty-m">{{ ty_cod|money }}</dd></div>
                         {% endif %}
                         {% if ty_total is not null %}
-                        <div class="qty-rc__tot"><dt>{{ trans('blocks.thank_you.total') }}</dt><dd class="qty-m">{{ ty_total|money }}</dd></div>
+                        <div class="qty-rc__tot"><dt>{{ trans('blocks.thank_you.total') }} <small>{{ trans('blocks.thank_you.incl_tax') }}</small></dt><dd class="qty-m">{{ ty_total|money }}</dd></div>
                         {% endif %}
                         {% if ty_pay %}
                         <div><dt>{{ trans('blocks.thank_you.payment') }}</dt><dd>{{ ty_pay }}</dd></div>

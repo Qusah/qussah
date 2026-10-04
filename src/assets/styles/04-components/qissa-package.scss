@@ -1,568 +1,263 @@
 // ====================================================================
-// Product Hero card (partials/qpack-card.twig) — Figma "Qusah Re-Vamp":
-// desktop 326:491 (1440 page, section frame at x 20 / 1400 wide), mobile
-// 290:8165 (402 page). Values are the scaled file's (2 dp).
-//
-// Two layouts of one card:
-//   · wide    — gallery on the right, details on the left, the «الأكثر مبيعًا»
-//               ribbon across the corner (qissa-package on desktop);
-//   · stacked — gallery, ribbon strip, details (the Figma mobile card): every
-//               card on phones, and always .qpack__card--stacked
-//               (qissa-dual-hero, whose cards get half the row).
-// The section chrome is at the end: .qpack here, .qdhero in qissa-dual-hero.scss.
+// Qissa Package — "المجموعة الشاملة" 
+// Centered title + a swipeable image gallery (big main image + thumbnail
+// strip), an optional best-seller marquee, then the product details
+// (sold count, rating, name, price, spec chips) + quantity & add-to-cart.
 // ====================================================================
 
-// Expo Arabic once its files are embedded; the theme's own stack until then.
-// !important: qusah-overrides forces `body *` (and [class*="price"]).
-$qpack-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
-$qpack-navy: #2c348e;
-$qpack-cyan: #91e6f7;
+.qpack {
+  font-family: 'GE SS Two', sans-serif;
+  padding-block: 24px;
 
-// ---- wide layout (the base) -----------------------------------------
-.qpack__card {
-  position: relative;
-  display: grid;
-  // rtl: the first column is the right one
-  grid-template-columns: minmax(0, 565.16fr) minmax(0, 513.66fr);
-  grid-template-areas: 'gallery info';
-  column-gap: 37.45px;
-  align-items: start;
-  width: 100%;
-  max-width: 1190.88px;
-  margin-inline: auto;
-  // physical: gallery 36.47 from the right edge, details 36.28 from the left
-  padding: 36.63px 36.47px 24.71px 36.28px;
-  overflow: hidden;   // clips the corner ribbon
-  background: #fff;
-  border: .93px solid rgba(0, 0, 0, .08);
-  border-radius: 14.89px;
-  direction: rtl;
+  .container { max-width: none; padding-inline: 50px; }
+
+  // ---- centered heading ----
+  &__head {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 12px; text-align: center; margin-bottom: 28px;
+  }
+  &__title {
+    font-size: 32px; font-weight: 700; line-height: 38px;
+    letter-spacing: -0.2px; color: #0a1f30; margin: 0;
+  }
+  &__subtitle {
+    font-size: 16px; font-weight: 300; line-height: 24px;
+    color: #6c757d; margin: 0;
+  }
+
+  // ---- the showcase card ----
+  &__card {
+    width: 100%; max-width: 600px; margin-inline: auto;   // slightly tighter hero card
+    display: flex; flex-direction: column;
+    background: #fff; border-radius: 24px; padding: 20px;
+    box-shadow: 0 14px 40px rgba(23, 41, 81, .10);
+    direction: rtl; overflow: hidden;
+  }
 
   // ---- gallery ----
-  .qpack__gallery {
-    grid-area: gallery;
-    display: flex;
-    flex-direction: column;
-    gap: 11.16px;
-    min-width: 0;
+  &__gallery { position: relative; }
+  &__stage { position: relative; }
+  // overlay prev/next arrows on the main image 
+  &__arrow {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 3;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255, 255, 255, .94); border: 1px solid #eef1f6; color: #30378e; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(10, 31, 48, .12);
+    -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+    i { font-size: 15px; }
+    &--prev { right: 12px; }
+    &--next { left: 12px; }
+    @media (hover: hover) { &:hover { background: #30378e; border-color: #30378e; color: #fff; } }
   }
-  .qpack__main {
-    display: flex;
-    aspect-ratio: 565.26 / 285.9;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    background: #f4f5f6;
-    border-radius: 29.77px;
-    direction: rtl;
-    cursor: grab;
 
+  // discount badge — red tag, top-left, right-pointing tail
+  &__badge {
+    // Merchant promotion_title labels run far longer than the short discount text
+    // this pill was drawn for, and as a nowrap badge with no cap it grew past the
+    // card. Hold it to one line at a fixed height and truncate with an ellipsis.
+    //
+    // Truncating needs overflow:hidden, which would also clip a tail drawn outside
+    // the box — so the tail now sits inside the padding box and ::after paints the
+    // pill behind the text. The badge is offset by the width of the tail so the
+    // pill itself still starts on the design's 16px line, and isolation keeps that
+    // z-index:-1 layer inside this badge instead of dropping behind the card.
+    // This badge's tail points the other way, so the 5px it needs is on the right.
+    position: absolute; top: 16px; left: 16px; z-index: 3; isolation: isolate;
+    display: block;
+    height: 36px; line-height: 36px;
+    padding: 0 19px 0 14px;        // 14px gutter each side, +5px for the tail
+    max-width: calc(100% - 27px);  // pill stops 16px short of the far edge
+    background: none; color: #fff;
+    font-size: 15px; font-weight: 300;
+    text-align: center;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    &::before {                    // the pill, behind the text
+      content: ''; position: absolute; inset: 0 5px 0 0; z-index: -1;
+      background: #f55157; border-radius: 8px;
+    }
+    &::after {                     // folded tail, inside the box
+      content: ''; position: absolute; top: 50%; right: 0; transform: translateY(-50%);
+      width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent;
+      border-left: 6px solid #f55157;
+    }
+  }
+  // wishlist — top-right circle
+  &__wish {
+    position: absolute; top: 16px; right: 16px; z-index: 3;
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: #fff; border: 1px solid #eee; color: #0a1f30; cursor: pointer;
+    -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none;
+    box-shadow: 0 4px 12px rgba(10, 31, 48, .08);
+    i { font-size: 18px; }
+    @media (hover: hover) { &:hover { color: #f55157; border-color: #f55157; } }
+    &.is-added { background: #dc3545; border-color: #dc3545; color: #fff; i { color: #fff; } }
+  }
+
+  // main image slider (swipeable, one image per view)
+  &__main {
+    display: flex; direction: rtl;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    border-radius: 16px; background: #fff9ec; cursor: grab;
     &::-webkit-scrollbar { display: none; }
     &.is-grabbing { cursor: grabbing; scroll-snap-type: none; user-select: none; }
   }
-  .qpack__slide {
-    display: block;
-    flex: 0 0 100%;
-    height: 100%;
-    scroll-snap-align: center;
-    -webkit-user-drag: none;
-
-    img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      pointer-events: none;
-    }
+  &__slide {
+    flex: 0 0 100%; scroll-snap-align: center;
+    display: block; aspect-ratio: 4 / 3;   // shorter hero (was 1/1) — trims the empty
+                                           // margin around the centered product so the
+                                           // buy box sits higher and cuts page scroll.
+    img { width: 100%; height: 100%; object-fit: cover; display: block; }
   }
-  // four across, more photos scroll
-  .qpack__thumbs {
-    display: flex;
-    gap: 11.16px;
-    overflow-x: auto;
-    scrollbar-width: none;
 
+  // thumbnail strip (peek + horizontal scroll)
+  &__thumbs {
+    display: flex; gap: 12px; margin-top: 10px;
+    overflow-x: auto; scrollbar-width: none; padding-block: 2px;
     &::-webkit-scrollbar { display: none; }
   }
-  .qpack__thumb {
-    flex: 0 0 calc((100% - 3 * 11.16px) / 4);
-    aspect-ratio: 132.94 / 105.17;
-    padding: 0;
-    overflow: hidden;
-    background: #f4f5f6;
-    border: 0;
-    border-radius: 18.61px;
-    cursor: pointer;
-
-    img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+  &__thumb {
+    flex: 0 0 24%; aspect-ratio: 4 / 3; padding: 0;   // slightly smaller thumbs
+    border-radius: 16px; overflow: hidden; cursor: pointer;
+    background: #fff9ec; border: 1px solid #eef1f6;
+    -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
+    img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    &.is-active { border: 2px solid #30378e; box-shadow: 0 6px 16px rgba(48, 55, 142, .14); }
   }
 
-  // ---- «الأكثر مبيعًا» ribbon: a -45° band across the top-left corner ----
-  // Figma: a 333.04×31.34 band centred at (64.82, 78.14) inside the card
-  .qpack__ribbon {
-    position: absolute;
-    z-index: 2;
-    top: 62.47px;
-    left: -101.7px;
-    width: 333.04px;
-    height: 31.34px;
-    overflow: hidden;
-    background: $qpack-cyan;
-    transform: rotate(-45deg);
-    direction: ltr;   // left-anchors the looping track
+  // ---- best-seller marquee ----
+  &__ticker {
+    margin: 18px -20px;                 // full-bleed across the card padding
+    overflow: hidden; background: #1fc16b;
+    direction: ltr;                     // left-anchor the track (RTL parent anchors max-content off-screen → gaps)
   }
-  .qpack__ribbon-track {
-    display: flex;
-    width: max-content;
-    height: 100%;
-    animation: qpack-ticker 22s linear infinite reverse;
+  &__ticker-track {
+    display: flex; width: max-content;
+    animation: qpack-ticker 22s linear infinite reverse;   // reverse → scrolls to the RIGHT, seamless & infinite
   }
-  .qpack__ribbon-group {
-    display: flex;
-    flex: 0 0 auto;
-    align-items: center;
-    gap: 6.37px;
-    padding: 2.79px 3.19px;   // half the item gap each side keeps the loop seamless
-  }
-  .qpack__ribbon-item {
-    color: $qpack-navy;
-    font-family: $qpack-font !important;
-    font-size: 10.23px;
-    font-weight: 500;
-    line-height: 16.37px;
-    white-space: nowrap;
-    direction: rtl;   // the star stays before the Arabic words
-  }
-
-  // ---- details ----
-  .qpack__info {
-    grid-area: info;
-    display: flex;
-    flex-direction: column;
-    gap: 10.09px;
-    min-width: 0;
-    margin-top: 5.23px;   // Figma: 41.86 from the top vs the gallery's 36.63
-  }
-  .qpack__name {
-    min-height: 76.28px;
-    margin: 0;
-    padding-top: 11.16px;
-    color: #082033;
-    font-family: $qpack-font !important;
-    font-size: 40.93px;
-    font-weight: 400;
-    line-height: 51.17px;
-    text-align: right;
-
-    a { color: inherit; }
-    a:hover { color: $qpack-navy; }
-  }
-
-  // rating row, then the sold row
-  .qpack__meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;   // rtl → right
-    gap: 10.09px;
-  }
-  .qpack__rating {
-    display: flex;
-    align-items: center;
-    gap: 7.44px;
-    height: 35.35px;
-  }
-  .qpack__stars {
-    display: flex;
-    align-items: center;
-    gap: 1.86px;
-
-    img { display: block; width: 12.09px; height: 11.54px; }
-  }
-  .qpack__rate {
-    color: #6c757d;
-    font-size: 13.02px;
-    font-weight: 500;
-    line-height: 1;
-  }
-  .qpack__sold {
-    display: flex;
-    align-items: center;
-    gap: 1.6px;
-    height: 20.72px;
-    margin: 0;
-    color: $qpack-navy;
-    font-size: 12.76px;
-    font-weight: 500;
-    line-height: 15.27px;
-
-    img { display: block; width: 19.94px; height: 19.94px; }
-  }
-
-  // «ماذا يوجد في البكج» — two columns of one-line boxes
-  .qpack__inside {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 4.78px 5.31px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-
-    &[hidden] { display: none; }
-  }
-  .qpack__inside-item {
-    height: 28.68px;
-    padding: 3.6px;
-    overflow: hidden;
-    background: #f9f9f9;
-    border: .3px solid #e5e7eb;
-    border-radius: 3.6px;
-    color: #5a6874;
-    font-family: $qpack-font !important;
-    font-size: 7.97px;
-    font-weight: 400;
-    line-height: 21.48px;   // the box's inner height: one centred line
-    text-align: center;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  // price, then «اشترِ الآن»
-  .qpack__buy {
-    display: flex;
-    flex-direction: column;
-    gap: 13.81px;
-  }
-  .qpack__price {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 7.45px;
-  }
-  .qpack__price .qpack__price-now {
-    color: $qpack-navy;
-    font-family: $qpack-font !important;
-    font-size: 52.1px;
-    font-weight: 700;
-    line-height: 52.1px;
-
-    .sicon-sar { font-size: 11.16px; }   // Figma: an 11px «ر.س» beside 52px digits
-  }
-  .qpack__price .qpack__price-old {
-    color: #e90000;
-    font-family: $qpack-font !important;
-    font-size: 20.47px;
-    font-weight: 400;
-    line-height: 32.75px;
-    text-decoration: line-through;
-
-    .sicon-sar { font-size: 11.16px; }
-  }
-  .qpack__buy-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 48.38px;
-    padding: 0 26.05px;
-    border: 0;
-    border-radius: 7.44px;
-    background: $qpack-cyan;
-    color: $qpack-navy;
-    font-size: 14.89px;
-    font-weight: 700;
-    line-height: 22.33px;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: background-color .15s ease, color .15s ease, opacity .15s ease;
-
-    &:hover { background: $qpack-navy; color: #fff; }
-    &[aria-busy] { opacity: .7; cursor: progress; }
-  }
-  .qpack__buy-btn--oos {
-    &,
-    &:hover {
-      background: #e6e7ef;
-      color: #8a8fa8;
-      cursor: not-allowed;
-    }
+  &__ticker-group { display: flex; flex: 0 0 auto; }
+  &__ticker-item {
+    direction: rtl;                                        // keep the star on the right of the Arabic text
+    display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px;
+    color: #e9f9f0; font-size: 13px; font-weight: 500; line-height: 1; white-space: nowrap;
+    i { font-size: 12px; color: #e9f9f0; }
   }
 }
-
-// two identical groups → a seamless loop
 @keyframes qpack-ticker {
   from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  to   { transform: translateX(-50%); }   // two identical groups → seamless loop
 }
 
-// ---- stacked layout: Figma 290:8165 ---------------------------------
-// Written against the card (&), emitted after the base rules so equal
-// selectors win on order.
-@mixin qpack-stacked {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;   // the wide grid's `start` would size the ribbon to its looping track
-  max-width: none;
-  padding: 19.94px;
-  border-width: 1.05px;
-  border-color: rgba(0, 0, 0, .17);
-  border-radius: 29.38px;
+// ---- product details ----
+.qpack__info {
+  display: flex; flex-direction: column; align-items: stretch;
+  gap: 12px; direction: rtl; padding-top: 4px;
 
-  .qpack__gallery {
-    gap: 12.59px;
-    margin-bottom: 30.43px;
-  }
-  .qpack__main {
-    aspect-ratio: 336.83 / 170.37;
-    border-radius: 33.58px;
-  }
-  .qpack__thumbs { gap: 12.59px; }
-  .qpack__thumb {
-    flex-basis: calc((100% - 3 * 12.59px) / 4);
-    aspect-ratio: 1;
-    border-radius: 20.99px;
-  }
-
-  // the ribbon becomes a full-bleed strip between the gallery and the name
-  .qpack__ribbon {
-    position: static;
-    width: auto;
-    height: 35.35px;
-    margin: 0 -19.94px 18px;
-    transform: none;
-  }
-  .qpack__ribbon-group {
-    gap: 7.19px;
-    padding: 3.15px 3.6px;
-  }
-  .qpack__ribbon-item {
-    font-size: 11.54px;
-    line-height: 18.47px;
-  }
-
-  .qpack__info {
-    gap: 18px;
-    margin-top: 0;
-  }
-  .qpack__name {
-    min-height: 0;
-    padding-top: 0;
-    font-size: 31.48px;
-    line-height: 39.35px;
-  }
-
-  // rating (right) and sold (left) share one row
-  .qpack__meta {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .qpack__rating {
-    gap: 2.7px;
-    height: auto;
-  }
-  .qpack__stars {
-    gap: 1.8px;
-    img { width: 11.68px; height: 11.15px; }
-  }
-  .qpack__rate {
-    font-family: $qpack-font !important;   // Figma mobile: Expo Arabic Medium
-    font-size: 9.89px;
+  // sold (right) + rating (left)
+  .qpack__status {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
   }
   .qpack__sold {
-    gap: 1.54px;
-    height: 16.22px;
-    font-size: 12.36px;
-    line-height: 14.78px;
-    img { width: 19.3px; height: 19.3px; }
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 14px; color: #0a1f30; line-height: 1;
+    b { font-family: 'Poppins','GE SS Two',sans-serif; font-weight: 600; }
+    i { font-size: 15px; color: #fd7e14; }
+  }
+  .qpack__review {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 14px; color: #6c757d; line-height: 1;
+    i { font-size: 15px; color: #ffc62a; }
+    .qpack__rate b { font-family: 'Poppins','GE SS Two',sans-serif; font-weight: 600; color: #1fc16b; }
+    .qpack__rate-count { color: #a5a5a5; font-size: 12px; }
   }
 
-  // two-line boxes
-  .qpack__inside {
-    gap: 8px 8.47px;
-    padding-top: 3.56px;
-  }
-  .qpack__inside-item {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    height: 45.76px;
-    padding: 5.75px;
-    border-width: .48px;
-    border-radius: 5.75px;
-    font-size: 10.17px;
-    line-height: 1.5;
-    text-align: right;
-    white-space: normal;
+  .qpack__cat { font-size: 14px; font-weight: 300; color: #91e6f7; line-height: 1; }
+  .qpack__name {
+    font-size: 20px; font-weight: 600; color: #0a1f30; line-height: 1.35; text-align: right;
+    &:hover { color: #30378e; }
   }
 
-  // price (right) beside the button (left); only the price itself
-  .qpack__buy {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+  // RTL: flex-start = visual RIGHT (flex-end would push the price to the left)
+  .qpack__price { display: flex; align-items: baseline; justify-content: flex-start; gap: 8px; }
+  .qpack__price-now {
+    font-family: 'Poppins','GE SS Two',sans-serif; font-size: 20px; font-weight: 600; color: #30378e; line-height: 1.4;
   }
-  .qpack__price { flex-wrap: nowrap; gap: 4px; }
-  .qpack__price .qpack__price-now {
-    font-size: 26px;
-    line-height: 26px;
-    .sicon-sar { font-size: 12px; }
+  .qpack__price-old {
+    font-family: 'Poppins','GE SS Two',sans-serif; font-size: 15px; font-weight: 400; color: #a5a5a5;
+    text-decoration: line-through; line-height: 1.4;
   }
-  .qpack__price .qpack__price-old { display: none; }
-  .qpack__buy-btn {
-    flex: 0 1 223px;
-    width: auto;
-    height: 52px;
-    padding: 0 12px;
-    border-radius: 8px;
-    font-size: 16px;
-    line-height: 24px;
+
+  // spec chips (blue/50), right-aligned — RTL: flex-start = visual RIGHT
+  .qpack__tags { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 10px; }
+  .qpack__tag {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 4px 12px; background: #e8fcff; color: #30378e; border-radius: 6px;
+    font-family: 'Poppins','GE SS Two',sans-serif; font-size: 14px; font-weight: 300; white-space: nowrap;
+  }
+
+  // actions: quantity (right) + add-to-cart fills (left)
+  .qpack__actions { display: flex; flex-direction: row; gap: 12px; align-items: stretch; margin-top: 6px; }
+  .qpack__qty {
+    flex: 0 0 auto; direction: ltr;                 // reads [−] 1 [+]
+    display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+    padding: 0 12px; min-height: 52px;
+    background: #fff; border: 1px solid #e9ecef; border-radius: 10px;
+  }
+  .qpack__qnum {
+    font-family: 'Poppins','GE SS Two',sans-serif; font-size: 15px; font-weight: 600;
+    color: #30378e; min-width: 22px; text-align: center;
+    padding-inline: 12px; border-inline: 1px solid #e9ecef;   // Figma: │ 1 │ divider lines
+  }
+  .qpack__q {
+    position: relative; flex: 0 0 auto; width: 18px; align-self: stretch;
+    background: none; border: 0; padding: 0; cursor: pointer;
+    -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none;
+    &::before {
+      content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 12px; height: 2px; border-radius: 2px; background: #0a1f30;
+    }
+    &--plus::after {
+      content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 2px; height: 12px; border-radius: 2px; background: #0a1f30;
+    }
+  }
+  .qpack__add {
+    flex: 1 1 auto; min-width: 0; min-height: 52px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: #30378e; border: 1px solid #30378e; color: #fff; border-radius: 12px;
+    font-family: 'GE SS Two',sans-serif; font-size: 16px; font-weight: 500; cursor: pointer;
+    -webkit-tap-highlight-color: transparent; appearance: none; -webkit-appearance: none;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+    i { font-size: 16px; }
+    @media (hover: hover) { &:hover { background: #91e6f7; border-color: #91e6f7; color: #30378e; } }
+  }
+  // out of stock — greyed out, no hover, not clickable
+  .qpack__add--oos {
+    background: #e6e7ef; border-color: #e6e7ef; color: #8a8fa8; cursor: not-allowed;
+    @media (hover: hover) { &:hover { background: #e6e7ef; border-color: #e6e7ef; color: #8a8fa8; } }
   }
 }
 
-.qpack__card--stacked { @include qpack-stacked; }
-
+// ---- mobile (<=768) ----
 @media (max-width: 768px) {
-  .qpack__card { @include qpack-stacked; }
-}
+  .qpack { padding-block: 8px; }
+  .qpack .container { padding-inline: 15px; }
+  .qpack__head { margin-bottom: 18px; }
+  .qpack__title { font-size: 24px; line-height: 30px; }
+  .qpack__subtitle { font-size: 14px; line-height: 20px; }
 
-// ---- compact wide layout: half-row cards (qissa-dual-hero) ------------
-// Not in the Figma frames. The wide layout sized for a ~580px card, so two
-// sit side by side and each is seen whole (~300px tall): equal columns, the
-// Figma mobile type scale, one-line pack boxes, the price beside the button.
-// The ribbon moves to the gallery's corner — on the details side, at this
-// size, it would run over the name. Details fill the card's height and the
-// buy row sits at the bottom, so cards in a row line their buttons up.
-// Phones get the stacked layout like every card.
-@media (min-width: 769px) {
-  .qpack__card--compact {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 20px;
-    align-items: stretch;
-    max-width: none;
-    padding: 20px;
+  .qpack__card { border-radius: 20px; padding: 14px; }
+  .qpack__ticker { margin-inline: -14px; }
+  .qpack__slide { aspect-ratio: 4 / 3; }   // shorter hero on mobile → less scrolling
+  .qpack__thumb { flex-basis: 34%; }       // slightly smaller thumbs
+  .qpack__arrow { width: 36px; height: 36px; }
 
-    .qpack__gallery {
-      align-self: start;
-      gap: 8px;
-    }
-    .qpack__main { border-radius: 16px; }
-    .qpack__thumbs { gap: 8px; }
-    .qpack__thumb {
-      flex-basis: calc((100% - 3 * 8px) / 4);
-      border-radius: 10px;
-    }
-
-    .qpack__ribbon {
-      right: -101.7px;
-      left: auto;
-      transform: rotate(45deg);
-    }
-
-    .qpack__info {
-      gap: 10px;
-      margin-top: 0;
-    }
-    .qpack__name {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      min-height: 0;
-      padding-top: 0;
-      overflow: hidden;
-      font-size: 22px;
-      line-height: 28px;
-    }
-
-    // rating (right) and sold (left) share one row
-    .qpack__meta {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-    .qpack__rating {
-      gap: 2.7px;
-      height: auto;
-    }
-    .qpack__rate { font-size: 11px; }
-    .qpack__sold {
-      gap: 1.54px;
-      height: 16.22px;
-      font-size: 12.36px;
-      line-height: 14.78px;
-      img { width: 19.3px; height: 19.3px; }
-    }
-
-    // one-line boxes, the full line on hover (title)
-    .qpack__inside { gap: 6px; }
-    .qpack__inside-item {
-      height: 30px;
-      padding: 4px 6px;
-      border-radius: 5px;
-      font-size: 10px;
-      line-height: 22px;
-      text-align: right;
-    }
-
-    .qpack__buy {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-top: auto;
-    }
-    .qpack__price { flex-wrap: nowrap; gap: 4px; }
-    .qpack__price .qpack__price-now {
-      font-size: 26px;
-      line-height: 26px;
-      .sicon-sar { font-size: 12px; }
-    }
-    .qpack__price .qpack__price-old { display: none; }
-    .qpack__buy-btn {
-      flex: 1 1 auto;
-      max-width: 223px;
-      width: auto;
-      height: 44px;
-      padding: 0 12px;
-      border-radius: 8px;
-      font-size: 14px;
-      line-height: 22px;
-    }
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .qpack__card .qpack__ribbon-track { animation: none; }
-}
-
-// ---- qissa-package section chrome ------------------------------------
-.qpack .container {
-  max-width: none;
-  padding-inline: 20px;   // the section frame sits 20px in from the page edges
-}
-
-@media (min-width: 769px) {
-  // the desktop frame's own top/bottom space stands in for the generic block
-  // gap (Salla's .s-block margin — raised selector, its order isn't ours)
-  .s-block.qpack {
-    margin-top: 0;
-    padding-block: 28.68px 67.91px;
-  }
-}
-
-@media (max-width: 768px) {
-  // the card sits at x 11 in the 402 frame, 379 wide
-  .qpack .container {
-    padding-left: 11px;
-    padding-right: 12px;
-  }
+  .qpack__info .qpack__name { font-size: 17px; }
+  .qpack__info .qpack__price-now { font-size: 18px; }
+  .qpack__info .qpack__add { font-size: 14px; min-height: 48px; }
+  .qpack__info .qpack__qty { min-height: 48px; }
 }

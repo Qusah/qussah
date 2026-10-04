@@ -1,16 +1,10 @@
 import BasePage from '../base-page';
 import { enhanceCarousels } from './card-carousel';
 import { bootQuickView, enhanceJsCard } from './qissa-quick-view';
-import { initPackCards } from './qissa-pack-card';
 
 // Card add → «✓ أُضيف» → stepper, and the quick-view ticket (every page loads
 // this file). Waits for theme::ready itself — nothing touches salla.* here.
 bootQuickView();
-
-// Product Hero cards (qissa-package / qissa-dual-hero): gallery, pack contents,
-// «اشترِ الآن». They only need the DOM, so they don't wait for the SDK.
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => initPackCards());
-else initPackCards();
 
 /* Plain text out of a product's HTML description — shared by the JS card here
    and the server-rendered cards (app.js hydrates [data-qdesc] with the same). */
@@ -88,9 +82,28 @@ class ProductCard extends HTMLElement {
     return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
   } 
 
+  // Discount percentage for the sale badge — prefers Salla's discount_percentage
+  // field, falls back to computing it from regular vs sale price. Digits localized.
+  getDiscountPercent() {
+    let pct = parseFloat(this.product?.discount_percentage);
+    if ((!pct || isNaN(pct)) && this.product?.regular_price > 0 && this.product?.sale_price >= 0) {
+      pct = (this.product.regular_price - this.product.sale_price) / this.product.regular_price * 100;
+    }
+    pct = Math.round(pct);
+    return pct > 0 ? salla.helpers.number(pct) : 0;
+  }
+
   getProductBadge() {
     if (this.product?.preorder?.label) {
       return `<div class="s-product-card-promotion-title">${this.product.preorder.label}</div>`
+    }
+
+    // Plain vertical (reusable Figma) card: show the discount percentage on sale.
+    if (this.isPlainVertical && this.product?.is_on_sale) {
+      const pct = this.getDiscountPercent();
+      if (pct) {
+        return `<div class="s-product-card-promotion-title">خصم ${pct}%</div>`
+      }
     }
 
     if (this.product.promotion_title) {
@@ -274,7 +287,7 @@ class ProductCard extends HTMLElement {
     const aria = this.escapeHTML(this.product?.image?.alt || this.product?.name || '');
 
     if (photos.length < 2) {
-      return `<a href="${href}" aria-label="${aria}" class="qprod__img-link">${this.buildCardImg(photos[0] || this.product?.image)}</a>`;
+      return `<a href="${href}" aria-label="${aria}">${this.buildCardImg(photos[0] || this.product?.image)}</a>`;
     }
 
     const slides = photos
@@ -299,129 +312,6 @@ class ProductCard extends HTMLElement {
     enhanceCarousels(this);
   }
 
-  // Donation progress + custom amount (donation products), shared by both templates.
-  getDonationBlock() {
-    return `<salla-progress-bar donation=${JSON.stringify(this.product?.donation)}></salla-progress-bar>
-          <div class="s-product-card-donation-input">
-            ${this.product?.donation?.can_donate && this.product?.donation?.custom_amount_enabled  ?
-              `<label for="donation-amount-${this.product.id}">${this.donationAmount} <span>*</span></label>
-              <input
-                type="text"
-                onInput="${e => {
-                  salla.helpers.inputDigitsOnly(e.target);
-                  this.addBtn.donatingAmount = (e.target).value;
-                }}"
-                id="donation-amount-${this.product.id}"
-                name="donating_amount"
-                class="s-form-control"
-                placeholder="${this.donationAmount}" />`
-              : ``}
-          </div>`;
-  }
-
-  // ---- The Qussah card (plain vertical) -----------------------------------
-  // Figma "Qusah Re-Vamp" 182:30936 / 290:7511. Same markup and classes as
-  // components/partials/qprod-card.twig, so 04-components/qprod-card.scss draws
-  // both. Hooks kept for other scripts: .qqv-slot + <salla-add-product-button>
-  // (qissa-quick-view.js), .s-product-card-wishlist-btn[data-id] (wishlist.js
-  // and the optimistic toggle in render()).
-
-  qcardIcon(name) {
-    return salla.url.asset(`images/qcard/${name}.svg`);
-  }
-
-  // Preorder label, else the merchant's promotion title, else «خصم» on sale.
-  qcardBadge() {
-    const p = this.product;
-    const text = p?.preorder?.label || p?.promotion_title
-      || (p?.is_on_sale ? (salla.lang.get('blocks.qissa.sale') || 'خصم') : '');
-    if (text) return `<span class="qprod__badge">${this.escapeHTML(text)}</span>`;
-    return this.showQuantity ? this.getProductBadge() : '';
-  }
-
-  // Whole stars filled (Figma shows 4 of 5 for 4.5), the value beside them.
-  qcardRating() {
-    const stars = parseFloat(this.product?.rating?.stars) || 0;
-    if (!stars) return '';
-    const filled = Math.floor(stars);
-    const imgs = [1, 2, 3, 4, 5]
-      .map(i => `<img src="${this.qcardIcon(i <= filled ? 'star' : 'star-empty')}" alt="" width="12" height="12">`)
-      .join('');
-    return `<div class="qprod__rating">
-        <span class="qprod__stars" role="img" aria-label="${stars} / 5">${imgs}</span>
-        <span class="qprod__rate">(${stars.toFixed(1)})</span>
-      </div>`;
-  }
-
-  qcardSold() {
-    const sold = Number(this.product?.sold_quantity) || 0;
-    if (sold <= 0) return '';
-    return `<p class="qprod__sold">
-        <img src="${this.qcardIcon('fire')}" alt="" width="20" height="20">
-        <span>${salla.lang.get('blocks.qissa.sold')} ${sold} ${salla.lang.get('blocks.qissa.times')}</span>
-      </p>`;
-  }
-
-  qcardPrice() {
-    const p = this.product;
-    if (p?.donation?.can_donate) return '';
-    let inner;
-    if (p.is_on_sale) {
-      inner = `<b class="qprod__price-now">${this.getPriceFormat(p.sale_price)}</b>
-               <s class="qprod__price-old">${this.getPriceFormat(p?.regular_price)}</s>`;
-    }
-    else if (p.starting_price) {
-      inner = `<span class="qprod__price-from">${this.startingPrice}</span>
-               <b class="qprod__price-now">${this.getPriceFormat(p?.starting_price)}</b>`;
-    }
-    else {
-      inner = `<b class="qprod__price-now">${this.getPriceFormat(p?.price)}</b>`;
-    }
-    return `<div class="qprod__price">${inner}</div>`;
-  }
-
-  qcardHTML() {
-    const p = this.product;
-    // one line under the name: the product subtitle, else the description excerpt
-    const line = p?.subtitle ? String(p.subtitle) : this.descriptionText();
-    return `
-      <div class="qprod__img">
-        ${this.getCardMedia()}
-        ${this.getCarouselDots()}
-        ${this.qcardBadge()}
-        <button type="button"
-          class="qprod__like s-product-card-wishlist-btn ${this.isInWishlist ? 's-product-card-wishlist-added' : 'not-added'}"
-          data-id="${p.id}"
-          onclick="salla.wishlist.toggle('${p.id}')"
-          aria-label="${this.escapeHTML(salla.lang.get('blocks.qissa.wishlist'))}">
-          <span class="qprod__like-ic" style="--qprod-heart: url('${this.qcardIcon('heart')}')" aria-hidden="true"></span>
-        </button>
-      </div>
-      <div class="qprod__info">
-        <div class="qprod__head">
-          <a href="${p?.url}" class="qprod__name">${p?.name}</a>
-          ${line ? `<p class="qprod__desc">${this.escapeHTML(line)}</p>` : ``}
-        </div>
-        ${this.qcardRating()}
-        ${this.qcardSold()}
-      </div>
-      ${p?.donation && !this.minimal ? this.getDonationBlock() : ``}
-      ${this.qcardPrice()}
-      ${!this.hideAddBtn ?
-        `<div class="qprod__btns">
-          <div class="qqv-slot">
-            <salla-add-product-button fill="solid" width="wide"
-              product-id="${p.id}"
-              product-status="${this.effectiveStatus}"
-              product-type="${p.type}">
-              <span>${p.add_to_cart_label ? p.add_to_cart_label : this.getAddButtonLabel()}</span>
-            </salla-add-product-button>
-          </div>
-        </div>`
-        : ``}
-    `;
-  }
-
   render(){
     this.classList.add('s-product-card-entry'); 
     this.setAttribute('id', this.product.id);
@@ -438,12 +328,14 @@ class ProductCard extends HTMLElement {
     this.effectiveStatus = (this.product.is_out_of_stock && window.notify_when_available_in_card && !['donating', 'financial_support'].includes(this.product?.type))
       ? 'out-and-notify'
       : this.product.status;
-    // The plain vertical card is the Qussah card (qcardHTML); the featured
-    // special / minimal / full-image / horizontal variants keep Salla's layout.
-    this.classList.toggle('qprod-js', this.isPlainVertical);
+    // Info chips for the plain vertical card — derived from the product subtitle
+    // (Arabic-comma separated), mirroring the homepage card convention.
+    this.chips = (this.isPlainVertical && this.product?.subtitle)
+      ? String(this.product.subtitle).split('،').map(c => c.trim()).filter(Boolean)
+      : [];
     // Recompute the card photos for this render (translation reloads re-render).
     this.cardPhotos = this.getCardImages();
-      this.innerHTML = this.isPlainVertical ? this.qcardHTML() : `
+      this.innerHTML = `
         <div class="${!this.fullImage ? 's-product-card-image' : 's-product-card-image-full'}">
           ${this.fullImage
             ? `<a href="${this.product?.url}" aria-label="${this.escapeHTML(this.product?.image?.alt || this.product.name)}">
@@ -463,7 +355,7 @@ class ProductCard extends HTMLElement {
                ${this.getCarouselDots()}`
           }
           ${this.fullImage ? `<a href="${this.product?.url}" aria-label=${this.product.name} class="s-product-card-overlay"></a>`:''}
-          ${!this.horizontal && !this.fullImage ?
+          ${(!this.horizontal && !this.fullImage && !this.isPlainVertical) || (this.isPlainVertical && this.hideAddBtn) ?
             `<button type="button"
               name="product-name-${this.product.id}"
               aria-label="Add or remove to wishlist"
@@ -489,16 +381,40 @@ class ProductCard extends HTMLElement {
             : ``}
 
           <div class="s-product-card-content-main ${this.isSpecial ? 's-product-card-content-extra-padding' : ''}">
+            ${this.isPlainVertical && this.product?.brand?.name ?
+              `<p class="s-product-card-content-category">${this.escapeHTML(this.product.brand.name)}</p>`
+              : ``}
             <h3 class="s-product-card-content-title">
               <a href="${this.product?.url}">${this.product?.name}</a>
             </h3>
             ${this.descriptionText() ? `<p class="s-product-card-content-desc">${this.escapeHTML(this.descriptionText())}</p>` : ``}
 
-            ${this.product?.subtitle && !this.minimal
-              ? `<p class="s-product-card-content-subtitle opacity-80">${this.product?.subtitle}</p>`
-              : ``}
+            ${this.isPlainVertical
+              ? (this.chips.length
+                  ? `<div class="s-product-card-chips">${this.chips.map(chip => `<span class="s-product-card-chip">${this.escapeHTML(chip)}</span>`).join('')}</div>`
+                  : ``)
+              : (this.product?.subtitle && !this.minimal
+                  ? `<p class="s-product-card-content-subtitle opacity-80">${this.product?.subtitle}</p>`
+                  : ``)}
           </div>
-          ${this.product?.donation && !this.minimal && !this.fullImage ? this.getDonationBlock() : ''}
+          ${this.product?.donation && !this.minimal && !this.fullImage ?
+          `<salla-progress-bar donation=${JSON.stringify(this.product?.donation)}></salla-progress-bar>
+          <div class="s-product-card-donation-input">
+            ${this.product?.donation?.can_donate && this.product?.donation?.custom_amount_enabled  ?
+              `<label for="donation-amount-${this.product.id}">${this.donationAmount} <span>*</span></label>
+              <input
+                type="text"
+                onInput="${e => {
+                  salla.helpers.inputDigitsOnly(e.target);
+                  this.addBtn.donatingAmount = (e.target).value;
+                }}"
+                id="donation-amount-${this.product.id}"
+                name="donating_amount"
+                class="s-form-control"
+                placeholder="${this.donationAmount}" />`
+              : ``}
+          </div>`
+            : ''}
           <div class="s-product-card-content-sub ${this.isSpecial ? 's-product-card-content-extra-padding' : ''}">
             ${this.product?.donation?.can_donate ? '' : this.getProductPrice()}
             ${this.product?.rating?.stars ?
@@ -517,6 +433,7 @@ class ProductCard extends HTMLElement {
 
           ${!this.hideAddBtn ?
             `<div class="s-product-card-content-footer gap-2">
+              ${this.isPlainVertical ? `<div class="qqv-slot">` : ``}
               <salla-add-product-button fill="outline" width="wide"
                 product-id="${this.product.id}"
                 product-status="${this.effectiveStatus}"
@@ -526,8 +443,9 @@ class ProductCard extends HTMLElement {
                   }
                 <span>${this.product.add_to_cart_label ? this.product.add_to_cart_label : this.getAddButtonLabel() }</span>
               </salla-add-product-button>
+              ${this.isPlainVertical ? `</div>` : ``}
 
-              ${this.horizontal || this.fullImage ?
+              ${this.horizontal || this.fullImage || (this.isPlainVertical && !this.hideAddBtn) ?
                 `<button type="button"
                   id="card-wishlist-btn-${this.product.id}-horizontal"
                   aria-label="Add or remove to wishlist"
@@ -545,7 +463,7 @@ class ProductCard extends HTMLElement {
       this.querySelectorAll('[name="donating_amount"]').forEach((element)=>{
         element.addEventListener('input', (e) => {
           e.target
-            .closest("custom-salla-product-card")
+            .closest(".s-product-card-content")
             .querySelector("salla-add-product-button")
             .setAttribute("donating-amount", e.target.value); 
         });

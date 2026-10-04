@@ -1,39 +1,37 @@
 // ====================================================================
 // Qissa banners — one or more full-image banners in a slider.
-// Figma "Qusah Re-Vamp": desktop Hero Banner 182:30993, mobile image 386.25×309.
 //
-// Fixed shapes: the banner is the design's frame, and artwork is exported to
-// it (see FIXED SHAPE below). Text and CTA sit on a 3×3 placement grid, always
-// stacked title → subtitle → button.
+// The image sizes its own card (no ratio guess, no letterboxing). Wide by
+// design: 20px gutters on desktop, full-bleed on mobile. Text and CTA sit on
+// a 3×3 placement grid, always stacked title → subtitle → button.
 // ====================================================================
 
 .qibanner {
   font-family: var(--qib-font, 'GE SS Two', sans-serif);
   padding-block: 12px;
 
-  // As the first visible block on the page it hangs straight off the navbar:
-  // the generic .s-block top margin (mt-16 = 64px) and this padding would
-  // otherwise stack on the header's own 18.6px bottom gap, which alone is the
-  // Figma distance (bar ends y 105.13, banner starts y 123.73). Salla injects
-  // (often empty) .s-blocks-wrapper hook containers between home components, so a
-  // plain :first-child misses when one sits before the banner — the real
-  // condition is "no visible block before it". A banner placed mid-page keeps
-  // the normal block rhythm.
+  // As the first visible block on the page it hangs straight off the navbar,
+  // like qissa-hero does: the generic .s-block top margin (mt-16 = 64px) would
+  // otherwise stack on the nav's own 24px and this padding, opening ~100px of
+  // white above the campaign banner. Salla injects (often empty) .s-blocks-wrapper
+  // hook containers between home components, so a plain :first-child misses
+  // when one sits before the banner — the real condition is "no visible block
+  // before it". A banner placed mid-page keeps the normal block rhythm.
   &:first-child,
-  &:not(.s-block ~ *):not(.s-blocks-wrapper:not(:empty) ~ *) { margin-top: 0; padding-top: 0; }
+  &:not(.s-block ~ *):not(.s-blocks-wrapper:not(:empty) ~ *) { margin-top: 0; }
 
-  // Track the navbar's edges exactly, not a container default: Figma puts the
-  // banner at x 15.81, 1408.46 wide in the 1440 frame — the bar's own insets.
+  // Track the navbar's edges exactly, not a container default: the header runs
+  // `max-width: none` with 50px gutters, dropping to 15px at ≤1150px. Matching
+  // it means the banner's sides line up with the bar above it at every width.
   .container {
     max-width: none;
-    padding-left: 15.81px;
-    padding-right: 15.73px;
+    padding-inline: 50px;
   }
 
   // ── viewport / track ────────────────────────────────────────────
   &__viewport {
     position: relative;
-    border-radius: 14.89px;
+    border-radius: 30px;
     overflow: hidden;
     background: #172951;                     // paints the frame while images load
   }
@@ -54,33 +52,24 @@
     line-height: 0;                          // no descender gap under the img
   }
 
-  // FIXED SHAPE. Every slide is the Figma frame: 1408.46 × 474.45 (2817×949
-  // artwork at 2×), and on phones 386.25 × 309 (773×618) when the slide has
-  // its own mobile file — without one the desktop artwork keeps its shape
-  // rather than losing half its width to a 5:4 crop. Artwork made to size
-  // shows whole; a file that doesn't match is cropped from the centre instead
-  // of changing the page layout. The merchant's fixed-height mode (--fixed,
-  // below) still wins: its explicit height overrides the ratio.
-  &__slide { aspect-ratio: 1408.46 / 474.45; }
-  &__slide > picture { position: absolute; inset: 0; display: block; }
+  // The image is a normal flow item, so the slide is exactly as tall as the
+  // artwork — nothing crops and nothing letterboxes.
+  &__slide > picture { display: block; }
 
   &__img {
     display: block;
     width: 100%;
-    height: 100%;
+    height: auto;
     max-width: 100%;
-    object-fit: cover;
   }
 
   // MULTI-SLIDE HEIGHT. Slides of different heights would make the block jump
-  // on every transition, so slide 1 sizes the viewport: the rest drop their
-  // own shape and stretch to its height, next to it in the row (laying them
-  // over slide 1 here left the last banner showing while the first was the
-  // active one; fade mode, below, is the one that stacks). Their images then
-  // have to fill that box, which means cropping — unavoidable when several
-  // artworks share one frame.
+  // on every transition, so slide 1 sizes the viewport and the rest are laid
+  // over it. Their images then have to fill that box, which means cropping —
+  // unavoidable when several artworks share one frame.
   &--multi &__slide:not(:first-child) {
-    aspect-ratio: auto;
+    position: absolute;
+    inset: 0;
 
     > picture { position: absolute; inset: 0; }
 
@@ -125,20 +114,6 @@
     height: 100%;
     object-fit: cover;
     object-position: var(--qib-focus, center);
-  }
-
-  // ── whole-banner link — the slide's own URL, under every layer ──
-  // The scrim, text grid and counter above it are pointer-events: none, so a
-  // click anywhere but the button lands here. The frame clips an outer focus
-  // ring, so it is drawn inside.
-  &__link {
-    position: absolute;
-    inset: 0;
-
-    &:focus-visible {
-      outline: 2px solid #fff;
-      outline-offset: -6px;
-    }
   }
 
   // ── scrim — lifts text off a busy or light photo ────────────────
@@ -287,15 +262,10 @@
   }
 
   // ── breakpoints ─────────────────────────────────────────────────
-  // Up to 1150px the navbar is its phone bar, so the banner takes the phone
-  // frame's edges and radius too (Figma: image at x 8, 386.25 wide in 402)
   @media (max-width: 1150px) {
-    .container {
-      padding-left: 8px;
-      padding-right: 7.75px;
-    }
+    .container { padding-inline: 15px; }   // navbar's own breakpoint + value
 
-    &__viewport { border-radius: 15.76px; }
+    &__viewport { border-radius: 24px; }
     &--fixed &__viewport { height: var(--qib-height-md, 460px); }
 
     &__overlay { padding: 28px 32px; }
@@ -303,12 +273,14 @@
     &__sub { font-size: 16px; }
   }
 
-  // MOBILE — the phone artwork (<picture> swaps it in at 768px) gets the phone
-  // frame's 5:4 shape; edges and radius come from the ≤1150px block above.
+  // MOBILE — a rounded card, not full bleed. The 15px gutter is already set at
+  // ≤1150px above (the navbar's own value); this block only softens the radius
+  // to 24px, matching qissa-banner and the theme's other mobile cards (hero,
+  // video banner, values, media) so the banners read as part of the same set.
   @media (max-width: 768px) {
     padding-block: 8px;
 
-    &__slide.has-mobile-img { aspect-ratio: 386.25 / 309; }
+    &__viewport { border-radius: 24px; }
     &--fixed &__viewport { height: var(--qib-height-sm, 380px); }
 
     &__overlay { padding: 20px; }

@@ -2,7 +2,6 @@
 | Variable                     | Type    | Description                                        |
 |------------------------------|---------|----------------------------------------------------|
 | component.slides             | array   | one entry per banner: image, text, button, position |
-| component.slides[].link_banner | bool  | the whole banner opens button_url (default on)      |
 | component.transition         | string  | slide \| fade                                       |
 | component.autoplay           | bool    | advance on a timer                                  |
 | component.autoplay_seconds   | int     | seconds per banner                                  |
@@ -17,13 +16,11 @@
 
 Qissa banners — one or more full-image banners in a swipeable slider.
 
-SIZING. Fixed shapes from the Figma frames: 1408.46 × 474.45 on desktop and,
-for a slide with its own mobile file, 386.25 × 309 on phones. Designers export
-to them (2817×949 / 773×618 at 2×, the sizes the dashboard fields ask for); a
-file that doesn't match is cropped from the centre, never reflowing the page.
-With several slides the first sets the height and the rest fill it. The
-merchant's fixed mode instead pins a pixel height and crops, with `focus`
-choosing what survives.
+SIZING. The image sizes its own card: it is a normal flow item, so the banner
+is exactly as tall as the artwork and nothing letterboxes. With several slides
+they must share ONE height or the block would jump on every transition, so the
+tallest slide sets it (the others are absolutely positioned over that). Fixed
+mode instead pins a height and crops, with `focus` choosing what survives.
 
 TEXT ABOVE BUTTON, ALWAYS. The content stack is a column: title, subtitle, then
 the CTA — the merchant picks WHERE the stack sits, never the order inside it.
@@ -126,17 +123,9 @@ content re-isolates its own RTL for the Arabic text.
                         {% set ov_raw = slide.overlay is iterable ? slide.overlay|first : slide.overlay %}
                         {% set ov = ov_raw.value|default(ov_raw)|default('light') %}
 
-                        {# Whole-banner link switch. Default on, and a slide saved before
-                           the field existed carries null, which reads as on. Not
-                           |default(true): that filter flips a stored `false` back on. #}
-                        {% set link_on = (slide.link_banner is defined and slide.link_banner is not null) ? slide.link_banner : true %}
-                        {% set has_btn = slide.button_text and slide.button_url %}
-
-                        {# `inert` keeps a hidden banner's link and button out of the tab
-                           order; the script moves it as the slider turns #}
-                        <div class="qibanner__slide{{ loop.index0 == (start - 1) ? ' is-active' : '' }}{{ slide.image_mobile ? ' has-mobile-img' : '' }}"
+                        <div class="qibanner__slide{{ loop.index0 == (start - 1) ? ' is-active' : '' }}"
                              data-qib-slide="{{ loop.index0 }}"
-                             {% if loop.index0 != (start - 1) %}aria-hidden="true" inert{% endif %}>
+                             {% if loop.index0 != (start - 1) %}aria-hidden="true"{% endif %}>
 
                             {# <picture> so a phone downloads only the mobile file #}
                             <picture>
@@ -148,16 +137,6 @@ content re-isolates its own RTL for the Arabic text.
                                      alt="{{ slide.alt|default(slide.title)|default('') }}"
                                      {% if loop.index0 == (start - 1) %}fetchpriority="high"{% else %}loading="lazy"{% endif %}/>
                             </picture>
-
-                            {# The banner itself as a link to its assigned URL — no button
-                               text needed. It lies under the scrim, counter and text
-                               layers, which all let clicks through; the button keeps its
-                               own. With a button it repeats that link, so it is left out
-                               of the tab order and the accessibility tree. #}
-                            {% if link_on and slide.button_url %}
-                                <a class="qibanner__link" href="{{ slide.button_url }}"
-                                   {% if has_btn %}tabindex="-1" aria-hidden="true"{% else %}aria-label="{{ slide.alt|default(slide.title)|default(slide.subtitle)|default(store.name) }}"{% endif %}></a>
-                            {% endif %}
 
                             {% if ov != 'none' %}
                                 <span class="qibanner__scrim" data-ov="{{ ov }}" aria-hidden="true"></span>
@@ -236,7 +215,7 @@ content re-isolates its own RTL for the Arabic text.
                                 </div>
                             {% endif %}
 
-                            {% if slide.title or slide.subtitle or has_btn %}
+                            {% if slide.title or slide.subtitle or (slide.button_text and slide.button_url) %}
                                 {# column: title, subtitle, THEN the button — the merchant
                                    places the stack, never reorders what is inside it #}
                                 <div class="qibanner__overlay" data-pos="{{ pos }}">
@@ -244,7 +223,7 @@ content re-isolates its own RTL for the Arabic text.
                                          {% if slide.text_color %}style="--qib-ink: {{ slide.text_color }}"{% endif %}>
                                         {% if slide.title %}<h2 class="qibanner__title">{{ slide.title }}</h2>{% endif %}
                                         {% if slide.subtitle %}<p class="qibanner__sub">{{ slide.subtitle }}</p>{% endif %}
-                                        {% if has_btn %}
+                                        {% if slide.button_text and slide.button_url %}
                                             <a class="qibanner__btn" href="{{ slide.button_url }}">{{ slide.button_text }}</a>
                                         {% endif %}
                                     </div>

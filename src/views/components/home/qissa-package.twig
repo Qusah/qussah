@@ -2,25 +2,302 @@
 | Variable              | Type      | Description                                        |
 |-----------------------|-----------|----------------------------------------------------|
 | component             | object    | merchant settings from twilight.json               |
-| component.heading     | string    | not shown since the revamp (no section title in the frame) |
-| component.subheading  | string    | not shown since the revamp                         |
+| component.heading     | string    | section title (e.g. "المجموعة الشاملة")            |
+| component.subheading  | string    | section subtitle                                   |
 | component.products    | Product[] | featured product (the FIRST selected is used)      |
-| component.show_marquee| bool      | show/hide the «الأكثر مبيعًا» ribbon               |
-| component.marquee_text| string    | ribbon label (default «الأكثر مبيعًا»)             |
+| component.show_marquee| bool      | show/hide the "الأكثر مبيعًا" marquee              |
+| component.marquee_text| string    | marquee label (default "الأكثر مبيعًا")            |
 | position              | int       | sorting block                                      |
 
-Product Hero — Figma "Qusah Re-Vamp": desktop 326:491, mobile 290:8165.
-One featured product in the shared Product Hero card (partials/qpack-card):
-gallery on the right, details on the left, stacked on phones.
+"المجموعة الشاملة" — a single featured product showna swipeable
+image gallery (big main image + thumbnail strip), an optional best-seller
+marquee, then the product details (sold count, rating, name, price, spec chips)
+with a quantity stepper + add-to-cart. All data is dynamic Salla product data.
 #}
 {% set product = component.products|first %}
 <section class="s-block qpack" id="qpack-{{ position }}">
     <div class="container">
+
+        {# centered heading #}
+        <div class="qpack__head">
+            {% if component.heading %}<h2 class="qpack__title">{{ component.heading }}</h2>{% endif %}
+            {% if component.subheading %}<p class="qpack__subtitle">{{ component.subheading }}</p>{% endif %}
+        </div>
+
         {% if product %}
-            {% include 'components.partials.qpack-card' with {
-                product: product,
-                ribbon: component.show_marquee ? component.marquee_text|default(trans('blocks.qissa.best_seller')) : false
-            } %}
+        {% set images = product.images|default([]) %}
+        <div class="qpack__card" data-qpack>
+
+            {# ---- image gallery ---- #}
+            <div class="qpack__gallery">
+                <div class="qpack__stage">
+                    {% if product.is_on_sale %}
+                        <span class="qpack__badge" data-qpack-badge
+                              data-regular="{{ product.regular_price }}" data-sale="{{ product.sale_price }}"
+                              data-discount-label="{{ trans('blocks.qissa.sale') }}">{{ product.promotion_title|default(trans('blocks.qissa.sale')) }}</span>
+                    {% endif %}
+
+                    <button type="button" class="qpack__wish" data-qpack-wish data-id="{{ product.id }}" aria-label="{{ trans('blocks.qissa.wishlist') }}">
+                        <i class="sicon-heart"></i>
+                    </button>
+
+                    {# main image slider (swipeable) #}
+                    <div class="qpack__main" data-qpack-main>
+                        {% if images|length %}
+                            {% for img in images %}
+                                <a class="qpack__slide" href="{{ product.url }}" data-qpack-slide="{{ loop.index0 }}">
+                                    <img src="{{ img.url }}" alt="{{ img.alt|default(product.name) }}" loading="lazy"/>
+                                </a>
+                            {% endfor %}
+                        {% else %}
+                            <a class="qpack__slide" href="{{ product.url }}" data-qpack-slide="0">
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy"/>
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    {% if images|length > 1 %}
+                        <button type="button" class="qpack__arrow qpack__arrow--next" data-qpack-next aria-label="{{ trans('blocks.qissa.next') }}"><i class="sicon-arrow-left"></i></button>
+                        <button type="button" class="qpack__arrow qpack__arrow--prev" data-qpack-prev aria-label="{{ trans('blocks.qissa.prev') }}"><i class="sicon-arrow-right"></i></button>
+                    {% endif %}
+                </div>
+
+         
+                {% if images|length > 1 %}
+                    <div class="qpack__thumbs" data-qpack-thumbs>
+                        {% for img in images %}
+                            <button type="button" class="qpack__thumb {{ loop.first ? 'is-active' : '' }}" data-qpack-thumb="{{ loop.index0 }}" aria-label="{{ trans('blocks.qissa.image') }} {{ loop.index }}">
+                                <img src="{{ img.url }}" alt="{{ img.alt|default(product.name) }}" loading="lazy"/>
+                            </button>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            {# ---- best-seller marquee (merchant-toggled) ---- #}
+            {% if component.show_marquee %}
+                <div class="qpack__ticker" aria-hidden="true">
+                    <div class="qpack__ticker-track">
+                        {% for group in 1..2 %}
+                            <div class="qpack__ticker-group">
+                                {% for i in 1..14 %}<span class="qpack__ticker-item"><i class="sicon-star"></i>{{ component.marquee_text|default(trans('blocks.qissa.best_seller')) }}</span>{% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {# ---- product details ---- #}
+            <div class="qpack__info">
+
+                <div class="qpack__status">
+                    {% if product.sold_quantity %}
+                        <span class="qpack__sold">
+                            <i class="sicon-fire"></i>
+                            <span>{{ trans('blocks.qissa.sold') }} <b>{{ product.sold_quantity }}</b> {{ trans('blocks.qissa.times') }}</span>
+                        </span>
+                    {% endif %}
+                    {% if product.rating and product.rating.count %}
+                        <span class="qpack__review">
+                            <i class="sicon-star"></i>
+                            <span class="qpack__rate">{{ trans('blocks.qissa.rated') }} <b>{{ product.rating.stars }}</b></span>
+                            <span class="qpack__rate-count">{{ product.rating.count }} {{ trans('blocks.qissa.review_word') }}</span>
+                        </span>
+                    {% endif %}
+                </div>
+
+                {% if product.brand.name %}<div class="qpack__cat">{{ product.brand.name }}</div>{% endif %}
+
+                <a class="qpack__name" href="{{ product.url }}">{{ product.name }}</a>
+                {% if theme.settings.get('card_show_description', true) and product.description %}<p class="qpack__desc" data-qdesc="{{ product.description|slice(0, 500) }}"></p>{% endif %}
+
+                <div class="qpack__price">
+                    {% if product.is_on_sale %}
+                        <b class="qpack__price-now">{{ product.sale_price|money }}</b>
+                        <s class="qpack__price-old">{{ product.regular_price|money }}</s>
+                    {% else %}
+                        <b class="qpack__price-now">{{ product.price|money }}</b>
+                    {% endif %}
+                </div>
+
+                {# spec chips — from product.subtitle, split on the Arabic comma "،" #}
+                {% if product.subtitle %}
+                    <div class="qpack__tags" data-qpack-chips="{{ product.subtitle }}"></div>
+                {% endif %}
+
+                {# quantity stepper (right) + add-to-cart fills (left) #}
+                <div class="qpack__actions">
+                    {% if product.is_out_of_stock %}
+                        <button type="button" class="qpack__add qpack__add--oos" disabled>
+                            <span>{{ trans('blocks.qissa.out_of_stock') }}</span>
+                        </button>
+                    {% else %}
+                        <div class="qpack__qty" data-qpack-qty>
+                            <button type="button" class="qpack__q qpack__q--minus" data-qpack-dec aria-label="{{ trans('blocks.qissa.decrease_qty') }}"></button>
+                            <span class="qpack__qnum" data-qpack-num>1</span>
+                            <button type="button" class="qpack__q qpack__q--plus" data-qpack-inc aria-label="{{ trans('blocks.qissa.increase_qty') }}"></button>
+                        </div>
+                        <button type="button" class="qpack__add" data-qpack-add data-id="{{ product.id }}">
+                            <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
+                            <i class="sicon-shopping-bag"></i>
+                        </button>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
         {% endif %}
+
     </div>
 </section>
+
+<script>
+(function () {
+  document.querySelectorAll('.qpack [data-qpack]').forEach(function (card) {
+    // Init guard — same as qissa-dual-hero. The selector is global, so with two
+    // Package blocks on one page each block's copy of this script reaches BOTH
+    // cards; without the guard every card got its chips appended twice.
+    if (card.hasAttribute('data-qpack-init')) { return; }
+    card.setAttribute('data-qpack-init', '');
+
+    // discount badge → "<promo label> · خصم X%"  (just "خصم X%" when the merchant
+    // set no promotion title, i.e. the label already IS the word خصم)
+    var badge = card.querySelector('[data-qpack-badge]');
+    if (badge) {
+      var reg = parseFloat(badge.getAttribute('data-regular'));
+      var sale = parseFloat(badge.getAttribute('data-sale'));
+      if (reg > 0 && sale >= 0 && sale < reg) {
+        // Both label and word are server-rendered (already translated). Reading
+        // salla.lang.get() here would return the raw key, because lang messages
+        // aren't loaded yet at parse time.
+        var word = (badge.getAttribute('data-discount-label') || '').trim();
+        var lbl  = (badge.textContent || '').trim();
+        var off  = (word ? word + ' ' : '') + Math.floor((1 - sale / reg) * 100) + '%';
+        if (!/%$/.test(lbl)) { badge.textContent = (lbl && lbl !== word ? lbl + ' · ' : '') + off; }
+      }
+    }
+
+    // spec chips: split product.subtitle on the Arabic comma "،"
+    var chipBox = card.querySelector('[data-qpack-chips]');
+    if (chipBox) {
+      (chipBox.getAttribute('data-qpack-chips') || '').split('،').forEach(function (part) {
+        var t = part.trim();
+        if (!t) { return; }
+        var chip = document.createElement('span');
+        chip.className = 'qpack__tag';
+        chip.textContent = t;
+        chipBox.appendChild(chip);
+      });
+    }
+
+    // image gallery — swipeable main slider synced with the thumbnails
+    var main   = card.querySelector('[data-qpack-main]');
+    var thumbs = card.querySelector('[data-qpack-thumbs]');
+    if (main) {
+      var slides = Array.prototype.slice.call(main.querySelectorAll('.qpack__slide'));
+      var thumbBtns = thumbs ? Array.prototype.slice.call(thumbs.querySelectorAll('.qpack__thumb')) : [];
+      var idx = 0, lock = false, lockT, settleT, raf;
+
+      // center an element within its OWN scroll container (RTL-safe, no page jump)
+      var centerIn = function (container, el) {
+        if (!container || !el) { return; }
+        var cr = container.getBoundingClientRect(), er = el.getBoundingClientRect();
+        var delta = (er.left + er.width / 2) - (cr.left + cr.width / 2);
+        if (Math.abs(delta) < 2) { return; }                 // already centered → don't nudge (avoids jitter)
+        container.scrollBy({ left: delta, behavior: 'smooth' });
+      };
+      var setActive = function (i) {
+        thumbBtns.forEach(function (b, k) { b.classList.toggle('is-active', k === i); });
+      };
+      // index of the image currently centered in the main viewport (RTL-safe)
+      var current = function () {
+        var r = main.getBoundingClientRect(), mid = r.left + r.width / 2, best = 0, bd = Infinity;
+        slides.forEach(function (s, k) {
+          var sr = s.getBoundingClientRect(), c = sr.left + sr.width / 2, d = Math.abs(c - mid);
+          if (d < bd) { bd = d; best = k; }
+        });
+        return best;
+      };
+      var go = function (i) {
+        idx = Math.max(0, Math.min(slides.length - 1, i));
+        lock = true;                        // ignore the scroll events our own animation fires
+        centerIn(main, slides[idx]);        // move the main image
+        centerIn(thumbs, thumbBtns[idx]);   // bring the matching thumb into view (once)
+        setActive(idx);
+        clearTimeout(lockT); lockT = setTimeout(function () { lock = false; }, 450);
+      };
+
+      thumbBtns.forEach(function (btn, i) { btn.addEventListener('click', function () { go(i); }); });
+      var prev = card.querySelector('[data-qpack-prev]');
+      var next = card.querySelector('[data-qpack-next]');   // RTL: next = arrow-left = higher index
+      if (next) { next.addEventListener('click', function () { go(idx + 1); }); }
+      if (prev) { prev.addEventListener('click', function () { go(idx - 1); }); }
+
+      // user swipe/drag of the main image → highlight live, but re-center the thumb
+      // only AFTER scrolling settles (debounced), and never during our own animation
+      main.addEventListener('scroll', function () {
+        if (raf) { cancelAnimationFrame(raf); }
+        raf = requestAnimationFrame(function () {
+          var i = current();
+          setActive(i);
+          if (lock) { return; }
+          idx = i;
+          clearTimeout(settleT);
+          settleT = setTimeout(function () { centerIn(thumbs, thumbBtns[idx]); }, 140);
+        });
+      }, { passive: true });
+
+      
+      var down = false, sx = 0, sl = 0, moved = false;
+      main.addEventListener('mousedown', function (e) { down = true; moved = false; sx = e.pageX; sl = main.scrollLeft; main.classList.add('is-grabbing'); });
+      main.addEventListener('mousemove', function (e) { if (!down) { return; } var dx = e.pageX - sx; if (Math.abs(dx) > 3) { moved = true; } main.scrollLeft = sl - dx; });
+      var endDrag = function () { down = false; main.classList.remove('is-grabbing'); };
+      main.addEventListener('mouseup', endDrag);
+      main.addEventListener('mouseleave', endDrag);
+      main.addEventListener('click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+    }
+
+    // wishlist heart — toggle + live state sync (mirrors the theme's wishlist.js)
+    var wish = card.querySelector('[data-qpack-wish]');
+    if (wish) {
+      var pid = wish.getAttribute('data-id');
+      var mark = function (a) { wish.classList.toggle('is-added', !!a); };
+      wish.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (window.salla && salla.wishlist) { salla.wishlist.toggle(pid); }
+      });
+      var syncWish = function () {
+        if (!(window.salla && salla.wishlist)) { return; }
+        try { mark((salla.storage.get('salla::wishlist', []) || []).map(String).indexOf(String(pid)) > -1); } catch (e) {}
+        if (salla.wishlist.event) {
+          salla.wishlist.event.onAdded(function (ev, id) { if (String(id) === String(pid)) { mark(true); } });
+          salla.wishlist.event.onRemoved(function (res, id) { if (String(id) === String(pid)) { mark(false); } });
+        }
+      };
+      if (window.salla && salla.onReady) { salla.onReady(syncWish); } else { document.addEventListener('DOMContentLoaded', syncWish); }
+    }
+
+    // quantity stepper (min 1)
+    var qty = card.querySelector('[data-qpack-qty]');
+    if (qty) {
+      var num = qty.querySelector('[data-qpack-num]');
+      var get = function () { return Math.max(1, parseInt(num.textContent, 10) || 1); };
+      var dec = qty.querySelector('[data-qpack-dec]');
+      var inc = qty.querySelector('[data-qpack-inc]');
+      if (dec) { dec.addEventListener('click', function () { num.textContent = Math.max(1, get() - 1); }); }
+      if (inc) { inc.addEventListener('click', function () { num.textContent = get() + 1; }); }
+    }
+
+    // add to cart with the chosen quantity
+    var add = card.querySelector('[data-qpack-add]');
+    if (add) {
+      add.addEventListener('click', function () {
+        var id = add.getAttribute('data-id');
+        var numEl = card.querySelector('[data-qpack-num]');
+        var q = numEl ? Math.max(1, parseInt(numEl.textContent, 10) || 1) : 1;
+        if (window.salla && salla.cart) { salla.cart.addItem({ id: id, quantity: q }); }
+      });
+    }
+  });
+})();
+</script>

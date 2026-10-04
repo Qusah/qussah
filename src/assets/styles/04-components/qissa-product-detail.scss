@@ -1,297 +1,272 @@
 // ====================================================================
-// Product details — Figma "Qusah Re-Vamp": desktop 113:35965 (a product)
-// and 113:35331 (a package), mobile 290:10598 / 290:9867 (≤768px).
-// pages/product/single.twig; behaviour in js/product.js.
-//
-// The frames are scaled ≈0.93, so the values are fractional; they are kept
-// as Figma gives them (2 dp). Salla draws most of this page — slider,
-// quantity, add button, comments, instalments — so many selectors below are
-// its own class names. postcss flips logical properties to LTR sides in this
-// build: physical sides only.
+// Qissa Product Detail — single product page (Figma node 6036:4788)
+// Scoped to .qpd (buy box) and .qpd-tabs (details/reviews) ONLY.
+// Restyles the working starter single.twig — CSS-first, keeps all
+// functional Salla components (slider, add-to-cart, comments, gifting).
+// RTL: gallery RIGHT, info LEFT.
+// Tokens: royal-blue #30378e, chosen-blue #0a1f30, gray-600 #6c757d,
+//         gray-200 #e9ecef, blue-50 #e8fcff, baby-blue #daeff7.
 // ====================================================================
 
-$qpd-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
-$qpd-ink: #082033;
-$qpd-navy: #2c348e;
-$qpd-muted: #5a6874;
-
-// <main> spaces its children with Tailwind's space-y (64px); the sections
-// below carry Figma's own gaps, and a hook wrapper with nothing in it takes
-// no room. 150.55: the last cards to the footer.
-.product-single #main-content {
-  padding-bottom: 64px;
-
-  > .s-blocks-wrapper:empty { margin: 0 !important; }
-}
-
-// ---- breadcrumb (113:36115) — the listing's, 45.67 under the header ----
-.qpd-crumbs { padding: 45.67px 48.68px 0; }
-
-// ====================================================================
-// Gallery (right) + details (left)
-// ====================================================================
 .qpd {
-  width: 100%;   // <main> is a flex column: auto margins would shrink it to fit
-  max-width: 1440px;
-  margin: 65.92px auto 0 !important;
-  padding: 0 41.91px 0 47.49px;
-  direction: rtl;
+  font-family: "GE SS Two", sans-serif;
+  max-width: none;
+  padding-inline: 50px;
 
+  // ----- two columns: info on the LEFT, gallery on the RIGHT -----
+  // Force LTR on the flex row so order is unambiguous: order 1 = LEFT, 2 = RIGHT.
   &__row {
-    display: flex;
+    gap: 32px;
     align-items: flex-start;
-    gap: 37.5px;
-  }
-  &__gallery {
-    position: sticky;
-    top: 6rem;
-    flex: 663.07 1 0;
-    min-width: 0;
+    direction: ltr;
   }
   &__info {
-    flex: 650.03 1 0;
-    min-width: 0;
-    margin-top: -5.39px;   // «مباع …» starts above the photo
-    text-align: right;
+    order: 1; // LEFT
+    width: 100%;
+    direction: rtl; // text stays RTL inside
   }
-
-  // ---- the photo (168:7926): 663.07 × 504.75, whatever the image's shape. The
-  // frame crops a full-width photo (168:7927 is a 663 square) — the theme's
-  // «طريقة عرض الصور» setting, «Cover» by default; «Contain» letterboxes it. ----
-  // .details-slider raises these over slider.scss, which is imported later
-  .details-slider .s-slider-block__title { display: none; }
-  .details-slider .s-slider-container {
-    overflow: hidden;
-    border: 0;
-    border-radius: 29.8px;
-    background: #fff;
-    box-shadow: 0 11.18px 29.8px rgba(8, 32, 51, .07);
+  &__gallery {
+    order: 2; // RIGHT
+    margin: 0 !important;
   }
-  .details-slider .s-slider-container .swiper-slide {
-    display: block;
-    aspect-ratio: 663.07 / 504.75;
-    border-radius: 0;
-    box-shadow: none;
-    outline: 0;
-  }
-
-  // promotion title / «خصم» (168:7929) — top right
-  &__badge {
-    position: absolute;
-    z-index: 3;
-    top: 24.21px;
-    right: 15.84px;
-    min-width: 111.75px;
-    max-width: calc(100% - 90px);   // stops short of the heart
-    height: 34.46px;
-    padding: 0 11.18px;
-    overflow: hidden;
-    border-radius: 999px;
-    background: #91e6f7;
-    color: #19325b;
-    font-family: $qpd-font !important;
-    font-size: 18.63px;
-    font-weight: 500;
-    line-height: 34.46px;
-    text-align: center;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  // wishlist — the card's heart, top left
-  &__fav {
-    position: absolute;
-    z-index: 3;
-    top: 24.21px;
-    left: 15.84px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40.98px;
-    height: 40.98px;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: #fff;
-    color: $qpd-ink;
-    filter: drop-shadow(0 7.44px 11.16px rgba(8, 32, 51, .06));
-    cursor: pointer;
-
-    svg { width: 19.56px; height: 19.56px; }
-    &:hover,
-    &.is-added { color: #dc3545; }
-    &.is-added path { fill: currentColor; }
-  }
-  // share — the same disc, beside the heart
-  &__share-btn {
-    left: 64.82px;
-
-    &:hover { color: $qpd-navy; }
-  }
-  // zoom — opens the lightbox on the photo showing; bottom left
-  &__zoom {
-    position: absolute;
-    z-index: 3;
-    bottom: 24.21px;
-    left: 15.84px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    border: 1px solid rgba(255, 255, 255, .35);
-    border-radius: 10px;
-    background: rgba(10, 31, 48, .4);
-    color: #fff;
-    cursor: pointer;
-    -webkit-backdrop-filter: blur(3px);
-    backdrop-filter: blur(3px);
-
-    &:hover { background: $qpd-navy; }
-  }
-  &__zoom-icon {
-    width: 20px;
-    height: 20px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-  // prev / next on the photo (the script in single.twig adds them) — phones only
-  &__gallery-arrow { display: none; }
-
-  // ---- thumbnails (168:7931): four to a row, 9.31 apart ----
-  .s-slider-thumbs {
-    margin: 22.19px 3.44px 0 7.44px;
-    padding: 0;
-  }
-  .s-slider-thumbs-container {
-    margin: 0;
-    padding: 0;
-    border-radius: 18.63px;
-  }
-  .details-slider .slide--one-fourth {
-    position: relative;
-    height: 180.79px;
-    max-width: none;
-    overflow: hidden;
-    border-radius: 0;
-    box-shadow: none;
-    opacity: 1;
-    cursor: pointer;
-
-    img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+  @media (min-width: 768px) {
+    &__gallery {
+      width: 50%;
+      flex: 0 0 50%;
     }
-    // the photo on show is washed out
-    &.swiper-slide-thumb-active::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(255, 255, 255, .59);
-      box-shadow: none;   // Salla rings the active one
+    &__info {
+      width: 50%;
+      flex: 0 0 50%;
     }
   }
 
-  &__brand {
-    width: 48px;
-    margin-bottom: 12px;
+  // ===== GALLERY (Figma node 6036:5032) =====
+  // Layout: thumb column on the LEFT (148w), main image fills the rest.
+  // The slider host holds two swipers: .s-slider-container (main) +
+  // .s-slider-thumbs (thumbs). Lay them side by side, thumbs left.
+  &__gallery {
+    .details-slider {
+      display: flex !important;
+      flex-direction: row; // main + thumbs in a row
+      direction: ltr; // pin visual order regardless of RTL flip
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    // ----- main image (radius 25, takes remaining width) -----
+    // main image RIGHT, thumb column LEFT
+    .s-slider-container {
+      order: 1; // main image LEFT within gallery (Figma)
+      flex: 1 1 0;
+      min-width: 0;
+      border-radius: 25px;
+      overflow: hidden;
+      height: 637px;
+    }
+    .homeslider__slide {
+      border-radius: 25px;
+      overflow: hidden;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 25px;
+      }
+    }
+
+    // ----- thumb column: VERTICAL, 148 wide, 4 frames stacked -----
+    .s-slider-thumbs {
+      order: 2; // thumb column RIGHT within gallery (Figma)
+      flex: 0 0 148px;
+      width: 148px;
+      height: 637px;
+    }
+    .s-slider-thumbs-container {
+      height: 100% !important;
+      width: 100% !important;
+    }
+    // force the Swiper thumbs wrapper to stack vertically and ignore its
+    // horizontal transform (Salla initializes thumbs as a horizontal swiper)
+    .s-slider-thumbs-container .swiper-wrapper {
+      flex-direction: column !important;
+      height: 100% !important;
+      transform: none !important;
+      gap: 16px;
+      justify-content: flex-start;
+    }
+    // each thumb = bordered frame, radius 15, pad 10, inner image radius 10
+    .slide--one-fourth {
+      width: 148px !important;
+      height: 147px !important;
+      margin: 0 !important;
+      flex: 0 0 147px;
+      // border: 1px solid #dee2e6;
+      border-radius: 15px;
+      padding: 10px;
+      background: #fff;
+      box-sizing: border-box;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+        background: transparent;
+      }
+      &.swiper-slide-thumb-active {
+        border-color: #30378e;
+      }
+    }
+
+    // ----- zoom button (40x40, bottom-left of main image) -----
+    .magnify-wrapper::after,
+    .s-slider-container {
+      position: relative;
+    }
+
+    // ----- wishlist / share overlays on the slider → keep top, restyle -----
+    .btn--wishlist {
+      z-index: 3;
+    }
+    .promotion-title {
+      z-index: 3;
+    }
   }
 
-  // ---- sold, name, rating (168:7958, 168:7937, 168:7939) ----
-  &__head {
+  // ===== INFO COLUMN =====
+  // ----- title row: title (right) + like/share icon buttons (left) -----
+  &__titlerow {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-right: 2.8px;
-  }
-  &__sold {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 14px;
-    margin: 0;
-    color: $qpd-navy;
-    font-size: 14.9px;
-    font-weight: 500;
-    line-height: 19.56px;
-
-    b { font-weight: 500; }
-  }
-  &__sold-item {
-    display: inline-flex;
     align-items: center;
-    gap: 1.86px;
-
-    img { width: 23.28px; height: 23.28px; margin: -1.86px 0; }
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 16px;
   }
   &__title {
-    margin: 18.62px 0 0;
-    color: $qpd-ink;
-    font-family: $qpd-font !important;
-    font-size: 40.98px;
-    font-weight: 400;
-    line-height: 51.22px;
+    flex: 1;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 38px;
+    letter-spacing: -0.2px;
+    color: #0a1f30;
+    text-align: right;
+    margin: 0;
   }
-  &__rating {
+  &__iconbtns {
+    display: inline-flex;
+    gap: 15px;
+    flex-shrink: 0;
+  }
+  &__iconbtn {
+    width: 50px;
+    height: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    overflow: hidden; // clip the inner Salla element to the 12px corners
+    color: #0a1f30;
+    background: #fff;
+    cursor: pointer;
+    i {
+      font-size: 18px;
+    }
+    &:hover {
+      border-color: #30378e;
+      color: #30378e;
+    }
+    // salla-button / salla-social-share host overrides — force the same square + radius
+    &::part(base) {
+      border: none;
+      background: none;
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      border-radius: 12px;
+    }
+  }
+  // social-share renders its own trigger — neutralize its default chrome
+  &__share {
+    &::part(base) {
+      padding: 0;
+    }
+  }
+
+  // ----- stock row: sold + remaining -----
+  &__stock {
     display: flex;
     align-items: center;
-    gap: 7.45px;
-    height: 25.14px;
-    margin-top: 13.7px;
+    gap: 8px;
+    justify-content: flex-end;
+    flex-direction: row-reverse;
+    margin-bottom: 16px;
+    font-size: 16px;
+    line-height: 25px;
+    color: #0a1f30;
   }
-  &__stars {
+  &__stock-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    i {
+      font-size: 16px;
+      color: #30378e;
+    }
+    b {
+      color: #30378e;
+      font-weight: 500;
+      font-family: "Poppins", "GE SS Two", sans-serif;
+    }
+  }
+  &__stock-sep {
+    width: 1px;
+    height: 13px;
+    background: #dee2e6;
+  }
+
+  // ----- rating (salla-rating-stars) -----
+  &__rating {
     display: flex;
-    gap: 1.86px;
-
-    img { width: 12.11px; height: 12.11px; }
+    justify-content: flex-end;
+    margin-bottom: 16px;
+    --salla-rating-star-color: #fd7e14;
+    salla-rating-stars {
+      direction: rtl;
+    }
   }
-  &__rate {
+
+  // ----- short description + read more -----
+  &__desc {
+    padding: 0 !important;
+    margin-bottom: 16px;
+    font-size: 16px;
+    line-height: 25px;
     color: #6c757d;
-    font-size: 13.04px;
-    font-weight: 500;
-    line-height: 16px;
+    text-align: right;
+    white-space: normal;
+    overflow-wrap: anywhere; // wrap long unbroken strings (e.g. dimension specs)
+    word-break: break-word;
+    .link--primary,
+    #btn-show-more {
+      color: #30378e;
+      font-weight: 500;
+    }
+    .article,
+    .article--main,
+    p {
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
   }
 
-  // ---- contents boxes (168:8074): the lines qissa-pack-card.js adds ----
-  &__boxes {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 4.79px 5.32px;
-    margin: 22px 2.8px 0 0;
-    padding: 0;
-    list-style: none;
-
-    &[hidden] { display: none; }
-  }
-  .qpack__inside-item {
-    height: 28.71px;
-    padding: 0 18.08px 0 3.61px;
-    overflow: hidden;
-    border: .3px solid #e5e7eb;
-    border-radius: 3.61px;
-    background: #f9f9f9;
-    color: $qpd-muted;
-    font-family: $qpd-font !important;
-    font-size: 10.63px;
-    font-weight: 400;
-    line-height: 28.11px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
-  // ---- restored from the previous design (not in the revamp frames): the tag
-  // chips, the weight box, the payment methods strip and the gift box ----
   // ----- chips (tags): packs / sheets-per-box -----
   &__chips {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-top: 12px;
+    justify-content: flex-end;
+    margin-bottom: 16px;
   }
   &__chip {
     display: inline-flex;
@@ -319,7 +294,7 @@ $qpd-muted: #5a6874;
     border: 1px solid #e9ecef;
     border-radius: 12px;
     background: #fff;
-    margin-top: 12px;
+    margin-bottom: 16px;
     color: #0a1f30;
     font-size: 16px;
   }
@@ -335,39 +310,128 @@ $qpd-muted: #5a6874;
     white-space: nowrap;
   }
 
-  // ===== accepted payment methods strip (under the buy buttons) =====
-  // Markup comes from <salla-payments>, so the inner selectors are Salla's
-  // (.s-payments-list / .s-payments-list-item) and are scoped under this block.
-  &__payments {
+  // ----- sku (compact) -----
+  &__sku {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 16px;
-  }
-  &__payments-label {
-    color: #6c757d;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    background: #fff;
+    margin-bottom: 16px;
     font-size: 14px;
-    font-weight: 500;
-    white-space: nowrap;
+    color: #6c757d;
+    i {
+      color: #30378e;
+      margin-inline-end: 4px;
+    }
   }
-  &__payments .s-payments-list {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  &__payments .s-payments-list-item {
+
+  // ----- installment cards (tamara / tabby) → Figma gradient cards -----
+  // salla-installment renders the real tamara/tabby methods (logos + real
+  // amounts) when enabled in the dashboard. Style them to the Figma cards.
+  // When empty (demo store has installments off) collapse the gap.
+  &__installment {
     display: block;
-    margin: 0;
-    img {
-      display: block;
-      width: auto;
-      height: 28px;
+    &:empty {
+      margin: 0;
+    }
+    &:not(:empty) {
+      margin-bottom: 16px;
+    }
+
+    // method list → 2-up row, 16 gap
+    .s-installment-app-tabby-content,
+    .s-installment-app-tamara-content,
+    [class*="installment-app"],
+    [class*="installment-list"] {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    // each method card
+    [class*="installment-app"] > *,
+    [class*="installment-method"],
+    .s-installment-item {
+      flex: 1 1 0;
+      min-width: 0;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: right;
+      direction: rtl;
+    }
+    // text + "أعرف أكثر"
+    [class*="installment"] a,
+    [class*="installment"] [class*="learn"] {
+      color: #30378e;
+      font-size: 13px;
+    }
+    [class*="installment"] p {
+      font-size: 14px;
+      color: #0a1f30;
+    }
+  }
+
+  // ----- DEMO tamara/tabby cards (Figma node 6036:4962). Remove before live. -----
+  &__paydemo {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+    margin-bottom: 16px;
+  }
+  &__pay {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; // content to the RIGHT (RTL)
+    justify-content: center;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    text-align: right;
+    &--tamara {
+      background: linear-gradient(
+        -88.7deg,
+        #ffffff 1.5%,
+        rgba(255, 215, 110, 0) 47.8%,
+        rgba(248, 143, 155, 0.33) 94%
+      );
+    }
+    &--tabby {
+      background: linear-gradient(-88.7deg, #ffffff 1.5%, #dafff4 94%);
+    }
+  }
+  &__pay-logo {
+    width: 135px;
+    height: 49px;
+    object-fit: contain;
+    object-position: right center;
+    border-radius: 10px;
+    // tabby SVG viewBox is 100x40 (2.5:1) — keep that ratio, don't stretch
+    &--tabby {
+      width: 90px;
+      height: 36px;
+      border-radius: 0;
       object-fit: contain;
+    }
+  }
+  &__pay-text {
+    width: 100%;
+    margin: 0;
+    font-size: 14px;
+    color: #0a1f30;
+    line-height: 1.5;
+  }
+  &__pay-more {
+    width: 100%;
+    font-size: 13px;
+    color: #30378e;
+    &:hover {
+      text-decoration: underline;
     }
   }
 
@@ -380,7 +444,7 @@ $qpd-muted: #5a6874;
     padding: 16px;
     border: 1px solid #eee;
     border-radius: 12px;
-    margin-top: 16px;
+    margin-bottom: 24px;
     background: linear-gradient(-86deg, #ffffff 1.5%, #daeff7 94%);
   }
   &__gift-icon {
@@ -423,907 +487,1008 @@ $qpd-muted: #5a6874;
     }
   }
 
-  // The blocks from the price down sit 19.51 in from the column's left edge
-  &__form,
-  &__installment,
-  &__trust,
-  &__gift,
-  &__gifting,
-  &__branch,
-  &__quick-order,
-  salla-metadata { margin-left: 19.51px; }
-
-  &__branch {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 16px;
-    font-size: 14px;
-  }
-
-  // ---- price (168:7994) ----
+  // ===== BUY BAR: price + qty + buttons =====
   &__buybar {
-    padding: 0;
-    border: 0;
-    background: none;
+    background: none !important;
+    padding: 0 !important;
+    border: none;
   }
-  &__price { margin-top: 15.94px; }
-  // NOTE: `.qpd__price-sale` deliberately has NO `display` rule — the row is the
-  // inner span. Twig and product.js hide the sale block with the `hidden` class,
-  // and this file compiles after Tailwind's utilities, so a `display` here would
-  // pin the block open (every product without a discount showed a 0 sale price).
-  // Qualifying the selector instead trips a rule-merging bug in the minifier.
-  &__price-sale-row {
-    display: inline-flex;
-    align-items: flex-end;
-    gap: 7.45px;
+  // qty + both buttons live here; order + flex-basis place them:
+  // qty (order 1) + أضف للسلة (order 2) share row 1; الشراء السريع (order 3,
+  // basis 100%) wraps to a full-width row 2.
+  // grid: row 1 = أضف للسلة (fills) + quantity (fixed); row 2 = quick-buy full width.
+  // RTL places column 1 (cart) on the RIGHT and column 2 (qty) on the LEFT.
+  &__controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 180px;
+    grid-template-areas:
+      "cart qty"
+      "buy  buy";
+    align-items: stretch;
+    gap: 16px;
+  }
+  &__price {
+    margin-bottom: 20px;
   }
   &__price-now {
-    color: $qpd-navy;
-    font-family: $qpd-font !important;
-    font-size: 52.15px;
-    font-weight: 700;
-    line-height: 52.15px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #30378e;
+    font-family: "Poppins", "GE SS Two", sans-serif;
     white-space: nowrap;
-
-    .sicon-sar { font-size: 11.18px; }   // Figma: an 11px «ر.س» beside 52px digits
   }
   &__price-old {
-    color: #e90000;
-    font-family: $qpd-font !important;
-    font-size: 20.49px;
-    font-weight: 400;
-    line-height: 32.78px;
+    font-size: 16px;
+    color: #adb5bd;
     text-decoration: line-through;
-    white-space: nowrap;
-
-    .sicon-sar { font-size: 11.18px; }
+    margin-inline-start: 8px;
   }
   &__price-from {
-    margin-left: 6px;
-    color: $qpd-muted;
-    font-size: 14.9px;
+    font-size: 14px;
+    color: #6c757d;
+    margin-inline-end: 6px;
+  }
+  // NOTE: `.qpd__price-sale` deliberately has NO `display` rule — the flex row lives
+  // on the inner `&__price-sale-row` instead.
+  // Both the Twig guard (has_real_sale) and product.js hide the sale block by adding
+  // `hidden`, but this file compiles after Tailwind's utilities, so any `display`
+  // declared on `.qpd__price-sale` wins on source order at equal specificity and pins
+  // the block open — which is what made every product WITHOUT a discount render its
+  // 0 sale_price beside the real one. Qualifying the selector (`&.hidden`,
+  // `&:not(.hidden)`) fixes the cascade but trips a rule-merging bug in the CSS
+  // minifier that sprays this class across ~73 unrelated selectors (+8KB in app.css).
+  &__price-sale-row {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
   }
   &__oos {
-    color: #e90000;
-    font-size: 20.49px;
+    color: #e04956;
     font-weight: 700;
-    line-height: 52.15px;
   }
 
-  // ---- «أضف للسلة» + quantity, then «اشترِ الآن» (168:7992, 168:7982, 168:7980) ----
-  &__controls {
+  // ===== accepted payment methods strip (under the buy buttons) =====
+  // Markup comes from <salla-payments>, so the inner selectors are Salla's
+  // (.s-payments-list / .s-payments-list-item) and are scoped under this block.
+  &__payments {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 15.83px 12.11px;
-    margin-top: 22.35px;
+    gap: 12px;
+    margin-top: 16px;
   }
-  &__btn--cart {
-    flex: 1 1 0;
-    min-width: 0;
-
-    > div,
-    salla-button { display: block; width: 100%; }
+  &__payments-label {
+    color: #6c757d;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
   }
-  &__qty { flex: 0 0 129.45px; min-width: 0; }
-  &__btn--buy { flex: 1 0 100%; }
-
-  // the visible buttons: Salla's inner element (cart) and the plain one (buy)
-  &__btn--cart .s-button-element,
-  &__btn--buy {
+  &__payments .s-payments-list {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 48.43px;
-    padding: 0 26.08px;
-    border: 0;
-    border-radius: 7.45px;
-    font-size: 14.9px;
-    font-weight: 700;
-    line-height: 22.35px;
-    cursor: pointer;
-    transition: opacity .15s ease;
-
-    &:hover { opacity: .9; }
-  }
-  &__btn--cart .s-button-element {
-    background: $qpd-navy !important;
-    color: #fff !important;
-
-    &[disabled] { opacity: .45; cursor: not-allowed; }
-  }
-  &__btn--buy {
-    background: #91e6f7;
-    color: $qpd-navy;
-  }
-
-  salla-quantity-input {
-    display: block;
-    height: 50.29px;
-    overflow: hidden;
-    border: 0;
-    border-radius: 7.45px;
-    background: #f4f5f6;
-  }
-  .s-quantity-input-container {
-    display: flex;
-    align-items: stretch;
-    width: 100%;
-    height: 100%;
-    border: 0;
-    border-radius: 0;
-    background: none;
-  }
-  .s-quantity-input-button {
-    display: flex;
-    flex: 0 0 41.91px;
-    align-items: center;
-    justify-content: center;
-    width: auto;
-    height: auto;
-    padding: 0;
-    border: 0;
-    background: none;
-    color: $qpd-ink;
-
-    svg { width: 16.76px; height: 16.76px; fill: currentColor; }
-  }
-  .s-quantity-input-input {
-    flex: 1 1 0;
-    width: 0;
-    min-width: 0;
-    height: auto;
-    padding: 0;
-    border: 0;
-    background: none;
-    color: $qpd-ink;
-    font-family: $qpd-font !important;
-    font-size: 14.9px;
-    font-weight: 700;
-    text-align: center;
-  }
-
-  // ---- Tabby / Tamara (168:8002): their own widgets, side by side ----
-  &__installment {
-    display: block;
-    margin-top: 22.35px;
-
-    &:empty { display: none; }
-  }
-
-  // ---- trust badges (168:8022) ----
-  &__trust {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 15.84px;
-    margin-top: 25.14px;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
     padding: 0;
     list-style: none;
   }
-  &__trust-item {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 4.66px;
-    min-height: 113.62px;
-    padding: 13.04px;
-    border-radius: 18.63px;
-    background: #f4f5f6;
-
-    img { width: 19.56px; height: 19.56px; }
-    b {
-      color: $qpd-ink;
-      font-family: $qpd-font !important;
-      font-size: 12.11px;
-      font-weight: 700;
-      line-height: 19.37px;
-    }
-    small {
-      color: $qpd-muted;
-      font-family: $qpd-font !important;
-      font-size: 10.24px;
-      font-weight: 400;
-      line-height: 16.39px;
-    }
-    // the link to the card before it (168:8053): a hairline, a dot at each end
-    & + &::before {
-      content: '';
-      position: absolute;
-      z-index: 1;
-      top: 55.73px;
-      right: -19.72px;
-      width: 23.59px;
-      height: 4.97px;
-      background:
-        radial-gradient(circle at 2.48px 50%, #d0d3d6 2.4px, transparent 2.5px),
-        radial-gradient(circle at calc(100% - 2.48px) 50%, #d0d3d6 2.4px, transparent 2.5px),
-        linear-gradient(#d0d3d6, #d0d3d6) center / calc(100% - 4.96px) .93px no-repeat;
-    }
-  }
-
-  &__gifting { display: block; }
-  &__quick-order {
+  &__payments .s-payments-list-item {
     display: block;
-    margin-top: 16px;
-
-    &:empty { display: none; }
-  }
-}
-
-// ====================================================================
-// «تفاصيل المنتج» + the reviews (113:36126, 113:36142; package 113:35800)
-// ====================================================================
-.qpd-more {
-  width: 100%;
-  max-width: 1440px;
-  margin: 57.99px auto 0 !important;
-  padding: 0 48.68px 0 47.49px;
-  direction: rtl;
-
-  &__title {
     margin: 0;
-    color: $qpd-ink;
-    font-family: $qpd-font !important;
-    font-size: 33.53px;
-    font-weight: 400;
-    line-height: 51.22px;
-    text-align: right;
-  }
-  &__title-m,   // «… ومحتوياته»: the phone frames' heading
-  &__title--card { display: none; }   // «التقييمات والآراء»: the heading inside the card
-
-  // ---- the description (168:8093) ----
-  &__desc {
-    margin-top: 11.18px;
-    color: #666;
-    font-size: 19.14px;
-    font-weight: 300;
-    line-height: 32.97px;
-    text-align: right;
-
-    p { margin: 0; }
-    h1, h2, h3, h4, h5, h6 {
-      margin: 0;
-      color: $qpd-ink;
-      font-size: inherit;
-      font-weight: 500;
-      line-height: inherit;
-    }
-    img, iframe { max-width: 100%; height: auto; }
-  }
-
-  // ---- the package graphic (113:35929) ----
-  .qpd-pack {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 38.77px 18.65px 26.06px;
-    overflow: hidden;
-    border-radius: 27.98px;
-    background: #212e6f;
-    color: #fff;
-    text-align: center;
-
-    &[hidden] { display: none; }
-
-    // two spotlights from the top corners onto the product (113:35930–31): each
-    // a strip hinged on its own top-left corner, white at the lamp end. Figma's
-    // layer blur (53.25) is twice CSS's.
-    &::before,
-    &::after {
-      content: '';
-      position: absolute;
-      top: -30.78px;
-      right: -72.79px;
-      width: 112.86px;
-      height: 254.63px;
-      background: linear-gradient(#fff, rgba(145, 230, 247, .3));
-      opacity: .5;
-      filter: blur(26.63px);
-      transform: rotate(45deg);
-      transform-origin: 0 0;
-      pointer-events: none;
-    }
-    &::after {
-      top: 47.16px;
-      right: auto;
-      left: -33.58px;
-      opacity: .4;
-      transform: rotate(-45deg);
-    }
-    > * { position: relative; z-index: 1; }
-  }
-  // a package: the graphic takes the description's place
-  &.is-pack &__desc { display: none; }
-  .qpd-pack { margin-top: 40.1px; }
-  .qpd-pack__name {
-    margin: 0;
-    font-family: $qpd-font !important;
-    font-size: 33.58px;
-    font-weight: 500;
-    line-height: 51.3px;
-  }
-  .qpd-pack__tag {
-    margin: 13.4px 0 0;
-    font-family: $qpd-font !important;
-    font-size: 14.92px;
-    font-weight: 400;
-    line-height: 23.32px;
-  }
-  .qpd-pack__count {
-    display: flex;
-    align-items: center;
-    gap: 6.53px;
-    margin: 14.92px 0 0;
-    font-family: $qpd-font !important;
-    font-size: 14.92px;
-    font-weight: 400;
-    line-height: 23.88px;
-
-    b {
-      color: #91e6f7;
-      font-family: $qpd-font !important;
-      font-size: 70.88px;
-      font-weight: 700;
-      line-height: 71px;
-    }
-  }
-  .qpd-pack__img {
-    display: block;
-    width: 100%;
-    aspect-ratio: 704.18 / 351.63;
-    margin-top: 14.92px;
-    border-radius: 20.14px;
-    background: #fff;
-    box-shadow: 0 7.55px 20.14px rgba(8, 32, 51, .07);
-    object-fit: cover;
-  }
-  .qpd-pack__tiles {
-    display: flex;
-    flex-wrap: wrap;   // five to a row, as drawn; a sixth starts the next row
-    justify-content: center;
-    gap: 14.92px;
-    width: 100%;
-    margin-top: 22.38px;
-  }
-  .qpd-pack__tile {
-    display: flex;
-    flex: 0 0 min(131.51px, calc((100% - 59.68px) / 5 - .1px));
-    flex-direction: column;
-    align-items: center;
-    gap: 13.06px;
-    min-width: 0;
-    padding: 14.92px 8px 7.57px;
-    border: .93px solid rgba(255, 255, 255, .06);
-    border-radius: 7.46px;
-    background: rgba(255, 255, 255, .06);
-
     img {
       display: block;
-      width: 100.73px;
-      max-width: 100%;
-      aspect-ratio: 1;
-      border-radius: 7.46px;
-      background: #fff;
-      object-fit: cover;
-    }
-    b {
-      font-family: $qpd-font !important;
-      font-size: 22.38px;
-      font-weight: 700;
-      line-height: 19.4px;
-    }
-    span {
-      font-family: $qpd-font !important;
-      font-size: 12.13px;
-      font-weight: 700;
-      line-height: 19.4px;
+      width: auto;
+      height: 28px;
+      object-fit: contain;
     }
   }
 
-  // ---- the reviews (113:36142). <salla-comments> draws: the form, the
-  // summary, a count + sort row, the comments, «عرض المزيد». ----
-  &__reviews { margin-top: 74.83px; }
-
-  salla-comments { display: block; }
-  .s-comments-product {
-    padding: 0;
-    background: none;
-  }
-  // A grid: the summary, then the form, in a card whose border (::before, in
-  // the same cells) wraps just those two; the rest runs under it. `salla-comments`
-  // raises these over product.scss, which is imported later.
-  salla-comments .s-comments-container {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    width: auto;   // Tailwind's .container sets 100%
-    max-width: none;
-    margin: 0;
-    padding: 0;
-
-    > * { grid-column: 1 / -1; min-width: 0; }
-    > salla-reviews-summary { grid-area: 1 / 1; }
-    > salla-comment-form {
-      display: block;
-      grid-area: 2 / 1;
-    }
-    &::before {
-      content: '';
-      grid-area: 1 / 1 / 3 / -1;
-      border: .93px solid #eee;
-      border-radius: 14.9px;
-      pointer-events: none;
-    }
-    // neither a form nor a summary: no card
-    &:not(:has(salla-comment-form > *, salla-reviews-summary > *))::before { display: none; }
-  }
-
-  // the form (113:36205)
-  salla-comment-form form::before {
-    content: var(--qpd-comment-label);
-    display: block;
-    margin-bottom: 7.45px;
-    color: #0a1f30;
-    font-size: 14.9px;
-    font-weight: 500;
-    line-height: 23px;
-    text-align: right;
-  }
-  salla-comment-form form { margin: 0; }
-  .s-comment-form-wrapper,
-  .s-comment-form-content {
-    display: block;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-  }
-  .s-comment-form-avatar,
-  salla-comment-form br { display: none; }
-  .s-comment-form-input {
-    display: block;
-    width: 100%;
-    height: 74.5px;
-    min-height: 0;
-    padding: 13.04px 14.9px;
-    border: .93px solid #eee;
-    border-radius: 11.18px;
-    background: #e9ecef;
-    color: #0a1f30;
-    font-size: 13.04px;
-    font-weight: 500;
-    line-height: 18.63px;
-    resize: none;
-
-    &::placeholder { color: #6c757d; }
-  }
-  .s-comment-form-action {
-    margin: 14.9px 0 0;
-
-    salla-button { display: block; width: 100%; }
-    .s-button-element {
-      width: 100%;
-      height: 52.15px;
-      border: .93px solid #30378e;
-      border-radius: 11.18px;
-      background: #30378e;
-      color: #fff;
-      font-size: 14.9px;
-      font-weight: 500;
-    }
-  }
-
-  // the summary (113:36144): the score card right of five bars. With the
-  // store's rating summary off Salla shows the recommendation alone.
-  salla-reviews-summary {
-    display: flex;
-    align-items: center;
-    gap: 5.18px;
-    padding: 0;
-    border: 0;
-    background: none;
-  }
-  .s-reviews-summary-header,
-  .s-reviews-summary-recommendation-only {
-    display: flex;
-    flex: 0 0 127.58px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5.59px;
-    min-height: 130.53px;
-    margin: 0;
-    padding: 16.76px 8px;
-    border: 0;
-    border-radius: 11.18px;
-    background: #faf7f4;
-    text-align: center;
-  }
-  .s-reviews-summary-overall-section,
-  .s-reviews-summary-overall-row {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5.59px;
-    margin: 0;
-    padding: 0;
-  }
-  .s-reviews-summary-average,
-  .s-reviews-summary-recommendation-percentage {
-    margin: 0;
-    color: #1c1c1c;
-    font-size: 33.53px;
-    font-weight: 700;
-    line-height: 50.29px;
-  }
-  .s-reviews-summary-count,
-  .s-reviews-summary-recommendation-only .s-reviews-summary-count {
-    margin: 0;
-    color: #6f6f6f;
-    font-size: 12.11px;
-    font-weight: 400;
-    line-height: 18.16px;
-  }
-  .s-reviews-summary-header svg {
-    width: 15.83px;
-    height: 15.83px;
-  }
-  .s-reviews-summary-rows {
-    display: flex;
-    flex: 1 1 0;
-    flex-direction: column;
-    gap: 7.45px;
-    min-width: 0;
-    margin: 0;
-    padding: 0;
-  }
-  .s-reviews-summary-row {
-    display: flex;
-    align-items: center;
-    gap: 9.31px;
-    height: 19px;
-    margin: 0;
-  }
-  .s-reviews-summary-row-rate {
-    display: flex;
-    flex: 0 0 39.11px;
-    align-items: center;
-    gap: 2.79px;
-    color: #4a4a4a;
-    font-size: 12.11px;
-    line-height: 18.16px;
-
-    svg { width: 15.83px; height: 15.83px; fill: #f0b100; color: #f0b100; }
-  }
-  .s-reviews-summary-progress {
-    flex: 1 1 0;
-    min-width: 0;
-  }
-  .s-progress-bar-wrapper {
-    height: 7.45px !important;
-    overflow: hidden;
-    border-radius: 999px;
-    background: #f3f3f3;
-  }
-  .s-progress-bar-progress {
-    height: 100%;
-    border-radius: 999px;
-    background-color: #f0b100 !important;
-  }
-  .s-reviews-summary-percentage {
-    flex: 0 0 31.66px;
-    color: #6f6f6f;
-    font-size: 12.11px;
-    line-height: 18.16px;
-    text-align: left;
-  }
-
-  // count + sort, the translate link — Salla's, kept small above the comments
-  .s-comments-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin: 24px 0 0;
-    padding: 0;
-    border: 0;
-    color: $qpd-muted;
-    font-size: 12.11px;
-
-    * { font-size: inherit; }
-  }
-  .s-comments-filter-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .s-comments-sort-input {
-    width: auto;
-    height: 32px;
-    padding: 0 10px;
-    border-radius: 7.45px;
-    font-size: 12.11px;
-  }
-  .s-translate-all-wrap {
-    margin: 8px 0 0;
-    padding: 0;
-    font-size: 12.11px;
-  }
-
-  // ---- the comments (356:3853): 268-wide cards in a row that scrolls,
-  // edge to edge. The row is the one child of the container with no class. ----
-  .s-comments-container > div:not([class]) {
+  // qty stepper — row 1, LEFT column
+  &__qty {
+    grid-area: qty;
     display: flex;
     align-items: stretch;
-    gap: 40px;
-    margin: 0;
-    padding: 28px 0;
-    overflow-x: auto;
-    scroll-snap-type: x proximity;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar { display: none; }
-    &:empty { display: none; }
   }
-  .s-comments-container .s-comments-item {
-    display: block;
-    flex: 0 0 268px;
-    min-height: 185px;
-    margin: 0;
-    padding: 12px;
-    border: 0;
-    border-radius: 24px;
-    background: #f4f5f7;
-    scroll-snap-align: center;
-    animation: none;
-  }
-  // a rating left without words has nothing to quote: the summary counts it,
-  // the row skips it (product.js asks for more until a few comments show)
-  .s-comments-container .s-comments-item:has(.s-comments-item-content-container > p:empty):not(:has(salla-attachments)) { display: none; }
-  .s-comments-item-wrapper,
-  .s-comments-item-inner {
-    display: block;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    background: none;
-  }
-  .s-comments-item-avatar,
-  .s-comments-item-user-info > :not(h3),
-  .s-comments-item-time { display: none; }
-  // quote on top, then the name (right) and the stars (left) at the foot
-  .s-comments-item-inner > .s-comments-flex-1 {
-    display: grid;
-    grid-template: 1fr auto / minmax(0, 1fr) auto;
-    gap: 11px;
-    height: 100%;
-    min-height: 161px;
-  }
-  .s-comments-item-content {
-    grid-area: 1 / 1 / 2 / -1;
-    margin: 0;
-    padding: 0;
-
-    // Figma: a 67px rule under the quote
-    &::after {
-      content: '';
-      display: block;
-      width: 67px;
-      height: 1px;
-      margin-top: 20px;
-      background: rgba(0, 0, 0, .05);
+  // quantity stepper — match the cart-page style: baby-blue border + inner dividers
+  salla-quantity-input {
+    --salla-quantity-input-border-color: #daeff7;
+    width: 100%;
+    height: 56px;
+    border: 1px solid #daeff7;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    overflow: hidden;
+    background: #fff;
+    &::part(base) {
+      border: none;
+      height: 100%;
+      width: 100%;
     }
-    p {
-      max-height: 128px;   // five lines; a longer comment scrolls in place
-      margin: 0;
-      overflow-y: auto;
-      color: #314158;
-      font-size: 16px;
+    &::part(button) {
+      color: #0a1f30;
+    }
+    &::part(input) {
+      color: #0a1f30;
       font-weight: 500;
-      line-height: 25.6px;
-      text-align: right;
+      font-size: 19px;
+    }
+    .s-quantity-input-container {
+      border: none;
+      height: 100%;
+      width: 100%;
+    }
+    .s-quantity-input-input {
+      color: #0a1f30;
+      font-family: "Poppins", "GE SS Two", sans-serif;
+      border-inline: 1px solid #daeff7; // the divider lines (Figma)
     }
   }
-  .s-comments-item-user-wrapper {
-    display: block;
-    grid-area: 2 / 1;
-    margin: 0;
-  }
-  .s-comments-item-user-info { display: block; margin: 0; }
-  .s-comments-item-user-info h3 {
-    margin: 0;
-    color: #0f172b;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 20px;
-  }
-  .s-comments-item-timestamp {
-    margin: 2px 0 0;
-    color: #90a1b9;
-    font-size: 12px;
-    line-height: 16px;
-    text-align: right;
-  }
-  // the stars' row. Not by its `.flex` class: a Tailwind utility in a selector
-  // is expanded into every rule that @applies it (this one cost 31KB).
-  .s-comments-item-inner .s-comments-flex-1 > div:has(> salla-rating-stars) {
-    grid-area: 2 / 2;
-    align-self: center;
-    margin: 0;
 
-    svg { width: 14px; height: 14px; }
+  // buttons are placed by order/flex on the --cart / --buy rules below
+  // inline Figma cart icon (16x16, inherits button color via currentColor)
+  &__cart-icon {
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px;
+    flex: 0 0 16px;
+    display: inline-block;
+    vertical-align: middle;
   }
-  // «عرض المزيد» — product.js presses it when the row is scrolled to its end
-  .s-infinite-scroll-wrapper { display: none; }
-  .s-comments-placeholder {
-    grid-column: 1 / -1;
-    padding: 24px 0 0;
-    color: $qpd-muted;
-    text-align: center;
-
-    span { display: none; }
-  }
-}
-
-// ---- the reviews across the page (113:36143): the form left of the summary;
-// the card reaches 23.28 / 30.73 past the section's text, the comments edge to
-// edge. A product from 769 up; a package only on tablets, where its two
-// columns (below) would be too narrow. ----
-@mixin qpd-reviews-wide {
-  salla-comments .s-comments-container {
-    grid-template-columns: minmax(0, 587.53fr) minmax(0, 768.3fr);   // RTL: the first is the right one
-    column-gap: 10.24px;
-    margin: 44.7px -18.52px 0 -3.72px;
-
-    > salla-reviews-summary { align-self: center; }
-    > salla-comment-form {
-      grid-area: 1 / 2;
-      padding: 16.76px 0 16.12px;
+  // inside salla button the icon sits in .s-button-text — keep it 16x16
+  &__btn--cart .s-button-text {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    .qpd__cart-icon {
+      width: 16px !important;
+      height: 16px !important;
+      flex: 0 0 16px;
     }
-    &::before {
-      grid-row: 1;
-      margin: 0 -12.21px 0 -19.56px;
-    }
-    // one of the two alone takes the card's width
-    &:not(:has(salla-reviews-summary > *)) > salla-comment-form,
-    &:not(:has(salla-comment-form > *)) > salla-reviews-summary { grid-column: 1 / -1; }
   }
-  .s-reviews-summary-rows { padding-left: 42.42px; }
-  .s-comments-header,
-  .s-translate-all-wrap { padding: 0 18.52px 0 3.72px; }
-  .s-comments-container > div:not([class]) {
-    margin: 44.39px -30.16px 0 -43.77px;
-    padding: 28px 43.77px;
-  }
-}
-@media (min-width: 769px) {
-  .qpd-more:not(.is-pack) { @include qpd-reviews-wide; }
-}
-@media (min-width: 769px) and (max-width: 1100px) {
-  .qpd-more.is-pack { @include qpd-reviews-wide; }
-}
 
-// ---- a package, desktop: the reviews card (113:35801) left of the graphic ----
-@media (min-width: 1101px) {
-  .qpd-more.is-pack {
-    display: grid;
-    grid-template-columns: minmax(0, 741.49fr) minmax(0, 626.77fr);   // RTL: the first is the right one
-    gap: 0 28.91px;
-    margin-top: 29.8px !important;
-    padding: 0 26.98px 0 15.85px;
-
-    // the graphic is as tall as the reviews card, its content centred (Figma)
-    .qpd-more__details {
-      display: flex;
-      grid-area: 1 / 1;
-      flex-direction: column;
-    }
-    .qpd-more__title { padding-right: 19.58px; }
-    .qpd-more__details > .s-blocks-wrapper:not(:empty) {
-      display: flex;
-      flex: 1 0 auto;
-      flex-direction: column;
-    }
-    .qpd-pack {
-      flex: 1 0 auto;
-      justify-content: center;
-      margin-top: 40.1px;
-    }
-
-    // level with the graphic, as tall as it
-    .qpd-more__reviews {
-      display: flex;
-      grid-area: 1 / 2;
-      flex-direction: column;
-      margin-top: 91.4px;
-      padding: 18.65px;
-      overflow: hidden;
-      border: .52px solid #e2e2e2;
-      border-radius: 13.06px;
-      background: #fff;
-    }
-    .qpd-more__title--rev { display: none; }
-    .qpd-more__title--card {
-      display: block;
-      margin: 0;
-      color: #1c1c1c;
-      font-size: 18.65px;
-      font-weight: 700;
-      line-height: 27.98px;
-      text-align: right;
-    }
-    salla-comments .s-comments-container {
-      margin-top: 24.25px;
-
-      &::before { display: none; }
-      > salla-comment-form { padding-top: 24.25px; }
-    }
-    .s-comment-form-input { height: 105px; }
-    .s-comments-container > div:not([class]) {
-      margin: 24.25px -18.65px 0;
-      padding: 37.5px 18.65px;
-    }
-    .s-comments-container .s-comments-item { min-height: 289px; }
-    .s-comments-item-inner > .s-comments-flex-1 { min-height: 265px; }
-  }
-}
-
-// ====================================================================
-// «يشترونها معها» (113:36214): four of the theme card, 26.09 apart
-// ====================================================================
-.qpd-rel {
-  width: 100%;
-  max-width: 1440px;
-  margin: 112.11px auto 0 !important;
-  padding: 0 20px;
-  direction: rtl;
-  text-align: center;
-
-  &[hidden] { display: none; }
-
-  &__title {
-    margin: 0;
-    color: $qpd-ink;
-    font-family: $qpd-font !important;
-    font-size: 37.25px;
-    font-weight: 400;
-    line-height: 47px;
-  }
-  &__sub {
-    margin: 0;
-    color: $qpd-muted;
-    font-family: $qpd-font !important;
-    font-size: 14.9px;
-    font-weight: 400;
-    line-height: 24px;
-  }
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 279.16px));
+  // The actual visible button: the plain <button> (buy) OR the inner
+  // .s-button-element (cart). The salla host itself stays borderless.
+  &__btn--buy,
+  &__btn--cart .s-button-element {
+    width: 100% !important;
+    height: 56px;
+    display: inline-flex !important;
+    align-items: center;
     justify-content: center;
-    gap: 26.09px;
-    margin-top: 31.66px;
+    gap: 8px;
+    border-radius: 12px;
+    font-family: "GE SS Two", sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    border: 1px solid #30378e !important;
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      color 0.15s,
+      border-color 0.15s;
+    i {
+      font-size: 16px;
+    }
+  }
+
+  // أضف للسلة (salla host) — row 1, RIGHT (order 1 in RTL), fills the space next
+  // to the qty. SOLID navy. The host is a transparent flex shell; the visible
+  // surface is .s-button-element.
+  &__btn--cart {
+    grid-area: cart;
+    min-width: 0;
+    border: none !important;
+    height: auto !important;
+    background: none !important;
+    > div {
+      width: 100%;
+    }
+  }
+  &__btn--cart .s-button-element {
+    background: #30378e !important;
+    color: #fff !important;
+  }
+  &__btn--cart:hover .s-button-element {
+    background: #91e6f7 !important;
+    border-color: #91e6f7 !important;
+    color: #30378e !important;
+  }
+
+  // الشراء السريع — row 2, full width (basis 100% forces the wrap). OUTLINE → hover cyan.
+  &__btn--buy {
+    grid-area: buy;
+    width: 100%;
+    background: #fff !important;
+    color: #30378e !important;
+    &:hover {
+      background: #91e6f7 !important;
+      border-color: #91e6f7 !important;
+      color: #30378e !important;
+    }
   }
 }
-.qpd-more.is-pack + .s-blocks-wrapper + .qpd-rel { margin-top: 75.55px !important; }
 
-@media (max-width: 1024px) {
-  .qpd-rel__grid { grid-template-columns: repeat(2, minmax(0, 279.16px)); }
+// ====================================================================
+// TABS: تفاصيل المنتج / تقييمات المنتج
+// ====================================================================
+.qpd-tabs {
+  font-family: "GE SS Two", sans-serif;
+  max-width: none;
+  padding-inline: 50px;
+  margin-top: 32px;
+  margin-bottom: 40px;
+
+  // Details and reviews stack in source order; the tablist/__nav/__tab rules were
+  // removed with the tab interface.
+  &__section + &__section {
+    margin-top: 40px;
+  }
+
+  // Section headings replace the removed tab buttons. Values match this page's other
+  // section titles (.qpd__title / .qpd-viewed__title) rather than a new scale.
+  &__heading {
+    margin: 0 0 16px;
+    text-align: right;
+    direction: rtl;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 38px;
+    letter-spacing: -0.2px;
+    color: #0a1f30;
+
+    @media (max-width: 768px) {
+      font-size: 24px;
+      line-height: 30px;
+    }
+  }
+
+  // No `display` here on purpose — a <div> is block already, and an explicit
+  // display declaration is what trips the minifier rule-merging bug (see the
+  // &__price-sale note above).
+  &__panel {
+    border: 1px solid #eee;
+    border-radius: 0 15px 15px 15px;
+    padding: 16px;
+    background: #fff;
+  }
+
+  // details tab text
+  &__desc {
+    text-align: right;
+    color: #666;
+    font-size: 16px;
+    line-height: 25px;
+    white-space: normal;
+    overflow-wrap: anywhere; // wrap long unbroken strings (e.g. dimension specs)
+    word-break: break-word;
+    p {
+      margin: 0 0 0;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+    h1,
+    h2,
+    h3,
+    h4,
+    strong,
+    b {
+      color: #0a1f30;
+      font-weight: 700;
+    }
+    h2,
+    h3 {
+      font-size: 25px;
+      margin: 16px 0 8px;
+    }
+  }
+
+  // ===== reviews tab: restyle salla-comments to Figma =====
+  // remove the component's default grey full-width band → inline panel
+  salla-comments .s-comments-product {
+    @apply bg-transparent py-0;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+  salla-comments .s-comments-container {
+    padding: 0 !important;
+    max-width: none !important;
+  }
+
+  // layout: comment list (left/flex) + summary+add card (right 380)
+  .s-comments {
+    direction: rtl;
+    &-list-wrapper,
+    &-body {
+      gap: 24px;
+    }
+  }
+
+  // rating summary / add-comment card → bordered Figma card
+  .s-comments-rating,
+  .s-comments-add {
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 16px;
+    background: #fff;
+  }
+  .s-comments-rating-average {
+    font-size: 20px;
+    color: #0a1f30;
+    font-weight: 500;
+  }
+  .s-comments-rating-count {
+    font-size: 14px;
+    color: #6c757d;
+  }
+
+  // single comment row
+  .s-comments-item {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 16px;
+    &-user-info-name {
+      font-size: 16px;
+      color: #0a1f30;
+      font-weight: 500;
+    }
+    &-date {
+      font-size: 13px;
+      color: #6c757d;
+    }
+    &-content,
+    &-text {
+      font-size: 14px;
+      color: #6c757d;
+      line-height: 20px;
+    }
+    &-user-avatar img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  }
+
+  // textarea + publish button
+  .s-comments-add textarea,
+  .s-comments-form textarea {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 14px 16px;
+    min-height: 110px;
+    font-size: 12px;
+    color: #6c757d;
+  }
+  .s-comments-add button,
+  .s-comments-form button[type="submit"] {
+    background: #30378e;
+    color: #fff;
+    border-radius: 12px;
+    height: 50px;
+    font-size: 16px;
+    font-weight: 500;
+    width: 100%;
+  }
+
+  // "عرض المزيد" load-more
+  .s-comments-load-more {
+    border: 1px solid #eee;
+    border-radius: 4px;
+    padding: 16px;
+    color: #0a1f30;
+    width: 100%;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    padding-inline: 15px;
+  }
 }
 
+// ====================================================================
+// Responsive — buy box
+// ====================================================================
+@media (max-width: 1024px) {
+  .qpd {
+    padding-inline: 24px;
+  }
+}
+@media (max-width: 768px) {
+  .qpd {
+    padding-inline: 15px;
+    &__title {
+      font-size: 24px;
+      line-height: 30px;
+    }
+
+    // stack order: gallery (image + thumbs) FIRST, info below (Figma 299:4271)
+    &__gallery {
+      order: 0;
+    }
+    &__info {
+      order: 1;
+    }
+
+    // ----- GALLERY: main image on top, thumbnails as a horizontal row below -----
+    &__gallery {
+      .details-slider {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .s-slider-container {
+        order: 1;
+        width: 100%;
+        height: 340px;
+        flex: none;
+      }
+      .s-slider-thumbs {
+        order: 2;
+        width: 100%;
+        height: auto;
+        flex: none;
+      }
+      .s-slider-thumbs-container {
+        height: auto !important;
+      }
+      .s-slider-thumbs-container .swiper-wrapper {
+        flex-direction: row !important;
+        height: auto !important;
+        gap: 10px;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+      }
+      .slide--one-fourth {
+        width: 80px !important;
+        height: 80px !important;
+        flex: 0 0 80px;
+        border-radius: 18px;
+        padding: 7px;
+      }
+      // show the main-image carousel arrows on mobile (hidden by default — slider.scss)
+      .s-slider-block__title-nav {
+        display: flex !important;
+      }
+    }
+
+    // ----- payment cards stack vertically -----
+    &__paydemo {
+      flex-direction: column;
+    }
+
+    // ----- gift: icon + text on top, button full-width below -----
+    &__gift {
+      flex-wrap: wrap;
+      row-gap: 14px;
+    }
+    &__gift-btn {
+      flex: 1 1 100%;
+      width: 100%;
+      order: 2;
+    }
+  }
+}
+
+// ====================================================================
+// Product-detail Figma refresh (desktop 160:4121 / mobile 214:4223)
+// ====================================================================
+.qpd {
+  &__title {
+    letter-spacing: 0;
+  }
+
+  &__gallery {
+    .details-slider {
+      position: relative;
+    }
+
+    .qpd__gallery-icon {
+      display: none !important;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .qpd {
+    &__row {
+      gap: 0;
+    }
+    &__gallery,
+    &__info {
+      width: 100%;
+      flex: 0 0 auto;
+    }
+
+    &__gallery {
+      overflow: visible !important;
+
+      .details-slider {
+        flex-direction: column;
+        gap: 20px;
+        overflow: visible;
+      }
+
+      .s-slider-container {
+        order: 1;
+        width: 100%;
+        height: 371px;
+        flex: none;
+        border-radius: 25px;
+        background: #30378e;
+      }
+
+      .homeslider__slide {
+        border-radius: 25px;
+        background: #30378e;
+
+        img {
+          border-radius: 25px;
+          object-fit: cover;
+        }
+      }
+
+      .s-slider-thumbs {
+        order: 2;
+        width: 100%;
+        height: 89px;
+        flex: none;
+        overflow: visible;
+      }
+
+      .s-slider-thumbs-container {
+        width: 100% !important;
+        height: 89px !important;
+      }
+
+      .s-slider-thumbs-container .swiper-wrapper {
+        flex-direction: row !important;
+        height: 89px !important;
+        gap: 16px;
+        justify-content: stretch;
+        flex-wrap: nowrap;
+        transform: none !important;
+      }
+
+      .slide--one-fourth {
+        width: auto !important;
+        min-width: 0;
+        max-width: none;
+        height: 89px !important;
+        flex: 1 1 0;
+        border-radius: 15px;
+        padding: 10px;
+
+        img {
+          border-radius: 10px;
+        }
+      }
+
+      .qpd__gallery-icon {
+        position: absolute !important;
+        top: 18px !important;
+        right: auto !important;
+        bottom: auto !important;
+        z-index: 6 !important;
+        width: 40px !important;
+        min-width: 40px !important;
+        height: 40px !important;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #e9ecef !important;
+        border-radius: 10px !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: #fff !important;
+        box-shadow: none !important;
+        overflow: hidden;
+
+        i {
+          font-size: 14px;
+          line-height: 1;
+        }
+
+        &::part(base) {
+          width: 100%;
+          height: 100%;
+          min-width: 0;
+          padding: 0;
+          border: 0;
+          border-radius: 10px;
+          background: transparent;
+          color: inherit;
+          box-shadow: none;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        // salla-button can render an async loading spinner part — never show
+        // it on these tiny overlay buttons (the heart toggles via the onclick).
+        &::part(loader) {
+          display: none !important;
+        }
+      }
+
+      .btn--wishlist.qpd__gallery-icon {
+        left: 17px !important;
+      }
+      // The base style above is a translucent white pill with a white heart — it
+      // disappears on light product images. Give the heart a solid, visible look
+      // (like the share) on any image. The wishlisted (.is-added) red state is
+      // kept by leaving it untouched here.
+      .btn--wishlist.qpd__gallery-icon:not(.is-added) {
+        background: #fff !important;
+        border-color: #e9ecef !important;
+        color: #30378e !important;
+
+        // render the heart clearly and centered (size + weight to match the share)
+        i,
+        .sicon-heart {
+          display: inline-flex !important;
+          align-items: center;
+          justify-content: center;
+          color: #30378e !important;
+          font-size: 17px !important;
+          line-height: 1;
+        }
+
+        &::part(base) {
+          background: #fff !important;
+          color: #30378e !important;
+        }
+      }
+
+      .qpd__gallery-share {
+        left: 69px !important;
+      }
+      .qpd__gallery-share::part(base) {
+        padding: 0;
+      }
+
+      .s-slider-block__title-nav {
+        display: flex !important;
+      }
+    }
+
+    &__info {
+      order: 1;
+      display: flex;
+      flex-direction: column;
+      padding-top: 30px;
+    }
+
+    &__titlerow {
+      justify-content: flex-end;
+      margin-bottom: 16px;
+    }
+
+    &__iconbtns {
+      display: none !important;
+    }
+    &__title {
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 30px;
+      letter-spacing: 0;
+    }
+    &__stock {
+      margin-bottom: 8px;
+      font-size: 14px;
+      line-height: 21px;
+    }
+    &__rating {
+      margin-bottom: 8px;
+    }
+    &__desc {
+      margin-bottom: 16px;
+      font-size: 14px;
+      line-height: 22px;
+    }
+    &__chips {
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    &__chip {
+      font-size: 12px;
+    }
+
+    &__weight {
+      height: 44px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 12px;
+    }
+
+    &__gift {
+      order: 12;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    &__gift-icon {
+      font-size: 20px;
+    }
+    &__gift-title {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    &__gift-sub {
+      font-size: 10px;
+      line-height: 16px;
+    }
+    &__gift-btn {
+      min-height: 36px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+
+    .product-form {
+      order: 16;
+    }
+    &__installment,
+    &__paydemo {
+      order: 20;
+      margin-top: 16px;
+    }
+
+    &__price {
+      margin-bottom: 16px;
+    }
+    &__price-now {
+      font-size: 20px;
+      line-height: 26px;
+    }
+    &__price-old {
+      font-size: 13px;
+    }
+    &__controls {
+      grid-template-columns: minmax(0, 1fr) 160px;
+      gap: 8px;
+    }
+
+    &__paydemo {
+      flex-direction: column;
+      gap: 12px;
+    }
+    &__pay {
+      padding: 14px;
+      gap: 12px;
+    }
+  }
+}
+
+// ====================================================================
+// Desktop horizontal arrangement → match Figma left/right (node 160:4121).
+// The info column flows RTL by default (first child → visual right). Figma
+// places these rows the other way (icons / price / tamara / stepper on the
+// LEFT), so flip them on desktop only — mobile already positions these via
+// its own order overrides and must stay untouched.
+// ====================================================================
+@media (min-width: 769px) {
+  .qpd {
+    &__titlerow {
+      flex-direction: row-reverse;
+    } // heart/share LEFT, title RIGHT
+    &__paydemo {
+      flex-direction: row-reverse;
+    } // tamara LEFT, tabby RIGHT
+  }
+}
+
+// Mobile Product_Image node 214:4948 exactness pass.
+@media (max-width: 768px) {
+  .qpd-breadcrumbs {
+    display: none !important;
+  }
+
+  .container--product-details.qpd {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  .qpd {
+    &__gallery {
+      .details-slider {
+        width: 100%;
+        gap: 20px !important;
+      }
+
+      .s-slider-container {
+        height: 371px !important;
+        max-height: 371px;
+        border-radius: 25px !important;
+        background: #30378e !important;
+      }
+
+      .swiper,
+      .swiper-wrapper,
+      .homeslider__slide {
+        height: 100% !important;
+      }
+
+      .homeslider__slide img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+      }
+
+      .s-slider-thumbs,
+      .s-slider-thumbs-container,
+      .s-slider-thumbs-container .swiper,
+      .s-slider-thumbs-container .swiper-wrapper {
+        height: 89px !important;
+        overflow: visible !important;
+      }
+
+      .s-slider-thumbs-container .swiper-wrapper {
+        display: flex !important;
+        gap: 16px !important;
+        width: 100% !important;
+      }
+
+      .slide--one-fourth {
+        display: flex !important;
+        flex: 1 1 0 !important;
+        width: auto !important;
+        min-width: 0 !important;
+        height: 89px !important;
+        margin: 0 !important;
+        border-radius: 15px !important;
+        padding: 10px !important;
+      }
+
+      .slide--one-fourth:nth-child(n + 5) {
+        display: none !important;
+      }
+
+      .slide--one-fourth img {
+        border-radius: 10px !important;
+        object-fit: cover !important;
+      }
+
+      .s-slider-block__title-nav,
+      .s-slider-next,
+      .s-slider-prev {
+        display: none !important;
+      }
+
+      .qpd__gallery-icon,
+      .qpd__gallery-icon::part(base),
+      .qpd__gallery-icon .s-button-element,
+      .qpd__gallery-icon button {
+        width: 40px !important;
+        min-width: 40px !important;
+        height: 40px !important;
+        min-height: 40px !important;
+        border-radius: 10px !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: #fff !important;
+        border-color: #e9ecef !important;
+        box-shadow: none !important;
+      }
+
+      .btn--wishlist.qpd__gallery-icon,
+      .btn--wishlist.qpd__gallery-icon:not(.is-added) {
+        left: 17px !important;
+        background: rgba(255, 255, 255, 0.08) !important;
+        color: #fff !important;
+      }
+
+      .btn--wishlist.qpd__gallery-icon i,
+      .btn--wishlist.qpd__gallery-icon:not(.is-added) i {
+        color: #fff !important;
+      }
+
+      .qpd__gallery-share {
+        left: 69px !important;
+      }
+    }
+  }
+}
+// Mobile gallery arrow and heart correction.
+@media (max-width: 768px) {
+  .qpd {
+    &__gallery {
+      // Figma mobile gallery has NO prev/next arrows — the thumbnails are the
+      // navigation. Hide the slider's nav buttons (they were floating over the
+      // image).
+      .s-slider-block__title-nav,
+      .s-slider-prev,
+      .s-slider-next {
+        display: none !important;
+      }
+
+      .qpd__gallery-icon,
+      .qpd__gallery-icon::part(base),
+      .qpd__gallery-icon .s-button-element,
+      .qpd__gallery-icon button {
+        border: 1px solid #e9ecef !important;
+        background: #fff !important;
+        color: #30378e !important;
+        opacity: 1 !important;
+      }
+
+      // center the heart inside salla-button's light-DOM button (was rendering
+      // in the corner and getting clipped by the host's overflow:hidden)
+      .qpd__gallery-icon::part(base),
+      .qpd__gallery-icon .s-button-element,
+      .qpd__gallery-icon .s-button-btn,
+      .qpd__gallery-icon button {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+      }
+      .qpd__gallery-icon .s-button-text {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        margin: 0 !important;
+      }
+
+      .qpd__gallery-icon i,
+      .qpd__gallery-icon svg {
+        color: #30378e !important;
+        fill: none;
+        stroke: currentColor;
+      }
+
+      .btn--wishlist.qpd__gallery-icon,
+      .btn--wishlist.qpd__gallery-icon:not(.is-added) {
+        left: 17px !important;
+        background: #fff !important;
+        color: #30378e !important;
+      }
+
+      .btn--wishlist.qpd__gallery-icon i,
+      .btn--wishlist.qpd__gallery-icon:not(.is-added) i {
+        display: block;
+        color: #30378e !important;
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      .btn--wishlist.qpd__gallery-icon.is-added,
+      .btn--wishlist.qpd__gallery-icon.is-added::part(base) {
+        background: #d62f45 !important;
+        border-color: #d62f45 !important;
+        color: #fff !important;
+      }
+
+      .btn--wishlist.qpd__gallery-icon.is-added i {
+        color: #fff !important;
+      }
+    }
+  }
+}
+@media (max-width: 390px) {
+  .qpd {
+    &__gallery {
+      .s-slider-container {
+        height: 340px;
+      }
+      .s-slider-thumbs,
+      .s-slider-thumbs-container,
+      .s-slider-thumbs-container .swiper-wrapper {
+        height: 82px !important;
+      }
+      .slide--one-fourth {
+        height: 82px !important;
+        padding: 8px;
+      }
+    }
+  }
+}
 // ====================================================================
 // Recently-viewed products — Figma node 6036:5118
 // Header band: eyebrow + title + subtitle (RIGHT) + view-all btn (LEFT).
 // Cards use the global qissa-product-card styling.
 // ====================================================================
 .qpd-viewed {
-  width: 100%;
-  margin-top: 64px !important;
   font-family: "GE SS Two", sans-serif;
   padding-block: 40px;
   // soft blue gradient band behind the whole section (Figma)
@@ -1507,459 +1672,1057 @@ $qpd-muted: #5a6874;
 }
 
 // ====================================================================
-// Mobile — 290:10598 (a product) / 290:9867 (a package)
+// Gallery polish pass (requested) — appended last so it wins the cascade
+//   Desktop: main image lines up with the thumbnail column (top + bottom);
+//            heart/share keep ONE square border (no inner round border).
+//   Mobile:  prev/next arrows float on the image sides; heart icon fixed;
+//            thumbnails centered horizontally.
 // ====================================================================
+
+// ----- Desktop -----
+@media (min-width: 769px) {
+  .qpd__gallery {
+    .details-slider {
+      align-items: flex-start;
+    } // pin tops to the same line
+
+    // main image + thumb column share the exact height so top AND bottom
+    // edges align (auto-height could otherwise leave the image taller)
+    .s-slider-container,
+    .s-slider-container .swiper,
+    .s-slider-container .swiper-wrapper,
+    .s-slider-container .swiper-slide,
+    .s-slider-container .homeslider__slide {
+      height: 637px !important;
+    }
+    .s-slider-thumbs,
+    .s-slider-thumbs-container,
+    .s-slider-thumbs-container .swiper,
+    .s-slider-thumbs-container .swiper-wrapper {
+      height: 637px !important;
+    }
+  }
+
+  // heart + share: keep only the outer 12px square (.qpd__iconbtn border),
+  // kill the inner round button border the salla components render.
+  .qpd__iconbtn,
+  .qpd__share {
+    .s-button-element,
+    .s-button-btn,
+    button,
+    .s-social-share-wrapper,
+    .s-social-share-btn {
+      width: 100% !important;
+      height: 100% !important;
+      min-width: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      border-radius: 12px !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+  }
+}
+
+// ----- Mobile -----
 @media (max-width: 768px) {
-  .product-single #main-content { padding-bottom: 32px; }
-
-  .qpd-crumbs { padding: 12.26px 18px 0; }
-
-  // 290:9973 — one 371-wide column
-  .qpd {
-    margin-top: 16.75px !important;
-    padding: 0 15.5px;
-
-    &__row {
-      flex-direction: column;
-      align-items: stretch;
-      gap: 9.03px;
-    }
-    &__gallery {
-      position: static;
-      flex: none;
-    }
-    &__info {
-      flex: none;
-      margin-top: 0;
+  .qpd__gallery {
+    .details-slider {
+      position: relative;
     }
 
-    .details-slider .s-slider-container {
-      border-radius: 9.03px;
+    // arrows live in .s-slider-block__title (above the image by default).
+    // collapse the title wrappers so the nav can float over the image.
+    .s-slider-block__title,
+    .s-slider-block__title-left {
+      display: contents !important;
+    }
+    .s-slider-block__title-nav {
+      display: flex !important;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 371px; // = mobile main-image height → centers arrows
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      margin: 0;
+      pointer-events: none; // only the buttons capture clicks
+      z-index: 6;
+    }
+    .s-slider-block__title-nav .s-slider-nav-arrow {
+      pointer-events: auto;
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #e9ecef;
+      border-radius: 50%;
+      background: #fff;
+      color: #30378e;
+      box-shadow: 0 2px 6px rgba(10, 31, 48, 0.12);
+      cursor: pointer;
+      svg {
+        fill: #30378e;
+      }
+      &:hover {
+        background: #30378e;
+        border-color: #30378e;
+        color: #fff;
+      }
+      &:hover svg {
+        fill: #fff;
+      }
+    }
+    .s-slider-block__title-nav .s-slider-nav-arrow .s-slider-button-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .s-slider-block__title-nav .s-slider-nav-arrow svg {
+      width: 16px;
+      height: 16px;
+      fill: #30378e;
+    }
+
+    // thumbnails: center the row horizontally (was start-aligned)
+    .s-slider-thumbs-container .swiper-wrapper {
+      justify-content: center !important;
+    }
+
+    // ----- heart / share icon: single clean square, glyph centered -----
+    .qpd__gallery-icon {
+      &,
+      &::part(base),
+      .s-button-element,
+      .s-button-btn,
+      button {
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        padding: 0 !important;
+        border-radius: 10px !important;
+        background: #fff !important;
+        color: #30378e !important;
+        box-shadow: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+      // outer host draws the square border; inner button must not (no double box)
+      & {
+        border: 1px solid #e9ecef !important;
+      }
+      &::part(base),
+      .s-button-element,
+      .s-button-btn,
+      button,
+      .s-social-share-wrapper,
+      .s-social-share-btn {
+        border: none !important;
+        background: transparent !important;
+      }
+      &::part(loader) {
+        display: none !important;
+      }
+      .s-button-text {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        height: auto;
+        margin: 0 !important;
+      }
+      i {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        color: #30378e !important;
+        fill: currentColor;
+        stroke: none;
+        font-size: 17px !important;
+        line-height: 1 !important;
+      }
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    // wishlisted (added) state → solid red, white heart
+    .btn--wishlist.qpd__gallery-icon.is-added,
+    .btn--wishlist.qpd__gallery-icon.is-added::part(base),
+    .btn--wishlist.qpd__gallery-icon.is-added .s-button-element,
+    .btn--wishlist.qpd__gallery-icon.is-added button {
+      background: #d62f45 !important;
+      border-color: #d62f45 !important;
+      color: #fff !important;
+    }
+    .btn--wishlist.qpd__gallery-icon.is-added i {
+      color: #fff !important;
+    }
+  }
+}
+
+@media (max-width: 390px) {
+  .qpd__gallery .s-slider-block__title-nav {
+    height: 340px;
+  } // smaller image
+}
+
+// Final mobile product gallery tune.
+@media (max-width: 768px) {
+  .qpd__gallery {
+    .details-slider {
+      position: relative !important;
+    }
+
+    .s-slider-block__title,
+    .s-slider-block__title-left {
+      display: contents !important;
+    }
+
+    .s-slider-block__title-nav {
+      position: absolute !important;
+      inset: 0 0 auto 0 !important;
+      z-index: 8 !important;
+      display: block !important;
+      width: 100% !important;
+      height: 371px !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      pointer-events: none;
+    }
+
+    .s-slider-prev,
+    .s-slider-next,
+    .s-slider-block__title-nav .s-slider-nav-arrow,
+    .s-slider-block__title-nav button {
+      position: absolute !important;
+      top: 50% !important;
+      z-index: 9 !important;
+      width: 40px !important;
+      min-width: 40px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      border: 1px solid #e9ecef !important;
+      border-radius: 50% !important;
+      background: #fff !important;
+      color: #30378e !important;
+      box-shadow: 0 8px 18px rgba(10, 31, 48, 0.14) !important;
+      opacity: 1 !important;
+      pointer-events: auto;
+      transform: translateY(-50%) !important;
+    }
+
+    .s-slider-prev {
+      left: 14px !important;
+      right: auto !important;
+    }
+
+    .s-slider-next {
+      right: 14px !important;
+      left: auto !important;
+    }
+
+    .s-slider-block__title-nav svg,
+    .s-slider-block__title-nav .s-slider-button-icon {
+      width: 16px !important;
+      height: 16px !important;
+      color: #30378e !important;
+      fill: currentColor !important;
+    }
+
+    .s-slider-thumbs {
+      display: flex !important;
+      justify-content: center !important;
+      width: 100% !important;
+    }
+
+    .s-slider-thumbs-container {
+      width: auto !important;
+      max-width: 100% !important;
+      margin-inline: auto !important;
+    }
+
+    .s-slider-thumbs-container .swiper,
+    .s-slider-thumbs-container .swiper-wrapper {
+      width: auto !important;
+      max-width: 100% !important;
+    }
+
+    .s-slider-thumbs-container .swiper-wrapper {
+      justify-content: center !important;
+      gap: 12px !important;
+      margin-inline: auto !important;
+      transform: none !important;
+    }
+
+    .slide--one-fourth {
+      flex: 0 0 62px !important;
+      width: 62px !important;
+      min-width: 62px !important;
+      height: 52px !important;
+      padding: 7px !important;
+      border-radius: 8px !important;
+    }
+
+    .slide--one-fourth img {
+      border-radius: 6px !important;
+    }
+
+    .qpd__gallery-icon,
+    .qpd__gallery-icon::part(base),
+    .qpd__gallery-icon .s-button-element,
+    .qpd__gallery-icon .s-button-btn,
+    .qpd__gallery-icon button {
+      width: 40px !important;
+      min-width: 40px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      border-radius: 10px !important;
+      background: #fff !important;
+      color: #30378e !important;
+      opacity: 1 !important;
+      box-shadow: none !important;
+    }
+
+    .qpd__gallery-icon {
+      border: 1px solid #e9ecef !important;
+      overflow: hidden !important;
+    }
+
+    .qpd__gallery-icon::part(base),
+    .qpd__gallery-icon .s-button-element,
+    .qpd__gallery-icon .s-button-btn,
+    .qpd__gallery-icon button {
+      border: 0 !important;
+      background: transparent !important;
+    }
+
+    .qpd__gallery-icon .s-button-text {
+      width: 100% !important;
+      height: 100% !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 !important;
+    }
+
+    .qpd__heart-icon {
+      width: 18px !important;
+      height: 18px !important;
+      display: block !important;
+      fill: none !important;
+      stroke: currentColor !important;
+      stroke-width: 2.2 !important;
+      stroke-linecap: round !important;
+      stroke-linejoin: round !important;
+      color: #30378e !important;
+    }
+
+    .btn--wishlist.qpd__gallery-icon,
+    .btn--wishlist.qpd__gallery-icon:not(.is-added) {
+      left: 17px !important;
+      background: #fff !important;
+      color: #30378e !important;
+    }
+
+    .btn--wishlist.qpd__gallery-icon.is-added,
+    .btn--wishlist.qpd__gallery-icon.is-added::part(base),
+    .btn--wishlist.qpd__gallery-icon.is-added .s-button-element,
+    .btn--wishlist.qpd__gallery-icon.is-added button {
+      background: #d62f45 !important;
+      border-color: #d62f45 !important;
+      color: #fff !important;
+    }
+
+    .btn--wishlist.qpd__gallery-icon.is-added .qpd__heart-icon {
+      color: #fff !important;
+    }
+  }
+}
+
+@media (max-width: 390px) {
+  .qpd__gallery .s-slider-block__title-nav {
+    height: 340px !important;
+  }
+}
+// Final mobile thumbnail strip centering.
+@media (max-width: 768px) {
+  .qpd__gallery {
+    .s-slider-thumbs,
+    .s-slider-thumbs-container,
+    .s-slider-thumbs-container .swiper,
+    .s-slider-thumbs-container .swiper-wrapper {
+      height: 52px !important;
+    }
+
+    .s-slider-thumbs-container .swiper-wrapper {
+      align-items: center !important;
+      justify-content: center !important;
+    }
+  }
+}
+// Mobile product gallery final correction from Figma heart node 214:5104.
+@media (max-width: 768px) {
+  .qpd__gallery {
+    .s-slider-block__title-nav {
+      position: absolute !important;
+      top: 0 !important;
+      right: 0 !important;
+      bottom: auto !important;
+      left: 0 !important;
+      z-index: 20 !important;
+      display: block !important;
+      width: 100% !important;
+      height: 371px !important;
+      pointer-events: none !important;
+    }
+
+    .s-slider-block__title-nav > *,
+    .s-slider-block__title-nav button,
+    .s-slider-block__title-nav .s-slider-nav-arrow,
+    .s-slider-prev,
+    .s-slider-next {
+      position: absolute !important;
+      top: 50% !important;
+      width: 40px !important;
+      min-width: 40px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      border: 1px solid #e9ecef !important;
+      border-radius: 999px !important;
+      background: #fff !important;
+      color: #30378e !important;
+      box-shadow: 0 8px 18px rgba(10, 31, 48, 0.14) !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+      transform: translateY(-50%) !important;
+    }
+
+    .s-slider-block__title-nav > *:first-child,
+    .s-slider-block__title-nav button:first-child,
+    .s-slider-block__title-nav .s-slider-nav-arrow:first-child,
+    .s-slider-prev {
+      left: 14px !important;
+      right: auto !important;
+    }
+
+    .s-slider-block__title-nav > *:last-child,
+    .s-slider-block__title-nav button:last-child,
+    .s-slider-block__title-nav .s-slider-nav-arrow:last-child,
+    .s-slider-next {
+      right: 14px !important;
+      left: auto !important;
+    }
+
+    .s-slider-block__title-nav svg,
+    .s-slider-block__title-nav .s-slider-button-icon {
+      width: 16px !important;
+      height: 16px !important;
+      color: #30378e !important;
+      fill: currentColor !important;
+    }
+
+    .btn--wishlist.qpd__gallery-icon,
+    .btn--wishlist.qpd__gallery-icon:not(.is-added),
+    .btn--wishlist.qpd__gallery-icon.is-added,
+    .btn--wishlist.qpd__gallery-icon::part(base),
+    .btn--wishlist.qpd__gallery-icon:not(.is-added)::part(base),
+    .btn--wishlist.qpd__gallery-icon.is-added::part(base),
+    .btn--wishlist.qpd__gallery-icon .s-button-element,
+    .btn--wishlist.qpd__gallery-icon .s-button-btn,
+    .btn--wishlist.qpd__gallery-icon button {
+      width: 40px !important;
+      min-width: 40px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 !important;
+      border-radius: 10px !important;
+      background: #fff !important;
+      color: #30378e !important;
+      box-shadow: none !important;
+      opacity: 1 !important;
+    }
+
+    .btn--wishlist.qpd__gallery-icon {
+      left: 17px !important;
+      border: 1px solid #e9ecef !important;
+      overflow: hidden !important;
+    }
+
+    .btn--wishlist.qpd__gallery-icon::part(base),
+    .btn--wishlist.qpd__gallery-icon .s-button-element,
+    .btn--wishlist.qpd__gallery-icon .s-button-btn,
+    .btn--wishlist.qpd__gallery-icon button {
+      border: 0 !important;
+      background: transparent !important;
+    }
+
+    .btn--wishlist.qpd__gallery-icon .s-button-text {
+      width: 100% !important;
+      height: 100% !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      margin: 0 !important;
+      line-height: 1 !important;
+    }
+
+    .btn--wishlist.qpd__gallery-icon .qpd__heart-icon {
+      width: 15px !important;
+      height: 15px !important;
+      display: block !important;
+      fill: none !important;
+      stroke: #30378e !important;
+      stroke-width: 2.2 !important;
+      stroke-linecap: round !important;
+      stroke-linejoin: round !important;
+      color: #30378e !important;
+    }
+  }
+}
+
+@media (max-width: 390px) {
+  .qpd__gallery .s-slider-block__title-nav {
+    height: 340px !important;
+  }
+}
+
+// ====================================================================
+// Product gallery slider arrows — FINAL authoritative pass.
+// Custom prev/next buttons are injected into .s-slider-container by the
+// inline script in single.twig and drive the main Swiper directly. This
+// replaces salla's brittle built-in title-nav overlay (hidden below).
+// RTL: prev (previous) = RIGHT side, next = LEFT side. Shown on all sizes.
+// Appended last so it wins the cascade over the earlier layered passes.
+// ====================================================================
+.qpd__gallery {
+  // we render our own arrows → hide every salla built-in nav variant
+  .s-slider-block__title-nav,
+  .s-slider-nav-arrow,
+  .s-slider-button-prev,
+  .s-slider-button-next,
+  .s-slider-prev,
+  .s-slider-next {
+    display: none !important;
+  }
+
+  // anchor the custom arrows to the main image on every breakpoint
+  .s-slider-container {
+    position: relative;
+  }
+
+  .qpd__gallery-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 7;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid #e9ecef;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    color: #30378e;
+    box-shadow: 0 6px 16px rgba(10, 31, 48, 0.14);
+    cursor: pointer;
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    transition:
+      background 0.15s,
+      color 0.15s,
+      border-color 0.15s,
+      opacity 0.15s;
+
+    i {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    &:hover {
+      background: #30378e;
+      border-color: #30378e;
+      color: #fff;
+    }
+
+    // disabled at a non-looping end → faded, non-interactive
+    &.is-disabled {
+      opacity: 0.35;
+      pointer-events: none;
       box-shadow: none;
     }
-    .details-slider .s-slider-container .swiper-slide { aspect-ratio: 371 / 297.49; }
-    &__badge {
-      top: 11.16px;
-      right: 11.16px;
-      min-width: 0;
-      max-width: calc(100% - 70px);
-      height: 27.16px;
-      font-size: 11.16px;
-      line-height: 27.16px;
-    }
-    &__fav {
-      top: 11.16px;
-      left: 11.16px;
-      width: 35.35px;
-      height: 35.35px;
+  }
 
-      svg { width: 15.81px; height: 15.81px; }
+  .qpd__gallery-arrow--prev {
+    right: 14px;
+    left: auto;
+  } // RTL: previous lives on the RIGHT
+  .qpd__gallery-arrow--next {
+    left: 14px;
+    right: auto;
+  } // next on the LEFT
+}
+
+@media (max-width: 768px) {
+  .qpd__gallery {
+    .qpd__gallery-arrow {
+      width: 40px;
+      height: 40px;
+      i {
+        font-size: 18px;
+      }
     }
-    &__share-btn { left: 52.51px; }
-    &__zoom {
-      bottom: 11.16px;
-      left: 11.16px;
+    .qpd__gallery-arrow--prev {
+      right: 12px;
     }
-    &__zoom-icon {
+    .qpd__gallery-arrow--next {
+      left: 12px;
+    }
+  }
+}
+
+// ====================================================================
+// Mobile gallery heart / share — FINAL centering fix (Figma node 214:5104).
+// The off-center/clipped glyph is caused by salla's inner <button> not
+// filling the 40px host (its own component CSS out-specifies our width/
+// height), so the slotted icon anchors top-left and overflow:hidden clips
+// it. Pin the inner button with position:absolute; inset:0 so it ALWAYS
+// fills + flex-centers regardless of salla's sizing. Appended last to win.
+// ====================================================================
+@media (max-width: 768px) {
+  .qpd__gallery {
+    // host = 40px rounded square, the only border, clips to its corners
+    .qpd__gallery-icon {
+      position: absolute !important;
+      width: 40px !important;
+      min-width: 40px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      display: block !important;
+      padding: 0 !important;
+      border: 1px solid #e9ecef !important;
+      border-radius: 10px !important;
+      background: #fff !important;
+      overflow: hidden !important;
+      box-shadow: none !important;
+    }
+
+    // every inner layer salla may render → fill the host + center its content
+    .qpd__gallery-icon::part(base),
+    .qpd__gallery-icon .s-button-element,
+    .qpd__gallery-icon .s-button-btn,
+    .qpd__gallery-icon button,
+    .qpd__gallery-icon .s-social-share-wrapper,
+    .qpd__gallery-icon .s-social-share-btn {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      min-width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      border-radius: 10px !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    // the slot wrapper must not add its own box/margins (salla adds text gaps)
+    .qpd__gallery-icon .s-button-text {
+      position: static !important;
+      width: auto !important;
+      height: auto !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      line-height: 0 !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    // never show salla's async loader on these tiny overlay buttons
+    .qpd__gallery-icon::part(loader),
+    .qpd__gallery-icon .s-button-loader {
+      display: none !important;
+    }
+
+    // the glyph itself — fixed 18px, centered, navy outline
+    .qpd__gallery-icon .qpd__heart-icon,
+    .qpd__gallery-icon i,
+    .qpd__gallery-icon svg {
+      flex: 0 0 auto !important;
+      width: 18px !important;
+      height: 18px !important;
+      margin: 0 !important;
+      display: block !important;
+      color: #30378e !important;
+    }
+    .qpd__gallery-icon .qpd__heart-icon {
+      fill: none !important;
+      stroke: #30378e !important;
+      stroke-width: 2.2 !important;
+      stroke-linecap: round !important;
+      stroke-linejoin: round !important;
+    }
+    .qpd__gallery-icon i {
+      font-size: 18px !important;
+      line-height: 1 !important;
+    }
+
+    // overlay placement on the image (heart RIGHT-most, share to its left — RTL)
+    .btn--wishlist.qpd__gallery-icon {
+      top: 17px !important;
+      left: 17px !important;
+      right: auto !important;
+    }
+    .qpd__gallery-share {
+      top: 17px !important;
+      left: 69px !important;
+      right: auto !important;
+    }
+
+    // wishlisted state → solid red, white heart
+    .btn--wishlist.qpd__gallery-icon.is-added {
+      background: #d62f45 !important;
+      border-color: #d62f45 !important;
+    }
+    .btn--wishlist.qpd__gallery-icon.is-added .qpd__heart-icon {
+      fill: #fff !important;
+      stroke: #fff !important;
+      color: #fff !important;
+    }
+  }
+}
+
+// ====================================================================
+// Wishlist (favorite) button — clean rebuild from Figma node 299:4326.
+// salla-button was dropped from the gallery markup (its light-DOM kept
+// clipping the heart); this is a plain <button class="qpd__fav"> with full
+// CSS control, so the glyph is always centered. Matches the share button
+// beside it: 40px white rounded square, 1px #e9ecef border, navy heart.
+// Overlay only on mobile (desktop uses the info-column heart, like before).
+// ====================================================================
+.qpd__gallery .qpd__fav {
+  display: none; // desktop: hidden, info-column heart is used instead
+}
+
+@media (max-width: 768px) {
+  .qpd__gallery .qpd__fav {
+    position: absolute;
+    top: 18px; // Figma 299:4325 container top
+    left: 17px; // RIGHT-most in RTL → leftmost overlay (matches Figma)
+    right: auto;
+    z-index: 6;
+
+    width: 40px; // 40.134 → 40
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+
+    border: 1px solid #e9ecef; // 0.803 → 1px, gray/200
+    border-radius: 10px; // 9.632 → 10
+    background: #fff;
+    color: #30378e;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    transition:
+      background 0.15s,
+      border-color 0.15s,
+      color 0.15s;
+
+    // heart glyph — 15px (Figma 14.448), centered, navy outline
+    .qpd__fav-icon {
+      width: 15px;
+      height: 15px;
+      display: block;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    &:hover {
+      border-color: #30378e;
+    }
+    &:active {
+      transform: scale(0.94);
+    }
+
+    // wishlisted → solid red, filled white heart (toggled by wishlist.js)
+    &.is-added {
+      background: #d62f45;
+      border-color: #d62f45;
+      color: #fff;
+      .qpd__fav-icon {
+        fill: #fff;
+        stroke: #fff;
+      }
+    }
+  }
+}
+
+// ====================================================================
+// Gallery follow-ups (requested):
+//   1) Hide the slider arrows on desktop — keep them on mobile only.
+//   2) Remove the blue selection outline on the main image + thumbnails.
+//   3) Share = plain native-share button (.qpd__share-btn), styled to
+//      match the heart (.qpd__fav); shown as a mobile overlay only.
+// ====================================================================
+
+// 1) arrows: mobile only
+@media (min-width: 769px) {
+  .qpd__gallery .qpd__gallery-arrow {
+    display: none !important;
+  }
+}
+
+// 2) no blue outline anywhere in the gallery (main image + thumbnails).
+//    Active thumb keeps a neutral border instead of the royal-blue one,
+//    and the slide links never show a focus ring.
+.qpd__gallery {
+  .slide--one-fourth,
+  .slide--one-fourth.swiper-slide-thumb-active {
+    border-color: #e9ecef !important;
+  }
+  .s-slider-container,
+  .homeslider__slide,
+  .swiper-slide,
+  .magnify-wrapper,
+  a:focus,
+  a:focus-visible,
+  button:focus,
+  button:focus-visible {
+    outline: none !important;
+    box-shadow: none;
+  }
+}
+
+// 3) share button — same square as the heart, sits to its left (Figma row).
+//    Desktop: hidden (info-column share is used, like the heart).
+.qpd__gallery .qpd__share-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .qpd__gallery .qpd__share-btn {
+    position: absolute;
+    top: 18px;
+    left: 69px; // 17 + 40 (heart) + 12 gap → second slot
+    right: auto;
+    z-index: 6;
+
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    background: #fff;
+    color: #30378e;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    transition:
+      background 0.15s,
+      border-color 0.15s,
+      color 0.15s;
+
+    .qpd__share-icon {
+      width: 16px;
+      height: 16px;
+      display: block;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    &:hover {
+      border-color: #30378e;
+    }
+    &:active {
+      transform: scale(0.94);
+    }
+  }
+}
+
+// ====================================================================
+// Info-column heart + share rebuilt as plain buttons (desktop title row).
+// They reuse the existing 50px .qpd__iconbtn square; only the icon sizing
+// + the wishlisted (red) state are added here. Native-share JS lives in
+// single.twig (binds all .qpd-share). Matches the gallery overlay icons.
+// ====================================================================
+.qpd__iconbtn {
+  cursor: pointer;
+
+  .qpd__iconbtn-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+// wishlisted → solid red square, white heart (toggled by wishlist.js)
+.qpd__iconbtn--fav.is-added {
+  background: #d62f45 !important;
+  border-color: #d62f45 !important;
+  color: #fff !important;
+
+  .qpd__iconbtn-heart {
+    fill: #fff;
+    stroke: #fff;
+  }
+  &:hover {
+    background: #c92f3d !important;
+    border-color: #c92f3d !important;
+    color: #fff !important;
+  }
+}
+
+// ====================================================================
+// Thumbnails (alternative images) — show ALL of them + center the strip.
+//   * Un-cap: earlier CSS hid every thumb past the 4th (nth-child(n+5)).
+//   * Desktop (vertical column) → centered vertically.
+//   * Mobile (horizontal row)   → centered horizontally.
+//   `safe center` keeps every thumb reachable: it centers when they fit and
+//   falls back to start-alignment (so scroll reaches them) when they overflow.
+// ====================================================================
+.qpd__gallery .slide--one-fourth:nth-child(n + 5) {
+  display: flex !important; // was display:none → unlock the 5th+ thumbnail
+}
+
+@media (min-width: 769px) {
+  .qpd__gallery {
+    .s-slider-thumbs-container {
+      overflow-y: auto !important; // scroll when there are more than fit
+    }
+    .s-slider-thumbs-container .swiper-wrapper {
+      justify-content: safe center !important; // vertical center (column axis)
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .qpd__gallery {
+    .s-slider-thumbs-container {
+      overflow-x: auto !important; // scroll the row when it overflows
+    }
+    .s-slider-thumbs-container .swiper-wrapper {
+      justify-content: safe center !important; // horizontal center (row axis)
+    }
+  }
+}
+
+// ====================================================================
+// Zoom / expand button — opens the image lightbox (Figma "zoom 1",
+// node 160:6138 desktop / 214:4961 mobile). 40px translucent square at the
+// BOTTOM-LEFT of the main image; shown on desktop and mobile. Lives in the
+// slider default slot → rendered inside .s-slider-container (relative).
+// ====================================================================
+.qpd__gallery .qpd__zoom {
+  position: absolute;
+  left: 24px; // Figma desktop inset
+  bottom: 24px;
+  right: auto;
+  top: auto;
+  z-index: 6;
+
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 10px;
+  background: rgba(10, 31, 48, 0.4);
+  color: #fff;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+
+  .qpd__zoom-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover {
+    background: #30378e;
+    border-color: #30378e;
+  }
+  &:active {
+    transform: scale(0.94);
+  }
+}
+
+@media (max-width: 768px) {
+  .qpd__gallery .qpd__zoom {
+    left: 15px; // Figma mobile inset
+    bottom: 14px;
+    .qpd__zoom-icon {
       width: 18px;
       height: 18px;
     }
-    &__gallery-arrow {
-      position: absolute;
-      z-index: 3;
-      top: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      margin-top: -20px;
-      padding: 0;
-      border: 1px solid #e9ecef;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, .92);
-      color: $qpd-navy;
-      box-shadow: 0 6px 16px rgba(10, 31, 48, .14);
-      font-size: 18px;
-      cursor: pointer;
-
-      &.is-disabled {
-        opacity: .35;
-        pointer-events: none;
-      }
-    }
-    &__gallery-arrow--prev { right: 12px; }   // RTL: previous is on the right
-    &__gallery-arrow--next { left: 12px; }
-
-    // 290:9978 — thumbnails: 84.8 high tiles, 4.52 apart
-    .s-slider-thumbs { margin: 9.03px 0 0; }
-    .s-slider-thumbs-container { border-radius: 0; }
-    .details-slider .slide--one-fourth {
-      height: 84.8px;
-      padding: 2.26px;
-      border-radius: 6.77px;
-      background: #efefef;
-
-      img { border-radius: 4.52px; }
-      &.swiper-slide-thumb-active::after { border-radius: 6.77px; }
-    }
-
-    // the name, then the rating (right) and sold (left) on one row
-    &__head {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 16px 8px;
-    }
-    &__title {
-      grid-area: 1 / 1 / 2 / -1;
-      margin: 0;
-      font-size: 18.06px;
-      line-height: 39.55px;
-    }
-    &__rating {
-      grid-area: 2 / 1;
-      gap: 0;
-      height: 17.84px;
-      margin: 0;
-    }
-    &__stars {
-      gap: 2.72px;
-
-      img { width: 12.85px; height: 12.85px; }
-    }
-    &__rate {
-      font-family: $qpd-font !important;
-      font-size: 10.88px;
-      line-height: 13px;
-    }
-    &__sold {
-      grid-area: 2 / 2;
-      font-size: 13.59px;
-      line-height: 17.84px;
-    }
-    &__sold-item {
-      gap: 1.7px;
-
-      img { width: 21.24px; height: 21.24px; }
-    }
-
-    // 290:10014 — boxes of two lines
-    &__boxes {
-      gap: 9px 10px;
-      margin-top: 16px;
-    }
-    .qpack__inside-item {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      height: 54px;
-      padding: 6.78px 6.78px 0;
-      border-width: .57px;
-      border-radius: 6.78px;
-      font-size: 12px;
-      line-height: 18px;
-      white-space: normal;
-    }
-
-    &__form,
-    &__installment,
-    &__trust,
-    &__gift,
-    &__gifting,
-    &__branch,
-    &__quick-order,
-    salla-metadata { margin-left: 0; }
-
-    // 290:10030 — the price alone
-    &__price { margin-top: 11.29px; }
-    &__price-now {
-      font-size: 22.58px;
-      line-height: 26px;
-
-      .sicon-sar { font-size: 11.86px; }
-    }
-    // no old price in the phone frame; kept, at the card's phone ratio (.75)
-    &__price-old {
-      font-size: 16.94px;
-      line-height: 26px;
-
-      .sicon-sar { font-size: 11.86px; }
-    }
-    &__oos {
-      font-size: 16px;
-      line-height: 26px;
-    }
-
-    // 290:10035 — 52.73 high controls
-    &__controls {
-      gap: 9.29px 7.43px;
-      margin-top: 9.03px;
-    }
-    &__qty { flex-basis: 148.49px; }
-    &__btn--cart .s-button-element,
-    &__btn--buy {
-      height: 52.73px;
-      padding: 0 14.86px;
-      border-radius: 11.15px;
-      font-size: 14.86px;
-      font-weight: 500;
-      line-height: 22.3px;
-    }
-    salla-quantity-input {
-      height: 52.68px;
-      border: .93px solid #e9ecef;
-      border-radius: 9.28px;
-      background: #fff;
-    }
-    .s-quantity-input-button { flex-basis: 43.4px; }
-    .s-quantity-input-input {
-      margin: 3.14px 0;
-      border-right: .93px solid #e9ecef;
-      border-left: .93px solid #e9ecef;
-      color: #30378e;
-      font-family: 'Poppins', 'WesternDigits', sans-serif !important;
-      font-size: 17.63px;
-      font-weight: 500;
-    }
-
-    &__installment { margin-top: 14.73px; }
-
-    // 290:10079 — 74.76 high badges, no links between them
-    &__trust {
-      gap: 7.37px;
-      margin-top: 27.66px;
-    }
-    &__trust-item {
-      gap: 3.59px;
-      min-height: 74.76px;
-      padding: 10.06px;
-      border-radius: 14.37px;
-
-      img { width: 17.68px; height: 17.68px; }
-      b { font-size: 11.78px; line-height: 14.94px; }
-      small { font-size: 8.84px; line-height: 12.64px; }
-      & + &::before { display: none; }
-    }
   }
-
-  // 290:10110 — the heading centred, the description, the reviews card
-  .qpd-more {
-    margin-top: 43.3px !important;
-    padding: 0 15px;
-
-    &__title {
-      font-size: 20px;
-      font-weight: 500;
-      line-height: 26px;
-      text-align: center;
-    }
-    &__title-m { display: inline; }
-    &__desc {
-      margin-top: 18px;
-      font-size: 12.08px;
-      line-height: 17.65px;
-    }
-    // 290:10113 — the graphic at phone size
-    .qpd-pack {
-      margin-top: 18px;
-      padding: 15.77px 9.35px 13.4px;
-      border-radius: 14.02px;
-
-      &::before,
-      &::after {
-        top: -15.44px;
-        right: -35.61px;
-        width: 56.55px;
-        height: 127.59px;
-        filter: blur(23.37px);
-      }
-      &::after {
-        top: 23.66px;
-        right: auto;
-        left: -16.8px;
-      }
-    }
-    .qpd-pack__name {
-      font-size: 16px;
-      line-height: 26px;
-    }
-    .qpd-pack__tag {
-      margin-top: 3.42px;
-      font-size: 11px;
-      line-height: 12px;
-    }
-    .qpd-pack__count {
-      gap: 3.27px;
-      margin-top: 11.57px;
-      font-size: 7.48px;
-      line-height: 11.96px;
-
-      b { font-size: 35.52px; line-height: 36px; }
-    }
-    .qpd-pack__img {
-      aspect-ratio: 353.31 / 176.41;
-      margin-top: 7.48px;
-      border-radius: 10.09px;
-      box-shadow: 0 3.78px 10.09px rgba(8, 32, 51, .07);
-    }
-    .qpd-pack__tiles {
-      gap: 7.43px;
-      margin-top: 11.22px;
-    }
-    .qpd-pack__tile {
-      flex-basis: min(65px, calc((100% - 29.72px) / 5 - .1px));
-      gap: 6.5px;
-      padding: 7.43px 4px 3.36px;
-      border-width: .46px;
-      border-radius: 3.71px;
-
-      img { width: 50.09px; border-radius: 3.71px; }
-      b { font-size: 11.14px; line-height: 9.66px; }
-      span { font-size: 6.96px; line-height: 9.66px; }
-    }
-
-    // 290:10150 — the reviews card: its heading, the summary, the form. The
-    // comments run under it, edge to edge.
-    &__reviews {
-      position: relative;
-      margin-top: 27.3px;
-    }
-    &__title--rev { display: none; }
-    &__title--card {
-      position: absolute;
-      z-index: 1;
-      top: 12px;
-      right: 7.03px;
-      display: block;
-      margin: 0;
-      color: #1c1c1c;
-      font-family: $qpd-font !important;
-      font-size: 14px;
-      font-weight: 500;
-      line-height: 16px;
-    }
-    salla-comments .s-comments-container {
-      padding: 0 7.03px;
-
-      &::before {
-        margin: 0 -7.03px;
-        border-width: .3px;
-        border-color: #e2e2e2;
-        border-radius: 13.47px;
-      }
-      > salla-reviews-summary { padding-top: 36.98px; }   // room for the heading
-      > salla-comment-form { padding: 17.97px 0 12px; }
-      // with no summary the form makes the heading's room itself
-      &:not(:has(salla-reviews-summary > *)) > salla-comment-form { padding-top: 36.98px; }
-    }
-
-    salla-reviews-summary { gap: 13px; }
-    .s-reviews-summary-header,
-    .s-reviews-summary-recommendation-only {
-      flex-basis: 90px;
-      gap: 3.19px;
-      min-height: 72px;
-      padding: 9.58px 4px;
-      border-radius: 6.38px;
-    }
-    .s-reviews-summary-overall-section,
-    .s-reviews-summary-overall-row { gap: 3.19px; }
-    .s-reviews-summary-average,
-    .s-reviews-summary-recommendation-percentage {
-      font-size: 19.15px;
-      line-height: 21px;
-    }
-    .s-reviews-summary-count,
-    .s-reviews-summary-recommendation-only .s-reviews-summary-count {
-      font-size: 8px;
-      line-height: 10.38px;
-    }
-    .s-reviews-summary-header svg {
-      width: 9.04px;
-      height: 9.04px;
-    }
-    .s-reviews-summary-rows {
-      gap: 4.26px;
-      padding: 0;
-    }
-    .s-reviews-summary-row {
-      gap: 5.32px;
-      height: 11px;
-    }
-    .s-reviews-summary-row-rate {
-      flex-basis: 22.34px;
-      gap: 1.6px;
-      font-size: 6.92px;
-      line-height: 10.38px;
-
-      svg { width: 9.04px; height: 9.04px; }
-    }
-    .s-progress-bar-wrapper { height: 4.25px !important; }
-    .s-reviews-summary-percentage {
-      flex-basis: 18.09px;
-      font-size: 6.92px;
-      line-height: 10.38px;
-    }
-
-    salla-comment-form form::before {
-      margin-bottom: 4.26px;
-      font-family: $qpd-font !important;
-      font-size: 12px;
-      line-height: 13px;
-    }
-    // Figma's 6.74px / 8.51px type is the desktop card scaled down; 16px keeps
-    // iOS from zooming the page when the box is focused
-    .s-comment-form-input {
-      height: 60px;
-      padding: 7.45px 8.51px;
-      border-width: .53px;
-      border-radius: 6.74px;
-      font-size: 16px;
-      line-height: 22px;
-    }
-    .s-comment-form-action {
-      margin: 8.98px 0 0;
-
-      .s-button-element {
-        height: 29.8px;
-        border-width: .53px;
-        border-radius: 6.74px;
-        font-size: 12px;
-      }
-    }
-
-    .s-comments-header,
-    .s-translate-all-wrap { margin-top: 12px; }
-    // 290:10224 — 32 under the card
-    .s-comments-container > div:not([class]) {
-      margin: 4px -22.03px 0;
-      padding: 28px 22.03px;
-    }
-  }
-
-  // 290:10361 — two cards to a row, the products section's phone grid
-  .qpd-rel {
-    margin-top: 4.69px !important;
-    padding: 0 13.5px;
-
-    &__title {
-      font-size: 23.82px;
-      line-height: 49.61px;
-    }
-    &__sub { display: none; }
-    &__grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 9.92px 12.9px;
-      margin-top: 9.92px;
-    }
-  }
-  .qpd-more.is-pack + .s-blocks-wrapper + .qpd-rel { margin-top: 4.69px !important; }
 }
 
 // ====================================================================
 // Floating sticky add-to-cart bar — appears when the buy buttons scroll
-// out of view (all screens). The script in single.twig moves it to <body> and
+// out of view (all screens). JS in single.twig moves it to <body> and
 // toggles .is-visible via an IntersectionObserver on the buybar.
 // ====================================================================
 .qpd-sticky {

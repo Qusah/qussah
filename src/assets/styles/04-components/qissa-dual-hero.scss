@@ -1,19 +1,18 @@
 // ====================================================================
 // Qissa Dual Hero — two Product Hero cards side-by-side.
-// The cards are the shared Product Hero card (partials/qpack-card.twig,
-// styled in qissa-package.scss): its compact wide layout from 769px
-// (.qpack__card--compact — gallery beside the details, ~300px tall), the
-// stacked Figma mobile card below. This file only adds: the section wrapper,
-// a centered heading, the 2-up grid (both cards the same height), and the
-// phones' two merchant-chosen layouts. Loaded AFTER qissa-package, so equal
-// selectors here win on order.
+// Reuses the .qpack__* card internals built for "البكج الشامل"
+// (gallery, marquee, details) and only adds: the section wrapper,
+// a centered heading, a 2-up grid, and a card-width override so each
+// hero card fills its grid column instead of the single-card 680px cap.
+// Import order: this file is loaded AFTER qissa-package, so the width
+// override below wins on equal specificity.
 // ====================================================================
 
 .qdhero {
   font-family: 'GE SS Two', sans-serif;
   padding-block: 24px;
 
-  .container { max-width: none; padding-inline: 20px; }   // the Product Hero's own edges
+  .container { max-width: none; padding-inline: 50px; }
 
   // ---- centered heading ----
   &__head {
@@ -29,34 +28,42 @@
     color: #6c757d; margin: 0;
   }
 
-  // ---- 2-up grid: the Product Hero's width, cards the same height ----
-  // stretch (not start): both cards take the row's height whatever their
-  // content, and each card's buy row sits at its bottom, so the buttons align.
+  // ---- 2-up grid (capped + centered) ----
+  // Without a cap each card stretched to ~half the full page → an enormous
+  // square gallery. Cap the pair so the two hero cards stay a comfortable size.
   &__grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 24px;
-    align-items: stretch;
+    align-items: start;
     width: 100%;
-    max-width: 1190.88px;
+    max-width: 880px;
     margin-inline: auto;
     direction: rtl;
   }
 
+  // cap each card to a sensible hero width; margin-auto keeps it centered when
+  // the grid collapses to a single column on tablet/mobile.
+  //
+  // .qpack__card's shadow (0 14px 40px / 10%) is drawn for ONE centred card.
+  // Two of them side by side throw that 40px blur into the gap from both
+  // sides, where it doubles up and reads as a seam rather than as depth.
+  // Softened here: a third of the blur and a lighter tint, enough to lift each
+  // card off the page and separate the pair without the two haloes meeting.
+  // The standalone البكج الشامل card keeps the original.
   &__card {
+    max-width: 428px;
+    margin-inline: auto;
     width: 100%;
     min-width: 0;   // grid item: allow shrink below content (no RTL edge cut)
-  }
 
-  // stacked cards (phones): the details grow and the buy row drops to the
-  // bottom — the compact layout does the same with its own grid
-  &__card .qpack__info { flex: 1 1 auto; }
-  &__card .qpack__buy { margin-top: auto; }
+    box-shadow: 0 4px 14px rgba(23, 41, 81, 0.07);
+  }
 }
 
-// ---- tablet: one card per row (a half row is too narrow for two columns) ----
-@media (max-width: 1100px) {
-  .qdhero__grid { grid-template-columns: minmax(0, 1fr); }
+// ---- tablet: stack to one column ----
+@media (max-width: 900px) {
+  .qdhero__grid { grid-template-columns: 1fr; }
 }
 
 // ---- mobile (<=768) ----
@@ -70,6 +77,10 @@
   .qdhero__title { font-size: 24px; line-height: 30px; }
   .qdhero__subtitle { font-size: 14px; line-height: 20px; }
   .qdhero__grid { gap: 16px; }
+
+  // The card caps at 428px for the desktop hero; on mobile both modes need it
+  // to fill whatever track it lands in, or the grid columns go uneven.
+  .qdhero__card { max-width: none; }
 
   // ── SLIDER: one card + a peek of the next ──────────────────────────────
   //
@@ -124,38 +135,35 @@
   //
   // minmax(0, 1fr) not 1fr: the card's own content would otherwise force the
   // track wider than half the screen and reintroduce horizontal scroll.
-  // At half a phone's width (~180px) the stacked card comes down a step: the
-  // thumbnails and the pack contents go, the price sits over a full-width
-  // button — image, name, rating, price and «اشترِ الآن» stay. Not in the
-  // Figma frames (they only draw the full-width card).
   .qdhero__grid[data-qdh-mobile='grid'] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
 
-    > .qdhero__card {
-      min-width: 0;
-      padding: 10px;
-      border-radius: 18px;
-    }
+    > .qdhero__card { min-width: 0; }
 
+    // Half the width means everything inside has to come down a step, while
+    // image, name, price and the essentials stay legible (the brief's list).
+    // No room at half width: the thumb strip and the gallery arrows go.
+    // Image, name, price and the essentials stay, per the brief.
     .qpack__thumbs,
-    .qpack__inside { display: none; }
+    .qpack__arrow { display: none; }
 
-    .qpack__gallery { margin-bottom: 12px; }
-    .qpack__main { border-radius: 14px; }
-    .qpack__ribbon { height: 24px; margin: 0 -10px 10px; }
-    .qpack__ribbon-item { font-size: 9px; line-height: 14px; }
-    .qpack__info { gap: 8px; }
-    .qpack__name { font-size: 15px; line-height: 21px; }
-    .qpack__meta { flex-direction: column; align-items: flex-start; gap: 4px; }
-    .qpack__buy { flex-direction: column; align-items: stretch; gap: 8px; }
-    .qpack__price .qpack__price-now { font-size: 18px; line-height: 22px; }
-    .qpack__buy-btn {
-      flex: none;
-      width: 100%;
-      height: 40px;
-      border-radius: 8px;
-      font-size: 13px;
-    }
+    .qpack__info { padding: 10px; }
+    .qpack__cat { font-size: 11px; }
+    .qpack__name { font-size: 14px; line-height: 20px; }
+    .qpack__price-now { font-size: 18px; line-height: 24px; }
+    .qpack__price-old { font-size: 12px; }
+    .qpack__badge { font-size: 10px; padding: 0 13px 0 8px; }
+    .qpack__sold,
+    .qpack__rate-count,
+    .qpack__review,
+    .qpack__status { font-size: 11px; }
+    .qpack__tags { gap: 4px; }
+    .qpack__tag { font-size: 11px; padding: 3px 8px; }
+    .qpack__add { font-size: 13px; padding-block: 10px; }
+
+    // stepper + add button stack rather than fighting for the same row
+    .qpack__actions { flex-wrap: wrap; gap: 8px; }
+    .qpack__qty { width: 100%; }
   }
 }

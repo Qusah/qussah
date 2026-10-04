@@ -1,8 +1,8 @@
 /**
  * Footer accordion — every titled footer section collapses under its heading
- * on small screens (chevron: ⌄ closed / ^ open). Closed by default, as the
- * revamp Figma draws them: footer.twig sets `data-ftg-closed` on every page
- * (it was the cart page only before). Desktop is untouched: the CSS only honours
+ * on small screens (chevron: ⌄ closed / ^ open). Open by default; closed by
+ * default on the cart page (the footer carries `data-ftg-closed` there, set in
+ * footer.twig from page.slug). Desktop is untouched: the CSS only honours
  * `.is-closed` below the breakpoint, and the heading is only a button there.
  *
  * Sections rendered later (Salla components, the footer menu) are picked up by

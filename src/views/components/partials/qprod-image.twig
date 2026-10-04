@@ -1,23 +1,22 @@
 {#
-  Photo box of the Qussah product card (components/partials/qprod-card.twig).
+  Reusable product image area for the hand-built qprod grid cards
+  (qissa-products / qissa-all-products / qissa-listing).
 
   Renders a swipe carousel (native CSS scroll-snap + dot indicators) when the
-  product has more than one photo, otherwise a single linked image. The box is
-  always a <div> — the wishlist heart is a button on the photo, and a button
-  cannot live inside the photo's link. Reads Salla dynamic data only.
+  product has more than one photo, otherwise a single linked image — identical
+  markup to the original single-image card, so nothing changes for products
+  with one image. Reads Salla dynamic data only.
 
   Params:
     product      Product   required
     img_class    string    wrapper class (default 'qprod__img')
-    badge_text   string    optional promotion / discount label
+    badge_text   string    optional discount/promotion label
     badge_class  string    badge class (default 'qprod__badge')
-    like         bool      wishlist heart on the photo (default on)
 
   Wired by initCardCarousels() in assets/js/home.js.
 #}
 {% set img_class = img_class|default('qprod__img') %}
 {% set badge_class = badge_class|default('qprod__badge') %}
-{% set like = like is not defined or like %}
 
 {# collect real photos only — skip videos / 3D models a card can't play #}
 {% set slides = [] %}
@@ -31,8 +30,9 @@
 {% endif %}
 {% set slides = slides|slice(0, 6) %}
 
-<div class="{{ img_class }}"{% if slides|length > 1 %} data-qpc-media{% endif %}>
-    {% if slides|length > 1 %}
+{% if slides|length > 1 %}
+    <div class="{{ img_class }}" data-qpc-media>
+        {% if badge_text %}<span class="{{ badge_class }}">{{ badge_text }}</span>{% endif %}
         <div class="qpc-carousel" data-qpc>
             {# Only the first slide carries a real src. The rest sit off-axis in a
                scroll-snap track, and Chrome's native lazy-load still fetches
@@ -56,20 +56,10 @@
                 <button type="button" class="qpc-dot{{ loop.first ? ' is-active' : '' }}" data-i="{{ loop.index0 }}" aria-label="{{ loop.index }}" tabindex="-1"></button>
             {% endfor %}
         </div>
-    {% else %}
-        <a href="{{ product.url }}" class="qprod__img-link" aria-label="{{ product.name }}">
-            <img src="{{ slides[0].url|default(product.image.url) }}" alt="{{ product.name }}" loading="lazy"/>
-        </a>
-    {% endif %}
-
-    {% if badge_text %}<span class="{{ badge_class }}">{{ badge_text }}</span>{% endif %}
-
-    {# The heart is the Figma icon used as a mask, so its colour can follow the
-       wishlist state; an <img> here would also be read as a product photo by
-       the quick view (cardData() collects `.qprod__img img`). #}
-    {% if like %}
-        <button type="button" class="qprod__like" data-id="{{ product.id }}" onclick="salla.wishlist.toggle('{{ product.id }}')" aria-label="{{ trans('blocks.qissa.wishlist') }}">
-            <span class="qprod__like-ic" style="--qprod-heart: url('{{ 'images/qcard/heart.svg' | asset }}')" aria-hidden="true"></span>
-        </button>
-    {% endif %}
-</div>
+    </div>
+{% else %}
+    <a href="{{ product.url }}" class="{{ img_class }}">
+        {% if badge_text %}<span class="{{ badge_class }}">{{ badge_text }}</span>{% endif %}
+        <img src="{{ slides[0].url|default(product.image.url) }}" alt="{{ product.name }}" loading="lazy"/>
+    </a>
+{% endif %}
