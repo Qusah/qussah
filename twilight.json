@@ -2190,8 +2190,20 @@
                             "type": "string",
                             "format": "text",
                             "id": "slides.button_url",
-                            "label": "رابط الزر",
+                            "label": "رابط البانر والزر",
+                            "description": "الرابط الذي يفتحه الزر، والبانر كاملاً عند تفعيل الخيار التالي",
                             "value": null,
+                            "required": false
+                        },
+                        {
+                            "type": "boolean",
+                            "format": "switch",
+                            "icon": "sicon-link",
+                            "id": "slides.link_banner",
+                            "label": "جعل البانر كاملاً قابلاً للنقر",
+                            "description": "عند التفعيل ينتقل الزائر إلى الرابط أعلاه بالضغط على أي مكان في البانر، حتى لو تُرك نص الزر فارغاً",
+                            "value": true,
+                            "selected": true,
                             "required": false
                         },
                         {

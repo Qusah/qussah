@@ -73,12 +73,14 @@
   }
 
   // MULTI-SLIDE HEIGHT. Slides of different heights would make the block jump
-  // on every transition, so slide 1 sizes the viewport and the rest are laid
-  // over it. Their images then have to fill that box, which means cropping —
-  // unavoidable when several artworks share one frame.
+  // on every transition, so slide 1 sizes the viewport: the rest drop their
+  // own shape and stretch to its height, next to it in the row (laying them
+  // over slide 1 here left the last banner showing while the first was the
+  // active one; fade mode, below, is the one that stacks). Their images then
+  // have to fill that box, which means cropping — unavoidable when several
+  // artworks share one frame.
   &--multi &__slide:not(:first-child) {
-    position: absolute;
-    inset: 0;
+    aspect-ratio: auto;
 
     > picture { position: absolute; inset: 0; }
 
@@ -123,6 +125,20 @@
     height: 100%;
     object-fit: cover;
     object-position: var(--qib-focus, center);
+  }
+
+  // ── whole-banner link — the slide's own URL, under every layer ──
+  // The scrim, text grid and counter above it are pointer-events: none, so a
+  // click anywhere but the button lands here. The frame clips an outer focus
+  // ring, so it is drawn inside.
+  &__link {
+    position: absolute;
+    inset: 0;
+
+    &:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: -6px;
+    }
   }
 
   // ── scrim — lifts text off a busy or light photo ────────────────
