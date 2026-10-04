@@ -19,17 +19,6 @@
 /* Trust-badges strip (qtb) */
 .s-block.qtb { display: none !important; }
 
-/* Default Salla gifting tile — the custom .qpd__gift card triggers it instead.
-   Kept in the DOM (visually hidden, still clickable) so .qpd__gift-btn can fire it. */
-.s-list-tile-item:has(.s-gifting-widget-action) {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  overflow: hidden !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
 /* A second product-listing block on the same page: drop its duplicate toolbar */
 .s-block.qlist ~ .s-block.qlist .qlist__top { display: none !important; }
 
