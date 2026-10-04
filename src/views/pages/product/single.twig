@@ -91,9 +91,10 @@
   · The boxes under the rating are the product's contents lines, read from its
     description by the Product Hero card's own filler (qissa-pack-card.js works
     on any [data-qpack] > [data-qpack-inside]); the subtitle is the fallback.
-  · «تفاصيل المنتج» is the description. When at least two of those lines read
-    as "product + quantity" the product is a package: product.js fills the navy
-    graphic with them and it takes the description's place (.qpd-more.is-pack).
+  · «تفاصيل المنتج» is the description. A package is a product the merchant gave
+    a «محتويات البكج» block (components/home/qissa-pack-contents, added to this
+    page's «before reviews» slot): its navy graphic takes the description's place
+    on that product's page (.qpd-more.is-pack, set by product.js).
   · Everything Salla owns stays Salla's: slider + lightbox, options, price
     updates, add to cart, instalments, gifting, comments, offers, hooks.
 #}
@@ -130,9 +131,9 @@
                         <div class="qpd__badge">{{ badge }}</div>
                     {% endif %}
 
-                    {# Wishlist — not drawn in the frames; kept so the page still has one
-                       (the card's heart, top left of the photo). wishlist.js toggles
-                       .is-added on any .btn--wishlist[data-id]. #}
+                    {# Wishlist, share and zoom are not drawn in the frames; they stay on the
+                       photo (the card's heart, top left). wishlist.js toggles .is-added on
+                       any .btn--wishlist[data-id]. #}
                     <button type="button"
                             class="qpd__fav btn--wishlist not-added"
                             data-id="{{ product.id }}"
@@ -140,6 +141,31 @@
                             aria-label="{{ trans('blocks.qissa.wishlist') }}">
                         <svg viewBox="0 0 15.8149 15.8149" fill="none" aria-hidden="true" focusable="false">
                             <path d="M1.31788 6.25968C1.31789 5.5264 1.54034 4.81037 1.95583 4.20616C2.37133 3.60195 2.96033 3.13799 3.64505 2.87555C4.32976 2.61312 5.07798 2.56456 5.79087 2.73628C6.50377 2.908 7.1478 3.29193 7.63791 3.83736C7.67243 3.87428 7.71417 3.9037 7.76053 3.92382C7.80689 3.94394 7.85689 3.95432 7.90743 3.95432C7.95796 3.95432 8.00796 3.94394 8.05432 3.92382C8.10068 3.9037 8.14242 3.87428 8.17694 3.83736C8.66552 3.28839 9.3097 2.90123 10.0237 2.72742C10.7378 2.55361 11.4879 2.60139 12.1741 2.86441C12.8603 3.12742 13.4502 3.59319 13.8651 4.19973C14.2801 4.80626 14.5005 5.52479 14.497 6.25968C14.497 7.76869 13.5085 8.8955 12.5201 9.88394L8.90113 13.385C8.77835 13.526 8.62696 13.6393 8.45703 13.7173C8.28709 13.7953 8.10251 13.8362 7.91553 13.8374C7.72854 13.8386 7.54345 13.8 7.37254 13.7241C7.20164 13.6483 7.04883 13.5369 6.92427 13.3975L3.29474 9.88394C2.30631 8.8955 1.31788 7.77528 1.31788 6.25968Z" stroke="currentColor" stroke-width="1.31791" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+
+                    {# Share — the native share sheet (clipboard / prompt fallback), beside the heart #}
+                    <button type="button"
+                            class="qpd__fav qpd__share-btn qpd-share"
+                            data-url="{{ product.url }}"
+                            data-title="{{ product.name|e('html_attr') }}"
+                            aria-label="{{ trans('blocks.qissa.share') }}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <circle cx="18" cy="5" r="3"/>
+                            <circle cx="6" cy="12" r="3"/>
+                            <circle cx="18" cy="19" r="3"/>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                        </svg>
+                    </button>
+
+                    {# Zoom / expand — opens the image lightbox for the active slide; bottom left #}
+                    <button type="button" class="qpd__zoom" aria-label="{{ trans('blocks.qissa.zoom_image') }}">
+                        <svg class="qpd__zoom-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <polyline points="15 3 21 3 21 9"/>
+                            <polyline points="9 21 3 21 3 15"/>
+                            <line x1="21" y1="3" x2="14" y2="10"/>
+                            <line x1="3" y1="21" x2="10" y2="14"/>
                         </svg>
                     </button>
 
@@ -201,6 +227,130 @@
                 </salla-slider>
             </div>
 
+            {# Share → native share sheet, with clipboard / prompt fallback #}
+            <script>
+                (function () {
+                    function bind() {
+                        var root = document.getElementById('product-{{ product.id }}');
+                        if (!root) { return; }
+                        root.querySelectorAll('.qpd-share').forEach(function (b) {
+                            if (b.dataset.qpdShareBound) { return; }
+                            b.dataset.qpdShareBound = '1';
+                            b.addEventListener('click', function () {
+                                var url = b.getAttribute('data-url') || window.location.href;
+                                var title = b.getAttribute('data-title') || document.title;
+                                if (navigator.share) {
+                                    navigator.share({ title: title, url: url }).catch(function () {});
+                                } else if (navigator.clipboard && navigator.clipboard.writeText) {
+                                    navigator.clipboard.writeText(url).then(function () {
+                                        if (window.salla && salla.notify) { salla.notify.success(salla.lang.get('blocks.qissa.link_copied')); }
+                                    });
+                                } else {
+                                    window.prompt(salla.lang.get('blocks.qissa.copy_link'), url);
+                                }
+                            });
+                        });
+                    }
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', bind);
+                    } else {
+                        bind();
+                    }
+                })();
+            </script>
+
+            {# Zoom button → open the lightbox for the currently active image by
+               triggering its data-fslightbox link (same as clicking the image). #}
+            <script>
+                (function () {
+                    var host = document.getElementById('details-slider-{{ product.id }}');
+                    var btn = document.querySelector('#product-{{ product.id }} .qpd__zoom');
+                    if (!host || !btn) { return; }
+                    btn.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        var active = host.querySelector('.s-slider-container .swiper-slide-active[data-fslightbox]')
+                            || host.querySelector('.s-slider-container .swiper-slide-active a[data-fslightbox]')
+                            || host.querySelector('.s-slider-container [data-fslightbox]');
+                        if (active) { active.click(); }
+                    });
+                })();
+            </script>
+
+            {# Custom gallery prev/next arrows — injected into the main image and
+               wired straight to the main Swiper instance (robust, replaces the
+               brittle salla built-in title-nav overlay). Only when >1 image. #}
+            {% if has_many_images %}
+            <script>
+                (function () {
+                    // <salla-slider> host: exposes public slideNext()/slidePrev().
+                    // The main image element is <div class="swiper s-slider-container">,
+                    // and Swiper attaches its instance to that element as `.swiper`.
+                    var host = document.getElementById('details-slider-{{ product.id }}');
+                    if (!host) { return; }
+                    var tries = 0;
+
+                    // the Swiper instance lives on the .s-slider-container element itself
+                    function swiper(container) {
+                        return container && container.swiper ? container.swiper : null;
+                    }
+
+                    function init() {
+                        var container = host.querySelector('.s-slider-container');
+                        if (!container) {
+                            if (tries++ < 120) { requestAnimationFrame(init); }
+                            return;
+                        }
+                        if (container.querySelector('.qpd__gallery-arrow')) { return; }
+
+                        var prev = document.createElement('button');
+                        prev.type = 'button';
+                        prev.className = 'qpd__gallery-arrow qpd__gallery-arrow--prev';
+                        prev.setAttribute('aria-label', salla.lang.get('blocks.qissa.prev'));
+                        prev.innerHTML = '<i class="sicon-keyboard_arrow_right"></i>';
+
+                        var next = document.createElement('button');
+                        next.type = 'button';
+                        next.className = 'qpd__gallery-arrow qpd__gallery-arrow--next';
+                        next.setAttribute('aria-label', salla.lang.get('blocks.qissa.next'));
+                        next.innerHTML = '<i class="sicon-keyboard_arrow_left"></i>';
+
+                        container.appendChild(prev);
+                        container.appendChild(next);
+
+                        function sync() {
+                            var s = swiper(container);
+                            if (!s) { return; }
+                            var loop = s.params && s.params.loop;
+                            prev.classList.toggle('is-disabled', !loop && s.isBeginning);
+                            next.classList.toggle('is-disabled', !loop && s.isEnd);
+                        }
+                        function go(dir) {
+                            var s = swiper(container);
+                            if (s) {
+                                dir === 'next' ? s.slideNext() : s.slidePrev();
+                            } else if (typeof host[dir === 'next' ? 'slideNext' : 'slidePrev'] === 'function') {
+                                // fall back to the salla-slider public method
+                                host[dir === 'next' ? 'slideNext' : 'slidePrev']();
+                            }
+                            setTimeout(sync, 80);
+                        }
+
+                        prev.addEventListener('click', function (e) { e.preventDefault(); go('prev'); });
+                        next.addEventListener('click', function (e) { e.preventDefault(); go('next'); });
+
+                        var s = swiper(container);
+                        if (s && s.on) {
+                            s.on('slideChange', sync);
+                            s.on('transitionEnd', sync);
+                        }
+                        sync();
+                    }
+
+                    requestAnimationFrame(init);
+                })();
+            </script>
+            {% endif %}
+
             {# data-qpack: qissa-pack-card.js fills the contents boxes below #}
             <div class="main-content qpd__info" data-qpack>
                 {% hook 'product:single.description.start' %}
@@ -253,6 +403,23 @@
                 {# the contents lines, two to a row — filled by qissa-pack-card.js;
                    stays hidden when the description and subtitle give none #}
                 <ul class="qpd__boxes" data-qpack-inside="{{ product.description|default('')|slice(0, 5000) }}" data-qpack-sub="{{ product.subtitle|default('') }}" hidden></ul>
+
+                {# tags, as chips linking to each tag's page #}
+                {% if product.tags|length and theme.settings.get('show_tags', true) %}
+                    <div class="qpd__chips">
+                        {% for tag in product.tags %}
+                            <a href="{{ tag.url }}" class="qpd__chip">{{ tag.name }}</a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if product.weight %}
+                    <div class="qpd__weight">
+                        <i class="sicon-box-bankers qpd__weight-icon"></i>
+                        <span class="qpd__weight-label">{{ trans('blocks.qissa.product_weight') }}</span>
+                        <span class="qpd__weight-value">{{ product.weight }}</span>
+                    </div>
+                {% endif %}
 
                 {% hook 'product:single.description' %}
 
@@ -349,10 +516,10 @@
                             </salla-add-product-button>
 
                             {% if product.is_hidden_quantity or product.type == 'booking' %}
-                                <input type="hidden" value="1" name="quantity" aria-label="Quantity"/>
+                                <input type="hidden" value="1" name="quantity" aria-label="{{ trans('pages.products.quantity') }}"/>
                             {% else %}
                                 <div class="qpd__qty">
-                                    <salla-quantity-input max="{{ product.max_quantity }}" value="1" name="quantity" aria-label="Quantity"></salla-quantity-input>
+                                    <salla-quantity-input max="{{ product.max_quantity }}" value="1" name="quantity" aria-label="{{ trans('pages.products.quantity') }}"></salla-quantity-input>
                                 </div>
                             {% endif %}
 
@@ -361,6 +528,14 @@
                                     onclick="salla.cart.addItem({ id: '{{ product.id }}', quantity: parseInt(this.closest('form').querySelector('[name=quantity]')?.value || 1) }).then(() => salla.cart.submit())">
                                 {{ trans('blocks.qissa.buy_now') }}
                             </button>
+                        </div>
+
+                        {# Accepted payment methods — <salla-payments> renders the methods the
+                           merchant actually has enabled (logos from Salla's CDN); `sbc` /
+                           `made-in-ksa` are the footer's trust badges. #}
+                        <div class="qpd__payments">
+                            <span class="qpd__payments-label">{{ trans('blocks.qissa.payment_methods') }}</span>
+                            <salla-payments exclude='["sbc","made-in-ksa"]'></salla-payments>
                         </div>
                     </section>
                 </form>
@@ -387,6 +562,20 @@
                     </li>
                 </ul>
 
+                {# gift box — opens Salla's gifting (its own tile is hidden in qusah-overrides) #}
+                {% if product.is_giftable %}
+                    <div class="qpd__gift">
+                        <i class="sicon-gift qpd__gift-icon"></i>
+                        <div class="qpd__gift-body">
+                            <p class="qpd__gift-title">{{ trans('blocks.qissa.gift_title') }}</p>
+                            <p class="qpd__gift-sub">{{ trans('blocks.qissa.gift_sub') }}</p>
+                        </div>
+                        <button type="button" class="qpd__gift-btn"
+                                onclick="var g=document.querySelector('#product-{{ product.id }} .s-gifting-widget-action')||document.querySelector('.s-gifting-widget-action'); g ? g.click() : document.querySelector('#product-{{ product.id }} salla-gifting')?.scrollIntoView({behavior:'smooth',block:'center'})">
+                            {{ trans('blocks.qissa.send_as_gift') }}
+                        </button>
+                    </div>
+                {% endif %}
                 {% if product.is_giftable %}
                     <salla-gifting class="qpd__gifting" widget-subtitle="{{ gifting_intro }}" product-id="{{ product.id }}" {{ product.is_require_shipping ? 'physical-products' : '' }}></salla-gifting>
                 {% endif %}
@@ -522,11 +711,11 @@
     </div>
 
     {# ===== تفاصيل المنتج + التقييمات =====
-       A product: the description, then the reviews across the page. A package
-       (.is-pack, set by product.js): the reviews card beside the navy graphic.
-       The description stays in the markup either way. #}
-    {% set sub_parts = product.subtitle|default('')|trim|split(' ', 2) %}
-    <section class="qpd-more" data-qpd-more>
+       A product: the description, then the reviews across the page. A package —
+       a product with a «محتويات البكج» block showing (.is-pack, set by product.js):
+       the reviews card beside the navy graphic. The description stays in the
+       markup either way. #}
+    <section class="qpd-more" data-qpd-more data-id="{{ product.id }}">
         <div class="qpd-more__details">
             <h2 class="qpd-more__title">{{ trans('blocks.qissa.product_details') }}<span class="qpd-more__title-m"> {{ trans('blocks.qissa.product_details_more') }}</span></h2>
 
@@ -543,27 +732,19 @@
                 {% endif %}
             </div>
 
-            {# the package graphic (113:35929) — tiles added by product.js #}
-            <div class="qpd-pack" data-qpd-pack data-id="{{ product.id }}" hidden>
-                <p class="qpd-pack__name">{{ product.name }}</p>
-                <p class="qpd-pack__tag">{{ trans('blocks.qissa.pack_tagline') }}</p>
-                {% if sub_parts|length > 1 and sub_parts[0] matches '/^[0-9]+$/' %}
-                    <p class="qpd-pack__count"><b>{{ sub_parts[0] }}</b> <span>{{ sub_parts[1] }} {{ trans('blocks.qissa.pack_inside') }}</span></p>
-                {% endif %}
-                <img class="qpd-pack__img" src="{{ product.image.url }}" alt="{{ product.image.alt|default(product.name) }}" loading="lazy"/>
-                <ul class="qpd-pack__tiles" data-qpd-tiles></ul>
-            </div>
+            {#
+                Hook: product.single.before_customer_reviews
+                Fires before the customer reviews/comments section.
+                This is the package slot: a «محتويات البكج» block (components/home/
+                qissa-pack-contents) added here shows on its own package's page, in
+                the description's place.
+            #}
+            <div class="s-blocks-wrapper s-before-reviews">{% hook 'product.single.before_customer_reviews' %}</div>
         </div>
 
         <div class="qpd-more__reviews" style="--qpd-comment-label: '{{ trans('blocks.qissa.add_your_comment') }}'">
             <h2 class="qpd-more__title qpd-more__title--rev">{{ trans('blocks.qissa.product_reviews') }}</h2>
             <p class="qpd-more__title--card" aria-hidden="true">{{ trans('blocks.qissa.reviews_opinions') }}</p>
-            {#
-                Hook: product.single.before_customer_reviews
-                Fires before the customer reviews/comments section.
-                Use this hook to inject content between the product info and the reviews block.
-            #}
-            <div class="s-blocks-wrapper s-before-reviews">{% hook 'product.single.before_customer_reviews' %}</div>
             <salla-comments item-id="{{ product.id }}" type="product" hide-title></salla-comments>
         </div>
     </section>
@@ -583,6 +764,66 @@
         <p class="qpd-rel__sub">{{ trans('blocks.qissa.bought_with_sub') }}</p>
         <div class="qpd-rel__grid" data-qpd-related-grid></div>
     </section>
+
+    {# Recently-viewed products (the previous design's section, Figma 6036:5118), under «يشترونها معها» #}
+    <section class="qpd-viewed">
+        <div class="container">
+            <div class="qpd-viewed__head">
+                {# right: eyebrow + title + subtitle #}
+                <div class="qpd-viewed__intro">
+                    <span class="qpd-viewed__eyebrow">{{ trans('blocks.qissa.cleaning_tagline') }}</span>
+                    <h2 class="qpd-viewed__title">{{ trans('blocks.qissa.recently_viewed_lead') }} <span class="qpd-viewed__title-hl">{{ trans('blocks.qissa.recently_viewed_highlight') }}</span></h2>
+                </div>
+
+                {# left: view-all button #}
+                <a href="{{ store.url }}" class="qpd-viewed__all">
+                    <i class="sicon-keyboard_arrow_left"></i>
+                    <span>{{ trans('blocks.qissa.view_all_products') }}</span>
+                    <svg class="qpd__cart-icon" viewBox="0 0 13.5783 13.4447" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M2.34957 3.34153C2.33963 3.23151 2.35271 3.12063 2.38799 3.01595C2.42327 2.91127 2.47997 2.81509 2.55447 2.73353C2.62897 2.65197 2.71965 2.58683 2.82072 2.54225C2.92179 2.49767 3.03104 2.47463 3.1415 2.47461H12.7833C12.9024 2.47466 13.0199 2.50145 13.1273 2.55301C13.2346 2.60456 13.329 2.67957 13.4035 2.77248C13.478 2.8654 13.5307 2.97386 13.5576 3.08985C13.5846 3.20584 13.5852 3.32641 13.5593 3.44265L12.7447 7.11485C12.6045 7.74592 12.2533 8.31031 11.7491 8.71479C11.2448 9.11927 10.6176 9.33966 9.97121 9.33954H5.48662C4.7775 9.33958 4.09401 9.07438 3.57049 8.59607C3.04698 8.11775 2.7213 7.46092 2.65748 6.75468L2.34957 3.34153ZM3.51418 3.61081L3.78914 6.65242C3.82745 7.07636 4.02302 7.47062 4.33737 7.75764C4.65172 8.04465 5.06209 8.20364 5.48776 8.20334H9.97234C10.3601 8.20324 10.7363 8.07091 11.0387 7.82818C11.3411 7.58546 11.5517 7.24687 11.6357 6.8683L12.3595 3.61081H3.51418Z" fill="currentColor"/>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M0 0.568101C0 0.417431 0.0598533 0.272932 0.166393 0.166393C0.272932 0.0598534 0.417431 0 0.568101 0H2.561C2.69996 0.00014086 2.83405 0.0512097 2.9379 0.143544C3.04175 0.235878 3.10816 0.363074 3.12455 0.501065L3.58131 4.36528C3.59893 4.51505 3.55635 4.66568 3.46291 4.78405C3.36948 4.90242 3.23285 4.97882 3.08308 4.99644C2.93332 5.01407 2.78268 4.97148 2.66432 4.87805C2.54595 4.78461 2.46955 4.64799 2.45192 4.49822L2.05539 1.13506H0.568101C0.417431 1.13506 0.272932 1.07521 0.166393 0.968672C0.0598533 0.862132 0 0.71877 0 0.568101ZM5.1129 12.3085C5.26357 12.3085 5.40807 12.2486 5.51461 12.1421C5.62115 12.0355 5.68101 11.891 5.68101 11.7404C5.68101 11.5897 5.62115 11.4452 5.51461 11.3387C5.40807 11.2321 5.26357 11.1723 5.1129 11.1723C4.96223 11.1723 4.81774 11.2321 4.7112 11.3387C4.60466 11.4452 4.5448 11.5897 4.5448 11.7404C4.5448 11.891 4.60466 12.0355 4.7112 12.1421C4.81774 12.2486 4.96223 12.3085 5.1129 12.3085ZM5.1129 13.4447C5.33672 13.4447 5.55834 13.4006 5.76511 13.3149C5.97189 13.2293 6.15977 13.1037 6.31803 12.9455C6.47629 12.7872 6.60182 12.5993 6.68747 12.3926C6.77312 12.1858 6.81721 11.9642 6.81721 11.7404C6.81721 11.5166 6.77312 11.2949 6.68747 11.0882C6.60182 10.8814 6.47629 10.6935 6.31803 10.5352C6.15977 10.377 5.97189 10.2514 5.76511 10.1658C5.55834 10.0801 5.33672 10.0361 5.1129 10.0361C4.6609 10.0361 4.2274 10.2156 3.90778 10.5352C3.58816 10.8549 3.4086 11.2884 3.4086 11.7404C3.4086 12.1924 3.58816 12.6259 3.90778 12.9455C4.2274 13.2651 4.6609 13.4447 5.1129 13.4447ZM10.2963 12.3085C10.4469 12.3085 10.5914 12.2486 10.698 12.1421C10.8045 12.0355 10.8644 11.891 10.8644 11.7404C10.8644 11.5897 10.8045 11.4452 10.698 11.3387C10.5914 11.2321 10.4469 11.1723 10.2963 11.1723C10.1456 11.1723 10.0011 11.2321 9.89455 11.3387C9.78801 11.4452 9.72815 11.5897 9.72815 11.7404C9.72815 11.891 9.78801 12.0355 9.89455 12.1421C10.0011 12.2486 10.1456 12.3085 10.2963 12.3085ZM10.2963 13.4447C10.5201 13.4447 10.7417 13.4006 10.9485 13.3149C11.1552 13.2293 11.3431 13.1037 11.5014 12.9455C11.6596 12.7872 11.7852 12.5993 11.8708 12.3926C11.9565 12.1858 12.0006 11.9642 12.0006 11.7404C12.0006 11.5166 11.9565 11.2949 11.8708 11.0882C11.7852 10.8814 11.6596 10.6935 11.5014 10.5352C11.3431 10.377 11.1552 10.2514 10.9485 10.1658C10.7417 10.0801 10.5201 10.0361 10.2963 10.0361C9.84425 10.0361 9.41075 10.2156 9.09113 10.5352C8.77151 10.8549 8.59195 11.2884 8.59195 11.7404C8.59195 12.1924 8.77151 12.6259 9.09113 12.9455C9.41075 13.2651 9.84425 13.4447 10.2963 13.4447Z" fill="currentColor"/>
+                    </svg>
+                </a>
+            </div>
+
+            {# real recently-viewed products; falls back to related on this product #}
+            <salla-products-slider class="qpd-viewed__slider" source="latest-viewed" limit="8"></salla-products-slider>
+
+            {# prev/next arrows — mobile carousel controls, centered under the products #}
+            <div class="qpd-viewed__nav">
+                <button type="button" class="qpd-viewed__navbtn" data-qv-prev aria-label="{{ trans('blocks.qissa.prev') }}">
+                    <i class="sicon-keyboard_arrow_right"></i>
+                </button>
+                <button type="button" class="qpd-viewed__navbtn" data-qv-next aria-label="{{ trans('blocks.qissa.next') }}">
+                    <i class="sicon-keyboard_arrow_left"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    {# recently-viewed carousel arrows → move the slider (click its built-in arrows,
+       fall back to the inner Swiper instance if needed) #}
+    <script>
+        (function () {
+            var sec = document.querySelector('.qpd-viewed');
+            if (!sec) { return; }
+            function move(dir) {
+                var slider = sec.querySelector('.qpd-viewed__slider');
+                if (!slider) { return; }
+                // 1) click the slider's own prev/next button if present
+                var btn = slider.querySelector(dir === 'next' ? '.s-slider-next' : '.s-slider-prev');
+                if (btn) { btn.click(); return; }
+                // 2) fall back to the Swiper instance on the inner .swiper element
+                var sw = slider.querySelector('.swiper');
+                sw = sw && sw.swiper;
+                if (sw) { dir === 'next' ? sw.slideNext() : sw.slidePrev(); }
+            }
+            var prev = sec.querySelector('[data-qv-prev]');
+            var next = sec.querySelector('[data-qv-next]');
+            if (prev) { prev.addEventListener('click', function () { move('prev'); }); }
+            if (next) { next.addEventListener('click', function () { move('next'); }); }
+        })();
+    </script>
 
     {#
         Hook: product.single.after_product_recommendations

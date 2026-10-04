@@ -1547,6 +1547,82 @@
             ]
         },
         {
+            "key": "85047fd7-872c-474e-93da-0cab13daa87a",
+            "title": {
+                "en": "Qissa Package Contents (product page)",
+                "ar": "محتويات البكج (صفحة المنتج)"
+            },
+            "icon": "sicon-box-bankers",
+            "path": "home.qissa-pack-contents",
+            "fields": [
+                {
+                    "id": "package",
+                    "type": "items",
+                    "icon": "sicon-keyboard_arrow_down",
+                    "label": "البكج",
+                    "format": "dropdown-list",
+                    "description": "أضف هذا العنصر في صفحة المنتج (قبل التقييمات). يظهر في صفحة هذا البكج فقط، ولا يظهر في صفحات باقي المنتجات.",
+                    "selected": [],
+                    "options": [],
+                    "required": true,
+                    "multichoice": true,
+                    "source": "products",
+                    "searchable": true,
+                    "maxLength": 1,
+                    "minLength": 1,
+                    "value": []
+                },
+                {
+                    "id": "products",
+                    "type": "items",
+                    "icon": "sicon-keyboard_arrow_down",
+                    "label": "المنتجات داخل البكج",
+                    "format": "dropdown-list",
+                    "description": "حتى 6 منتجات بالترتيب. تظهر صورة كل منتج واسمه، والكمية من الوصف المختصر للمنتج (مثل: 32 عبوة).",
+                    "selected": [],
+                    "options": [],
+                    "required": true,
+                    "multichoice": true,
+                    "source": "products",
+                    "searchable": true,
+                    "maxLength": 6,
+                    "minLength": 1,
+                    "value": []
+                },
+                {
+                    "id": "tagline",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Line under the package name",
+                        "ar": "العبارة تحت اسم البكج"
+                    },
+                    "value": "كل احتياجات البيت في كرتون واحد، من المصنع إلى بابك"
+                },
+                {
+                    "id": "count",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Total count (big number)",
+                        "ar": "العدد الإجمالي (الرقم الكبير)"
+                    },
+                    "description": "اتركه فارغاً لاستخدام الوصف المختصر للبكج إن بدأ برقم (مثل: 68 قطعة).",
+                    "value": ""
+                },
+                {
+                    "id": "count_label",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Words beside the count",
+                        "ar": "النص بجانب العدد"
+                    },
+                    "value": "عبوة داخل الكرتون"
+                }
+            ]
+        },
+        {
             "key": "20dbf092-ba3c-4145-b712-96608270c2b9",
             "title": {
                 "en": "Dual Product Hero",

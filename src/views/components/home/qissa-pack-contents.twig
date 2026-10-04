@@ -1,0 +1,52 @@
+{#
+| Variable               | Type      | Description                                                        |
+|------------------------|-----------|--------------------------------------------------------------------|
+| component              | object    | merchant settings from twilight.json                               |
+| component.package      | Product[] | the package — the block shows on ITS product page only (first one) |
+| component.products     | Product[] | what is inside it, in order (up to 6)                              |
+| component.tagline      | string    | the line under the package's name                                  |
+| component.count        | string    | the big number; empty → the package's subtitle when it leads with one |
+| component.count_label  | string    | the words beside that number                                       |
+| product                | ?Product  | the page's product, when the block sits on a product page          |
+
+Package contents — Figma "Qusah Re-Vamp": desktop 113:35929, mobile 290:10113.
+A product-page block. The merchant adds it once per package to the product
+page's «before reviews» slot; pages/product/single.twig gives that slot the
+description's place, and js/product.js lays the page out as a package when
+one of these is showing. Styles: 04-components/qissa-product-detail.scss.
+
+Each tile is a product inside the package: its photo, its subtitle (how many —
+«32 عبوة») and its name, linked to its page.
+
+It renders for its own package only. Where Salla passes the page's product the
+others are not printed at all; otherwise they are printed hidden and product.js
+shows the one whose data-qpd-pack is this page's product — so on any other page
+(or the home page) the block never appears.
+#}
+{% set pkg = component.package|first %}
+{% set on_product = product is defined and product and product.id %}
+{% if pkg and component.products|length and (not on_product or product.id == pkg.id) %}
+    {% set sub_parts = pkg.subtitle|default('')|trim|split(' ', 2) %}
+    <section class="qpd-pack" data-qpd-pack="{{ pkg.id }}"{{ on_product ? '' : ' hidden' }}>
+        <p class="qpd-pack__name">{{ pkg.name }}</p>
+        <p class="qpd-pack__tag">{{ component.tagline|default(trans('blocks.qissa.pack_tagline')) }}</p>
+
+        {% if component.count %}
+            <p class="qpd-pack__count"><b>{{ component.count }}</b> <span>{{ component.count_label }}</span></p>
+        {% elseif sub_parts|length > 1 and sub_parts[0] matches '/^[0-9]+$/' %}
+            <p class="qpd-pack__count"><b>{{ sub_parts[0] }}</b> <span>{{ sub_parts[1] }} {{ trans('blocks.qissa.pack_inside') }}</span></p>
+        {% endif %}
+
+        <img class="qpd-pack__img" src="{{ pkg.image.url }}" alt="{{ pkg.image.alt|default(pkg.name) }}" loading="lazy"/>
+
+        <div class="qpd-pack__tiles">
+            {% for item in component.products|slice(0, 6) %}
+                <a class="qpd-pack__tile" href="{{ item.url }}">
+                    <img src="{{ item.image.url }}" alt="" loading="lazy"/>
+                    {% if item.subtitle %}<b>{{ item.subtitle }}</b>{% endif %}
+                    <span>{{ item.name }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+{% endif %}

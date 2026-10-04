@@ -19,7 +19,7 @@ $qpd-muted: #5a6874;
 // below carry Figma's own gaps, and a hook wrapper with nothing in it takes
 // no room. 150.55: the last cards to the footer.
 .product-single #main-content {
-  padding-bottom: 150.55px;
+  padding-bottom: 64px;
 
   > .s-blocks-wrapper:empty { margin: 0 !important; }
 }
@@ -120,6 +120,45 @@ $qpd-muted: #5a6874;
     &.is-added { color: #dc3545; }
     &.is-added path { fill: currentColor; }
   }
+  // share — the same disc, beside the heart
+  &__share-btn {
+    left: 64.82px;
+
+    &:hover { color: $qpd-navy; }
+  }
+  // zoom — opens the lightbox on the photo showing; bottom left
+  &__zoom {
+    position: absolute;
+    z-index: 3;
+    bottom: 24.21px;
+    left: 15.84px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, .35);
+    border-radius: 10px;
+    background: rgba(10, 31, 48, .4);
+    color: #fff;
+    cursor: pointer;
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+
+    &:hover { background: $qpd-navy; }
+  }
+  &__zoom-icon {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  // prev / next on the photo (the script in single.twig adds them) — phones only
+  &__gallery-arrow { display: none; }
 
   // ---- thumbnails (168:7931): four to a row, 9.31 apart ----
   .s-slider-thumbs {
@@ -243,10 +282,150 @@ $qpd-muted: #5a6874;
     text-overflow: ellipsis;
   }
 
+  // ---- restored from the previous design (not in the revamp frames): the tag
+  // chips, the weight box, the payment methods strip and the gift box ----
+  // ----- chips (tags): packs / sheets-per-box -----
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    background: #e8fcff;
+    color: #30378e;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 4px;
+    padding: 2px 8px;
+    text-decoration: none;
+    &:hover {
+      background: #d6f6fc;
+    }
+  }
+
+  // ----- weight box -----
+  &__weight {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-direction: row; // Figma: value LEFT, label + icon RIGHT
+    height: 60px;
+    padding: 16px;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    background: #fff;
+    margin-top: 12px;
+    color: #0a1f30;
+    font-size: 16px;
+  }
+  &__weight-icon {
+    font-size: 22px;
+    color: #30378e;
+  }
+  &__weight-label {
+    flex: 1;
+    text-align: right;
+  }
+  &__weight-value {
+    white-space: nowrap;
+  }
+
+  // ===== accepted payment methods strip (under the buy buttons) =====
+  // Markup comes from <salla-payments>, so the inner selectors are Salla's
+  // (.s-payments-list / .s-payments-list-item) and are scoped under this block.
+  &__payments {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  &__payments-label {
+    color: #6c757d;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  &__payments .s-payments-list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  &__payments .s-payments-list-item {
+    display: block;
+    margin: 0;
+    img {
+      display: block;
+      width: auto;
+      height: 28px;
+      object-fit: contain;
+    }
+  }
+
+  // ----- gift box -----
+  &__gift {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    margin-top: 16px;
+    background: linear-gradient(-86deg, #ffffff 1.5%, #daeff7 94%);
+  }
+  &__gift-icon {
+    font-size: 24px;
+    color: #30378e;
+    order: 0;
+  }
+  &__gift-body {
+    flex: 1;
+    text-align: right;
+    order: 1;
+  }
+  &__gift-title {
+    font-size: 16px;
+    color: #0a1f30;
+    margin: 0 0 6px;
+  }
+  &__gift-sub {
+    font-size: 14px;
+    font-weight: 300;
+    color: #adb5bd;
+    margin: 0;
+    line-height: 1.5;
+  }
+  &__gift-btn {
+    order: 2;
+    flex-shrink: 0;
+    padding: 10px 16px 11px;
+    border: 1px solid #30378e;
+    border-radius: 8px;
+    background: transparent;
+    color: #30378e;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    &:hover {
+      background: #30378e;
+      color: #fff;
+    }
+  }
+
   // The blocks from the price down sit 19.51 in from the column's left edge
   &__form,
   &__installment,
   &__trust,
+  &__gift,
   &__gifting,
   &__branch,
   &__quick-order,
@@ -464,7 +643,7 @@ $qpd-muted: #5a6874;
     }
   }
 
-  &__gifting,
+  &__gifting { display: block; }
   &__quick-order {
     display: block;
     margin-top: 16px;
@@ -604,9 +783,7 @@ $qpd-muted: #5a6874;
     justify-content: center;
     gap: 14.92px;
     width: 100%;
-    margin: 22.38px 0 0;
-    padding: 0;
-    list-style: none;
+    margin-top: 22.38px;
   }
   .qpd-pack__tile {
     display: flex;
@@ -619,7 +796,9 @@ $qpd-muted: #5a6874;
     border: .93px solid rgba(255, 255, 255, .06);
     border-radius: 7.46px;
     background: rgba(255, 255, 255, .06);
+    color: #fff;
 
+    &:hover { background: rgba(255, 255, 255, .12); }
     img {
       display: block;
       width: 100.73px;
@@ -1041,6 +1220,11 @@ $qpd-muted: #5a6874;
       flex-direction: column;
     }
     .qpd-more__title { padding-right: 19.58px; }
+    .qpd-more__details > .s-blocks-wrapper:not(:empty) {
+      display: flex;
+      flex: 1 0 auto;
+      flex-direction: column;
+    }
     .qpd-pack {
       flex: 1 0 auto;
       justify-content: center;
@@ -1129,10 +1313,200 @@ $qpd-muted: #5a6874;
 }
 
 // ====================================================================
+// Recently-viewed products — Figma node 6036:5118
+// Header band: eyebrow + title + subtitle (RIGHT) + view-all btn (LEFT).
+// Cards use the global qissa-product-card styling.
+// ====================================================================
+.qpd-viewed {
+  width: 100%;
+  margin-top: 64px !important;
+  font-family: "GE SS Two", sans-serif;
+  padding-block: 40px;
+  // soft blue gradient band behind the whole section (Figma)
+  background: linear-gradient(180deg, #e8fcff 0%, #f4fdff 55%, #ffffff 100%);
+
+  .container {
+    max-width: none;
+    padding-inline: 50px;
+  }
+
+  // header row: button LEFT, intro RIGHT. LTR makes order unambiguous.
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    margin-bottom: 24px;
+    direction: ltr;
+  }
+  &__intro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; // LTR column → flex-end = RIGHT
+    gap: 12px;
+    text-align: right;
+    direction: ltr; // keep flex-end = visual RIGHT, unambiguous
+    order: 2; // RIGHT
+  }
+  &__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    height: 39px;
+    padding: 5px 15px;
+    border: 1px solid #fff;
+    border-radius: 10px;
+    background: linear-gradient(to left, #daeff7, #fff);
+    color: #30378e;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.16px;
+    direction: rtl; // Arabic text RTL inside the pill
+  }
+  &__title {
+    margin: 0;
+    width: 100%;
+    text-align: right;
+    direction: rtl;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 38px;
+    letter-spacing: -0.2px;
+    color: #0a1f30;
+  }
+  &__title-hl {
+    color: #30378e;
+  }
+  &__subtitle {
+    margin: 0;
+    width: 100%;
+    text-align: right;
+    direction: rtl;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 24px;
+    color: #6c757d;
+  }
+
+  // view-all button (cyan, radius 16, h55): arrow → text → cart (LTR order)
+  &__all {
+    order: 1; // LEFT
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    direction: ltr;
+    gap: 8px;
+    height: 55px;
+    padding: 16px;
+    border: 1px solid #91e6f7;
+    border-radius: 16px;
+    background: #91e6f7;
+    color: #0a1f30;
+    font-size: 16px;
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+    transition:
+      background 0.15s,
+      border-color 0.15s;
+    i {
+      font-size: 16px;
+    }
+    .qpd__cart-icon {
+      width: 23px;
+      height: 23px;
+      flex: 0 0 23px;
+    }
+    &:hover {
+      background: #7fdcef;
+      border-color: #7fdcef;
+    }
+  }
+
+  // slider cards keep the global qissa-product-card look
+  &__slider {
+    display: block;
+  }
+
+  // prev/next carousel arrows — mobile only, centered under the products
+  &__nav {
+    display: none;
+    direction: rtl;
+    justify-content: center;
+  } // rtl → arrows point outward
+  &__navbtn {
+    width: 46px;
+    height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e9ecef;
+    border-radius: 50%;
+    background: #fff;
+    color: #30378e;
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      color 0.15s,
+      border-color 0.15s;
+    i {
+      font-size: 18px;
+    }
+    &:hover {
+      background: #30378e;
+      border-color: #30378e;
+      color: #fff;
+    }
+  }
+
+  // tablet / in-between: the slider scrolls (only ~3–4 cards fit) but the
+  // desktop view hides the arrows → show the carousel controls here.
+  @media (min-width: 769px) and (max-width: 1150px) {
+    .container { padding-inline: 32px; }
+    &__nav {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding-block: 24px;
+    .container {
+      padding-inline: 15px;
+    }
+    &__head {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
+    }
+    &__intro {
+      align-items: flex-end;
+      order: 1;
+    }
+    &__all {
+      order: 2;
+      width: 100%;
+    }
+    &__nav {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+    &__title {
+      font-size: 24px;
+      line-height: 30px;
+    }
+  }
+}
+
+// ====================================================================
 // Mobile — 290:10598 (a product) / 290:9867 (a package)
 // ====================================================================
 @media (max-width: 768px) {
-  .product-single #main-content { padding-bottom: 57.73px; }
+  .product-single #main-content { padding-bottom: 32px; }
 
   .qpd-crumbs { padding: 12.26px 18px 0; }
 
@@ -1177,6 +1551,41 @@ $qpd-muted: #5a6874;
 
       svg { width: 15.81px; height: 15.81px; }
     }
+    &__share-btn { left: 52.51px; }
+    &__zoom {
+      bottom: 11.16px;
+      left: 11.16px;
+    }
+    &__zoom-icon {
+      width: 18px;
+      height: 18px;
+    }
+    &__gallery-arrow {
+      position: absolute;
+      z-index: 3;
+      top: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      margin-top: -20px;
+      padding: 0;
+      border: 1px solid #e9ecef;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, .92);
+      color: $qpd-navy;
+      box-shadow: 0 6px 16px rgba(10, 31, 48, .14);
+      font-size: 18px;
+      cursor: pointer;
+
+      &.is-disabled {
+        opacity: .35;
+        pointer-events: none;
+      }
+    }
+    &__gallery-arrow--prev { right: 12px; }   // RTL: previous is on the right
+    &__gallery-arrow--next { left: 12px; }
 
     // 290:9978 — thumbnails: 84.8 high tiles, 4.52 apart
     .s-slider-thumbs { margin: 9.03px 0 0; }
@@ -1252,6 +1661,7 @@ $qpd-muted: #5a6874;
     &__form,
     &__installment,
     &__trust,
+    &__gift,
     &__gifting,
     &__branch,
     &__quick-order,
@@ -1265,7 +1675,13 @@ $qpd-muted: #5a6874;
 
       .sicon-sar { font-size: 11.86px; }
     }
-    &__price-old { display: none; }
+    // no old price in the phone frame; kept, at the card's phone ratio (.75)
+    &__price-old {
+      font-size: 16.94px;
+      line-height: 26px;
+
+      .sicon-sar { font-size: 11.86px; }
+    }
     &__oos {
       font-size: 16px;
       line-height: 26px;

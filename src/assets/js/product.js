@@ -6,25 +6,6 @@ import { zoom } from './partials/image-zoom';
 
 const quiet = fn => (salla.api && typeof salla.api.withoutNotifier === 'function' ? salla.api.withoutNotifier(fn) : fn());
 
-// «1 كرتون مناديل 600 مفرد» → «مناديل 600 مفرد»
-const packName = text => text.trim().replace(/^[\d٠-٩]+\s+(كرتون|شدة|شده|عبوة|علبة|بكج)\s+/, '').replace(/^بكج\s+/, '');
-
-// [quantity, product] when a contents line names a product and how many of it:
-// «مناديل حرير — 50 عبوة», «مناديل رول /6رولات», «32 عبوة من مناديل قصة 600».
-// «عدد الطبقات: 3» is a spec, not a product.
-function packTile(line) {
-    line = line.trim();
-    if (/[:：]/.test(line)) {
-        return null;
-    }
-    let match = line.match(/^(.+?)(?:\s*[\/—–]\s*|\s+-\s+)([\d٠-٩][^\/—–]*)$/);
-    if (match) {
-        return [match[2].trim(), packName(match[1])];
-    }
-    match = line.match(/^([\d٠-٩]+\s*\S+)\s+من\s+(.+)$/);
-    return match ? [match[1], packName(match[2])] : null;
-}
-
 class Product extends BasePage {
     onReady() {
         app.watchElements({
@@ -54,44 +35,22 @@ class Product extends BasePage {
       });
     }
 
-    // A package is a product whose contents boxes (filled from its description by
-    // qissa-pack-card.js) name at least two products with quantities. Those become
-    // the tiles of the navy graphic, which takes the description's place; a tile's
-    // photo is the store's own best search match for its name.
+    // A package is a product the merchant gave a «محتويات البكج» block
+    // (components/home/qissa-pack-contents) in this page's slot. Keep the one for
+    // this product — where Salla passed the product to the block it is the only
+    // one printed — and let it take the description's place.
     initPack() {
-        const pack = document.querySelector('[data-qpd-pack]');
-        const tiles = Array.from(document.querySelectorAll('.qpd__boxes li'), li => packTile(li.textContent)).filter(Boolean);
-        if (!pack || tiles.length < 2) {
+        const more = document.querySelector('[data-qpd-more]');
+        if (!more) {
             return;
         }
-        const list = pack.querySelector('[data-qpd-tiles]');
-        const items = tiles.map(([quantity, name]) => {
-            const item = document.createElement('li');
-            item.className = 'qpd-pack__tile';
-            item.append(Object.assign(document.createElement('b'), {textContent: quantity}), Object.assign(document.createElement('span'), {textContent: name}));
-            list.append(item);
-            return [item, name];
+        // wherever on the page the block was added, it belongs in the details column's slot
+        const slot = more.querySelector('.qpd-more__details > .s-blocks-wrapper');
+        document.querySelectorAll('[data-qpd-pack]').forEach(pack => {
+            pack.hidden = pack.dataset.qpdPack !== more.dataset.id;
+            pack.hidden || slot.contains(pack) || slot.append(pack);
         });
-        pack.hidden = false;
-        pack.closest('[data-qpd-more]').classList.add('is-pack');
-
-        // the photos, once the graphic is near the screen
-        const photos = () => items.forEach(([item, name]) => {
-            quiet(() => salla.product.api.fetch({source: 'search', source_value: name, limit: 3})).then(res => {
-                const hit = (res?.data || []).find(product => String(product.id) !== pack.dataset.id && product.image?.url);
-                hit && item.prepend(Object.assign(new Image(), {src: hit.image.url, alt: '', loading: 'lazy'}));
-            }).catch(() => {});
-        });
-        if (!('IntersectionObserver' in window)) {
-            return photos();
-        }
-        const observer = new IntersectionObserver(entries => {
-            if (entries.some(entry => entry.isIntersecting)) {
-                observer.disconnect();
-                photos();
-            }
-        }, {rootMargin: '600px'});
-        observer.observe(pack);
+        more.classList.toggle('is-pack', !!slot.querySelector('[data-qpd-pack]:not([hidden])'));
     }
 
     // «يشترونها معها»: Salla's related products of this one, four in the theme card
