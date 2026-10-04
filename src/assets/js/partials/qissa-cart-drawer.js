@@ -152,9 +152,15 @@ class QissaCartDrawer {
     salla.cart.api.details(null, ['options'])
       .then(response => {
         const cart = response?.data?.cart;
-        if (cart) { this.cart = cart; this.render(); }
+        if (cart) { this.cart = cart; this.render(); } else { this.settleEmpty(); }
       })
-      .catch(() => this.render());
+      .catch(() => this.settleEmpty());
+  }
+
+  /** No answer and nothing in the cart (a visitor has no cart until the first add): the empty state, not the skeleton. */
+  settleEmpty() {
+    if (this.cart === null && !QissaCartDrawer.num(salla.storage?.get('cart.summary.count'))) { this.cart = {}; }
+    this.render();
   }
 
   /* --------------------------------------------------------------- figures */
