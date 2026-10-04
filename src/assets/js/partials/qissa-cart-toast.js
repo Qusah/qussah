@@ -149,7 +149,7 @@ const Pill = {
     el.className = 'qct';
     el.setAttribute('role', 'region');
     el.setAttribute('aria-label', T.region);
-    el.innerHTML = `<div class="qct__stack" aria-hidden="true"></div>`
+    el.innerHTML = `<div class="qct__stack"></div>`
       + `<div class="qct__txt"><div class="qct__msg" role="status" aria-live="polite" aria-atomic="true">`
       + `<p class="qct__title"><b>${T.arrived}</b><span class="qct__qty"></span></p>`
       + `<p class="qct__line"><span class="qct__name"></span><span class="qct__price"></span></p></div>`
@@ -214,7 +214,8 @@ const Pill = {
       if (!cancel && dy > 46) this.hide();
     };
     el.addEventListener('pointerdown', e => {
-      if (drag || e.pointerType === 'mouse' || (e.target.closest && e.target.closest('button'))) return;
+      // (a captured pointer would hand the tile link's click to the pill)
+      if (drag || e.pointerType === 'mouse' || (e.target.closest && e.target.closest('button, a'))) return;
       drag = { id: e.pointerId, y0: e.clientY, dy: 0 };
       try { el.setPointerCapture(e.pointerId); } catch (x) { /* capture is a nicety */ }
       el.classList.add('is-drag');
@@ -302,7 +303,7 @@ const Pill = {
     const render = () => {
       this.setMode('ok');
       this.frontId = item ? String(item.id) : null;
-      this.putTile(item && item.product_image, String(productId), false, wasOn);
+      this.putTile(item && item.product_image, String(productId), false, wasOn, item);
       this.qty.innerHTML = item ? `<bdi dir="ltr">×${latin(num(item.quantity))}</bdi>` : '';
       if (wasOn && !wasErr) this.pop(this.qty);
       this.name.textContent = item ? item.product_name || '' : '';
@@ -327,7 +328,7 @@ const Pill = {
     const total = cart ? num(cart.total) : num(window.salla && salla.storage && salla.storage.get('cart.summary.total'));
     const render = () => {
       this.setMode('err');
-      this.putTile(info.image, pid, true, wasOn);
+      this.putTile(info.image, pid, true, wasOn, info);
       this.err.innerHTML = `<b>${T.failed}<span class="qct-sr">${info.name ? ': ' + esc(info.name) : ''}</span></b><span>${esc(errorText(error))}</span>`;
       // «إتمام الطلب» stays when the cart already holds something
       this.el.classList.toggle('is-solo', !(count > 0));
@@ -341,11 +342,11 @@ const Pill = {
   /** A product that never reached the cart: its name and photo from the cart, the card pressed, or the product page. */
   productInfo(pid) {
     const line = this.cart && (this.cart.items || []).find(i => String(i.product_id) === pid);
-    if (line) return { name: line.product_name, image: line.product_image };
+    if (line) return { name: line.product_name, image: line.product_image, url: line.url };
     const card = this.target && this.target.closest('.qqv-card, .qprod, custom-salla-product-card');
     if (card) {
       const p = card.product;
-      if (p && p.name) return { name: p.name, image: p.image && p.image.url };
+      if (p && p.name) return { name: p.name, image: p.image && p.image.url, url: p.url };
       const n = card.querySelector('.qprod__name, .s-product-card-content-title a');
       const img = [...card.querySelectorAll('img')]
         .map(i => i.getAttribute('data-src') || i.currentSrc || i.getAttribute('src'))
@@ -416,16 +417,23 @@ const Pill = {
   },
 
   /** `drop`: the pill is already up, so the new tile falls onto the stack
-      (the first one rides in with the pill itself). */
-  putTile(src, pid, bad, drop) {
+      (the first one rides in with the pill itself). `of`: the cart line (or
+      what is known of a refused product) — with its `url` the tile is a link
+      to the product's page, named after it. */
+  putTile(src, pid, bad, drop, of) {
     const stack = this.stack;
     const front = stack.lastElementChild;
     // same product again: the tile stays, ×n moves
     if (!bad && front && front.dataset.id === pid && !front.classList.contains('is-bad')) return;
     [...stack.children].filter(t => t.dataset.id === pid || t.classList.contains('is-bad')).forEach(t => t.remove());
-    const t = document.createElement('span');
+    const url = of && of.url;
+    const t = document.createElement(url ? 'a' : 'span');
     t.className = 'qct__tile' + (bad ? ' is-bad' : '');
     t.dataset.id = pid;
+    if (url) {
+      t.href = url;
+      t.setAttribute('aria-label', of.product_name || of.name || '');
+    }
     if (src) {
       const img = document.createElement('img');
       img.alt = '';
@@ -445,6 +453,8 @@ const Pill = {
     }
     stack.appendChild(t);
     while (stack.children.length > 3) stack.firstElementChild.remove();
+    // the tile on top is the one a Tab reaches; the ones fanned behind it are not
+    [...stack.children].forEach(c => { if (c.tagName === 'A') c.tabIndex = c === t ? 0 : -1; });
   },
 
   pop(n) {
