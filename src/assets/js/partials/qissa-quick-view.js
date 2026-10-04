@@ -33,6 +33,15 @@
  *      `quick_view_enabled` is off, or for one section when it carries
  *      data-qv="off" — then no corner is drawn and the ticket is never built.
  *
+ *   3. The cart page. Each cart line (`.qcart__item[data-qqv-cart]`, cart.twig)
+ *      gets the same corner on its photo and turns over the same way, at its
+ *      own width, into a SHORT ticket: the gallery, the name, the subtitle and
+ *      rating, «ماذا يوجد» and the description — no price, no quantity, no
+ *      buttons, no «طلبك» step (`.qqv-lite`). The line's own fields (quantity,
+ *      remove, the hidden id) stay in the DOM under the back, so the cart's
+ *      form and cart.js keep working on them; a line removed while open lets
+ *      the ticket go. The cart drawer's rows are not touched.
+ *
  * Verified against the live store (26 Sep 2026): getDetails(id, ['images',
  * 'options', 'rating']) returns images / options / rating; addItem,
  * updateItem({id, quantity}) and deleteItem(id) resolve with the whole cart in
@@ -531,9 +540,49 @@ function focusable(el) {
   return el.matches('button') ? el : el.querySelector('button');
 }
 
+/* ============================================================== cart rows
+   The cart page's lines become cards the ticket can turn: the corner goes on
+   the photo (beside its link, never inside it — the same wrapper move the
+   one-photo Twig card gets), and `qqv-row` marks the short ticket. */
+const CartRows = {
+  scan() {
+    if (!qvGlobalOn()) return;
+    $$('.qcart__item[data-qqv-cart]:not(.qqv-card)').forEach(row => {
+      const id = row.dataset.qqvCart;
+      const link = $('.qcart__item-thumb', row);
+      if (!id || !link) return;
+      row.dataset.qqvId = String(id);
+      row.classList.add('qqv-card', 'qqv-row', 'qqv-has-trig');
+      const nameEl = $('.qcart__item-info a', row);
+      const name = nameEl ? clean(nameEl.textContent) : '';
+      const box = document.createElement('div');
+      box.className = link.className;
+      link.className = 'qqv-ln';
+      link.before(box);
+      box.appendChild(link);
+      box.insertAdjacentHTML('beforeend',
+        `<button type="button" class="qqv-ear" aria-expanded="false" aria-label="${esc(T.qvOn(name))}">${IC.eye}</button>`);
+    });
+  },
+};
+
 /** Everything the ticket can show before getDetails answers — never an empty shell. */
 function cardData(card) {
   const id = card.dataset.qqvId;
+  if (card.classList.contains('qqv-row')) {
+    const nameEl = $('.qcart__item-info a', card);
+    const img = $('.qcart__item-thumb img', card);
+    const url = img && (img.currentSrc || img.getAttribute('src'));
+    return {
+      id,
+      name: nameEl ? clean(nameEl.textContent) : '',
+      url: nameEl ? nameEl.href : '',
+      image: url ? { url } : null,
+      images: url ? [{ url }] : [],
+      subtitle: '',
+      plain: '',
+    };
+  }
   if (card.product) {
     const p = card.product;
     // The list feed's description is already flattened to text — show it, but
@@ -1021,6 +1070,8 @@ const Ticket = {
     const det = getDetails(id).then(d => { got = d; return d; });
     det.catch(() => {});
     this.card = card;
+    // a cart line shows the short ticket: no price, no buttons, no «طلبك»
+    this.bk.classList.toggle('qqv-lite', card.classList.contains('qqv-row'));
     trigs.forEach(t => t.setAttribute('aria-expanded', 'true'));
     card.classList.add('qqv-turn');
     const a1 = turn(card, 0, 90, 210, E_ACC);
@@ -1103,7 +1154,8 @@ const Ticket = {
     c.classList.add('is-qv-open');
     // Photos beside the details once the widened card has the room — every
     // desktop grid. offsetWidth, not the box: mid-turn the card is a sliver.
-    c.classList.toggle('qqv-split', !!this.grid && c.offsetWidth >= 440);
+    // A cart line is as wide as the list, grid or not.
+    c.classList.toggle('qqv-split', (!!this.grid || c.classList.contains('qqv-row')) && c.offsetWidth >= 440);
   },
 
   unlay() {
@@ -1228,6 +1280,7 @@ function boot() {
   booted = true;
   tint();
   Cards.scan();
+  CartRows.scan();
   Cart.bind();
   document.addEventListener('click', onClickCapture, true);
   if (qvGlobalOn()) {
@@ -1246,6 +1299,7 @@ function boot() {
       clearTimeout(t);
       t = setTimeout(() => {
         Cards.scan();
+        CartRows.scan();
         if (Ticket.card && !Ticket.card.isConnected) Ticket.hide(false);
       }, 120);
     }).observe(main, { childList: true, subtree: true });

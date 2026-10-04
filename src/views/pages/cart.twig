@@ -64,7 +64,11 @@
 
                 {% for item in cart.items %}
                     <form onchange="salla.form.onChange('cart.updateItem', event)" id="item-{{ item.id }}">
-                        <section class="cart-item qcart__item mb-5 relative">
+                        {# data-qqv-cart: the product behind this line. qissa-quick-view.js puts the
+                           folded corner with the eye on the photo and turns the row over, in place,
+                           into the short ticket (photos, name, what is inside, description — no
+                           buttons). The row's own fields stay in the DOM underneath, untouched. #}
+                        <section class="cart-item qcart__item mb-5 relative" data-qqv-cart="{{ item.product_id }}">
                             <input type="hidden" name="id" value="{{ item.id }}">
                                 <!-- product -->
                                 <div class="qcart__item-row last:mb-0">
