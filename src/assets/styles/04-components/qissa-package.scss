@@ -95,6 +95,17 @@ $qpack-cyan: #91e6f7;
     border: 0;
     border-radius: 7.44px;
     cursor: pointer;
+    opacity: .6;
+    transition: opacity .2s ease;
+
+    // the photo on show: full strength with a navy ring (inside, the row clips)
+    &[aria-current='true'] {
+      opacity: 1;
+      outline: 2px solid $qpack-navy;
+      outline-offset: -2px;
+    }
+    &:hover,
+    &:focus-visible { opacity: 1; }
 
     img {
       display: block;
@@ -410,13 +421,13 @@ $qpack-cyan: #91e6f7;
     justify-content: space-between;
     gap: 12px;
   }
-  .qpack__price { flex-wrap: nowrap; gap: 4px; }
+  .qpack__price { flex-wrap: wrap; gap: 0 6px; }
   .qpack__price .qpack__price-now {
     font-size: 26px;
     line-height: 26px;
     .sicon-sar { font-size: 12px; }
   }
-  .qpack__price .qpack__price-old { display: none; }
+  .qpack__price .qpack__price-old { font-size: 13px; line-height: 20px; }
   .qpack__buy-btn {
     flex: 0 1 223px;
     width: auto;
@@ -520,13 +531,13 @@ $qpack-cyan: #91e6f7;
       gap: 12px;
       margin-top: auto;
     }
-    .qpack__price { flex-wrap: nowrap; gap: 4px; }
+    .qpack__price { flex-wrap: wrap; gap: 0 6px; }
     .qpack__price .qpack__price-now {
       font-size: 26px;
       line-height: 26px;
       .sicon-sar { font-size: 12px; }
     }
-    .qpack__price .qpack__price-old { display: none; }
+    .qpack__price .qpack__price-old { font-size: 13px; line-height: 20px; }
     .qpack__buy-btn {
       flex: 1 1 auto;
       max-width: 223px;

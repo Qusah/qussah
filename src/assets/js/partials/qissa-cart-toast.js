@@ -63,6 +63,13 @@ const latin = t => String(t).replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0
 const esc = v => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 /** The theme's money helper (cards, cart drawer, quick view): salla.money, Latin digits. */
 const money = v => latin(window.salla && salla.money ? salla.money(num(v)) : num(v));
+/** A cart line's price, with its regular line price struck beside it when the line is discounted (the cart page's rule). */
+const linePrice = it => {
+  const now = num(it.total);
+  const unit = Math.max(num(it.product_price), num(it.original_price), num(it.price));
+  const was = unit * (num(it.quantity) || 1);
+  return money(now) + (was > now + 0.01 ? `<s class="qct__was">${money(was)}</s>` : '');
+};
 const plural = n => (n === 1 ? 'منتج واحد' : n === 2 ? 'منتجان' : n <= 10 ? `${latin(n)} منتجات` : `${latin(n)} منتج`);
 const enabled = () => window.cart_toast_enabled !== 'off';
 /** Adds made inside the quick view ticket land on its own «طلبك» step. */
@@ -307,7 +314,7 @@ const Pill = {
       this.qty.innerHTML = item ? `<bdi dir="ltr">×${latin(num(item.quantity))}</bdi>` : '';
       if (wasOn && !wasErr) this.pop(this.qty);
       this.name.textContent = item ? item.product_name || '' : '';
-      this.price.innerHTML = item ? money(item.total) : '';
+      this.price.innerHTML = item ? linePrice(item) : '';
       this.price.hidden = !item;
       if (wasOn) this.roll(this.line);
       const to = num(cart.total);
@@ -371,7 +378,7 @@ const Pill = {
       if (!it) { this.hide(); return; }
       const q = `×${latin(num(it.quantity))}`;
       if (this.qty.textContent !== q) { this.qty.innerHTML = `<bdi dir="ltr">${q}</bdi>`; this.pop(this.qty); }
-      this.price.innerHTML = money(it.total);
+      this.price.innerHTML = linePrice(it);
     }
     const n = latin(num(cart.count));
     const changed = this.count.textContent !== n;

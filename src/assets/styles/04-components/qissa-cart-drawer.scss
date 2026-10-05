@@ -132,6 +132,11 @@ $qcd-green: #008036;
     color: $qcd-navy; font-size: 20px; font-weight: 700; line-height: 14.24px; white-space: nowrap;
     .sicon-sar { font-size: 10px; font-weight: 500; }   // Figma: a 10px «ر.س» beside 20px digits
   }
+  &__prices { display: inline-flex; flex-wrap: wrap; align-items: baseline; gap: 2px 6px; min-width: 0; }
+  &__was {
+    color: #e90000; font-size: 12px; font-weight: 400; line-height: 14.24px; white-space: nowrap; text-decoration: line-through;
+    .sicon-sar { font-size: 9px; }
+  }
   &__form { display: block; margin: 0; }
   // 342:3632 — + n − (− on the left), a hairline box
   &__qty {

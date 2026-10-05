@@ -261,6 +261,9 @@ class QissaCartDrawer {
     const max = QissaCartDrawer.max(item);
     const note = QissaCartDrawer.note(item);
     const out = item.is_available === false;
+    // the regular line price, struck beside the price, when the line is discounted
+    const regular = QissaCartDrawer.regularLine(item);
+    const was = !out && regular > QissaCartDrawer.num(item.total) + 0.01 ? `<s class="qcd__was">${this.money(regular)}</s>` : '';
 
     return `
       <div class="qcd__item" data-item-id="${item.id}" data-qty="${qty}"${max ? ` data-max="${max}"` : ''}>
@@ -273,7 +276,7 @@ class QissaCartDrawer {
             ${note ? `<p class="qcd__note">${QissaCartDrawer.esc(note)}</p>` : ''}
           </div>
           <div class="qcd__line">
-            <span class="qcd__price">${out ? this.s.out : this.money(item.total)}</span>
+            <span class="qcd__prices"><span class="qcd__price">${out ? this.s.out : this.money(item.total)}</span>${was}</span>
             <form class="qcd__form" id="qcd-item-${item.id}" onsubmit="return false">
               <input type="hidden" name="id" value="${item.id}" />
               ${QissaCartDrawer.optionFields(item)}

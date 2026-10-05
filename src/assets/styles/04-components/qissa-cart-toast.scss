@@ -93,6 +93,7 @@ body.qpd-has-sticky { --qct-base: calc(var(--qpd-sticky-h, 61px) + 12px); }
   &::before { content: ''; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: #5d6d84; margin-left: 8px; vertical-align: middle; }
 }
 .qct__name:empty + .qct__price::before { display: none; }
+.qct__was { margin-right: 10px; color: #ff9da0; font-size: .86em; font-weight: 300; text-decoration: line-through; }
 .qct__err { display: none; }
 .qct__err b { display: block; font-size: 16px; font-weight: 700; line-height: 1.35; }
 .qct__err > span {
