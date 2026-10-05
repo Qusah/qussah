@@ -1167,6 +1167,9 @@ const Ticket = {
       this.item.style.gridColumn = getComputedStyle(this.grid).gridTemplateColumns.split(' ').length >= 3 ? 'span 2' : '1 / -1';
     } else if (this.track) this.track.classList.add('qqv-track');
     c.classList.add('is-qv-open');
+    // on a cart drawer line the ticket has the panel to itself: the sums and the checkout button step aside
+    const drawer = c.closest('.qcd');
+    if (drawer) drawer.classList.add('has-qv');
     // Photos beside the details once the widened card has the room — every
     // desktop grid. offsetWidth, not the box: mid-turn the card is a sliver.
     // A cart line is as wide as the list, grid or not.
@@ -1179,6 +1182,8 @@ const Ticket = {
     if (this.track) this.track.classList.remove('qqv-track');
     if (this.card) this.card.classList.remove('is-qv-open', 'qqv-split');
     document.body.classList.remove('qqv-flip');
+    const drawer = document.querySelector('.qcd.has-qv');
+    if (drawer) drawer.classList.remove('has-qv');
     this.item = this.grid = this.track = null;
   },
 

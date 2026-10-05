@@ -159,6 +159,7 @@ $qcd-green: #008036;
   &__item.is-busy &__qty { opacity: 0.6; }
   // a line turned over into the quick view's short ticket (qissa-quick-view.js)
   &__item.is-qv-open { display: block; margin: 10px 12px; }
+  &.has-qv &__foot { display: none; }
 
   /* ---- foot (339:3529): the sums, a dashed rule, total, checkout ---- */
   &__foot {
