@@ -92,14 +92,6 @@ function wireAll(section) {
   return sync;
 }
 
-// the frame shows the second card centred with both neighbours peeking
-function centreSecond(track) {
-  if (!matchMedia(PHONE).matches || track.children.length < 3) return;
-  const card = track.children[1].getBoundingClientRect();
-  const box = track.getBoundingClientRect();
-  track.scrollBy({ left: (card.left + card.width / 2) - (box.left + box.width / 2), behavior: 'instant' });
-}
-
 // mouse drag for a desktop row of more than three (touch and trackpads
 // scroll it natively); a drag never counts as a click on what it started on
 function dragToScroll(track) {
@@ -134,7 +126,6 @@ export async function initReorder(root = document) {
     const track = section.querySelector('[data-qreorder-track]');
     const sync = wireAll(section);
     dragToScroll(track);
-    centreSecond(track);
 
     if (!section.hasAttribute('data-qreorder-personal') || isGuest()) continue;
     try {
@@ -143,7 +134,6 @@ export async function initReorder(root = document) {
       if (!products.length) continue;
       showProducts(section, products);
       sync();
-      requestAnimationFrame(() => centreSecond(track));
     } catch (e) { /* keep the merchant's picks */ }
   }
 }

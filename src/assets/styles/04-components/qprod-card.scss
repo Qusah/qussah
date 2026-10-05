@@ -347,9 +347,6 @@ custom-salla-product-card.qprod-js {
   }
 }
 
-// the phones' quick-view trigger — hidden until the mobile layout below
-.qqv-eye { display: none; }
-
 // ---- mobile: Figma 290:7511 ----------------------------------------
 @media (max-width: 768px) {
   .qprod,
@@ -467,29 +464,6 @@ custom-salla-product-card.qprod-js {
       border-radius: 12px !important;
       font-size: 11.91px !important;
       line-height: 23.82px !important;
-    }
-  }
-
-  // the eye in the button row replaces the photo corner
-  .qqv-has-eye .qprod__img .qqv-ear { display: none; }
-  .qqv-has-eye .qprod__img .qpc-dots { left: 0; }
-  .qqv-eye {
-    display: inline-flex;
-    flex: 0 0 42px;
-    align-items: center;
-    justify-content: center;
-    width: 42px;
-    height: 43px;
-    padding: 0;
-    border: 1px solid #172951;
-    border-radius: 12px;
-    background: #fff;
-    cursor: pointer;
-
-    img {
-      display: block;
-      width: 24px;
-      height: 24px;
     }
   }
 }

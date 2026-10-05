@@ -5,7 +5,7 @@
 //
 // Desktop: the text column (title, line, «أعد طلب الكل») on the right, a row
 // of three 303.67-wide cards on the left, the pair centred in the box.
-// Phones: heading, a centred card slider (the neighbours peek), the button.
+// Phones: heading, a card slider that starts at the right edge, the button.
 //
 // The cards are the shared qprod card (Twig partial, or the JS card when
 // qissa-reorder.js swaps in a customer's last order) drawn at the frame's
@@ -280,15 +280,17 @@ $qreorder-cyan: #91e6f7;
     line-height: 25.58px;
   }
 
-  // one 201.44 card centred, its neighbours peeking at the screen edges
+  // the row starts at the right edge like every other slider; the next
+  // 201.44 card peeks on the left
   .qreorder__track {
     width: 100%;
-    padding-inline: calc(50% - 100.72px);
+    padding-inline: 20px;
+    scroll-padding-inline: 20px;
 
     > .qprod,
     > custom-salla-product-card {
       flex: 0 0 201.44px;
-      scroll-snap-align: center;
+      scroll-snap-align: start;
     }
   }
 

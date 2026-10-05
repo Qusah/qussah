@@ -13,10 +13,8 @@
  *      button. This part runs whatever the quick-view switches say.
  *
  *   2. The ticket. A folded corner with the eye sits on the card's photo
- *      (always there on touch screens; with a pointer it folds out on
- *      hover/focus). On phones (≤768px) the card design puts an eye button
- *      beside «أضف للسلة» instead, and the corner is hidden (qprod-card.scss).
- *      Either one turns THAT card over, in place: at the edge-on
+ *      (always there on phones and touch screens; with a pointer it folds
+ *      out on hover/focus). It turns THAT card over, in place: at the edge-on
  *      moment the card widens — two grid columns, or the whole row when the
  *      grid has fewer than three; its own width inside a slider or a flex row —
  *      and its back is the navy ticket. Product step: gallery (every photo: a
@@ -381,11 +379,6 @@ const Cards = {
       }
       box.insertAdjacentHTML('beforeend',
         `<button type="button" class="qqv-ear" aria-expanded="false" aria-label="${esc(T.qvOn(name))}">${IC.eye}<span aria-hidden="true">${T.flip}</span></button>`);
-      // Phones: the Figma card opens the ticket from an eye beside «أضف للسلة»
-      // instead of the corner (qprod-card.scss swaps the two at 768px).
-      slot.insertAdjacentHTML('afterend',
-        `<button type="button" class="qqv-eye" aria-expanded="false" aria-label="${esc(T.qvOn(name))}"><img src="${esc(salla.url.asset('images/qcard/eye.svg'))}" alt="" width="24" height="24"></button>`);
-      card.classList.add('qqv-has-eye');
     }
     this.sync(card);
   },
@@ -530,7 +523,7 @@ function addBtn(slot) {
 /* A card's ticket triggers: the photo corner, and the phones' eye in the
    button row. Only one is on screen at a time; state goes on both, focus on
    the one that shows. */
-const TRIG = '.qqv-ear, .qqv-eye';
+const TRIG = '.qqv-ear';
 function triggers(card) { return $$(TRIG, card); }
 function shownTrigger(card) {
   const all = triggers(card);

@@ -55,7 +55,7 @@ $qpack-cyan: #91e6f7;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     background: #f4f5f6;
-    border-radius: 29.77px;
+    border-radius: 14.89px;   // the card's own corner; the Figma 29.77 read as a pill
     direction: rtl;
     cursor: grab;
 
@@ -93,7 +93,7 @@ $qpack-cyan: #91e6f7;
     overflow: hidden;
     background: #f4f5f6;
     border: 0;
-    border-radius: 18.61px;
+    border-radius: 7.44px;
     cursor: pointer;
 
     img {
@@ -320,13 +320,13 @@ $qpack-cyan: #91e6f7;
   }
   .qpack__main {
     aspect-ratio: 336.83 / 170.37;
-    border-radius: 33.58px;
+    border-radius: 16px;
   }
   .qpack__thumbs { gap: 12.59px; }
   .qpack__thumb {
     flex-basis: calc((100% - 3 * 12.59px) / 4);
     aspect-ratio: 1;
-    border-radius: 20.99px;
+    border-radius: 10px;
   }
 
   // the ribbon becomes a full-bleed strip between the gallery and the name
