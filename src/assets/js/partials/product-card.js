@@ -2,10 +2,16 @@ import BasePage from '../base-page';
 import { enhanceCarousels } from './card-carousel';
 import { bootQuickView, enhanceJsCard } from './qissa-quick-view';
 import { initPackCards } from './qissa-pack-card';
+import { bindGallery } from './image-viewer';
 
 // Card add → «✓ أُضيف» → stepper, and the quick-view ticket (every page loads
 // this file). Waits for theme::ready itself — nothing touches salla.* here.
 bootQuickView();
+
+// The product page gallery opens the zooming viewer. Bound here, where the
+// viewer is already bundled for the quick view, so product.js does not carry a
+// second copy of it (the theme's 1 MB limit). Document listeners only — no wait.
+bindGallery('.image-slider');
 
 // Product Hero cards (qissa-package / qissa-dual-hero): gallery, pack contents,
 // «اشترِ الآن». They only need the DOM, so they don't wait for the SDK.

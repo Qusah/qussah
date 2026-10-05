@@ -17,7 +17,9 @@
  * (openImageViewer). One instance for the page, kept on `window` because two
  * bundles import this file (product.js and product-card.js).
  *
- * Nothing here calls `salla.*`, so it is safe at any point of the page load.
+ * Binding is safe at any point of the page load. The labels are the theme's
+ * translations (blocks.qissa.*), read from `salla.lang` when the viewer first
+ * opens — always after a click, so the SDK is there by then.
  * Videos are not handled: a video slide keeps fslightbox.
  * Switch: Theme Settings → «تكبير صورة المنتج عند الضغط» (`image_viewer`);
  * off puts `window.image_viewer = 'off'` and the photo opens as it used to.
@@ -29,8 +31,7 @@ const STEP = 2.5;             // what one click zooms to
 const TAP_MOVE = 8;           // px a pointer may travel and still be a tap
 const SWIPE = 56;             // px of horizontal travel that turns the page at 1×
 
-const AR = { title: 'صور المنتج', close: 'إغلاق', next: 'الصورة التالية', prev: 'الصورة السابقة', zoomIn: 'تكبير', zoomOut: 'تصغير', of: 'من', hint: 'اضغط على الصورة للتكبير' };
-const EN = { title: 'Product photos', close: 'Close', next: 'Next photo', prev: 'Previous photo', zoomIn: 'Zoom in', zoomOut: 'Zoom out', of: 'of', hint: 'Tap the photo to zoom' };
+const tr = (key, params) => (window.salla && salla.lang ? salla.lang.get(`blocks.qissa.${key}`, params) : '');
 
 const esc = v => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
@@ -56,31 +57,29 @@ class ImageViewer {
     this.onKey = this.onKey.bind(this);
   }
 
-  get t() { return (document.documentElement.lang || 'ar').slice(0, 2) === 'en' ? EN : AR; }
   get rtl() { return document.documentElement.dir !== 'ltr'; }
 
   build() {
     if (this.root) return;
-    const t = this.t;
     const root = document.createElement('div');
     root.className = 'imgv';
     root.hidden = true;
     root.setAttribute('role', 'dialog');
     root.setAttribute('aria-modal', 'true');
-    root.setAttribute('aria-label', t.title);
+    root.setAttribute('aria-label', tr('viewer_title'));
     // Physical arrows: «next» sits on the left in Arabic, on the right in English.
     root.innerHTML = `
       <div class="imgv__bar">
         <span class="imgv__count" aria-live="polite"></span>
         <span class="imgv__tools">
-          <button type="button" class="imgv__btn" data-imgv="zoom" aria-label="${esc(t.zoomIn)}">${IC.plus}</button>
-          <button type="button" class="imgv__btn" data-imgv="close" aria-label="${esc(t.close)}">${IC.close}</button>
+          <button type="button" class="imgv__btn" data-imgv="zoom" aria-label="${esc(tr('zoom_in'))}">${IC.plus}</button>
+          <button type="button" class="imgv__btn" data-imgv="close" aria-label="${esc(tr('viewer_close'))}">${IC.close}</button>
         </span>
       </div>
       <div class="imgv__stage" data-imgv="stage"><img class="imgv__img" alt="" draggable="false" decoding="async"></div>
-      <button type="button" class="imgv__nav imgv__nav--l" data-imgv="left">${IC.left}</button>
-      <button type="button" class="imgv__nav imgv__nav--r" data-imgv="right">${IC.right}</button>
-      <p class="imgv__hint">${esc(t.hint)}</p>`;
+      <button type="button" class="imgv__nav imgv__nav--l" data-imgv="left" aria-label="${esc(tr(this.rtl ? 'next_photo' : 'prev_photo'))}">${IC.left}</button>
+      <button type="button" class="imgv__nav imgv__nav--r" data-imgv="right" aria-label="${esc(tr(this.rtl ? 'prev_photo' : 'next_photo'))}">${IC.right}</button>
+      <p class="imgv__hint">${esc(tr('zoom_hint'))}</p>`;
     document.body.appendChild(root);
     this.root = root;
     this.stage = root.querySelector('.imgv__stage');
@@ -152,7 +151,7 @@ class ImageViewer {
     this.img.alt = it.alt || '';
     if (this.img.getAttribute('src') !== it.url) this.img.src = it.url;
     else this.root.classList.remove('is-loading');
-    this.count.textContent = this.items.length > 1 ? `${i + 1} ${this.t.of} ${this.items.length}` : '';
+    this.count.textContent = this.items.length > 1 ? tr('photo_count', { current: i + 1, total: this.items.length }) : '';
     this.apply(true);
     // The neighbours, so the next step does not wait on the network.
     [i - 1, i + 1].forEach(k => { const n = this.items[k]; if (n) { const p = new Image(); p.src = n.url; } });
@@ -182,7 +181,7 @@ class ImageViewer {
     const zoomed = this.s > 1.01;
     this.root.classList.toggle('is-zoomed', zoomed);
     this.zoomBtn.innerHTML = zoomed ? IC.minus : IC.plus;
-    this.zoomBtn.setAttribute('aria-label', zoomed ? this.t.zoomOut : this.t.zoomIn);
+    this.zoomBtn.setAttribute('aria-label', tr(zoomed ? 'zoom_out' : 'zoom_in'));
   }
 
   /** Zoom to `s`, keeping the picture point under (cx, cy) where it is. */
