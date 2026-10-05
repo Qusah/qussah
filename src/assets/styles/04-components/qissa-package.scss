@@ -216,32 +216,50 @@ $qpack-cyan: #91e6f7;
     img { display: block; width: 19.94px; height: 19.94px; }
   }
 
-  // «ماذا يوجد في البكج» — two columns of one-line boxes
+  // «ماذا يوجد في البكج» — a titled, ticked list (not the frame's grey boxes,
+  // at the merchant's request): one item a line, up to two lines each. The
+  // title is the list's own aria-label, so it hides with an empty list.
   .qpack__inside {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 4.78px 5.31px;
+    gap: 6px;
     margin: 0;
     padding: 0;
     list-style: none;
 
     &[hidden] { display: none; }
+
+    &::before {
+      content: attr(aria-label);
+      color: $qpack-navy;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 22px;
+    }
   }
   .qpack__inside-item {
-    height: 28.68px;
-    padding: 3.6px;
+    position: relative;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    background: #f9f9f9;
-    border: .3px solid #e5e7eb;
-    border-radius: 3.6px;
-    color: #5a6874;
+    padding-right: 24px;   // the tick's column — rtl: a line starts on the right
+    color: #082033;
     font-family: $qpack-font !important;
-    font-size: 7.97px;
-    font-weight: 400;
-    line-height: 21.48px;   // the box's inner height: one centred line
-    text-align: center;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 20px;
+    text-align: right;
+
+    // images/qcard/check.svg, handed over by the template
+    &::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      right: 0;
+      width: 16px;
+      height: 16px;
+      background: var(--qpack-tick) center / contain no-repeat;
+    }
   }
 
   // price, then «اشترِ الآن»
@@ -395,25 +413,6 @@ $qpack-cyan: #91e6f7;
     img { width: 19.3px; height: 19.3px; }
   }
 
-  // two-line boxes
-  .qpack__inside {
-    gap: 8px 8.47px;
-    padding-top: 3.56px;
-  }
-  .qpack__inside-item {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    height: 45.76px;
-    padding: 5.75px;
-    border-width: .48px;
-    border-radius: 5.75px;
-    font-size: 10.17px;
-    line-height: 1.5;
-    text-align: right;
-    white-space: normal;
-  }
-
   // price (right) beside the button (left); only the price itself
   .qpack__buy {
     flex-direction: row;
@@ -448,7 +447,7 @@ $qpack-cyan: #91e6f7;
 // ---- compact wide layout: half-row cards (qissa-dual-hero) ------------
 // Not in the Figma frames. The wide layout sized for a ~580px card, so two
 // sit side by side and each is seen whole (~300px tall): equal columns, the
-// Figma mobile type scale, one-line pack boxes, the price beside the button.
+// Figma mobile type scale, one-line pack items, the price beside the button.
 // The ribbon moves to the gallery's corner — on the details side, at this
 // size, it would run over the name. Details fill the card's height and the
 // buy row sits at the bottom, so cards in a row line their buttons up.
@@ -513,15 +512,27 @@ $qpack-cyan: #91e6f7;
       img { width: 19.3px; height: 19.3px; }
     }
 
-    // one-line boxes, the full line on hover (title)
-    .qpack__inside { gap: 6px; }
+    // one-line items, the full line on hover (title)
+    .qpack__inside {
+      gap: 3px;
+
+      &::before {
+        font-size: 12px;
+        line-height: 18px;
+      }
+    }
     .qpack__inside-item {
-      height: 30px;
-      padding: 4px 6px;
-      border-radius: 5px;
-      font-size: 10px;
-      line-height: 22px;
-      text-align: right;
+      display: block;
+      font-size: 11px;
+      line-height: 16px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      &::before {
+        top: 1px;
+        width: 14px;
+        height: 14px;
+      }
     }
 
     .qpack__buy {

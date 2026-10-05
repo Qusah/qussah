@@ -97,10 +97,13 @@
             </div>
         {% endif %}
 
-        {# «ماذا يوجد في البكج» — filled by qissa-pack-card.js with the quick view's
-           own parser, falling back to the subtitle split on «،»; hidden if empty #}
+        {# «ماذا يوجد في البكج» — a titled, ticked list, filled by qissa-pack-card.js
+           with the quick view's own parser, falling back to the subtitle split on
+           «،»; hidden if empty. The title is the quick view's (a package by its
+           name, a carton otherwise) and is drawn from the aria-label; the tick is
+           images/qcard/check.svg. #}
         {% if show_inside %}
-            <ul class="qpack__inside" data-qpack-inside="{{ product.description|default('')|slice(0, 5000) }}" data-qpack-sub="{{ product.subtitle|default('') }}" hidden></ul>
+            <ul class="qpack__inside" aria-label="{{ trans(product.name matches '/بكج|باقة|مجموعة/' ? 'blocks.qissa.inside_pack' : 'blocks.qissa.inside_box') }}" style="--qpack-tick: url('{{ 'images/qcard/check.svg' | asset }}')" data-qpack-inside="{{ product.description|default('')|slice(0, 5000) }}" data-qpack-sub="{{ product.subtitle|default('') }}" hidden></ul>
         {% endif %}
 
         {% if show_price or show_buy %}

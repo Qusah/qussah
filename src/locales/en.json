@@ -82,6 +82,8 @@
       "list_view": "List view",
       "grid_view": "Grid view",
       "zoom_image": "Zoom image",
+      "inside_pack": "What's in the package?",
+      "inside_box": "What's in the carton?",
       "viewer_title": "Product photos",
       "viewer_close": "Close",
       "next_photo": "Next photo",
