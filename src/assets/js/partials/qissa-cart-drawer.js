@@ -99,7 +99,8 @@ class QissaCartDrawer {
     });
 
     document.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && this.isOpen) { this.close(); }
+      // a quick view open on one of the lines takes the first Escape (qissa-quick-view.js)
+      if (event.key === 'Escape' && this.isOpen && !this.root.querySelector('.is-qv-open')) { this.close(); }
     });
   }
 
@@ -266,7 +267,7 @@ class QissaCartDrawer {
     const was = !out && regular > QissaCartDrawer.num(item.total) + 0.01 ? `<s class="qcd__was">${this.money(regular)}</s>` : '';
 
     return `
-      <div class="qcd__item" data-item-id="${item.id}" data-qty="${qty}"${max ? ` data-max="${max}"` : ''}>
+      <div class="qcd__item" data-item-id="${item.id}" data-qqv-cart="${QissaCartDrawer.attr(item.product_id || '')}" data-qty="${qty}"${max ? ` data-max="${max}"` : ''}>
         <a class="qcd__thumb" href="${QissaCartDrawer.attr(url)}" tabindex="-1" aria-hidden="true">
           ${image ? `<img src="${QissaCartDrawer.attr(image)}" alt="" width="133" height="119" loading="lazy" />` : ''}
         </a>

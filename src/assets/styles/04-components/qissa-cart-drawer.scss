@@ -99,6 +99,7 @@ $qcd-green: #008036;
     border-bottom: 0.64px solid #f1f1f1;
   }
   &__thumb {
+    position: relative;   // the quick view's corner sits on the photo
     display: block; flex: none;
     width: 133px; height: 119px;
     overflow: hidden;
@@ -156,6 +157,8 @@ $qcd-green: #008036;
   &__i { display: block; width: 14.24px; height: 14.24px; }
   &__n { width: 26.44px; color: $qcd-ink; font-size: 14.24px; font-weight: 500; line-height: 21.36px; text-align: center; }
   &__item.is-busy &__qty { opacity: 0.6; }
+  // a line turned over into the quick view's short ticket (qissa-quick-view.js)
+  &__item.is-qv-open { display: block; margin: 10px 12px; }
 
   /* ---- foot (339:3529): the sums, a dashed rule, total, checkout ---- */
   &__foot {

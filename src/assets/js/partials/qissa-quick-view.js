@@ -38,7 +38,8 @@
  *      buttons, no «طلبك» step (`.qqv-lite`). The line's own fields (quantity,
  *      remove, the hidden id) stay in the DOM under the back, so the cart's
  *      form and cart.js keep working on them; a line removed while open lets
- *      the ticket go. The cart drawer's rows are not touched.
+ *      the ticket go. The cart drawer's lines (`.qcd__item[data-qqv-cart]`,
+ *      qissa-cart-drawer.js) get the same corner and the same short ticket.
  *
  * Verified against the live store (26 Sep 2026): getDetails(id, ['images',
  * 'options', 'rating']) returns images / options / rating; addItem,
@@ -538,16 +539,20 @@ function focusable(el) {
    The cart page's lines become cards the ticket can turn: the corner goes on
    the photo (beside its link, never inside it — the same wrapper move the
    one-photo Twig card gets), and `qqv-row` marks the short ticket. */
+const ROW = '.qcart__item[data-qqv-cart], .qcd__item[data-qqv-cart]';   // the cart page's lines, the cart drawer's
+const ROW_THUMB = '.qcart__item-thumb, .qcd__thumb';
+const ROW_NAME = '.qcart__item-info a, .qcd__name';
 const CartRows = {
   scan() {
     if (!qvGlobalOn()) return;
-    $$('.qcart__item[data-qqv-cart]:not(.qqv-card)').forEach(row => {
+    $$(ROW).forEach(row => {
+      if (row.classList.contains('qqv-card')) return;
       const id = row.dataset.qqvCart;
-      const link = $('.qcart__item-thumb', row);
+      const link = $(ROW_THUMB, row);
       if (!id || !link) return;
       row.dataset.qqvId = String(id);
       row.classList.add('qqv-card', 'qqv-row', 'qqv-has-trig');
-      const nameEl = $('.qcart__item-info a', row);
+      const nameEl = $(ROW_NAME, row);
       const name = nameEl ? clean(nameEl.textContent) : '';
       const box = document.createElement('div');
       box.className = link.className;
@@ -564,8 +569,8 @@ const CartRows = {
 function cardData(card) {
   const id = card.dataset.qqvId;
   if (card.classList.contains('qqv-row')) {
-    const nameEl = $('.qcart__item-info a', card);
-    const img = $('.qcart__item-thumb img', card);
+    const nameEl = $(ROW_NAME, card);
+    const img = $('.qcart__item-thumb img, .qcd__thumb img', card);
     const url = img && (img.currentSrc || img.getAttribute('src'));
     return {
       id,
@@ -638,6 +643,9 @@ const settle = a => (a ? a.finished.catch(() => {}) : Promise.resolve());
 /** grid: the card (or its wrapper) is a grid item — it spans. Flex: a slider
     track or a wrapping row — it turns at its own width. */
 function layoutOf(host) {
+  // a cart drawer line turns at its own width: the panel above it is a flex
+  // column, and treating that as a slider track would unpin its head and foot
+  if (host.closest('.qcd')) return { item: host };
   let item = host;
   let parent = host.parentElement;
   for (let i = 0; i < 2 && parent; i++) {
@@ -1258,8 +1266,11 @@ function onIntent(e) {
 }
 
 function onKey(e) {
-  // Salla's own sheets and the cart drawer close on Escape too; leave them be.
-  if (e.key === 'Escape' && Ticket.open && !document.body.matches('.modal-is-open,.qcd-open')) Ticket.hide(true);
+  // Salla's own sheets and the cart drawer close on Escape too; leave them be —
+  // unless the ticket is open on one of the drawer's own lines, which goes first.
+  if (e.key !== 'Escape' || !Ticket.open || document.body.matches('.modal-is-open')) return;
+  if (document.body.matches('.qcd-open') && !(Ticket.card && Ticket.card.closest('.qcd'))) return;
+  Ticket.hide(true);
 }
 
 /* Corner colour — theme setting `quick_view_button_color` (master.twig, a
@@ -1310,6 +1321,15 @@ function boot() {
         if (Ticket.card && !Ticket.card.isConnected) Ticket.hide(false);
       }, 120);
     }).observe(main, { childList: true, subtree: true });
+    // The cart drawer sits outside <main> and redraws its lines on every cart
+    // answer: put the corners back, and let go of a line that was redrawn.
+    const drawer = document.querySelector('[data-qcd]');
+    if (drawer && !main.contains(drawer)) {
+      new MutationObserver(() => {
+        CartRows.scan();
+        if (Ticket.card && !Ticket.card.isConnected) Ticket.hide(false);
+      }).observe(drawer, { childList: true, subtree: true });
+    }
   }
 }
 
