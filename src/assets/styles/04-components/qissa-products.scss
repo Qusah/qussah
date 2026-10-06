@@ -165,10 +165,9 @@ $qprods-phi: .0062, .0228, .0668, .1587, .3085, .5, .6915, .8413, .9332, .9772, 
 
   .qprods__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 12.9px;
-    row-gap: 9.92px;
+    gap: 8px;   // 524:1410 — cards 182.17 wide
 
-    > .qprod { min-height: 343.91px; }   // Figma's mobile grid rows
+    > .qprod { min-height: 343.83px; }   // Figma's mobile grid rows
   }
 
   // «عرض الكل»: the grid's full width, at the phone card button's height/radius

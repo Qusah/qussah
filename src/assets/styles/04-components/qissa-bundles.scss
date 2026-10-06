@@ -65,9 +65,8 @@
 // ---- mobile: Figma 290:7685 — the products section's grid (290:7925) ----
 @media (max-width: 768px) {
   .qbund__grid {
-    column-gap: 12.9px;
-    row-gap: 9.92px;
+    gap: 8px;
 
-    > .qprod { min-height: 343.91px; }
+    > .qprod { min-height: 343.83px; }
   }
 }
