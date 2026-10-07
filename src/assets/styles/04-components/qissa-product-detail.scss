@@ -1304,9 +1304,9 @@ $qpd-muted: #5a6874;
   }
   &__grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 279.16px));
+    grid-template-columns: repeat(4, var(--qcard-w, minmax(0, 279.16px)));
     justify-content: center;
-    gap: 26.09px;
+    gap: var(--qcard-gap);
     margin-top: 31.66px;
   }
 }
@@ -1461,6 +1461,11 @@ $qpd-muted: #5a6874;
       border-color: #30378e;
       color: #fff;
     }
+  }
+
+  // desktop: the slider's cards take the shared card width
+  @media (min-width: 1201px) {
+    .s-products-slider-card { width: calc(var(--qcard-w) + 20px) !important; max-width: none !important; }   // the slide pads its card 10 a side
   }
 
   // tablet / in-between: the slider scrolls (only ~3–4 cards fit) but the

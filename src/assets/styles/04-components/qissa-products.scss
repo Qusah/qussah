@@ -66,17 +66,14 @@ $qprods-phi: .0062, .0228, .0668, .1587, .3085, .5, .6915, .8413, .9332, .9772, 
     line-height: 23.82px;
   }
 
-  // ---- grid: 4 cols of 280.99, gaps 16.70 × 15.82 (1174.07 in all) ----
+  // ---- grid: four cards at the shared card width (qprod-card.scss) ----
   &__grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    column-gap: 16.7px;
-    row-gap: 15.82px;
+    grid-template-columns: repeat(4, var(--qcard-w, minmax(0, 1fr)));
+    justify-content: center;
+    gap: var(--qcard-gap);
     width: 100%;
-    max-width: 1174.07px;
     direction: rtl;
-
-    > .qprod { min-height: 455.21px; }   // Figma's card frame height
   }
 
   // ---- optional «عرض الكل» under the grid ----
@@ -122,7 +119,7 @@ $qprods-phi: .0062, .0228, .0668, .1587, .3085, .5, .6915, .8413, .9332, .9772, 
   // No max-width here: four tracks fill the 1174.07 cap to 0.02px, and the
   // fourth must fit for a widened card to sit beside the other two.
   .qprods__grid:not(:has(> .qprod:nth-child(4))) {
-    grid-template-columns: repeat(auto-fit, 280.99px);
+    grid-template-columns: repeat(auto-fit, var(--qcard-w, 280.99px));
     justify-content: center;
     max-width: none;
   }

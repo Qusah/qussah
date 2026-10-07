@@ -366,7 +366,7 @@ class ProductCard extends HTMLElement {
     if (sold <= 0) return '';
     return `<p class="qprod__sold">
         <img src="${this.qcardIcon('fire')}" alt="" width="20" height="20">
-        <span>${salla.lang.get('blocks.qissa.sold')} ${sold} ${salla.lang.get('blocks.qissa.times')}</span>
+        <span>${salla.lang.get('blocks.qissa.sold')} ${sold.toLocaleString('en-US')} ${salla.lang.get('blocks.qissa.times')}</span>
       </p>`;
   }
 
