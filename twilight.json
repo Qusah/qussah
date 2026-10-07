@@ -3550,20 +3550,6 @@
                 },
                 {
                     "type": "boolean",
-                    "id": "show_proof",
-                    "format": "switch",
-                    "icon": "sicon-hashtag",
-                    "label": {
-                        "en": "Show the review count line",
-                        "ar": "إظهار سطر عدد التقييمات"
-                    },
-                    "description": "عدد تقييمات المتجر فوق الصفوف، ومعه أن آخر التقييمات كلها خمس نجوم وأن المعروض من مشترين موثّقين. كل جزء يظهر فقط إذا كان صحيحاً",
-                    "required": false,
-                    "value": true,
-                    "selected": true
-                },
-                {
-                    "type": "boolean",
                     "id": "show_all_link",
                     "format": "switch",
                     "icon": "sicon-link",

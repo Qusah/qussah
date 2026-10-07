@@ -1,7 +1,7 @@
 // ====================================================================
 // Qissa Testimonials — «آراء العملاء». Figma "Qusah Re-Vamp", section
-// «Customer reviews · picked»: desktop 503:509, phone 503:657. A tinted panel
-// with no visible heading: the count line, the rows, the link to every review.
+// «Customer reviews · picked»: desktop 503:509, phone 503:657. A tinted panel:
+// the section's title, the rows, the link to every review.
 // The strongest review rides in the navy card; the others are white.
 //
 // The rows are VIRTUAL (qissa-testimonials.js) and move as Latafa's do: a
@@ -44,64 +44,17 @@ $qtest-hair: rgba(0, 0, 0, .08);
     background: linear-gradient(180deg, #e2f3fa 0%, #f1f9fc 70%, #f6fbfd 100%);
   }
 
-  // the heading is read out, not shown
-  &__sr {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  // ---- the count line ----
-  &__proof {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 6px 12px;
+  // ---- the title ----
+  &__title {
     margin: 0 0 24px;
-    color: $qtest-ink-2;
-    font-family: $qtest-font !important;
-    font-size: 15px;
-    line-height: 1.5;
-  }
-  &__count {
     color: $qtest-deep;
-    font-size: 19px;
+    font-family: $qtest-font !important;
+    font-size: 34px;
     font-weight: 700;
+    line-height: 1.25;
+    text-wrap: balance;
   }
-  &__sep {
-    width: 1px;
-    height: 16px;
-    background: rgba(23, 41, 81, .18);
-  }
-  &__recent,
-  &__trust {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  &__recent svg {
-    flex: none;
-    width: 14px;
-    height: 14px;
-    fill: #f5a700;
-  }
-  &__trust {
-    color: $qtest-navy;
-    font-size: 13px;
-    font-weight: 700;
-
-    svg {
-      flex: none;
-      width: 15px;
-      height: 15px;
-    }
-  }
-  // nothing after the count → no separator
-  &__sep:has(+ [hidden] + [hidden]) { display: none; }
+  &__title-hl { color: $qtest-navy; }
 
   // ---- the rows: out to the panel's edges, 16 apart, soft at both ends ----
   &__rows {
@@ -325,16 +278,10 @@ $qtest-hair: rgba(0, 0, 0, .08);
 
   .qtest__panel { padding: 28px var(--qtest-pad) 12px; }
 
-  .qtest__proof {
+  .qtest__title {
     margin-bottom: 20px;
-    font-size: 14px;
+    font-size: 26px;
   }
-  .qtest__count {
-    flex-basis: 100%;
-    font-size: 17px;
-  }
-  .qtest__sep { display: none; }
-  .qtest__trust { flex-basis: 100%; }
 
   .qtest__viewport--second { display: none; }
 

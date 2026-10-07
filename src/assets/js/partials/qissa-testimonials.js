@@ -29,9 +29,8 @@
  *     the most specific first (longer, naming delivery / softness / price /
  *     service, carrying a number), one per customer, and the top one rides in
  *     the navy card. Later pages join in the order they arrive.
- *   · Honest count line. The store's own total; «the latest N are all five
- *     stars» only while every review walked so far is five stars; «verified
- *     buyers» because only reviews with an order behind them are shown.
+ *   · Verified only. A card carries «مشترٍ موثّق», so only reviews with an
+ *     order behind them are shown.
  *   · Keyboard. A focused row holds still and the arrow keys step it a card.
  *
  * Source: the store's real reviews (use_real_reviews, default on); the
@@ -61,7 +60,6 @@ const PHONE = '(max-width: 768px)';
 
 const mod = (n, m) => ((n % m) + m) % m;
 const clampStars = n => Math.max(0, Math.min(5, Math.round(Number(n) || 0))) || 5;
-const RECENT_MIN = 30;        // «the latest N are all five stars» needs at least a page behind it
 
 // how much a review says: its length, the things shoppers ask about, a number
 const TOPICS = ['توصيل', 'وصل', 'يوم', 'ايام', 'أيام', 'سنوات', 'سنين', 'ناعم', 'نعوم', 'ملمس', 'سعر', 'اسعار', 'أسعار', 'عروض', 'خدمة', 'جود', 'مشكل', 'تعويض', 'اول مره', 'أول تجربه',
@@ -113,9 +111,6 @@ class StoreReviews {
     this.done = false;
     this.bare = false;
     this.seen = new Set();
-    this.total = 0;        // the store's own count
-    this.walked = 0;       // reviews read so far, stars-only ones included
-    this.allFive = true;   // …and whether every one of them was five stars
     this.pending = null;
     this.started = Date.now();
     this.restore();
@@ -132,9 +127,6 @@ class StoreReviews {
       this.page = c.page | 0;
       this.done = !!c.done;
       this.bare = !!c.bare;
-      this.total = c.total | 0;
-      this.walked = c.walked | 0;
-      this.allFive = c.allFive !== false;
       this.started = c.t;
     } catch (e) { /* storage blocked or unreadable — walk afresh */ }
   }
@@ -143,7 +135,6 @@ class StoreReviews {
     try {
       localStorage.setItem(CACHE_KEY, JSON.stringify({
         v: CACHE_VERSION, t: this.started, page: this.page, done: this.done, bare: this.bare, items: this.items,
-        total: this.total, walked: this.walked, allFive: this.allFive,
       }));
     } catch (e) { /* full or blocked — the list in memory still works */ }
   }
@@ -184,16 +175,13 @@ class StoreReviews {
       this.seen.add(key);
       fresh++;
       const stars = clampStars(r.rating ?? r.stars);
-      this.walked++;
-      if (stars !== 5) this.allFive = false;
-      // a card needs a quote, and an order behind it — the count line says «verified buyers»
+      // a card needs a quote, and an order behind it — each one says «verified buyer»
       if (text && r.has_order !== false) {
         this.items.push({ k: key, text, name: plain(r.name), stars, city: plain(r.city), date: day(r.created_at ?? r.date), ok: r.has_order === true });
       }
     }
     // no new rows means the endpoint ignored `page` — stop rather than repeat
     const p = res?.pagination || {};
-    if (Number(p.total) > 0) this.total = Number(p.total);
     const next = (p.links && p.links.next) || ((p.currentPage || p.current_page) < (p.totalPages || p.total_pages));
     if (this.bare || !fresh || !next) this.done = true;
     this.save();
@@ -504,28 +492,6 @@ class Row {
   }
 }
 
-/* ---- the count line -------------------------------------------------- */
-
-// every part is shown only when the store's own answer makes it true
-function proof(section, store) {
-  const line = section.querySelector('[data-qtest-proof]');
-  if (!line || !(store.total > 0)) return;
-  const n = v => Number(v).toLocaleString('en-US');
-  const ar = (document.documentElement.lang || 'ar').toLowerCase().startsWith('ar');
-  const t = store.total;
-  // Arabic counts its nouns differently below eleven
-  const count = ar && t === 1 ? 'تقييم واحد' : ar && t === 2 ? 'تقييمان' : ar && t <= 10 ? `${t} تقييمات`
-    : !ar && t === 1 ? '1 review' : (section.dataset.qtestCount || ':n').replace(':n', n(t));
-  line.querySelector('[data-f="count"]').textContent = count;
-  const recent = line.querySelector('[data-f="recent"]');
-  if (store.allFive && store.walked >= RECENT_MIN) {
-    line.querySelector('[data-f="recent-text"]').textContent = (section.dataset.qtestRecent || '').replace(':n', n(store.walked));
-    recent.hidden = false;
-  }
-  line.querySelector('[data-f="trust"]').hidden = !store.items.every(r => r.ok);
-  line.hidden = false;
-}
-
 /* ---- boot ------------------------------------------------------------ */
 
 async function start(section) {
@@ -542,7 +508,7 @@ async function start(section) {
     const store = storeReviews();
     // more than the rows hold, so the ranking has something to choose from
     try { await store.fill(need * 3, PAGES_FIRST); } catch (e) { /* fall back below */ }
-    if (store.items.length) { source = rankedFeed(store); proof(section, store); }
+    if (store.items.length) source = rankedFeed(store);
   }
   if (!source && mock.length) source = { items: mock, done: true, fill: () => Promise.resolve() };
   if (!source) { section.remove(); return; }

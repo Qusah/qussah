@@ -2,11 +2,10 @@
 | Variable                   | Type         | Description                                              |
 |----------------------------|--------------|----------------------------------------------------------|
 | component                  | object       | merchant settings from twilight.json                     |
-| component.title_highlight  | string       | heading's leading word(s) — read by screen readers only  |
-| component.title            | string       | heading rest — read by screen readers only               |
+| component.title_highlight  | string       | heading's leading word(s), navy                          |
+| component.title            | string       | heading rest, deep navy                                  |
 | component.use_real_reviews | bool         | the store's real reviews, every written one (default on) |
 | component.items            | Collection[] | mock reviews (name, role → the grey line, text, stars) — shown when the switch is off or the store has none |
-| component.show_proof       | bool         | the count line above the rows (default on)               |
 | component.show_all_link    | bool         | the «عرض جميع التقييمات» link under the rows (default on)  |
 | component.two_rows         | bool         | two counter-scrolling rows on desktop (default on)       |
 | component.speed            | int          | seconds for one card to pass (default 9)                 |
@@ -14,9 +13,8 @@
 | position                   | int          | sorting block                                            |
 
 Figma "Qusah Re-Vamp", section «Customer reviews · picked»: desktop 503:509,
-phone 503:657. A tinted panel with no visible heading: the count line (how many
-reviews the store has, that the latest are all five stars, that the ones on
-show are verified buyers), then the rows, then the link to every review. The
+phone 503:657. A tinted panel: the section's title, then the rows, then the
+link to every review. The
 rows keep Latafa's behaviour — two counter-scrolling rows on desktop, one on
 phones, drag / swipe, optional pause on hover.
 
@@ -34,7 +32,6 @@ iterable (the first list operation consumes it — see Latafa's testimonials).
 #}
 {% set real     = component.use_real_reviews is not defined or component.use_real_reviews is null or component.use_real_reviews %}
 {% set two_rows = component.two_rows is not defined or component.two_rows is null or component.two_rows %}
-{% set proof    = component.show_proof is not defined or component.show_proof is null or component.show_proof %}
 {% set all_link = component.show_all_link is not defined or component.show_all_link is null or component.show_all_link %}
 
 {% set mock = [] %}
@@ -47,31 +44,14 @@ iterable (the first list operation consumes it — see Latafa's testimonials).
          {%- if component.pause_on_hover %} data-qtest-pause{% endif %}
          data-qtest-speed="{{ component.speed ?: 9 }}"
          data-qtest-anon="{{ trans('blocks.qissa.customer') }}"
-         data-qtest-count="{{ trans('blocks.qissa.reviews_count') }}"
-         data-qtest-recent="{{ trans('blocks.qissa.reviews_recent') }}"
          aria-labelledby="qtest-title-{{ position }}"
          {%- if not real and not mock|length %} hidden{% endif %}>
     <div class="container">
         <div class="qtest__panel">
 
-            <h2 class="qtest__sr" id="qtest-title-{{ position }}">{{ component.title_highlight }} {{ component.title }}</h2>
-
-            {# the count line: filled by the script from what the store really returns; it stays
-               hidden for mock reviews, and each part only shows when it is true #}
-            {% if proof %}
-                <p class="qtest__proof" data-qtest-proof hidden>
-                    <strong class="qtest__count" data-f="count"></strong>
-                    <span class="qtest__sep" aria-hidden="true"></span>
-                    <span class="qtest__recent" data-f="recent" hidden>
-                        <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1.6l2.5 5.3 5.8.7-4.3 4 1.1 5.8L10 14.5l-5.1 2.9 1.1-5.8-4.3-4 5.8-.7z"/></svg>
-                        <span data-f="recent-text"></span>
-                    </span>
-                    <span class="qtest__trust" data-f="trust" hidden>
-                        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="7.25" stroke="currentColor" stroke-width="1.5"/><path d="M4.8 8.2l2.2 2.2 4.2-4.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        {{ trans('blocks.qissa.reviews_verified_note') }}
-                    </span>
-                </p>
-            {% endif %}
+            <h2 class="qtest__title" id="qtest-title-{{ position }}">
+                <span class="qtest__title-hl">{{ component.title_highlight }}</span> {{ component.title }}
+            </h2>
 
             {# row two runs the other way; phones show row one only. data-phase = where each row
                starts on desktop (px past the right edge): row one opens on its first card, the
