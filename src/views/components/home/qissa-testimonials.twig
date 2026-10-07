@@ -7,6 +7,8 @@
 | component.use_real_reviews | bool         | the store's real reviews, every written one (default on) |
 | component.items            | Collection[] | mock reviews (name, role → the grey line, text, stars) — shown when the switch is off or the store has none |
 | component.show_all_link    | bool         | the «عرض جميع التقييمات» link under the rows (default on)  |
+| component.bg_color         | string       | panel background, top colour (empty → the design's tint)   |
+| component.bg_color2        | string       | panel background, bottom colour (with the first → gradient) |
 | component.two_rows         | bool         | two counter-scrolling rows on desktop (default on)       |
 | component.speed            | int          | seconds for one card to pass (default 9)                 |
 | component.pause_on_hover   | bool         | stop the rows under a mouse (default off)                |
@@ -34,6 +36,15 @@ iterable (the first list operation consumes it — see Latafa's testimonials).
 {% set two_rows = component.two_rows is not defined or component.two_rows is null or component.two_rows %}
 {% set all_link = component.show_all_link is not defined or component.show_all_link is null or component.show_all_link %}
 
+{# the panel's background: both colours → a top-to-bottom gradient, the first alone → one flat
+   colour, neither → the design's own tint #}
+{% set qtbg = '' %}
+{% if component.bg_color and component.bg_color2 %}
+    {% set qtbg = 'linear-gradient(180deg, ' ~ component.bg_color ~ ', ' ~ component.bg_color2 ~ ')' %}
+{% elseif component.bg_color or component.bg_color2 %}
+    {% set qtbg = component.bg_color ?: component.bg_color2 %}
+{% endif %}
+
 {% set mock = [] %}
 {% for item in component.items %}
     {% if item.text %}{% set mock = mock|merge([item]) %}{% endif %}
@@ -47,7 +58,7 @@ iterable (the first list operation consumes it — see Latafa's testimonials).
          aria-labelledby="qtest-title-{{ position }}"
          {%- if not real and not mock|length %} hidden{% endif %}>
     <div class="container">
-        <div class="qtest__panel">
+        <div class="qtest__panel"{% if qtbg %} style="background: {{ qtbg }};"{% endif %}>
 
             <h2 class="qtest__title" id="qtest-title-{{ position }}">
                 <span class="qtest__title-hl">{{ component.title_highlight }}</span> {{ component.title }}

@@ -3562,6 +3562,32 @@
                     "selected": true
                 },
                 {
+                    "id": "bg_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Section background: top color",
+                        "ar": "خلفية القسم: اللون العلوي"
+                    },
+                    "description": "اتركه فارغاً لاستخدام الخلفية الافتراضية. إذا اخترت هذا اللون فقط تصبح الخلفية لوناً واحداً",
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "bg_color2",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Section background: bottom color",
+                        "ar": "خلفية القسم: اللون السفلي"
+                    },
+                    "description": "مع اللون العلوي يصنع تدرجاً من الأعلى إلى الأسفل",
+                    "required": false,
+                    "value": null
+                },
+                {
                     "id": "items",
                     "key": "2bb58935-a2b4-4d86-af9f-9531d6af008b",
                     "type": "collection",
