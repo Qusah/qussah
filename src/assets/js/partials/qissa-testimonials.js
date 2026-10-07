@@ -488,7 +488,22 @@ class Row {
     };
     vp.addEventListener('pointerup', up);
     vp.addEventListener('pointercancel', up);
-    vp.addEventListener('lostpointercapture', up);
+    // a finger is captured by the card it lands on; taking the capture for the row
+    // makes the CARD lose it, and that event bubbles here: only the row's own loss ends the drag
+    vp.addEventListener('lostpointercapture', e => { if (e.target === vp) up(); });
+
+    // a trackpad or a tilted wheel moves the row sideways; an up-and-down scroll stays the page's
+    let wheelEnd = 0;
+    vp.addEventListener('wheel', e => {
+      if (!this.anim || this.still || Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+      e.preventDefault();
+      this.flags.drag = true;
+      this.sync();
+      this.anim.currentTime += ((-e.deltaX * this.sgn) / (this.dir * this.speed)) * 1000;
+      if (!frame) frame = requestAnimationFrame(() => { frame = 0; this.layout(); });
+      clearTimeout(wheelEnd);
+      wheelEnd = setTimeout(() => { if (!d) { this.flags.drag = false; this.sync(); } }, 220);
+    }, { passive: false });
   }
 }
 

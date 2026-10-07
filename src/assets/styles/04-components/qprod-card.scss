@@ -195,6 +195,8 @@ custom-salla-product-card.qprod-js {
   gap: 6.98px;
   height: 15.81px;
 }
+// no rating yet: the line keeps its place so every card measures the same
+.qprod__rating.is-empty { visibility: hidden; }
 .qprod__stars {
   display: flex;
   align-items: center;

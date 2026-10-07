@@ -21,6 +21,7 @@ class App extends AppHelpers {
     this.initAddToCart();
     this.hookGuestWishlist();
     this.hydrateCardDescriptions();
+    this.hydrateCardMeta();
     this.initiateDropdowns();
     this.initiateModals();
     this.initiateCollapse();
@@ -360,6 +361,55 @@ isElementLoaded(selector, timeout = 8000){
       el.removeAttribute('data-qdesc');
       if (text) el.textContent = text; else el.remove();
     });
+  }
+
+  /**
+   * Server-rendered product cards come without the rating and the sold count:
+   * the page's product objects do not carry them, the products API does. Fetch
+   * them once for the cards on the page and print the same two lines the JS
+   * card (product-card.js) and partials/qprod-card.twig draw. A card with no
+   * rating keeps an empty line in its place, so every card measures the same.
+   */
+  hydrateCardMeta() {
+    const cards = [...document.querySelectorAll('.qprod')].filter(c => !c.querySelector('.qprod__rating, .qprod__sold') && c.querySelector('.qprod__info'));
+    if (!cards.length || !(salla.product && salla.product.fetch)) return;
+    const idOf = (card) => {
+      const like = card.querySelector('.qprod__like[data-id]');
+      if (like) return like.dataset.id;
+      const m = /id:\s*'(\d+)'/.exec((card.querySelector('.qprod__add') || card).getAttribute('onclick') || '');
+      return m ? m[1] : (card.dataset.qqvId || '');
+    };
+    const byId = new Map();
+    cards.forEach((card) => { const id = idOf(card); if (id) byId.set(id, (byId.get(id) || []).concat(card)); });
+    if (!byId.size) return;
+    // the theme's own icons, from wherever this page already points at them
+    const heart = document.querySelector('.qprod__like-ic');
+    const base = heart ? ((/url\(['"]?(.*?)heart\.svg/.exec(heart.getAttribute('style') || '') || [])[1] || '') : '';
+    const icon = name => `${base}${name}.svg`;
+    const word = key => salla.lang.get(`blocks.qissa.${key}`);
+    const paint = (product) => {
+      const stars = parseFloat(product.rating && product.rating.stars) || 0;
+      const sold = Number(product.sold_quantity) || 0;
+      const filled = Math.floor(stars);
+      const rating = `<div class="qprod__rating${stars ? '' : ' is-empty'}"${stars ? '' : ' aria-hidden="true"'}>
+          <span class="qprod__stars"${stars ? ` role="img" aria-label="${stars} / 5"` : ''}>${base ? [1, 2, 3, 4, 5].map(i => `<img src="${icon(i <= filled ? 'star' : 'star-empty')}" alt="" width="12" height="12">`).join('') : ''}</span>
+          <span class="qprod__rate">(${stars.toFixed(1)})</span>
+        </div>`;
+      const line = sold > 0 ? `<p class="qprod__sold">
+          ${base ? `<img src="${icon('fire')}" alt="" width="20" height="20">` : ''}
+          <span>${word('sold')} ${sold.toLocaleString('en-US')} ${word('times')}</span>
+        </p>` : '';
+      (byId.get(String(product.id)) || []).forEach((card) => {
+        if (card.querySelector('.qprod__rating, .qprod__sold')) return;
+        card.querySelector('.qprod__info').insertAdjacentHTML('beforeend', rating + line);
+      });
+    };
+    const ids = [...byId.keys()];
+    for (let i = 0; i < ids.length; i += 20) {
+      salla.product.fetch({ source: 'selected', source_value: ids.slice(i, i + 20) })
+        .then(res => (res && res.data || []).forEach(paint))
+        .catch(() => { /* the cards stay as the page printed them */ });
+    }
   }
 
   /**
