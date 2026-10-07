@@ -151,7 +151,8 @@ class ProductCard extends HTMLElement {
     }
 
     if (this.product.status === 'sale') {
-      return salla.lang.get('pages.cart.add_to_cart');
+      // the same words as the page-rendered card (partials/qprod-card.twig)
+      return salla.lang.get('blocks.qissa.add_to_cart') || salla.lang.get('pages.cart.add_to_cart');
     }
 
     if (this.product.type !== 'donating') {
@@ -348,7 +349,8 @@ class ProductCard extends HTMLElement {
   // Whole stars filled (Figma shows 4 of 5 for 4.5), the value beside them.
   qcardRating() {
     const stars = parseFloat(this.product?.rating?.stars) || 0;
-    if (!stars) return '';
+    // no rating yet: the line keeps its place so every card measures the same
+    if (!stars) return `<div class="qprod__rating is-empty" aria-hidden="true"><span class="qprod__stars"></span><span class="qprod__rate">(0.0)</span></div>`;
     const filled = Math.floor(stars);
     const imgs = [1, 2, 3, 4, 5]
       .map(i => `<img src="${this.qcardIcon(i <= filled ? 'star' : 'star-empty')}" alt="" width="12" height="12">`)
@@ -447,6 +449,8 @@ class ProductCard extends HTMLElement {
     // The plain vertical card is the Qussah card (qcardHTML); the featured
     // special / minimal / full-image / horizontal variants keep Salla's layout.
     this.classList.toggle('qprod-js', this.isPlainVertical);
+    // a list that came without rating and sold count (the offers page): app.js fetches them
+    if (this.isPlainVertical && !this.product?.sold_quantity && !this.product?.rating?.stars && window.QissaCardMeta) window.QissaCardMeta();
     // Recompute the card photos for this render (translation reloads re-render).
     this.cardPhotos = this.getCardImages();
       this.innerHTML = this.isPlainVertical ? this.qcardHTML() : `

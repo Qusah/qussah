@@ -22,6 +22,9 @@ class App extends AppHelpers {
     this.hookGuestWishlist();
     this.hydrateCardDescriptions();
     this.hydrateCardMeta();
+    // cards drawn later by product-card.js ask for the same, in one batch
+    let metaTimer = 0;
+    window.QissaCardMeta = () => { clearTimeout(metaTimer); metaTimer = setTimeout(() => this.hydrateCardMeta(), 250); };
     this.initiateDropdowns();
     this.initiateModals();
     this.initiateCollapse();
@@ -371,7 +374,8 @@ isElementLoaded(selector, timeout = 8000){
    * rating keeps an empty line in its place, so every card measures the same.
    */
   hydrateCardMeta() {
-    const cards = [...document.querySelectorAll('.qprod')].filter(c => !c.querySelector('.qprod__rating, .qprod__sold') && c.querySelector('.qprod__info'));
+    const bare = c => !c.querySelector('.qprod__sold, .qprod__rating:not(.is-empty)');
+    const cards = [...document.querySelectorAll('.qprod, custom-salla-product-card.qprod-js')].filter(c => c.querySelector('.qprod__info') && bare(c) && !c.hasAttribute('data-qmeta'));
     if (!cards.length || !(salla.product && salla.product.fetch)) return;
     const idOf = (card) => {
       const like = card.querySelector('.qprod__like[data-id]');
@@ -380,7 +384,7 @@ isElementLoaded(selector, timeout = 8000){
       return m ? m[1] : (card.dataset.qqvId || '');
     };
     const byId = new Map();
-    cards.forEach((card) => { const id = idOf(card); if (id) byId.set(id, (byId.get(id) || []).concat(card)); });
+    cards.forEach((card) => { const id = idOf(card); card.setAttribute('data-qmeta', ''); if (id) byId.set(id, (byId.get(id) || []).concat(card)); });
     if (!byId.size) return;
     // the theme's own icons, from wherever this page already points at them
     const heart = document.querySelector('.qprod__like-ic');
@@ -400,7 +404,8 @@ isElementLoaded(selector, timeout = 8000){
           <span>${word('sold')} ${sold.toLocaleString('en-US')} ${word('times')}</span>
         </p>` : '';
       (byId.get(String(product.id)) || []).forEach((card) => {
-        if (card.querySelector('.qprod__rating, .qprod__sold')) return;
+        if (!bare(card)) return;
+        card.querySelectorAll('.qprod__rating').forEach(el => el.remove());
         card.querySelector('.qprod__info').insertAdjacentHTML('beforeend', rating + line);
       });
     };

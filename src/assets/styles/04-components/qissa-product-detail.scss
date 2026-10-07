@@ -1480,6 +1480,8 @@ $qpd-muted: #5a6874;
     .container {
       padding-inline: 15px;
     }
+    // the same card width as the two-column grids
+    .s-products-slider-card { width: calc((100vw - 20px) / 2) !important; }
     &__head {
       flex-direction: column;
       align-items: stretch;
