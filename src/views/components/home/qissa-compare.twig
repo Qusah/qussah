@@ -1,0 +1,166 @@
+{#
+| Variable                 | Type         | Description                                                  |
+|--------------------------|--------------|--------------------------------------------------------------|
+| component                | object       | merchant settings from twilight.json                         |
+| component.products       | Product[]    | show the table on these products only (empty → wherever the block is added) |
+| component.title          | string       | heading                                                      |
+| component.lede           | string       | line under it (empty → «نتقدّم في X من Y» counted from the rows) |
+| component.crit_head      | string       | heading of the criteria column                               |
+| component.our_name       | string       | our column's name (empty → the page's product name)          |
+| component.our_sub        | string       | line under it (empty → the product's subtitle)               |
+| component.our_image      | string       | our column's photo (empty → the product's photo)             |
+| component.comp1 … comp4  | string       | the alternatives' names; an empty name hides that column     |
+| component.rows           | Collection[] | one criterion per row                                        |
+| row.label                | string       | the criterion                                                |
+| row.ours                 | string       | our value                                                    |
+| row.c1 … row.c4          | string       | each alternative's value (empty → a dash)                    |
+| row.market_wins          | bool         | the alternatives are better on this row (shown plainly)      |
+| component.lost_note      | string       | small line under such a row's criterion                      |
+| component.show_price     | bool         | the price row under our column (default on) — the product's own price |
+| component.price_label    | string       | that row's label                                             |
+| component.footnote       | string       | the note beside the price                                    |
+| component.show_photo / show_ticks / highlight_lost / raised / motion | bool | default on            |
+| component.c_*            | string       | colours (empty → the design's)                               |
+| component.radius         | int          | corner radius, 0–16                                          |
+
+«جدول المقارنة» — Figma "Qusah Re-Vamp", section «New picks · EDITABLE»: desktop
+485:207, phone 485:338. A product-page block: our product against up to four
+alternatives, our column a navy pillar raised above the sheet.
+
+Which products it shows on, two ways (both can be used):
+  · Salla's own: in the theme editor open «صفحة تفاصيل المنتج», pick «تخصيص منتج
+    محدد» and a product, and add this block — it prints on that product's page
+    only, with its own rows and wording.
+  · This block's «المنتجات» field: added once to the product page for all
+    products, it shows only on the ones picked there.
+Either way the table speaks for the product it is on: the name, photo and price
+under our column are that product's own unless typed here (qissa-compare.js
+fills them from the page — pages/product/single.twig carries them in an inert
+<template data-qcmp-product>).
+
+Printed hidden; the script shows it on a product page it belongs to. The rows
+ride a plain loop first: on Salla a collection is a one-shot iterable.
+#}
+{% set names = [] %}
+{% for n in [component.comp1, component.comp2, component.comp3, component.comp4] %}
+    {% if n %}{% set names = names|merge([n]) %}{% endif %}
+{% endfor %}
+
+{% set rows = [] %}
+{% for item in component.rows %}
+    {% if item.label %}{% set rows = rows|merge([item]) %}{% endif %}
+{% endfor %}
+
+{% set show_price = component.show_price is not defined or component.show_price is null or component.show_price %}
+{% set show_photo = component.show_photo is not defined or component.show_photo is null or component.show_photo %}
+{% set show_ticks = component.show_ticks is not defined or component.show_ticks is null or component.show_ticks %}
+{% set mark_lost  = component.highlight_lost is not defined or component.highlight_lost is null or component.highlight_lost %}
+{% set raised     = component.raised is not defined or component.raised is null or component.raised %}
+{% set motion     = component.motion is not defined or component.motion is null or component.motion %}
+
+{% set won = 0 %}
+{% for r in rows %}{% if not r.market_wins and r.ours %}{% set won = won + 1 %}{% endif %}{% endfor %}
+
+{% if names|length and rows|length %}
+<section class="s-block qcmp" id="qcmp-{{ position }}" data-qcmp hidden
+         data-c="{{ names|length }}"
+         data-qcmp-products="{% for p in component.products %}{{ p.id }},{% endfor %}"
+         {%- if not raised %} data-flat{% endif %}
+         {%- if motion %} data-qcmp-motion{% endif %}
+         aria-labelledby="qcmp-title-{{ position }}"
+         style="{% if component.c_bg %}--c-bg:{{ component.c_bg }};{% endif %}{% if component.c_sheet %}--c-sheet:{{ component.c_sheet }};{% endif %}{% if component.c_line %}--c-line:{{ component.c_line }};{% endif %}{% if component.c_head %}--c-head:{{ component.c_head }};{% endif %}{% if component.c_text %}--c-text:{{ component.c_text }};{% endif %}{% if component.c_muted %}--c-muted:{{ component.c_muted }};{% endif %}{% if component.c_val %}--c-val:{{ component.c_val }};{% endif %}{% if component.c_ours %}--c-ours:{{ component.c_ours }};--c-ctick:{{ component.c_ours }};--c-nav:{{ component.c_ours }};{% endif %}{% if component.c_ours_top %}--c-ours-top:{{ component.c_ours_top }};{% elseif component.c_ours %}--c-ours-top:{{ component.c_ours }};{% endif %}{% if component.c_ours_foot %}--c-ours-foot:{{ component.c_ours_foot }};{% elseif component.c_ours %}--c-ours-foot:{{ component.c_ours }};{% endif %}{% if component.c_ours_ink %}--c-ours-ink:{{ component.c_ours_ink }};{% endif %}{% if component.c_ours_soft %}--c-ours-soft:{{ component.c_ours_soft }};{% endif %}{% if component.c_tick %}--c-tick:{{ component.c_tick }};{% endif %}{% if component.c_tick_mark %}--c-tick-mark:{{ component.c_tick_mark }};{% endif %}{% if component.c_lost %}--c-lost:{{ component.c_lost }};{% endif %}{% if component.c_lost_ink %}--c-lost-ink:{{ component.c_lost_ink }};{% endif %}{% if component.radius is not null and component.radius != '' %}--r:{{ component.radius }}px;{% endif %}">
+    <div class="qcmp__in">
+        <div class="qcmp__head">
+            <h2 class="qcmp__title" id="qcmp-title-{{ position }}">{{ component.title|default(trans('blocks.qissa.compare_title')) }}</h2>
+            <p class="qcmp__lede">
+                {%- if component.lede -%}
+                    {{ component.lede }}
+                {%- else -%}
+                    <b>{{ trans('blocks.qissa.compare_lede_a') }} {{ won }} {{ trans('blocks.qissa.compare_lede_b') }} {{ rows|length }}</b>{{ trans('blocks.qissa.compare_lede_c') }}
+                {%- endif -%}
+            </p>
+        </div>
+
+        <div class="qcmp__wrap" data-qcmp-wrap>
+            {# shown by the script only when the alternatives' columns overflow (phones, 3–4 columns) #}
+            <div class="qcmp__nav" data-qcmp-nav hidden>
+                <p class="qcmp-sr" aria-live="polite" data-qcmp-count></p>
+                <button type="button" data-qcmp-prev aria-label="{{ trans('blocks.qissa.compare_prev') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg></button>
+                <button type="button" data-qcmp-next aria-label="{{ trans('blocks.qissa.compare_next') }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7"/></svg></button>
+            </div>
+
+            <div class="qcmp__scroll" data-qcmp-scroll role="region" aria-labelledby="qcmp-title-{{ position }}">
+                <table class="qcmp__table" style="--c:{{ names|length }}">
+                    <colgroup>
+                        <col class="qcmp-k-crit"><col class="qcmp-k-ours">
+                        {% for n in names %}<col>{% endfor %}
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th scope="col" class="qcmp-crit"><span>{{ component.crit_head|default(trans('blocks.qissa.compare_criteria')) }}</span></th>
+                            <th scope="col" class="qcmp-ours">
+                                <div class="qcmp-ph">
+                                    {% if show_photo %}<img data-qcmp-f="image" src="{{ component.our_image }}" alt="" width="400" height="320" loading="lazy"{% if not component.our_image %} hidden{% endif %}>{% endif %}
+                                    <span class="qcmp-nm" data-qcmp-f="name">{{ component.our_name }}</span>
+                                    <span class="qcmp-sb" data-qcmp-f="sub">{{ component.our_sub }}</span>
+                                </div>
+                            </th>
+                            {% for n in names %}
+                                <th scope="col" class="qcmp-comp"><span>{{ n }}</span></th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in rows %}
+                            {% set lost = r.market_wins ? true : false %}
+                            {% set vals = [r.c1, r.c2, r.c3, r.c4] %}
+                            <tr{% if lost and mark_lost %} class="is-lost"{% endif %}>
+                                <th scope="row" class="qcmp-crit">
+                                    <span class="qcmp-lab">{{ r.label }}{% if lost and mark_lost %}<small>{{ component.lost_note|default(trans('blocks.qissa.compare_lost_note')) }}</small>{% endif %}</span>
+                                </th>
+                                <td class="qcmp-ours">
+                                    <span class="qcmp-val">
+                                        {%- if r.ours -%}
+                                            {%- if not lost and show_ticks -%}<svg class="qcmp-tick" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="10"/><path d="M5.8 10.4l2.8 2.8 5.6-6" fill="none" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>{%- endif -%}
+                                            <span class="qcmp-t" data-qcmp-fig>{{ r.ours }}</span>
+                                            {%- if not lost -%}<span class="qcmp-sr"> ({{ trans('blocks.qissa.compare_best') }})</span>{%- endif -%}
+                                        {%- else -%}
+                                            <span aria-hidden="true">—</span><span class="qcmp-sr">{{ trans('blocks.qissa.compare_none') }}</span>
+                                        {%- endif -%}
+                                    </span>
+                                </td>
+                                {% for n in names %}
+                                    {% set v = vals[loop.index0] %}
+                                    <td class="qcmp-comp">
+                                        <span class="qcmp-val">
+                                            {%- if v -%}
+                                                {%- if lost and show_ticks -%}<svg class="qcmp-tick" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="10"/><path d="M5.8 10.4l2.8 2.8 5.6-6" fill="none" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg>{%- endif -%}
+                                                <span class="qcmp-t" data-qcmp-fig>{{ v }}</span>
+                                                {%- if lost -%}<span class="qcmp-sr"> ({{ trans('blocks.qissa.compare_best') }})</span>{%- endif -%}
+                                            {%- else -%}
+                                                <span aria-hidden="true">—</span><span class="qcmp-sr">{{ trans('blocks.qissa.compare_none') }}</span>
+                                            {%- endif -%}
+                                        </span>
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    {% if show_price or component.footnote %}
+                        <tfoot>
+                            <tr>
+                                <th scope="row" class="qcmp-crit"><span class="qcmp-lab">{% if show_price %}{{ component.price_label|default(trans('blocks.qissa.compare_price')) }}{% endif %}</span></th>
+                                <td class="qcmp-ours">
+                                    {# the product's own price and struck price, placed by the script #}
+                                    <div class="qcmp-pr"{% if show_price %} data-qcmp-price{% endif %}></div>
+                                </td>
+                                <td class="qcmp-note" colspan="{{ names|length }}">{% if component.footnote %}<span>{{ component.footnote }}</span>{% endif %}</td>
+                            </tr>
+                        </tfoot>
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}

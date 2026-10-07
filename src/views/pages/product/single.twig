@@ -716,6 +716,14 @@
        a product with a «محتويات البكج» block showing (.is-pack, set by product.js):
        the reviews card beside the navy graphic. The description stays in the
        markup either way. #}
+    {# what a «جدول المقارنة» block (components/home/qissa-compare) says about THIS product where the
+       merchant typed nothing: its name, subtitle, photo and price. Inert — qissa-compare.js reads it. #}
+    <template data-qcmp-product data-id="{{ product.id }}" data-name="{{ product.name }}" data-sub="{{ product.subtitle }}" data-image="{{ product.image.url }}">
+        {% set qcmp_sale = product.is_on_sale and product.sale_price %}
+        <span data-now>{{ qcmp_sale ? (product.sale_price|money) : ((product.starting_price ?: product.price)|money) }}</span>
+        {% if qcmp_sale %}<span data-was>{{ product.regular_price|money }}</span>{% endif %}
+    </template>
+
     <section class="qpd-more" data-qpd-more>
         <div class="qpd-more__details">
             <h2 class="qpd-more__title">{{ trans('blocks.qissa.product_details') }}<span class="qpd-more__title-m"> {{ trans('blocks.qissa.product_details_more') }}</span></h2>

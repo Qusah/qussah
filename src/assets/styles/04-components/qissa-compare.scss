@@ -1,0 +1,199 @@
+// ====================================================================
+// Qissa Compare — «جدول المقارنة» (components/home/qissa-compare). A product
+// page block: our product against up to four alternatives the merchant names,
+// one criterion per row. Our column is a navy pillar that rises above the
+// sheet; a row the market wins is shown as plainly as the ones we win.
+//
+// A real <table>. On phones the criteria and our column stay put while the
+// alternatives scroll sideways under them. Physical right / left on purpose:
+// the build rewrites logical properties for ltr, and this table is rtl.
+// Every colour is a custom property
+// the Twig sets from the component's fields (--c-*); --c is the number of
+// alternative columns. js/partials/qissa-compare.js fills the product's own
+// name / photo / price where the merchant left them empty, sets the figures
+// larger than their units, and shows the arrows only when columns overflow.
+// ====================================================================
+
+.qcmp-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.qcmp[hidden]{display:none}
+.qcmp{font-family:'WesternDigits','GE SS Two',sans-serif;font-size:15px;line-height:1.5;direction:rtl}
+.qcmp :focus-visible{outline:2px solid var(--c-nav);outline-offset:3px;border-radius:8px}
+.s-block.qcmp{margin-top:24px}
+.qcmp{
+  --w-crit:84px; --w-ours:108px; --w-comp:88px; --rise:calc(80px * var(--k-rise)); --bulge:3px; --shade:8px;
+  --c-bg:#f4f5f6; --c-sheet:#ffffff; --c-line:#e3e5ea; --c-head:#172951; --c-text:#172951; --c-muted:#555c6c; --c-val:#3c4353;
+  --c-ours:#2c348e; --c-ours-top:#3a43a6; --c-ours-foot:#172951; --c-ours-ink:#ffffff; --c-ours-soft:#d3d8f6;
+  --c-tick:#91e6f7; --c-tick-mark:#172951; --c-lost:#e2f7fc; --c-lost-ink:#172951; --c-ctick:#2c348e; --c-ctick-mark:#ffffff; --c-strike:#ff7a7a; --c-nav:#2c348e;
+  --k-rise:1; --k-row:1; --k-type:1; --r:15px; --ease:cubic-bezier(.16,1,.3,1);
+  --ground:var(--c-bg); --sheet:var(--c-sheet); --line:var(--c-line); --muted:var(--c-muted); --navy:var(--c-ours); --on-navy-soft:var(--c-ours-soft);
+  background:var(--ground);padding:22px 10px 6px;color:var(--c-text);
+}
+.qcmp[data-c="3"],.qcmp[data-c="4"]{--w-comp:118px}
+.qcmp[data-flat]{--k-rise:0;--bulge:0px;--shade:0px}
+.qcmp[data-flat] .qcmp-ph{margin-top:0}
+.qcmp__in{max-width:1024px;margin:0 auto}
+.qcmp__title{margin:0;font-size:calc(22px * var(--k-type));line-height:1.25;font-weight:700;color:var(--c-head);text-wrap:balance}
+.qcmp__lede{margin:6px 0 0;font-size:14px;line-height:1.55;color:var(--muted);max-width:40em;text-wrap:pretty}
+.qcmp__lede b{color:var(--c-head);font-weight:700}
+
+.qcmp__wrap{position:relative;margin-top:6px}
+.qcmp__scroll{
+  position:relative;overflow-x:auto;overflow-y:hidden;container-type:inline-size;
+  padding-top:var(--rise);padding-bottom:26px;
+  scroll-snap-type:x proximity;scroll-padding-right:calc(var(--w-crit) + var(--w-ours) + var(--bulge));
+  overscroll-behavior-x:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+}
+.qcmp__scroll::-webkit-scrollbar{display:none}
+.qcmp__scroll:focus-visible{outline-offset:-2px;border-radius:16px}
+
+.qcmp__table{
+  width:100%;min-width:calc(var(--w-crit) + var(--w-ours) + var(--c) * var(--w-comp));
+  table-layout:fixed;border-collapse:separate;border-spacing:0;
+}
+.qcmp__table col.qcmp-k-crit{width:var(--w-crit)}
+.qcmp__table col.qcmp-k-ours{width:var(--w-ours)}
+.qcmp__table th,.qcmp__table td{padding:0;font-weight:400;text-align:center;vertical-align:middle;overflow-wrap:break-word}
+
+/* flat sheet: criteria + competitors */
+.qcmp-comp{background:var(--sheet);border-bottom:1px solid var(--line)}
+.qcmp-crit{background:var(--ground);border-bottom:1px solid var(--line)} /* ground behind, sheet painted on ::before, so nothing scrolled shows through the rounded corners */
+.qcmp-crit{position:sticky;right:0;z-index:2;border-right:1px solid var(--line)}
+.qcmp-crit::before{content:"";position:absolute;inset:0;background:var(--sheet);border-radius:inherit;z-index:-1}
+.qcmp-comp{scroll-snap-align:start}
+.qcmp-ours + .qcmp-comp .qcmp-val,thead .qcmp-ours + .qcmp-comp span{padding-right:9px}
+.qcmp-comp:last-child{border-left:1px solid var(--line)}
+.qcmp thead .qcmp-crit,.qcmp thead .qcmp-comp{border-top:1px solid var(--line);vertical-align:bottom}
+.qcmp thead .qcmp-crit{border-top-right-radius:var(--r)}
+.qcmp thead .qcmp-comp:last-child{border-top-left-radius:var(--r)}
+.qcmp tbody tr:last-child .qcmp-crit{border-bottom-right-radius:var(--r)}
+.qcmp tbody tr:last-child .qcmp-comp:last-child{border-bottom-left-radius:var(--r)}
+
+.qcmp thead .qcmp-crit span{display:block;padding:10px 8px 11px;text-align:right;font-size:12px;color:var(--muted)}
+.qcmp[data-flat] thead .qcmp-ours::before{top:0;border-radius:0}
+.qcmp[data-flat] tfoot .qcmp-ours::before{box-shadow:none}
+.qcmp thead .qcmp-comp span{display:block;padding:10px 4px 11px;font-size:12.5px;line-height:1.35;font-weight:700;color:var(--c-val)}
+
+.qcmp tbody .qcmp-crit{text-align:right}
+.qcmp-crit .qcmp-lab{display:block;padding:9px 8px;font-size:calc(13px * var(--k-type));line-height:1.4;font-weight:500;color:var(--c-text)}
+.qcmp-crit .qcmp-lab small{display:block;margin-top:2px;font-size:12px;font-weight:400;color:var(--muted)}
+.qcmp-comp .qcmp-val{display:block;padding:9px 4px;font-size:calc(13px * var(--k-type));line-height:1.4;color:var(--muted)}
+.qcmp-val .qcmp-n{font-size:calc(16px * var(--k-type));font-weight:500;color:var(--c-val)}
+.qcmp-val .qcmp-u{display:block;font-size:12px}
+.qcmp tbody tr{height:calc(52px * var(--k-row))}
+
+/* the raised pillar */
+.qcmp-ours{position:sticky;right:var(--w-crit);z-index:3;color:var(--c-ours-ink)}
+.qcmp-ours::before{content:"";position:absolute;inset:0 calc(var(--bulge) * -1);z-index:-1;background:var(--navy);box-shadow:inset 0 -1px rgba(255,255,255,.13)}
+.qcmp-ours::after{content:"";position:absolute;inset:0 calc(var(--bulge) * -1 - var(--shade));z-index:-2;pointer-events:none;
+  background:
+    linear-gradient(to left,rgba(23,41,81,0),rgba(23,41,81,.2)) left/var(--shade) 100% no-repeat,
+    linear-gradient(to right,rgba(23,41,81,0),rgba(23,41,81,.2)) right/var(--shade) 100% no-repeat}
+.qcmp thead .qcmp-ours{vertical-align:bottom}
+.qcmp thead .qcmp-ours::before{top:calc(var(--rise) * -1);border-radius:var(--r) var(--r) 0 0;
+  background:linear-gradient(180deg,var(--c-ours-top) 0,var(--navy) 62%)}
+.qcmp thead .qcmp-ours::after{top:calc(var(--rise) * -1 + 10px);
+  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 46px);mask-image:linear-gradient(to bottom,transparent,#000 46px)}
+.qcmp tfoot .qcmp-ours::before{border-radius:0 0 var(--r) var(--r);background:linear-gradient(180deg,var(--navy) 0,var(--c-ours-foot) 100%);
+  box-shadow:0 20px 26px -14px rgba(23,41,81,.55)}
+.qcmp tfoot .qcmp-ours::after{bottom:8px;
+  -webkit-mask-image:linear-gradient(to top,transparent,#000 40px);mask-image:linear-gradient(to top,transparent,#000 40px)}
+
+.qcmp-ph{margin-top:calc(var(--rise) * -1);padding:6px 4px 10px}
+.qcmp-ph img{display:block;width:100%;height:auto;aspect-ratio:5/4;object-fit:cover;object-position:74% 78%;border-radius:min(8px,var(--r))}
+.qcmp-ph .qcmp-nm{display:block;margin-top:8px;font-size:14px;line-height:1.3;font-weight:700}
+.qcmp-ph .qcmp-sb{display:block;font-size:12px;color:var(--on-navy-soft)}
+
+.qcmp-ours .qcmp-val{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 4px;font-size:calc(13.5px * var(--k-type));line-height:1.35;font-weight:700}
+.qcmp-ours .qcmp-val .qcmp-t{min-width:0}
+.qcmp-ours .qcmp-val .qcmp-n{font-size:calc(21px * var(--k-type));line-height:1.05;font-weight:700;color:var(--c-ours-ink);display:block}
+.qcmp-ours .qcmp-val .qcmp-u{color:var(--on-navy-soft);font-weight:500}
+.qcmp-tick{flex:none;width:18px;height:18px}
+.qcmp-ours .qcmp-tick circle{fill:var(--c-tick)} .qcmp-ours .qcmp-tick path{stroke:var(--c-tick-mark)}
+.qcmp-comp .qcmp-tick circle{fill:var(--c-ctick)} .qcmp-comp .qcmp-tick path{stroke:var(--c-ctick-mark)}
+
+/* the honest row: the flat columns win, shown as loudly as our wins */
+.is-lost .qcmp-comp{background:var(--c-lost)}
+.is-lost .qcmp-comp .qcmp-val{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--c-lost-ink);font-weight:700}
+.is-lost .qcmp-comp .qcmp-val .qcmp-n{color:var(--c-lost-ink)}
+.is-lost .qcmp-ours .qcmp-val{font-weight:400;color:var(--on-navy-soft)}
+
+/* foot: price */
+.qcmp tfoot .qcmp-crit{border:0;text-align:right}
+.qcmp tfoot .qcmp-crit::before{background:var(--ground)}
+.qcmp tfoot .qcmp-crit .qcmp-lab{color:var(--muted);font-weight:500}
+.qcmp-pr{padding:10px 4px 13px}
+.qcmp-pr .qcmp-now{display:block;font-size:27px;line-height:1.1;font-weight:700}
+.qcmp-pr .qcmp-now small{font-size:13px;font-weight:500}
+.qcmp-pr .qcmp-was{display:block;margin-top:3px;font-size:12px;color:var(--on-navy-soft)}
+.qcmp-pr .qcmp-was s{text-decoration-color:var(--c-strike);text-decoration-thickness:1.5px}
+.qcmp-note{text-align:right !important}
+.qcmp-note span{display:block;position:sticky;right:calc(var(--w-crit) + var(--w-ours) + var(--bulge) + 8px);
+  max-width:calc(100cqw - var(--w-crit) - var(--w-ours) - var(--bulge) - 10px);
+  padding:8px 8px 10px 2px;font-size:12px;line-height:1.5;color:var(--muted)}
+
+/* movers: only when the competitor columns overflow */
+.qcmp__nav{position:absolute;z-index:4;left:0;top:calc(var(--rise) - 54px);display:flex;align-items:center;gap:6px}
+.qcmp__nav[hidden]{display:none}
+.qcmp__nav button{width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);border-radius:min(8px,var(--r));background:var(--c-sheet);color:var(--c-nav);cursor:pointer;transition:background .2s,opacity .2s}
+.qcmp__nav button:disabled{opacity:.38;cursor:default}
+.qcmp__nav svg{width:18px;height:18px}
+.qcmp__wrap.is-more::after{content:"";position:absolute;z-index:4;left:0;top:var(--rise);bottom:26px;width:26px;pointer-events:none;
+  background:linear-gradient(to left,transparent,var(--ground))}
+
+@media (hover:hover){
+  .qcmp tbody tr:hover .qcmp-crit::before,.qcmp tbody tr:not(.is-lost):hover .qcmp-comp{background:color-mix(in srgb,var(--c-sheet) 96%,var(--c-ours))}
+  .qcmp tbody tr.is-lost:hover .qcmp-comp{background:color-mix(in srgb,var(--c-lost) 92%,var(--c-ours))}
+  .qcmp tbody tr:hover .qcmp-ours::before{background:color-mix(in srgb,var(--c-ours) 92%,#fff)}
+  .qcmp__nav button:not(:disabled):hover{background:color-mix(in srgb,var(--c-sheet) 90%,var(--c-ours))}
+}
+
+/* the one moment: the pillar rises out of the sheet */
+@keyframes qcmp-rise{from{clip-path:inset(0 -40px 0 -40px)}to{clip-path:inset(calc(var(--rise) * -1) -40px 0 -40px)}}
+@keyframes qcmp-shade{from{opacity:0}to{opacity:1}}
+@keyframes qcmp-foot{from{clip-path:inset(0 -40px 100% -40px)}to{clip-path:inset(0 -40px -40px -40px)}}
+.qcmp.is-rising thead .qcmp-ours{animation:qcmp-rise .9s var(--ease) both}
+.qcmp.is-rising tfoot .qcmp-ours{animation:qcmp-foot .9s var(--ease) both}
+.qcmp.is-rising .qcmp-ours::after{animation:qcmp-shade .9s .15s ease-out both}
+@media (prefers-reduced-motion:reduce){
+  .qcmp.is-rising thead .qcmp-ours,.qcmp.is-rising tfoot .qcmp-ours,.qcmp.is-rising .qcmp-ours::after{animation:none}
+  .qcmp__nav button{transition:none}
+}
+
+/* ───────── desktop ───────── */
+@media (min-width:769px){
+  .qcmp{--w-crit:230px;--w-ours:236px;--w-comp:150px;--rise:calc(124px * var(--k-rise));--bulge:8px;--shade:18px;
+    max-width:1120px;margin:0 auto 40px;border-radius:var(--r);padding:40px 48px 14px}
+  .qcmp[data-c="4"]{--w-crit:190px;--w-ours:214px;--w-comp:150px}
+  .qcmp[data-c="3"],.qcmp[data-c="4"]{--w-comp:150px}
+  .qcmp__title{font-size:calc(30px * var(--k-type))}
+  .qcmp__lede{font-size:16px;margin-top:8px}
+  .qcmp__wrap{margin-top:4px}
+  .qcmp__scroll{overflow:visible;padding-bottom:30px}
+  .qcmp tbody tr{height:calc(64px * var(--k-row))}
+  .qcmp thead .qcmp-crit span{padding:14px 22px;font-size:13px}
+  .qcmp thead .qcmp-comp span,.qcmp thead .qcmp-ours + .qcmp-comp span{padding:14px 12px;font-size:15px}
+  .qcmp-crit .qcmp-lab{padding:12px 22px;font-size:calc(15px * var(--k-type))}
+  .qcmp-crit .qcmp-lab small{font-size:13px}
+  .qcmp-comp .qcmp-val,.qcmp-ours + .qcmp-comp .qcmp-val{padding:12px;font-size:calc(15px * var(--k-type))}
+  .qcmp-ours + .qcmp-comp .qcmp-val,thead .qcmp-ours + .qcmp-comp span{padding-right:22px;padding-left:2px}
+  .is-lost .qcmp-comp .qcmp-val{gap:6px}
+  .is-lost .qcmp-comp .qcmp-val{flex-direction:row}
+  .qcmp-val .qcmp-n{font-size:calc(19px * var(--k-type))}
+  .qcmp-val .qcmp-u{display:inline;font-size:14px}
+  .qcmp-ph{padding:10px 2px 14px}
+  .qcmp-ph img{aspect-ratio:16/10}
+  .qcmp-ph .qcmp-nm{font-size:18px;margin-top:12px}
+  .qcmp-ph .qcmp-sb{font-size:14px}
+  .qcmp-ours .qcmp-val{font-size:calc(16px * var(--k-type));gap:9px;padding:10px 6px}
+  .qcmp-ours .qcmp-val .qcmp-n{font-size:calc(27px * var(--k-type));display:inline}
+  .qcmp-ours .qcmp-val .qcmp-u{font-size:14px}
+  .qcmp-tick{width:20px;height:20px}
+  .qcmp-pr{padding:14px 6px 18px}
+  .qcmp-pr .qcmp-now{font-size:36px}
+  .qcmp-pr .qcmp-now small{font-size:16px}
+  .qcmp-pr .qcmp-was{font-size:14px}
+  .qcmp-note span{font-size:13px;padding:12px 30px;max-width:none}
+}
+/* one competitor: our column and theirs share the width equally */
+.qcmp[data-c="1"]{--w-ours:calc((100cqw - var(--w-crit)) / 2 - var(--bulge))}
+@media (min-width:769px){.qcmp[data-c="1"] .qcmp-ph img{max-width:232px;margin-inline:auto}}

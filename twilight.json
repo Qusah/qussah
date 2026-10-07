@@ -1665,6 +1665,637 @@
             ]
         },
         {
+            "key": "4409bf44-542d-472c-8eaf-c0b05f041274",
+            "title": {
+                "en": "Qissa Comparison Table (product page)",
+                "ar": "جدول المقارنة (صفحة المنتج)"
+            },
+            "icon": "sicon-layout-grid",
+            "path": "home.qissa-compare",
+            "fields": [
+                {
+                    "id": "products",
+                    "type": "items",
+                    "icon": "sicon-keyboard_arrow_down",
+                    "label": {
+                        "en": "Show on these products only",
+                        "ar": "يظهر على هذه المنتجات فقط"
+                    },
+                    "format": "dropdown-list",
+                    "description": "يظهر الجدول في صفحة المنتج. لتخصيصه لمنتج واحد: من (صفحة تفاصيل المنتج) اختر (تخصيص منتج محدد) ثم المنتج وأضف هذا العنصر بنصوصه. أو أضفه مرة واحدة لكل المنتجات واختر هنا المنتجات التي يظهر عليها. اتركه فارغاً ليظهر أينما أضفته",
+                    "selected": [],
+                    "options": [],
+                    "required": false,
+                    "multichoice": true,
+                    "source": "products",
+                    "searchable": true,
+                    "maxLength": 100,
+                    "minLength": 0,
+                    "value": []
+                },
+                {
+                    "id": "title",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": {
+                        "en": "Title",
+                        "ar": "العنوان"
+                    },
+                    "description": null,
+                    "placeholder": "قصة مقابل مناديل السوق",
+                    "multilanguage": true,
+                    "required": false,
+                    "value": "قصة مقابل مناديل السوق"
+                },
+                {
+                    "id": "lede",
+                    "type": "string",
+                    "format": "textarea",
+                    "icon": "sicon-format-text-alt",
+                    "label": {
+                        "en": "Line under the title",
+                        "ar": "السطر تحت العنوان"
+                    },
+                    "description": "إذا تُرك فارغاً يُكتب تلقائياً: «نتقدّم في X من Y» بحسب الصفوف",
+                    "placeholder": "اتركه فارغاً ليُحسب تلقائياً",
+                    "multilanguage": true,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "crit_head",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": {
+                        "en": "Criteria column heading",
+                        "ar": "عنوان عمود المعايير"
+                    },
+                    "description": null,
+                    "placeholder": "وجه المقارنة",
+                    "multilanguage": true,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "our_name",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": {
+                        "en": "Our product's name",
+                        "ar": "اسم منتجنا في العمود"
+                    },
+                    "description": "اتركه فارغاً ليأخذ اسم المنتج الذي يُعرض عليه الجدول تلقائياً",
+                    "placeholder": "اتركه فارغاً لاسم المنتج",
+                    "multilanguage": true,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "our_sub",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": {
+                        "en": "Line under our name",
+                        "ar": "سطر تحت اسم منتجنا"
+                    },
+                    "description": "اتركه فارغاً ليأخذ الوصف المختصر للمنتج تلقائياً",
+                    "placeholder": "32 عبوة",
+                    "multilanguage": true,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "our_image",
+                    "type": "string",
+                    "format": "image",
+                    "icon": "sicon-image",
+                    "label": {
+                        "en": "Our product's photo",
+                        "ar": "صورة منتجنا"
+                    },
+                    "description": "اتركها فارغة لتُؤخذ صورة المنتج تلقائياً",
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "comp1",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": {
+                        "en": "Alternative 1 name",
+                        "ar": "اسم العمود الأول (بديل 1)"
+                    },
+                    "description": "عدد الأعمدة = عدد الأسماء المكتوبة (من 1 إلى 4). اترك الاسم فارغاً لإخفاء العمود",
+                    "placeholder": "مناديل السوبرماركت",
+                    "multilanguage": true,
+                    "required": false,
+                    "value": "مناديل السوبرماركت"
+                },
+                {
+                    "id": "comp2",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": {
+                        "en": "Alternative 2 name",
+                        "ar": "اسم العمود الثاني (بديل 2)"
+                    },
+                    "description": null,
+                    "placeholder": "الماركات المعروفة",
+                    "multilanguage": true,
+                    "required": false,
+                    "value": "الماركات المعروفة"
+                },
+                {
+                    "id": "comp3",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": {
+                        "en": "Alternative 3 name",
+                        "ar": "اسم العمود الثالث (بديل 3)"
+                    },
+                    "description": null,
+                    "placeholder": "مناديل الجملة",
+                    "multilanguage": true,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "comp4",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": {
+                        "en": "Alternative 4 name",
+                        "ar": "اسم العمود الرابع (بديل 4)"
+                    },
+                    "description": null,
+                    "placeholder": "تطبيقات التوصيل",
+                    "multilanguage": true,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "rows",
+                    "key": "48d56492-4d8d-4862-9c71-5c6d006528bb",
+                    "type": "collection",
+                    "format": "collection",
+                    "label": "صفوف المقارنة",
+                    "description": "كل صف معيار واحد: قيمتنا وقيمة كل بديل. الرقم في بداية القيمة يُكتب أكبر تلقائياً (مثال: 3 طبقات)",
+                    "labelHTML": null,
+                    "item_label": "صف",
+                    "icon": "sicon-list-add",
+                    "required": false,
+                    "minLength": 0,
+                    "maxLength": 20,
+                    "value": [],
+                    "fields": [
+                        {
+                            "id": "rows.label",
+                            "type": "string",
+                            "format": "text",
+                            "icon": "sicon-format-text-alt",
+                            "label": "المعيار",
+                            "description": null,
+                            "placeholder": "عدد الطبقات",
+                            "multilanguage": true,
+                            "required": false,
+                            "value": null
+                        },
+                        {
+                            "id": "rows.ours",
+                            "type": "string",
+                            "format": "text",
+                            "icon": "sicon-format-text-alt",
+                            "label": "قيمة منتجنا",
+                            "description": null,
+                            "placeholder": "3 طبقات",
+                            "multilanguage": true,
+                            "required": false,
+                            "value": null
+                        },
+                        {
+                            "id": "rows.c1",
+                            "type": "string",
+                            "format": "text",
+                            "icon": "sicon-format-text-alt",
+                            "label": "قيمة البديل 1",
+                            "description": null,
+                            "placeholder": "2 طبقة",
+                            "multilanguage": true,
+                            "required": false,
+                            "value": null
+                        },
+                        {
+                            "id": "rows.c2",
+                            "type": "string",
+                            "format": "text",
+                            "icon": "sicon-format-text-alt",
+                            "label": "قيمة البديل 2",
+                            "description": null,
+                            "placeholder": "2 طبقة",
+                            "multilanguage": true,
+                            "required": false,
+                            "value": null
+                        },
+                        {
+                            "id": "rows.c3",
+                            "type": "string",
+                            "format": "text",
+                            "icon": "sicon-format-text-alt",
+                            "label": "قيمة البديل 3",
+                            "description": null,
+                            "placeholder": null,
+                            "multilanguage": true,
+                            "required": false,
+                            "value": null
+                        },
+                        {
+                            "id": "rows.c4",
+                            "type": "string",
+                            "format": "text",
+                            "icon": "sicon-format-text-alt",
+                            "label": "قيمة البديل 4",
+                            "description": null,
+                            "placeholder": null,
+                            "multilanguage": true,
+                            "required": false,
+                            "value": null
+                        },
+                        {
+                            "type": "boolean",
+                            "icon": "sicon-toggle-off",
+                            "label": "البدائل أفضل في هذا الصف",
+                            "description": "يُعرض الصف بصدق: علامة الصح عند البدائل لا عندنا",
+                            "id": "rows.market_wins",
+                            "format": "switch",
+                            "required": false,
+                            "value": false,
+                            "selected": false
+                        }
+                    ]
+                },
+                {
+                    "id": "lost_note",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": {
+                        "en": "Note on a row the alternatives win",
+                        "ar": "ملاحظة الصف الذي تسبقنا فيه البدائل"
+                    },
+                    "description": null,
+                    "placeholder": "هنا السوق يسبقنا",
+                    "multilanguage": true,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_price",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Show the price row",
+                        "ar": "إظهار صف السعر"
+                    },
+                    "description": "سعر المنتج نفسه (والسعر قبل الخصم إن وُجد) تحت عمودنا، تلقائياً",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "price_label",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": {
+                        "en": "Price row label",
+                        "ar": "عنوان صف السعر"
+                    },
+                    "description": null,
+                    "placeholder": "السعر اليوم",
+                    "multilanguage": true,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "footnote",
+                    "type": "string",
+                    "format": "textarea",
+                    "icon": "sicon-format-text-alt",
+                    "label": {
+                        "en": "Footnote",
+                        "ar": "الملاحظة أسفل الجدول"
+                    },
+                    "description": null,
+                    "placeholder": "المقارنة حسب بيانات المتجر وأسعار السوق",
+                    "multilanguage": true,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_photo",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Show our product's photo",
+                        "ar": "إظهار صورة منتجنا"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_ticks",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Show the ticks",
+                        "ar": "إظهار علامات الصح"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "highlight_lost",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Highlight a row the alternatives win",
+                        "ar": "تمييز الصف الذي تسبقنا فيه البدائل"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "raised",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Raise our column",
+                        "ar": "عمودنا مرفوع عن الجدول"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "motion",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Rise motion when it comes into view",
+                        "ar": "حركة ارتفاع العمود عند الظهور"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "c_bg",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Section background",
+                        "ar": "لون خلفية القسم"
+                    },
+                    "description": "اترك أي لون فارغاً لاستخدام لون التصميم",
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "c_sheet",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Table background",
+                        "ar": "لون خلفية الجدول"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "c_line",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Divider lines",
+                        "ar": "لون الخطوط الفاصلة"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "c_head",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Title colour",
+                        "ar": "لون العنوان"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "c_text",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Criteria text",
+                        "ar": "لون نص المعايير"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "c_muted",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Secondary text",
+                        "ar": "لون النص الثانوي"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "c_val",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Alternatives' values",
+                        "ar": "لون قيم البدائل"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "c_ours",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Our column",
+                        "ar": "لون عمودنا"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "c_ours_top",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Our column, top (gradient)",
+                        "ar": "لون أعلى عمودنا (تدرج)"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "c_ours_foot",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Our column, bottom (price row)",
+                        "ar": "لون أسفل عمودنا (صف السعر)"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "c_ours_ink",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Our column text",
+                        "ar": "لون نص عمودنا"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "c_ours_soft",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Our column secondary text",
+                        "ar": "لون النص الثانوي في عمودنا"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "c_tick",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Tick colour",
+                        "ar": "لون علامة الصح"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "c_tick_mark",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Tick mark colour",
+                        "ar": "لون خط علامة الصح"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "c_lost",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Alternatives' row background",
+                        "ar": "لون خلفية صف البدائل"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "c_lost_ink",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Alternatives' row text",
+                        "ar": "لون نص صف البدائل"
+                    },
+                    "description": null,
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "id": "radius",
+                    "type": "number",
+                    "format": "integer",
+                    "icon": "sicon-format-text-alt",
+                    "label": {
+                        "en": "Corner radius (px)",
+                        "ar": "استدارة الزوايا (بكسل)"
+                    },
+                    "placeholder": "15",
+                    "value": 15,
+                    "minimum": 0,
+                    "maximum": 16,
+                    "required": false
+                }
+            ]
+        },
+        {
             "key": "20dbf092-ba3c-4145-b712-96608270c2b9",
             "title": {
                 "en": "Dual Product Hero",
