@@ -202,6 +202,17 @@
         {
             "type": "boolean",
             "icon": "sicon-toggle-off",
+            "label": "إخفاء قائمة المنتجات الأساسية في صفحة قائمة المنتجات",
+            "description": "يخفي منتجات الصفحة نفسها (عنصر المنتجات والفلاتر) ويُبقي شريط التصفية والترتيب، لتعرض المنتجات بعناصرك أنت",
+            "id": "product_index_hide_list",
+            "format": "switch",
+            "required": false,
+            "value": false,
+            "selected": false
+        },
+        {
+            "type": "boolean",
+            "icon": "sicon-toggle-off",
             "label": "تفعيل إشعار الإضافة للسلة المحسن",
             "description": null,
             "id": "enable_add_product_toast",

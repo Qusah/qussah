@@ -57,7 +57,8 @@
 	   of the store's categories once a sort is picked. #}
 	{% set all_page = page.slug == 'product.index' and page.id == 1390845573 %}
 
-	<section class="qlisting" data-qlisting>
+	{# theme setting: the page's own products are hidden, the filter and sort bar stays #}
+	<section class="qlisting{{ theme.settings.get('product_index_hide_list', false) ? ' qlisting--nolist' : '' }}" data-qlisting>
 		<div class="qlisting__bar">
 			{# «تصفية: …» — what is being shown; once filters are picked, their
 			   number instead («تصفية (2)», set by products.js) #}

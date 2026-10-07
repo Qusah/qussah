@@ -564,3 +564,6 @@ $qlisting-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     &__grid:not(.qlist__grid--list) { grid-template-columns: repeat(2, 1fr); column-gap: 8px; row-gap: 10px; }
   }
 }
+
+// theme setting product_index_hide_list: the page's own products go, the bar stays
+.qlisting--nolist .qlisting__list { display: none; }
