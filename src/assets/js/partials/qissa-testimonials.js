@@ -329,7 +329,7 @@ class Row {
 
   startPos() {
     // desktop: the frame's own phase; phones: the first card at the right edge, the panel's padding in
-    return matchMedia(PHONE).matches ? -this.pad : this.phase;
+    return this.still || matchMedia(PHONE).matches ? -this.pad : this.phase;
   }
 
   // the track runs a long lap with the start in the MIDDLE, so a drag backwards
@@ -363,6 +363,7 @@ class Row {
   review(k) {
     const list = this.feed.items;
     if (!list.length) return null;
+    if (this.still) return list[k] || null;   // a handful of reviews: each one once, in order
     // a row running the other way reads its line backwards; started a window's
     // worth along, so what it opens on is the head of its sequence, not the tail
     const s = this.dir * k + (this.dir < 0 ? Math.ceil(this.V / this.step) : 0);
@@ -427,7 +428,7 @@ class Row {
 
   sync() {
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const run = !!this.anim && this.active && this.flags.inView && !this.flags.hover && !this.flags.drag && !this.flags.focus && !reduce;
+    const run = !!this.anim && !this.still && this.active && this.flags.inView && !this.flags.hover && !this.flags.drag && !this.flags.focus && !reduce;
     if (run === this.running) return;
     this.running = run;
     if (run) this.anim.play(); else if (this.anim) this.anim.pause();
@@ -450,7 +451,7 @@ class Row {
     vp.addEventListener('focus', () => { if (vp.matches(':focus-visible')) { this.flags.focus = true; this.sync(); } });
     vp.addEventListener('blur', () => { this.flags.focus = false; this.sync(); });
     vp.addEventListener('keydown', e => {
-      if (!this.anim || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+      if (!this.anim || this.still || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
       e.preventDefault();
       const dx = e.key === 'ArrowLeft' ? this.step : -this.step;   // the track moves by dx
       this.anim.currentTime += ((dx * this.sgn) / (this.dir * this.speed)) * 1000;
@@ -464,7 +465,7 @@ class Row {
     let d = null;
     let frame = 0;
     vp.addEventListener('pointerdown', e => {
-      if (!this.anim || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      if (!this.anim || this.still || (e.pointerType === 'mouse' && e.button !== 0)) return;
       d = { x: e.clientX, y: e.clientY, t: this.anim.currentTime, id: e.pointerId, on: false };
     });
     vp.addEventListener('pointermove', e => {
@@ -510,7 +511,12 @@ function proof(section, store) {
   const line = section.querySelector('[data-qtest-proof]');
   if (!line || !(store.total > 0)) return;
   const n = v => Number(v).toLocaleString('en-US');
-  line.querySelector('[data-f="count"]').textContent = (section.dataset.qtestCount || ':n').replace(':n', n(store.total));
+  const ar = (document.documentElement.lang || 'ar').toLowerCase().startsWith('ar');
+  const t = store.total;
+  // Arabic counts its nouns differently below eleven
+  const count = ar && t === 1 ? 'تقييم واحد' : ar && t === 2 ? 'تقييمان' : ar && t <= 10 ? `${t} تقييمات`
+    : !ar && t === 1 ? '1 review' : (section.dataset.qtestCount || ':n').replace(':n', n(t));
+  line.querySelector('[data-f="count"]').textContent = count;
   const recent = line.querySelector('[data-f="recent"]');
   if (store.allFive && store.walked >= RECENT_MIN) {
     line.querySelector('[data-f="recent-text"]').textContent = (section.dataset.qtestRecent || '').replace(':n', n(store.walked));
@@ -541,7 +547,17 @@ async function start(section) {
   if (!source && mock.length) source = { items: mock, done: true, fill: () => Promise.resolve() };
   if (!source) { section.remove(); return; }
 
-  rows.forEach(r => { r.feed = source; r.layout(true); });
+  // so few reviews that one row shows them all: they stand still, each once —
+  // a row of the same card passing again and again would read as padding
+  const few = () => {
+    const r = rows[0];
+    const on = !!source.done && source.items.length <= Math.max(1, Math.floor((r.V - r.pad) / r.step));
+    section.classList.toggle('is-few', on);
+    rows.forEach(x => { if (x.still !== on) { x.still = on; x.resize(); } x.viewport.tabIndex = on ? -1 : 0; });
+  };
+  rows.forEach(r => { r.feed = source; });
+  few();
+  rows.forEach(r => r.layout(true));
 
   const io = new IntersectionObserver(entries => {
     const on = entries[entries.length - 1].isIntersecting;
@@ -556,6 +572,8 @@ async function start(section) {
     timer = setTimeout(() => {
       if (window.innerWidth === width) return;   // phones fire resize on scroll (URL bar)
       width = window.innerWidth;
+      rows.forEach(r => r.measure());
+      few();
       rows.forEach(r => { r.resize(); r.sync(); });
     }, 200);
   }, { passive: true });

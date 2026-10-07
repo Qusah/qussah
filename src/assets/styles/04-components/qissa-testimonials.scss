@@ -267,6 +267,15 @@ $qtest-hair: rgba(0, 0, 0, .08);
     .qtest__foot { border-top-color: rgba(255, 255, 255, .16); }
   }
 
+  // a handful of reviews stand still, each once: no second row, no empty shells, no fade
+  &.is-few &__viewport--second,
+  &.is-few &__card.is-empty { display: none; }
+  &.is-few &__rows {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  &.is-few &__viewport { cursor: default; }
+
   // ---- the link to every review ----
   &__foot-row {
     display: flex;
