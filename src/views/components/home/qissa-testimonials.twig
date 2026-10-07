@@ -2,26 +2,31 @@
 | Variable                   | Type         | Description                                              |
 |----------------------------|--------------|----------------------------------------------------------|
 | component                  | object       | merchant settings from twilight.json                     |
-| component.title_highlight  | string       | heading's leading word(s) — same colour since the revamp |
-| component.title            | string       | heading rest                                             |
-| component.subtitle         | string       | line under the heading                                   |
+| component.title_highlight  | string       | heading's leading word(s) — read by screen readers only  |
+| component.title            | string       | heading rest — read by screen readers only               |
 | component.use_real_reviews | bool         | the store's real reviews, every written one (default on) |
 | component.items            | Collection[] | mock reviews (name, role → the grey line, text, stars) — shown when the switch is off or the store has none |
+| component.show_proof       | bool         | the count line above the rows (default on)               |
+| component.show_all_link    | bool         | the «عرض جميع التقييمات» link under the rows (default on)  |
 | component.two_rows         | bool         | two counter-scrolling rows on desktop (default on)       |
 | component.speed            | int          | seconds for one card to pass (default 9)                 |
 | component.pause_on_hover   | bool         | stop the rows under a mouse (default off)                |
 | position                   | int          | sorting block                                            |
 
-Figma "Qusah Re-Vamp": desktop 326:1655 (1400 frame at x 20; the rows run to
-the page edges, two of them, counter-scrolling, a blurred white fade on each
-side), mobile 290:8617 (one row, the middle card centred). Latafa's
-testimonials, sized for this file.
+Figma "Qusah Re-Vamp", section «Customer reviews · picked»: desktop 503:509,
+phone 503:657. A tinted panel with no visible heading: the count line (how many
+reviews the store has, that the latest are all five stars, that the ones on
+show are verified buyers), then the rows, then the link to every review. The
+rows keep Latafa's behaviour — two counter-scrolling rows on desktop, one on
+phones, drag / swipe, optional pause on hover.
 
 Nothing here moves or fills by itself: qissa-testimonials.js (run by home.js)
 builds VIRTUAL rows — only the cards that fit, recycled as they scroll out,
 filled from the store's reviews page by page — so every written review can
 pass through without the page growing. The rows have fixed heights, so the
-section never shifts while the reviews load; the card shells show first.
+section never shifts while the reviews load; the card shells show first. The
+script also picks the order: the most specific reviews first, one per customer,
+the strongest in the navy card.
 
 The mock reviews ride in an inert <template> (Twig-escaped text, never run)
 and are copied to a plain array first: on Salla the collection is a one-shot
@@ -29,6 +34,8 @@ iterable (the first list operation consumes it — see Latafa's testimonials).
 #}
 {% set real     = component.use_real_reviews is not defined or component.use_real_reviews is null or component.use_real_reviews %}
 {% set two_rows = component.two_rows is not defined or component.two_rows is null or component.two_rows %}
+{% set proof    = component.show_proof is not defined or component.show_proof is null or component.show_proof %}
+{% set all_link = component.show_all_link is not defined or component.show_all_link is null or component.show_all_link %}
 
 {% set mock = [] %}
 {% for item in component.items %}
@@ -40,47 +47,71 @@ iterable (the first list operation consumes it — see Latafa's testimonials).
          {%- if component.pause_on_hover %} data-qtest-pause{% endif %}
          data-qtest-speed="{{ component.speed ?: 9 }}"
          data-qtest-anon="{{ trans('blocks.qissa.customer') }}"
+         data-qtest-count="{{ trans('blocks.qissa.reviews_count') }}"
+         data-qtest-recent="{{ trans('blocks.qissa.reviews_recent') }}"
+         aria-labelledby="qtest-title-{{ position }}"
          {%- if not real and not mock|length %} hidden{% endif %}>
     <div class="container">
+        <div class="qtest__panel">
 
-        <div class="qtest__head">
-            <h2 class="qtest__title">
-                <span class="qtest__title-hl">{{ component.title_highlight }}</span> {{ component.title }}
-            </h2>
-            {% if component.subtitle %}
-                <p class="qtest__subtitle">{{ component.subtitle }}</p>
+            <h2 class="qtest__sr" id="qtest-title-{{ position }}">{{ component.title_highlight }} {{ component.title }}</h2>
+
+            {# the count line: filled by the script from what the store really returns; it stays
+               hidden for mock reviews, and each part only shows when it is true #}
+            {% if proof %}
+                <p class="qtest__proof" data-qtest-proof hidden>
+                    <strong class="qtest__count" data-f="count"></strong>
+                    <span class="qtest__sep" aria-hidden="true"></span>
+                    <span class="qtest__recent" data-f="recent" hidden>
+                        <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 1.6l2.5 5.3 5.8.7-4.3 4 1.1 5.8L10 14.5l-5.1 2.9 1.1-5.8-4.3-4 5.8-.7z"/></svg>
+                        <span data-f="recent-text"></span>
+                    </span>
+                    <span class="qtest__trust" data-f="trust" hidden>
+                        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="7.25" stroke="currentColor" stroke-width="1.5"/><path d="M4.8 8.2l2.2 2.2 4.2-4.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        {{ trans('blocks.qissa.reviews_verified_note') }}
+                    </span>
+                </p>
             {% endif %}
-        </div>
 
-        {# row two runs the other way; phones show row one only. data-phase =
-           where each row starts on desktop, as the frame draws them (px past
-           the right edge) — phones centre the second card instead #}
-        <div class="qtest__rows">
-            <div class="qtest__viewport" data-qtest-row data-dir="1" data-phase="194.39"><div class="qtest__track"></div></div>
-            {% if two_rows %}
-                <div class="qtest__viewport qtest__viewport--second" data-qtest-row data-dir="-1" data-phase="11.56"><div class="qtest__track"></div></div>
+            {# row two runs the other way; phones show row one only. data-phase = where each row
+               starts on desktop (px past the right edge): row one opens on its first card, the
+               strongest review, 40 in from the panel's edge; phones use their own 16 #}
+            <div class="qtest__rows">
+                <div class="qtest__viewport" data-qtest-row data-dir="1" data-phase="-40" tabindex="0" role="group" aria-label="{{ trans('blocks.qissa.reviews_rows_label') }}"><div class="qtest__track"></div></div>
+                {% if two_rows %}
+                    <div class="qtest__viewport qtest__viewport--second" data-qtest-row data-dir="-1" data-phase="158" tabindex="0" role="group" aria-label="{{ trans('blocks.qissa.reviews_rows_label') }}"><div class="qtest__track"></div></div>
+                {% endif %}
+            </div>
+
+            {% if all_link %}
+                <div class="qtest__foot-row">
+                    <a class="qtest__all" href="{{ link('/testimonials') }}">
+                        {{ trans('blocks.qissa.reviews_all') }}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+                    </a>
+                </div>
             {% endif %}
-            <span class="qtest__fade qtest__fade--left" aria-hidden="true"></span>
-            <span class="qtest__fade qtest__fade--right" aria-hidden="true"></span>
-        </div>
 
+        </div>
     </div>
 
     {# one card — the script clones it into the rows' slots #}
     <template data-qtest-card>
         <figure class="qtest__card">
             <div class="qtest__quote-wrap">
+                <svg class="qtest__mark" viewBox="0 0 22 18" aria-hidden="true" focusable="false"><path d="M0 18V10C0 4.6 3 1 8.4 0l.9 2.6C6.6 3.5 5.3 5.2 5.2 8H9v10zM12.6 18V10c0-5.4 3-9 8.4-10l.9 2.6c-2.7.9-4 2.6-4.1 5.4h3.8v10z"/></svg>
                 <blockquote class="qtest__quote" data-f="text"></blockquote>
-                <hr class="qtest__divider">
             </div>
-            {# rtl: the name first (right), the stars last (left) #}
+            {# rtl: the name first (right), the verified mark last (left) #}
             <figcaption class="qtest__foot">
                 <div class="qtest__who">
                     <p class="qtest__name" data-f="name"></p>
                     <p class="qtest__meta" data-f="meta"></p>
                 </div>
-                {# the star (290:8636, Latafa 34:6730): filled AND stroked in one colour #}
-                <div class="qtest__stars" role="img" data-f="stars">{% for n in [1, 2, 3, 4, 5] %}<svg class="qtest__star" viewBox="0 0 13.9931 13.9931" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M6.7196 1.33809C6.74515 1.28647 6.78462 1.24301 6.83356 1.21263C6.8825 1.18225 6.93895 1.16615 6.99655 1.16615C7.05415 1.16615 7.1106 1.18225 7.15954 1.21263C7.20848 1.24301 7.24795 1.28647 7.2735 1.33809L8.62033 4.06616C8.70906 4.24572 8.84003 4.40107 9.00201 4.51887C9.16399 4.63667 9.35213 4.71341 9.55029 4.74249L12.5623 5.18328C12.6194 5.19155 12.673 5.21562 12.7171 5.25278C12.7612 5.28993 12.794 5.33869 12.8119 5.39353C12.8297 5.44837 12.8318 5.5071 12.818 5.56309C12.8042 5.61908 12.775 5.67009 12.7337 5.71035L10.5555 7.83147C10.4118 7.97146 10.3043 8.14427 10.2423 8.33501C10.1802 8.52575 10.1654 8.72871 10.1992 8.92643L10.7135 11.9233C10.7235 11.9803 10.7174 12.0391 10.6957 12.0928C10.674 12.1465 10.6376 12.193 10.5908 12.2271C10.5439 12.2611 10.4884 12.2813 10.4306 12.2853C10.3728 12.2893 10.3151 12.277 10.2639 12.2498L7.57143 10.8342C7.39402 10.741 7.19664 10.6923 6.99626 10.6923C6.79588 10.6923 6.59849 10.741 6.42108 10.8342L3.72916 12.2498C3.67805 12.2769 3.62036 12.289 3.56267 12.2849C3.50498 12.2808 3.4496 12.2606 3.40283 12.2266C3.35605 12.1926 3.31977 12.1461 3.29809 12.0925C3.27641 12.0389 3.27022 11.9803 3.28022 11.9233L3.79388 8.92701C3.82781 8.72921 3.81311 8.52611 3.75105 8.33525C3.68898 8.14439 3.58142 7.97149 3.43764 7.83147L1.25938 5.71093C1.21775 5.67072 1.18824 5.61963 1.17423 5.56347C1.16022 5.50731 1.16227 5.44834 1.18013 5.39329C1.198 5.33823 1.23097 5.2893 1.27528 5.25207C1.3196 5.21483 1.37348 5.1908 1.43079 5.18269L4.44223 4.74249C4.64061 4.71363 4.82901 4.637 4.99121 4.51918C5.15341 4.40136 5.28455 4.2459 5.37335 4.06616L6.7196 1.33809Z" fill="currentColor" stroke="currentColor" stroke-width="1.16609" stroke-linecap="round" stroke-linejoin="round"/></svg>{% endfor %}</div>
+                <span class="qtest__ok" data-f="ok" hidden>
+                    <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="7.25" stroke="currentColor" stroke-width="1.5"/><path d="M4.8 8.2l2.2 2.2 4.2-4.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    {{ trans('blocks.qissa.reviews_verified') }}
+                </span>
             </figcaption>
         </figure>
     </template>

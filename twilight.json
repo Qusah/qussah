@@ -3549,6 +3549,33 @@
                     "selected": true
                 },
                 {
+                    "type": "boolean",
+                    "id": "show_proof",
+                    "format": "switch",
+                    "icon": "sicon-hashtag",
+                    "label": {
+                        "en": "Show the review count line",
+                        "ar": "إظهار سطر عدد التقييمات"
+                    },
+                    "description": "عدد تقييمات المتجر فوق الصفوف، ومعه أن آخر التقييمات كلها خمس نجوم وأن المعروض من مشترين موثّقين. كل جزء يظهر فقط إذا كان صحيحاً",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_all_link",
+                    "format": "switch",
+                    "icon": "sicon-link",
+                    "label": {
+                        "en": "Show the link to all reviews",
+                        "ar": "إظهار رابط «عرض جميع التقييمات»"
+                    },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
                     "id": "items",
                     "key": "2bb58935-a2b4-4d86-af9f-9531d6af008b",
                     "type": "collection",

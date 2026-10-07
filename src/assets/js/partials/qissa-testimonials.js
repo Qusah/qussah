@@ -24,6 +24,16 @@
  *   · Off screen it pauses; prefers-reduced-motion leaves it still (dragging
  *     still works).
  *
+ *   · Chosen, not just newest. Most written reviews are one word and one
+ *     customer often writes several in a row, so the first batch is ranked:
+ *     the most specific first (longer, naming delivery / softness / price /
+ *     service, carrying a number), one per customer, and the top one rides in
+ *     the navy card. Later pages join in the order they arrive.
+ *   · Honest count line. The store's own total; «the latest N are all five
+ *     stars» only while every review walked so far is five stars; «verified
+ *     buyers» because only reviews with an order behind them are shown.
+ *   · Keyboard. A focused row holds still and the arrow keys step it a card.
+ *
  * Source: the store's real reviews (use_real_reviews, default on); the
  * merchant's mock reviews when that switch is off or the store has none.
  * Neither → the section removes itself.
@@ -34,18 +44,56 @@
  * Reviews endpoint, measured on the live store 2026-07-22 (3,780 store
  * reviews): `per_page` and `page` are honoured, pagination.links.next is
  * always present, only ~17% of reviews carry text, and a setup that refuses
- * the params gets the bare {type:'store'} call instead.
+ * the params gets the bare {type:'store'} call instead. Measured again
+ * 2026-10-05 (4,119): every review carries name, city, date, stars and
+ * has_order; none carries photos, replies or a product; pagination.total is
+ * the store's count; created_at is { date: 'Y-m-d H:i:s', timezone } and
+ * date a unix time.
  */
 const PER_PAGE = 30;
 const PAGES_PER_TOP_UP = 4;   // a run of stars-only pages can't stall a top-up forever
+const PAGES_FIRST = 6;        // the first batch is ranked, so it reads a little further (cached 6 h)
 const LAP = 4000;             // cards per animation lap — ~10 h at the default speed
 const CACHE_KEY = 'qtest:store-reviews';
-const CACHE_VERSION = 1;
+const CACHE_VERSION = 2;   // 2: city, date, the order flag, the store's total
 const CACHE_TTL = 6 * 60 * 60 * 1000;   // then a fresh walk picks up new reviews
 const PHONE = '(max-width: 768px)';
 
 const mod = (n, m) => ((n % m) + m) % m;
 const clampStars = n => Math.max(0, Math.min(5, Math.round(Number(n) || 0))) || 5;
+const RECENT_MIN = 30;        // «the latest N are all five stars» needs at least a page behind it
+
+// how much a review says: its length, the things shoppers ask about, a number
+const TOPICS = ['توصيل', 'وصل', 'يوم', 'ايام', 'أيام', 'سنوات', 'سنين', 'ناعم', 'نعوم', 'ملمس', 'سعر', 'اسعار', 'أسعار', 'عروض', 'خدمة', 'جود', 'مشكل', 'تعويض', 'اول مره', 'أول تجربه',
+  'deliver', 'soft', 'price', 'quality', 'service', 'days', 'years'];
+function score(text) {
+  const t = text.toLowerCase();
+  const words = t.split(/\s+/).length;
+  let hits = 0;
+  for (const k of TOPICS) if (t.includes(k)) hits++;
+  return Math.min(words, 24) + hits * 5 + (/[0-9٠-٩]/.test(t) ? 4 : 0);
+}
+const who = r => `${r.name}|${r.city || ''}`;
+
+let dateFmt = null;
+// created_at is { date: '2026-10-04 03:34:56…', timezone }, date a unix time in seconds
+function day(value) {
+  let v = (value && value.date) || value || '';
+  if (typeof v === 'number') {
+    try { v = new Date(v * 1000).toLocaleDateString('en-CA', { timeZone: 'Asia/Riyadh' }); } catch (e) { v = ''; }
+  }
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(v));
+  if (!m) return '';
+  try {
+    if (!dateFmt) {
+      const lang = (document.documentElement.lang || 'ar').toLowerCase().startsWith('ar') ? 'ar-SA-u-ca-gregory-nu-latn' : 'en-GB';
+      dateFmt = new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+    }
+    return dateFmt.format(new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])));
+  } catch (e) {
+    return `${+m[3]}/${+m[2]}/${m[1]}`;
+  }
+}
 
 let parser = null;
 function plain(value) {
@@ -65,6 +113,9 @@ class StoreReviews {
     this.done = false;
     this.bare = false;
     this.seen = new Set();
+    this.total = 0;        // the store's own count
+    this.walked = 0;       // reviews read so far, stars-only ones included
+    this.allFive = true;   // …and whether every one of them was five stars
     this.pending = null;
     this.started = Date.now();
     this.restore();
@@ -81,6 +132,9 @@ class StoreReviews {
       this.page = c.page | 0;
       this.done = !!c.done;
       this.bare = !!c.bare;
+      this.total = c.total | 0;
+      this.walked = c.walked | 0;
+      this.allFive = c.allFive !== false;
       this.started = c.t;
     } catch (e) { /* storage blocked or unreadable — walk afresh */ }
   }
@@ -89,6 +143,7 @@ class StoreReviews {
     try {
       localStorage.setItem(CACHE_KEY, JSON.stringify({
         v: CACHE_VERSION, t: this.started, page: this.page, done: this.done, bare: this.bare, items: this.items,
+        total: this.total, walked: this.walked, allFive: this.allFive,
       }));
     } catch (e) { /* full or blocked — the list in memory still works */ }
   }
@@ -128,10 +183,17 @@ class StoreReviews {
       if (this.seen.has(key)) continue;
       this.seen.add(key);
       fresh++;
-      if (text) this.items.push({ k: key, text, name: plain(r.name), stars: clampStars(r.rating ?? r.stars) });
+      const stars = clampStars(r.rating ?? r.stars);
+      this.walked++;
+      if (stars !== 5) this.allFive = false;
+      // a card needs a quote, and an order behind it — the count line says «verified buyers»
+      if (text && r.has_order !== false) {
+        this.items.push({ k: key, text, name: plain(r.name), stars, city: plain(r.city), date: day(r.created_at ?? r.date), ok: r.has_order === true });
+      }
     }
     // no new rows means the endpoint ignored `page` — stop rather than repeat
     const p = res?.pagination || {};
+    if (Number(p.total) > 0) this.total = Number(p.total);
     const next = (p.links && p.links.next) || ((p.currentPage || p.current_page) < (p.totalPages || p.total_pages));
     if (this.bare || !fresh || !next) this.done = true;
     this.save();
@@ -139,11 +201,11 @@ class StoreReviews {
 
   // top up until `want` reviews are held, the store runs out, or this top-up's
   // page budget is spent (the next call carries on)
-  fill(want) {
+  fill(want, pages = PAGES_PER_TOP_UP) {
     if (this.done || this.items.length >= want) return Promise.resolve();
     if (!this.pending) {
       this.pending = (async () => {
-        for (let i = 0; i < PAGES_PER_TOP_UP && !this.done && this.items.length < want; i++) await this.pull();
+        for (let i = 0; i < pages && !this.done && this.items.length < want; i++) await this.pull();
       })().finally(() => { this.pending = null; });
     }
     return this.pending;
@@ -152,6 +214,38 @@ class StoreReviews {
 
 let shared = null;
 const storeReviews = () => (shared = shared || new StoreReviews());
+
+// what the rows read from: the first batch ranked (the most specific first, one
+// per customer, the top one marked for the navy card); later pages join behind
+// it in the order they arrive, so cards already on screen never reshuffle
+function rankedFeed(store) {
+  const best = new Map();
+  for (const r of store.items) {
+    r.s = r.s ?? score(r.text);
+    r.lead = false;   // a cached list carries the last visit's mark
+    const had = best.get(who(r));
+    if (!had || r.s > had.s) best.set(who(r), r);
+  }
+  const items = [...best.values()].sort((a, b) => b.s - a.s);
+  if (items.length) items[0].lead = true;
+  const feed = {
+    items,
+    done: store.done,
+    used: store.items.length,
+    fill() {
+      return store.fill(store.items.length + PER_PAGE).then(() => {
+        for (; feed.used < store.items.length; feed.used++) {
+          const r = store.items[feed.used];
+          if (best.has(who(r))) continue;
+          best.set(who(r), r);
+          items.push(r);
+        }
+        feed.done = store.done;
+      });
+    },
+  };
+  return feed;
+}
 
 function mockReviews(section) {
   const tpl = section.querySelector('template[data-qtest-mock]');
@@ -173,11 +267,15 @@ function paint(card, review, anon) {
   card.classList.toggle('is-empty', !review);
   f.text.textContent = review ? review.text : '';
   f.name.textContent = review ? (review.name || anon) : '';
-  f.meta.textContent = (review && review.meta) || '';
-  f.meta.hidden = !(review && review.meta);
-  const n = review ? review.stars : 0;
-  f.starEls.forEach((s, i) => s.classList.toggle('is-off', i >= n));
-  f.stars.setAttribute('aria-label', `${n} / 5`);
+  // a mock review's grey line as typed; a real one's city and date
+  const meta = review ? (review.meta || [review.city, review.date].filter(Boolean).join(' · ')) : '';
+  f.meta.textContent = meta;
+  f.meta.hidden = !meta;
+  f.ok.hidden = !(review && review.ok);
+  const len = review ? [...review.text].length : 99;
+  card.classList.toggle('is-short', len <= 16);
+  card.classList.toggle('is-mid', len > 16 && len <= 48);
+  card.classList.toggle('is-lead', !!(review && review.lead));
 }
 
 /* ---- one virtual row ------------------------------------------------- */
@@ -196,11 +294,12 @@ class Row {
     this.anon = section.dataset.qtestAnon || '';
     this.template = section.querySelector('template[data-qtest-card]').content.firstElementChild;
     this.cards = [];
-    this.flags = { inView: false, hover: false, drag: false };
+    this.flags = { inView: false, hover: false, drag: false, focus: false };
     this.measure();
     this.animate();
     this.layout();
     this.bindDrag();
+    this.bindKeys();
     if (section.hasAttribute('data-qtest-pause') && matchMedia('(hover: hover) and (pointer: fine)').matches) {
       viewport.addEventListener('mouseenter', () => { this.flags.hover = true; this.sync(); });
       viewport.addEventListener('mouseleave', () => { this.flags.hover = false; this.sync(); });
@@ -211,8 +310,9 @@ class Row {
 
   measure() {
     const cs = getComputedStyle(this.viewport);
-    this.cardW = parseFloat(cs.getPropertyValue('--qtest-card-w')) || 350;
-    this.step = this.cardW + (parseFloat(cs.getPropertyValue('--qtest-gap')) || 20);
+    this.cardW = parseFloat(cs.getPropertyValue('--qtest-card-w')) || 352;
+    this.step = this.cardW + (parseFloat(cs.getPropertyValue('--qtest-gap')) || 16);
+    this.pad = parseFloat(cs.getPropertyValue('--qtest-pad')) || 16;
     this.V = this.viewport.clientWidth;
     this.rtl = cs.direction === 'rtl';
     this.sgn = this.rtl ? 1 : -1;   // rtl: later cards wait on the left, the row moves right
@@ -228,8 +328,8 @@ class Row {
   }
 
   startPos() {
-    // desktop: the frame's own phase; phones: the second card centred
-    return matchMedia(PHONE).matches ? this.step + this.cardW / 2 - this.V / 2 : this.phase;
+    // desktop: the frame's own phase; phones: the first card at the right edge, the panel's padding in
+    return matchMedia(PHONE).matches ? -this.pad : this.phase;
   }
 
   // the track runs a long lap with the start in the MIDDLE, so a drag backwards
@@ -263,7 +363,9 @@ class Row {
   review(k) {
     const list = this.feed.items;
     if (!list.length) return null;
-    const s = this.dir * k;
+    // a row running the other way reads its line backwards; started a window's
+    // worth along, so what it opens on is the head of its sequence, not the tail
+    const s = this.dir * k + (this.dir < 0 ? Math.ceil(this.V / this.step) : 0);
     const i = list.length >= this.slots * this.count
       ? s * this.count + this.index
       : s + this.index * Math.ceil(list.length / this.count);
@@ -280,9 +382,8 @@ class Row {
       text: card.querySelector('[data-f="text"]'),
       name: card.querySelector('[data-f="name"]'),
       meta: card.querySelector('[data-f="meta"]'),
-      stars: card.querySelector('[data-f="stars"]'),
+      ok: card.querySelector('[data-f="ok"]'),
     };
-    card._f.starEls = [...card._f.stars.children];
     card._review = undefined;
     this.track.appendChild(card);
     this.cards.push(card);
@@ -326,7 +427,7 @@ class Row {
 
   sync() {
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const run = !!this.anim && this.active && this.flags.inView && !this.flags.hover && !this.flags.drag && !reduce;
+    const run = !!this.anim && this.active && this.flags.inView && !this.flags.hover && !this.flags.drag && !this.flags.focus && !reduce;
     if (run === this.running) return;
     this.running = run;
     if (run) this.anim.play(); else if (this.anim) this.anim.pause();
@@ -341,6 +442,20 @@ class Row {
     this.running = undefined;
     this.animate(at * this.step);
     this.layout();
+  }
+
+  // a keyboard: the focused row holds still, the arrows step it one card
+  bindKeys() {
+    const vp = this.viewport;
+    vp.addEventListener('focus', () => { if (vp.matches(':focus-visible')) { this.flags.focus = true; this.sync(); } });
+    vp.addEventListener('blur', () => { this.flags.focus = false; this.sync(); });
+    vp.addEventListener('keydown', e => {
+      if (!this.anim || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
+      e.preventDefault();
+      const dx = e.key === 'ArrowLeft' ? this.step : -this.step;   // the track moves by dx
+      this.anim.currentTime += ((dx * this.sgn) / (this.dir * this.speed)) * 1000;
+      this.layout();
+    });
   }
 
   // a finger or mouse takes the row and hands it back where it was left
@@ -388,6 +503,23 @@ class Row {
   }
 }
 
+/* ---- the count line -------------------------------------------------- */
+
+// every part is shown only when the store's own answer makes it true
+function proof(section, store) {
+  const line = section.querySelector('[data-qtest-proof]');
+  if (!line || !(store.total > 0)) return;
+  const n = v => Number(v).toLocaleString('en-US');
+  line.querySelector('[data-f="count"]').textContent = (section.dataset.qtestCount || ':n').replace(':n', n(store.total));
+  const recent = line.querySelector('[data-f="recent"]');
+  if (store.allFive && store.walked >= RECENT_MIN) {
+    line.querySelector('[data-f="recent-text"]').textContent = (section.dataset.qtestRecent || '').replace(':n', n(store.walked));
+    recent.hidden = false;
+  }
+  line.querySelector('[data-f="trust"]').hidden = !store.items.every(r => r.ok);
+  line.hidden = false;
+}
+
 /* ---- boot ------------------------------------------------------------ */
 
 async function start(section) {
@@ -402,8 +534,9 @@ async function start(section) {
   let source = null;
   if (section.hasAttribute('data-qtest-real') && window.salla?.api?.request) {
     const store = storeReviews();
-    try { await store.fill(need); } catch (e) { /* fall back below */ }
-    if (store.items.length) source = store;
+    // more than the rows hold, so the ranking has something to choose from
+    try { await store.fill(need * 3, PAGES_FIRST); } catch (e) { /* fall back below */ }
+    if (store.items.length) { source = rankedFeed(store); proof(section, store); }
   }
   if (!source && mock.length) source = { items: mock, done: true, fill: () => Promise.resolve() };
   if (!source) { section.remove(); return; }
