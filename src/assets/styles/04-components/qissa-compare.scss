@@ -20,7 +20,7 @@
 .qcmp :focus-visible{outline:2px solid var(--c-nav);outline-offset:3px;border-radius:8px}
 .s-block.qcmp{margin-top:24px}
 .qcmp{
-  --w-crit:84px; --w-ours:108px; --w-comp:88px; --rise:calc(80px * var(--k-rise)); --bulge:3px; --shade:8px;
+  --w-crit:84px; --w-ours:108px; --w-comp:88px; --rise:calc(80px * var(--k-rise)); --bulge:3px;
   --c-bg:#f4f5f6; --c-sheet:#ffffff; --c-line:#e3e5ea; --c-head:#172951; --c-text:#172951; --c-muted:#555c6c; --c-val:#3c4353;
   --c-ours:#2c348e; --c-ours-top:#3a43a6; --c-ours-foot:#172951; --c-ours-ink:#ffffff; --c-ours-soft:#d3d8f6;
   --c-tick:#91e6f7; --c-tick-mark:#172951; --c-lost:#e2f7fc; --c-lost-ink:#172951; --c-ctick:#2c348e; --c-ctick-mark:#ffffff; --c-strike:#ff7a7a; --c-nav:#2c348e;
@@ -29,7 +29,7 @@
   background:var(--ground);padding:22px 10px 6px;color:var(--c-text);
 }
 .qcmp[data-c="3"],.qcmp[data-c="4"]{--w-comp:118px}
-.qcmp[data-flat]{--k-rise:0;--bulge:0px;--shade:0px}
+.qcmp[data-flat]{--k-rise:0;--bulge:0px}
 .qcmp[data-flat] .qcmp-ph{margin-top:0}
 .qcmp__in{max-width:1024px;margin:0 auto}
 .qcmp__title{margin:0;font-size:calc(22px * var(--k-type));line-height:1.25;font-weight:700;color:var(--c-head);text-wrap:balance}
@@ -70,7 +70,6 @@
 
 .qcmp thead .qcmp-crit span{display:block;padding:10px 8px 11px;text-align:right;font-size:12px;color:var(--muted)}
 .qcmp[data-flat] thead .qcmp-ours::before{top:0;border-radius:0}
-.qcmp[data-flat] tfoot .qcmp-ours::before{box-shadow:none}
 .qcmp thead .qcmp-comp span{display:block;padding:10px 4px 11px;font-size:12.5px;line-height:1.35;font-weight:700;color:var(--c-val)}
 
 .qcmp tbody .qcmp-crit{text-align:right}
@@ -84,19 +83,10 @@
 /* the raised pillar */
 .qcmp-ours{position:sticky;right:var(--w-crit);z-index:3;color:var(--c-ours-ink)}
 .qcmp-ours::before{content:"";position:absolute;inset:0 calc(var(--bulge) * -1);z-index:-1;background:var(--navy);box-shadow:inset 0 -1px rgba(255,255,255,.13)}
-.qcmp-ours::after{content:"";position:absolute;inset:0 calc(var(--bulge) * -1 - var(--shade));z-index:-2;pointer-events:none;
-  background:
-    linear-gradient(to left,rgba(23,41,81,0),rgba(23,41,81,.2)) left/var(--shade) 100% no-repeat,
-    linear-gradient(to right,rgba(23,41,81,0),rgba(23,41,81,.2)) right/var(--shade) 100% no-repeat}
 .qcmp thead .qcmp-ours{vertical-align:bottom}
 .qcmp thead .qcmp-ours::before{top:calc(var(--rise) * -1);border-radius:var(--r) var(--r) 0 0;
   background:linear-gradient(180deg,var(--c-ours-top) 0,var(--navy) 62%)}
-.qcmp thead .qcmp-ours::after{top:calc(var(--rise) * -1 + 10px);
-  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 46px);mask-image:linear-gradient(to bottom,transparent,#000 46px)}
-.qcmp tfoot .qcmp-ours::before{border-radius:0 0 var(--r) var(--r);background:linear-gradient(180deg,var(--navy) 0,var(--c-ours-foot) 100%);
-  box-shadow:0 20px 26px -14px rgba(23,41,81,.55)}
-.qcmp tfoot .qcmp-ours::after{bottom:8px;
-  -webkit-mask-image:linear-gradient(to top,transparent,#000 40px);mask-image:linear-gradient(to top,transparent,#000 40px)}
+.qcmp tfoot .qcmp-ours::before{border-radius:0 0 var(--r) var(--r);background:linear-gradient(180deg,var(--navy) 0,var(--c-ours-foot) 100%);box-shadow:none}
 
 .qcmp-ph{margin-top:calc(var(--rise) * -1);padding:6px 4px 10px}
 .qcmp-ph img{display:block;width:100%;height:auto;aspect-ratio:5/4;object-fit:cover;object-position:74% 78%;border-radius:min(8px,var(--r))}
@@ -149,19 +139,17 @@
 
 /* the one moment: the pillar rises out of the sheet */
 @keyframes qcmp-rise{from{clip-path:inset(0 -40px 0 -40px)}to{clip-path:inset(calc(var(--rise) * -1) -40px 0 -40px)}}
-@keyframes qcmp-shade{from{opacity:0}to{opacity:1}}
 @keyframes qcmp-foot{from{clip-path:inset(0 -40px 100% -40px)}to{clip-path:inset(0 -40px -40px -40px)}}
 .qcmp.is-rising thead .qcmp-ours{animation:qcmp-rise .9s var(--ease) both}
 .qcmp.is-rising tfoot .qcmp-ours{animation:qcmp-foot .9s var(--ease) both}
-.qcmp.is-rising .qcmp-ours::after{animation:qcmp-shade .9s .15s ease-out both}
 @media (prefers-reduced-motion:reduce){
-  .qcmp.is-rising thead .qcmp-ours,.qcmp.is-rising tfoot .qcmp-ours,.qcmp.is-rising .qcmp-ours::after{animation:none}
+  .qcmp.is-rising thead .qcmp-ours,.qcmp.is-rising tfoot .qcmp-ours{animation:none}
   .qcmp__nav button{transition:none}
 }
 
 /* ───────── desktop ───────── */
 @media (min-width:769px){
-  .qcmp{--w-crit:230px;--w-ours:236px;--w-comp:150px;--rise:calc(124px * var(--k-rise));--bulge:8px;--shade:18px;
+  .qcmp{--w-crit:230px;--w-ours:236px;--w-comp:150px;--rise:calc(124px * var(--k-rise));--bulge:8px;
     max-width:1120px;margin:0 auto 40px;border-radius:var(--r);padding:40px 48px 14px}
   .qcmp[data-c="4"]{--w-crit:190px;--w-ours:214px;--w-comp:150px}
   .qcmp[data-c="3"],.qcmp[data-c="4"]{--w-comp:150px}
