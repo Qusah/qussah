@@ -365,7 +365,6 @@
                             <p class="qty-stub__chosen" data-csat-chosen></p>
                         </div>
                     </div>
-                    <p class="qty-stub__foot" data-csat-foot aria-hidden="true"><span>{{ trans('blocks.thank_you.stub_foot') }}</span><span class="qty-num">#{{ order.reference_id }}</span></p>
                     <p class="sr-only" aria-live="polite" data-csat-live></p>
                 </section>
                 {% endif %}
@@ -447,28 +446,21 @@
             {% endif %}
 
             <aside class="qty-side">
-                {# Salla's default stages; the current one is order.status.name. A status the
-                   list does not know (custom, pending payment) is shown as the current step. #}
-                {% set ty_steps = [trans('blocks.thank_you.step_review'), trans('blocks.thank_you.step_progress'), trans('blocks.thank_you.step_shipped'), trans('blocks.thank_you.step_delivered')] %}
-                {% set ty_now = -1 %}
-                {% for s in ty_steps %}{% if ty_status and s == ty_status %}{% set ty_now = loop.index0 %}{% endif %}{% endfor %}
-                {# Shown only when the order's status is one of these steps (or unknown to the page).
-                   A store status outside them («تم التنفيذ» on a new order) used to be slotted in
-                   before «بانتظار المراجعة», which read as nonsense; it is on the ticket already. #}
-                {% if ty_now >= 0 or not ty_status %}
+                {# Three plain steps (asked for on the task: the six-step list was too much).
+                   «تم استلام الطلب» is always done; the other two light up only when the order's
+                   status is exactly «تم الشحن» / «جاري التوصيل» or «تم التوصيل». #}
+                {% set ty_at = (ty_status == trans('blocks.thank_you.step_delivered')) ? 2 : ((ty_status == trans('blocks.thank_you.step_shipped') or ty_status == trans('blocks.thank_you.step_delivering')) ? 1 : 0) %}
                 <section class="qty-nx" aria-labelledby="qty-nx-t">
                     <h2 id="qty-nx-t" class="qty-side__h">{{ trans('blocks.thank_you.next') }}</h2>
                     <ol class="qty-nx__list">
-                        <li class="is-done"><span class="qty-nx__b" aria-hidden="true"><svg class="qty-i" width="14" height="14" stroke-width="3"><use href="#qty-i-check"/></svg></span><span>{{ trans('blocks.thank_you.step_received') }}</span></li>
-                        {% for s in ty_steps %}
-                        <li class="{{ ty_now >= 0 and loop.index0 < ty_now ? 'is-done' : (loop.index0 == ty_now ? 'is-now' : '') }}"{{ loop.index0 == ty_now ? ' aria-current="step"' : '' }}>
-                            <span class="qty-nx__b" aria-hidden="true">{% if ty_now >= 0 and loop.index0 < ty_now %}<svg class="qty-i" width="14" height="14" stroke-width="3"><use href="#qty-i-check"/></svg>{% endif %}</span>
-                            <span>{{ s }}{% if loop.index0 == ty_now %} <em>{{ trans('blocks.thank_you.now') }}</em>{% elseif loop.index0 == 2 and ty_ship %} <em>{{ trans('blocks.thank_you.with')|replace({'{name}': ty_ship}) }}</em>{% endif %}</span>
+                        {% for s in [trans('blocks.thank_you.step_received'), trans('blocks.thank_you.step_shipped'), trans('blocks.thank_you.step_arrived')] %}
+                        <li class="{{ (loop.index0 == 0 or loop.index0 < ty_at or (loop.index0 == 2 and ty_at == 2)) ? 'is-done' : (loop.index0 == ty_at ? 'is-now' : '') }}"{{ (loop.index0 == ty_at and loop.index0 > 0) ? ' aria-current="step"' : '' }}>
+                            <span class="qty-nx__b" aria-hidden="true">{% if loop.index0 < ty_at or (loop.index0 == 2 and ty_at == 2) or loop.index0 == 0 %}<svg class="qty-i" width="14" height="14" stroke-width="3"><use href="#qty-i-check"/></svg>{% endif %}</span>
+                            <span>{{ s }}{% if loop.index0 == 1 and ty_ship %} <em>{{ trans('blocks.thank_you.with')|replace({'{name}': ty_ship}) }}</em>{% endif %}</span>
                         </li>
                         {% endfor %}
                     </ol>
                 </section>
-                {% endif %}
 
                 <section class="qty-inv" aria-labelledby="qty-inv-t">
                     {% if order.email_sent %}
@@ -486,19 +478,22 @@
                     {% endif %}
                 </section>
 
-                {% if ty_wa or ty_mobile %}
+                {# WhatsApp only: the store takes no calls #}
+                {% if ty_wa %}
                 <section class="qty-sup" aria-labelledby="qty-sup-t">
                     <h2 id="qty-sup-t" class="qty-side__h qty-side__h--sm">{{ trans('common.titles.support') }}</h2>
                     <div class="qty-sup__row">
-                        {% if ty_wa %}
                         <a class="qty-sup__a" href="https://wa.me/{{ ty_wa|replace({' ': '', '+': '', '-': ''}) }}" target="_blank" rel="noopener"><svg class="qty-i" width="22" height="22" aria-hidden="true"><use href="#qty-i-wa"/></svg><span>{{ trans('blocks.thank_you.whatsapp') }}<b class="qty-num" dir="ltr">{{ ty_wa }}</b></span></a>
-                        {% endif %}
-                        {% if ty_mobile %}
-                        <a class="qty-sup__a" href="tel:{{ ty_mobile|replace({' ': ''}) }}"><svg class="qty-i" width="22" height="22" aria-hidden="true"><use href="#qty-i-phone"/></svg><span>{{ trans('blocks.thank_you.call') }}<b class="qty-num" dir="ltr">{{ ty_mobile }}</b></span></a>
-                        {% endif %}
                     </div>
                 </section>
                 {% endif %}
+
+                {# «تابعنا»: the store's social accounts, from Salla's own settings (salla-social prints
+                   only the accounts the store has filled in) #}
+                <section class="qty-follow" aria-labelledby="qty-follow-t">
+                    <h2 id="qty-follow-t" class="qty-side__h qty-side__h--sm">{{ trans('blocks.thank_you.follow') }}</h2>
+                    <salla-social class="qty-follow__list"></salla-social>
+                </section>
             </aside>
 
             <div class="qty-slots">

@@ -100,7 +100,8 @@ $qe: cubic-bezier(.16, 1, .3, 1);
   &::before { content: ""; position: absolute; top: 22px; bottom: 22px; right: 0; width: 2px; background: repeating-linear-gradient(#b9c1dc 0, #b9c1dc 6px, transparent 6px, transparent 12px); }
   &.is-torn { transform: translateX(-12px) rotate(-1.6deg); }
 }
-.qty-stub__ask { display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
+.qty-stub__ask { display: flex; flex-direction: column; gap: 8px; }
+.qty-stub { justify-content: center; }
 .qty-stub__q { font: 700 21px/1.45 $f; color: $ink; text-wrap: balance; overflow-wrap: anywhere; }
 .qty-stub__hint, .qty-stub__got { display: flex; align-items: center; gap: 6px; font: 500 14px/1.4 $f; color: $n; }
 .qty-stub__got { color: #1a6a4d; }
@@ -207,6 +208,12 @@ $qe: cubic-bezier(.16, 1, .3, 1);
   &:hover { color: $n; box-shadow: inset 0 0 0 1.5px $n; }
   span { display: flex; flex-direction: column; font: 300 13px/1.3 $f; color: $sub; }
   b { font: 500 15px/1.3 $f; color: $ink; text-align: right; }
+}
+
+/* «تابعنا»: salla-social's own list, as navy squares */
+.qty-follow__list { display: block; margin-top: 12px;
+  ul, .s-social-list { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; list-style: none; }
+  a { display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 14px; background: $n; color: #fff; font-size: 20px; transition: background-color .2s, color .2s; &:hover { background: #91e6f7; color: $n; } }
 }
 
 .qty-slots { display: flex; flex-direction: column; gap: 16px; > :empty { display: none; } }

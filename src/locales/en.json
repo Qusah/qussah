@@ -216,7 +216,10 @@
       "pay_mada": "mada",
       "pay_tabby": "Tabby",
       "pay_tamara": "Tamara",
-      "pay_free": "No payment"
+      "pay_free": "No payment",
+      "step_arrived": "Your order has arrived",
+      "step_delivering": "Out for delivery",
+      "follow": "Follow us"
     }
   },
   "pages": {

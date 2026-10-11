@@ -216,7 +216,10 @@
       "pay_mada": "مدى",
       "pay_tabby": "تابي",
       "pay_tamara": "تمارا",
-      "pay_free": "بدون دفع"
+      "pay_free": "بدون دفع",
+      "step_arrived": "طلبك وصل",
+      "step_delivering": "جاري التوصيل",
+      "follow": "تابعنا على وسائل التواصل"
     }
   },
   "pages": {
