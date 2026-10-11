@@ -72,9 +72,11 @@
     <div class="qpack__info">
         <{{ name_tag }} class="qpack__name"><a href="{{ product.url }}">{{ product.name }}</a></{{ name_tag }}>
 
-        {# rating then sold (rows on the wide layout, one row stacked) #}
+        {# rating then sold (rows on the wide layout, one row stacked). The sold
+           figure is rounded («مباع +300 مرة») and not shown under 10:
+           partials/qsold-count.twig #}
         {% set has_rating = show_rating and product.rating and product.rating.stars %}
-        {% set has_sold = show_sold and product.sold_quantity %}
+        {% set has_sold = show_sold and product.sold_quantity >= 10 %}
         {% if has_rating or has_sold %}
             <div class="qpack__meta">
                 {% if has_rating %}
@@ -91,7 +93,7 @@
                 {% if has_sold %}
                     <p class="qpack__sold">
                         <img src="{{ 'images/qcard/fire.svg' | asset }}" alt="" width="20" height="20"/>
-                        <span>{{ trans('blocks.qissa.sold') }} {{ product.sold_quantity }} {{ trans('blocks.qissa.times') }}</span>
+                        <span>{{ trans('blocks.qissa.sold') }} {% include 'components.partials.qsold-count' with { count: product.sold_quantity } %} {{ trans('blocks.qissa.times') }}</span>
                     </p>
                 {% endif %}
             </div>

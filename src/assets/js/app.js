@@ -4,6 +4,7 @@ import Anime from './partials/anime';
 import initTootTip from './partials/tooltip';
 import AppHelpers from "./app-helpers";
 import { autoEnhanceCarousels } from "./partials/card-carousel";
+import { soldLabel } from "./partials/qissa-sold-count";
 
 class App extends AppHelpers {
   constructor() {
@@ -393,15 +394,16 @@ isElementLoaded(selector, timeout = 8000){
     const word = key => salla.lang.get(`blocks.qissa.${key}`);
     const paint = (product) => {
       const stars = parseFloat(product.rating && product.rating.stars) || 0;
-      const sold = Number(product.sold_quantity) || 0;
+      // the rounded figure («مباع +300 مرة»); '' under 10, and then no line
+      const sold = soldLabel(product.sold_quantity);
       const filled = Math.floor(stars);
       const rating = `<div class="qprod__rating${stars ? '' : ' is-empty'}"${stars ? '' : ' aria-hidden="true"'}>
           <span class="qprod__stars"${stars ? ` role="img" aria-label="${stars} / 5"` : ''}>${base ? [1, 2, 3, 4, 5].map(i => `<img src="${icon(i <= filled ? 'star' : 'star-empty')}" alt="" width="12" height="12">`).join('') : ''}</span>
           <span class="qprod__rate">(${stars.toFixed(1)})</span>
         </div>`;
-      const line = sold > 0 ? `<p class="qprod__sold">
+      const line = sold ? `<p class="qprod__sold">
           ${base ? `<img src="${icon('fire')}" alt="" width="20" height="20">` : ''}
-          <span>${word('sold')} ${sold.toLocaleString('en-US')} ${word('times')}</span>
+          <span>${word('sold')} <bdi>${sold}</bdi> ${word('times')}</span>
         </p>` : '';
       (byId.get(String(product.id)) || []).forEach((card) => {
         if (!bare(card)) return;

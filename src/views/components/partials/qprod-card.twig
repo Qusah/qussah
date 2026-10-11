@@ -62,10 +62,11 @@
             </div>
         {% endif %}
 
-        {% if product.sold_quantity %}
+        {# sold — the rounded figure («مباع +300 مرة»), not shown under 10: partials/qsold-count.twig #}
+        {% if product.sold_quantity >= 10 %}
             <p class="qprod__sold">
                 <img src="{{ 'images/qcard/fire.svg' | asset }}" alt="" width="20" height="20"/>
-                <span>{{ trans('blocks.qissa.sold') }} {{ product.sold_quantity }} {{ trans('blocks.qissa.times') }}</span>
+                <span>{{ trans('blocks.qissa.sold') }} {% include 'components.partials.qsold-count' with { count: product.sold_quantity } %} {{ trans('blocks.qissa.times') }}</span>
             </p>
         {% endif %}
     </div>

@@ -3,6 +3,7 @@ import { enhanceCarousels } from './card-carousel';
 import { bootQuickView, enhanceJsCard } from './qissa-quick-view';
 import { initPackCards } from './qissa-pack-card';
 import { bindGallery } from './image-viewer';
+import { soldLabel } from './qissa-sold-count';
 
 // Card add → «✓ أُضيف» → stepper, and the quick-view ticket (every page loads
 // this file). Waits for theme::ready itself — nothing touches salla.* here.
@@ -361,12 +362,13 @@ class ProductCard extends HTMLElement {
       </div>`;
   }
 
+  // «مباع +300 مرة» — the rounded figure, not drawn under 10 (qissa-sold-count.js)
   qcardSold() {
-    const sold = Number(this.product?.sold_quantity) || 0;
-    if (sold <= 0) return '';
+    const sold = soldLabel(this.product?.sold_quantity);
+    if (!sold) return '';
     return `<p class="qprod__sold">
         <img src="${this.qcardIcon('fire')}" alt="" width="20" height="20">
-        <span>${salla.lang.get('blocks.qissa.sold')} ${sold.toLocaleString('en-US')} ${salla.lang.get('blocks.qissa.times')}</span>
+        <span>${salla.lang.get('blocks.qissa.sold')} <bdi>${sold}</bdi> ${salla.lang.get('blocks.qissa.times')}</span>
       </p>`;
   }
 

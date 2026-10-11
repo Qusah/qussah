@@ -368,14 +368,16 @@
                 {% endif %}
 
                 {# sold, name, rating: stacked on desktop; on phones the name, then
-                   the rating (right) and sold (left) on one row #}
+                   the rating (right) and sold (left) on one row. The sold figure
+                   is rounded («مباع +300 مرة») and not shown under 10 — see
+                   components/partials/qsold-count.twig #}
                 <div class="qpd__head">
-                    {% if product.sold_quantity or product.can_show_remained_quantity %}
+                    {% if product.sold_quantity >= 10 or product.can_show_remained_quantity %}
                         <p class="qpd__sold">
-                            {% if product.sold_quantity %}
+                            {% if product.sold_quantity >= 10 %}
                                 <span class="qpd__sold-item">
                                     <img src="{{ 'images/qcard/fire.svg'|asset }}" alt="" width="23" height="23"/>
-                                    <span>{{ trans('blocks.qissa.sold') }} <b>{{ product.sold_quantity }}</b> {{ trans('blocks.qissa.times') }}</span>
+                                    <span>{{ trans('blocks.qissa.sold') }} <b>{% include 'components.partials.qsold-count' with { count: product.sold_quantity } %}</b> {{ trans('blocks.qissa.times') }}</span>
                                 </span>
                             {% endif %}
                             {% if product.can_show_remained_quantity %}

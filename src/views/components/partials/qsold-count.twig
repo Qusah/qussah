@@ -1,0 +1,46 @@
+{#
+  Sold-count figure — the rounded «مباع +300 مرة» form. The Twig side of
+  assets/js/partials/qissa-sold-count.js; change both together.
+
+  The count is rounded down — to the ten under 100, to the hundred under
+  1,000, to the thousand from there up — and printed with a "+" on the left of
+  the digits, in Latin digits with a thousands comma:
+
+         7  →  nothing (under 10 the line is not drawn)
+        34  →  +30
+       470  →  +400
+     6,072  →  +6,000
+    17,177  →  +17,000
+   109,798  →  +109,000
+
+  It rounds down, never up, so the "+" stays true. The zero groups and their
+  commas are written out: after the rounding they are known in advance.
+
+  Prints the figure only, inside <bdi> — that keeps the "+" on the number's
+  left inside the Arabic sentence. The caller draws the icon and the words
+  around it, so the caller checks `>= 10` as well.
+
+  Params:
+    count   int   a raw product.sold_quantity
+
+  Used by: pages/product/single.twig, components/partials/qprod-card.twig,
+  components/partials/qpack-card.twig.
+#}
+{%- set qsold = count|default(0) -%}
+{%- if qsold >= 10 -%}
+    {%- if qsold < 100 -%}
+        {%- set qsold_label = '+' ~ (qsold // 10) ~ '0' -%}
+    {%- elseif qsold < 1000 -%}
+        {%- set qsold_label = '+' ~ (qsold // 100) ~ '00' -%}
+    {%- elseif qsold < 1000000 -%}
+        {%- set qsold_label = '+' ~ (qsold // 1000) ~ ',000' -%}
+    {%- elseif qsold < 1000000000 -%}
+        {#- a million and up: two groups before the zeros, the second padded to three digits -#}
+        {%- set qsold_m = qsold // 1000000 -%}
+        {%- set qsold_k = (qsold // 1000) - qsold_m * 1000 -%}
+        {%- set qsold_label = '+' ~ qsold_m ~ ',' ~ (qsold_k < 10 ? '00' : (qsold_k < 100 ? '0' : '')) ~ qsold_k ~ ',000' -%}
+    {%- else -%}
+        {%- set qsold_label = qsold ~ '' -%}
+    {%- endif -%}
+    <bdi>{{ qsold_label }}</bdi>
+{%- endif -%}
