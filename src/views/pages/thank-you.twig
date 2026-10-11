@@ -197,15 +197,11 @@
         and store.* are documented for this page — every other order field is guarded,
         so a missing one hides only its own line. #}
     {% hook 'thank-you:start' %}
-    {# The heading is short and fixed (setting thank_you_heading) so the rating sits in the
-       first screen on a phone; the store's own thank-you message from Salla (often a long
-       promo line) is printed under the ticket. An empty setting puts that message back as
-       the heading. #}
-    {% set ty_msg = (thank_you_title ?: page.title)|trim %}
+    {# The heading is short and fixed (setting thank_you_heading). The store's own thank-you
+       message from Salla (a long Instagram promo line on Qusah) is not printed on this page:
+       it pushed the rating out of the first screen and was asked to be removed. #}
     {% set ty_head = theme.settings.get('thank_you_heading') %}
-    {% set ty_head = ty_head is null ? 'شكراً لك! طلبك وصلنا' : ty_head|trim %}
-    {% set ty_title = ty_head ?: ty_msg %}
-    {% set ty_note = (ty_head and ty_msg and ty_msg != ty_head) ? ty_msg : '' %}
+    {% set ty_title = ((ty_head is null ? '' : ty_head)|trim) ?: 'شكراً لك! طلبك وصلنا' %}
     {% set ty_parts = ty_title|split('!') %}
     {% set ty_rest = ty_parts|slice(1)|join('!')|trim %}
     {% set ty_name = (order.customer is defined and order.customer and order.customer.first_name is defined and order.customer.first_name) ? order.customer.first_name|trim : '' %}
@@ -386,9 +382,8 @@
         </section>
 
         <div class="qty-after">
-            {% if ty_note or order.instructions or messages|length %}
+            {% if order.instructions or messages|length %}
             <div class="qty-note">
-                {% if ty_note %}<p class="qty-note__msg">{{ ty_note }}</p>{% endif %}
                 {% if order.instructions %}
                     <article class="article article--main article--small">{{ order.instructions|raw }}</article>
                 {% endif %}
