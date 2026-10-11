@@ -98,11 +98,14 @@
     }
   }
 
+  /* The line under the rating: «{n}» in the merchant's text is the reviews total
+     (the real one, or the typed one when the real one is not used). */
   function note(section, total) {
     all(section, '[data-stat-note]').forEach(function (el) {
       var template = el.getAttribute('data-template') || '';
-      if (!template) return;
-      el.textContent = template.replace(/\{n\}/g, Number(total).toLocaleString('en-US'));
+      var count = total == null ? (el.getAttribute('data-typed-n') || '') : Number(total).toLocaleString('en-US');
+      if (!template || (!count && template.indexOf('{n}') > -1)) return;
+      el.textContent = template.replace(/\{n\}/g, count);
       el.hidden = false;
     });
   }
@@ -119,6 +122,7 @@
       [rating, reviews].forEach(function (stat) {
         if (stat && stat.getAttribute('data-typed') === '1') stat.hidden = false;
       });
+      note(section, null);
       layout(section);
     }
 
@@ -182,6 +186,7 @@
     if (!sections.length) return;
     sections.forEach(function (section) {
       all(section, '[data-stat-num]').forEach(function (el) { paint(el, el.textContent); });
+      if (section.getAttribute('data-stats-auto') !== '1') note(section, null);
       layout(section);
       watch(section);
     });
