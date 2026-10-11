@@ -5,6 +5,7 @@ import initTootTip from './partials/tooltip';
 import AppHelpers from "./app-helpers";
 import { autoEnhanceCarousels } from "./partials/card-carousel";
 import { soldLabel } from "./partials/qissa-sold-count";
+import { swipeToClose } from "./partials/qissa-swipe-close";
 
 class App extends AppHelpers {
   constructor() {
@@ -16,6 +17,7 @@ class App extends AppHelpers {
     this.commonThings();
     this.initiateNotifier();
     this.initiateMobileMenu();
+    this.initiateSideMenuSwipe();
     if (header_is_sticky) {
       this.initiateStickyMenu();
     }
@@ -184,6 +186,24 @@ isElementLoaded(selector, timeout = 8000){
     });
   }
 
+
+  /**
+   * The mobile menu is the .qside drawer in components/header/header.twig — its
+   * own script opens and closes it; initiateMobileMenu() below is the starter
+   * theme's mmenu path, which this header never reaches. The panel sits against
+   * the right edge, so a swipe to the right closes it (qissa-swipe-close.js).
+   * Closing goes through the overlay's click, which is header.twig's closeSide().
+   */
+  initiateSideMenuSwipe() {
+    const side = document.querySelector('[data-qside]');
+    if (!side) return;
+    swipeToClose(side.querySelector('.qside__panel'), {
+      side: 'right',
+      close: () => side.querySelector('[data-qside-close]')?.click(),
+      backdrop: side.querySelector('.qside__overlay'),
+      enabled: () => side.classList.contains('is-open'),
+    });
+  }
 
   initiateMobileMenu() {
 

@@ -92,7 +92,9 @@ $qcd-green: #008036;
   &__ship.is-done &__fill { background: $qcd-green; }
 
   /* ---- items (342:3622): photo right, details left of it ---- */
-  &__body { flex: 1; min-height: 0; overflow-y: auto; }
+  // touch-action: a scroll area answers for the touches inside it — the panel's
+  // own pan-y (qissa-swipe-close.js) stops here, so the swipe to close needs it too
+  &__body { flex: 1; min-height: 0; overflow-y: auto; touch-action: pan-y; }
   &__item {
     display: flex; align-items: center; gap: 12.2px;
     padding: 14.24px 18.31px;
@@ -198,7 +200,7 @@ $qcd-green: #008036;
   }
 
   /* ---- empty (339:3553): copy + art centred, the button at the foot ---- */
-  &__empty-slot { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; }
+  &__empty-slot { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; touch-action: pan-y; }
   &__empty {
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 23.23px;
     flex: 1;

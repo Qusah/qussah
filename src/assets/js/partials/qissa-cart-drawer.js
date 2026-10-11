@@ -1,3 +1,5 @@
+import { swipeToClose } from './qissa-swipe-close';
+
 /**
  * Qussah cart drawer — Figma "Qusah Re-Vamp" 339:3416: empty (339:3553),
  * free shipping to go (341:463), free shipping reached (339:3489).
@@ -80,6 +82,16 @@ class QissaCartDrawer {
     this.bindTriggers();
     this.bindCartEvents();
     document.addEventListener('theme::ready', () => this.bindCartEvents());
+
+    // The panel sits against the left edge: a swipe to the left closes it. A
+    // quick view open on one of the lines is the layer on top and keeps its
+    // own gestures, as it keeps the first Escape.
+    swipeToClose(this.panel, {
+      side: 'left',
+      close: () => this.close(),
+      backdrop: root.querySelector('.qcd__backdrop'),
+      enabled: () => this.isOpen && !this.root.querySelector('.is-qv-open'),
+    });
   }
 
   /* ---------------------------------------------------------------- opening */
