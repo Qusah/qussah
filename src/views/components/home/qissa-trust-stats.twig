@@ -1,0 +1,149 @@
+{#
+| component.show_title / title                  | bool / string | Heading
+| component.show_subtitle / subtitle            | bool / string | Line under the heading
+| component.show_customers                      | bool          | The customers figure
+| component.customers_label|value|unit          | string        | Typed by the merchant; a leading + is coloured
+| component.show_rating                         | bool          | The rating figure
+| component.rating_label|unit                   | string        | 
+| component.show_stars                          | bool          | Five stars filled to the rating
+| component.show_reviews                        | bool          | The reviews total
+| component.reviews_label|unit                  | string        | 
+| component.reviews_auto                        | bool          | Rating + total from the store reviews API (default on)
+| component.rating_value / reviews_value        | string        | Typed values: used with auto off, or when the API fails
+| component.min_reviews                         | int           | With auto on: under this total, rating and total stay hidden
+| component.show_third + third_label|value|unit | bool / string | Optional extra figure
+| component.show_decor                          | bool          | إظهار الريش
+| component.show_rule                           | bool          | إظهار الخط الفاصل تحت العنوان
+| component.animate                             | bool          | تشغيل الحركة
+| component.title_color                         | string        | Hex. لون العنوان
+| component.subtitle_color                      | string        | Hex. لون السطر التمهيدي
+| component.label_color                         | string        | Hex. لون التسميات
+| component.figures_color                       | string        | Hex. لون الأرقام
+| component.plus_color                          | string        | Hex. لون علامة +
+| component.unit_color                          | string        | Hex. لون الوحدات
+| component.stars_color                         | string        | Hex. لون النجوم
+| component.stars_empty_color                   | string        | Hex. لون النجوم الفارغة
+| component.decor_color                         | string        | Hex. لون الريشة الكبيرة
+| component.decor_color2                        | string        | Hex. لون الريش الصغير
+| component.rule_color                          | string        | Hex. لون الخط الفاصل
+| component.rule_accent_color                   | string        | Hex. لون بداية الخط الفاصل
+| component.panel_color                         | string        | Hex. اللوحة: اللون الأول
+| component.panel_color2                        | string        | Hex. اللوحة: اللون الثاني (تدرّج)
+| component.border_color                        | string        | Hex. لون حد اللوحة
+| component.bg_color                            | string        | Hex. خلفية القسم
+| position                                      | int           | Sorting number start from zero
+
+«ثقة بخفّة الريشة»: the row layout Bareq and Latafa use, in Qusah's colours, with a
+feather where Bareq has its glint: three in the corner and one that settles onto
+the main figure once when the block is first seen. The rating is five stars.
+This is a separate block from home.qissa-stats (the four gradient cards).
+
+Markup contract with qissa-trust-stats.js (data attributes only, no classes):
+  [data-stats]            the block; data-stats-auto 1/0, data-stats-min
+  [data-stats-list]       the row; the script sets --cols and data-count on it
+  [data-stat="…"]         one figure; `hidden` until the reviews answer when auto
+  [data-stat-num]         the figure text · [data-stat-unit] its unit
+  [data-stat-stars]       five stars; the script sets --pct from the figure
+The first visible figure gets .is-main from the script (and from here, so the
+row is right before the script runs).
+#}
+{% set show_title = component.show_title is not defined or component.show_title is null or component.show_title %}
+{% set show_subtitle = component.show_subtitle is not defined or component.show_subtitle is null or component.show_subtitle %}
+{% set show_customers = component.show_customers is not defined or component.show_customers is null or component.show_customers %}
+{% set show_rating = component.show_rating is not defined or component.show_rating is null or component.show_rating %}
+{% set show_reviews = component.show_reviews is not defined or component.show_reviews is null or component.show_reviews %}
+{% set show_stars = component.show_stars is not defined or component.show_stars is null or component.show_stars %}
+{% set show_decor = component.show_decor is not defined or component.show_decor is null or component.show_decor %}
+{% set show_rule = component.show_rule is not defined or component.show_rule is null or component.show_rule %}
+{% set animate = component.animate is not defined or component.animate is null or component.animate %}
+{% set auto = component.reviews_auto is not defined or component.reviews_auto is null or component.reviews_auto %}
+{% set min_reviews = (component.min_reviews is not null and component.min_reviews != '') ? component.min_reviews : 10 %}
+{% set has_rating = show_rating and (auto or component.rating_value) %}
+{% set has_reviews = show_reviews and (auto or component.reviews_value) %}
+{% set has_customers = show_customers and component.customers_value %}
+{% set has_third = component.show_third and component.third_value %}
+
+{# Merchant colours ride in as block-scoped custom properties; the stylesheet
+   reads each one with the brand value as its fallback. #}
+{% set styles = [] %}
+{% if component.title_color %}{% set styles = styles|merge(['--st-title: ' ~ component.title_color]) %}{% endif %}
+{% if component.subtitle_color %}{% set styles = styles|merge(['--st-sub: ' ~ component.subtitle_color]) %}{% endif %}
+{% if component.label_color %}{% set styles = styles|merge(['--st-label: ' ~ component.label_color]) %}{% endif %}
+{% if component.figures_color %}{% set styles = styles|merge(['--st-fig: ' ~ component.figures_color]) %}{% endif %}
+{% if component.plus_color %}{% set styles = styles|merge(['--st-plus: ' ~ component.plus_color]) %}{% endif %}
+{% if component.unit_color %}{% set styles = styles|merge(['--st-unit: ' ~ component.unit_color]) %}{% endif %}
+{% if component.stars_color %}{% set styles = styles|merge(['--st-star: ' ~ component.stars_color]) %}{% endif %}
+{% if component.stars_empty_color %}{% set styles = styles|merge(['--st-star-off: ' ~ component.stars_empty_color]) %}{% endif %}
+{% if component.decor_color %}{% set styles = styles|merge(['--st-decor: ' ~ component.decor_color]) %}{% endif %}
+{% if component.decor_color2 %}{% set styles = styles|merge(['--st-decor2: ' ~ component.decor_color2]) %}{% endif %}
+{% if component.rule_color %}{% set styles = styles|merge(['--st-rule: ' ~ component.rule_color]) %}{% endif %}
+{% if component.rule_accent_color %}{% set styles = styles|merge(['--st-rule-accent: ' ~ component.rule_accent_color]) %}{% endif %}
+{% if component.panel_color %}{% set styles = styles|merge(['--st-panel: ' ~ component.panel_color]) %}{% endif %}
+{% if component.panel_color2 %}{% set styles = styles|merge(['--st-panel2: ' ~ component.panel_color2]) %}{% endif %}
+{% if component.border_color %}{% set styles = styles|merge(['--st-border: ' ~ component.border_color]) %}{% endif %}
+{% if component.bg_color %}{% set styles = styles|merge(['--st-bg: ' ~ component.bg_color]) %}{% endif %}
+
+<section class="s-block qissa-trust-stats{{ animate ? '' : ' qissa-trust-stats--still' }}{{ component.bg_color ? ' qissa-trust-stats--bg' : '' }}" id="qissa-trust-stats-{{ position }}" data-stats data-stats-auto="{{ auto ? '1' : '0' }}" data-stats-min="{{ min_reviews }}"{% if styles|length %} style="{{ styles|join('; ') }}"{% endif %}>
+    <div class="qissa-trust-stats__wrap">
+        <div class="qissa-trust-stats__panel">
+            {% if show_decor %}
+                <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+                    <symbol id="qissa-trust-stats-mark-{{ position }}" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M20.8 3.2L20.37 3.24L19.93 3.3L19.49 3.39L19.05 3.48L18.61 3.6L18.17 3.73L17.73 3.88L17.29 4.05L16.85 4.23L16.42 4.43L15.99 4.65L15.56 4.87L15.59 6.91L14.71 5.37L14.3 5.64L13.89 5.92L13.48 6.22L13.09 6.53L12.7 6.84L12.32 7.17L11.94 7.51L11.58 7.86L11.89 10.28L10.87 8.59L10.54 8.97L10.21 9.36L9.9 9.75L9.6 10.16L9.31 10.57L9.04 10.98L8.78 11.41L8.53 11.83L8.3 12.27L8.08 12.71L7.88 13.15L7.7 13.6L7.66 13.71L7.62 13.82L7.58 13.92L7.54 14.03L7.5 14.14L7.47 14.24L7.43 14.35L7.4 14.45L7.36 14.56L7.33 14.66L7.3 14.76L7.27 14.87L7.24 14.97L7.21 15.07L7.18 15.17L7.15 15.27L7.13 15.37L7.1 15.48L7.08 15.57L7.05 15.67L7.03 15.77L7.01 15.87L6.99 15.97L6.97 16.07L6.95 16.16L6.93 16.26L6.91 16.36L6.9 16.45L6.88 16.55L6.87 16.64L6.85 16.74L6.84 16.83L6.83 16.92L6.82 17.02L6.81 17.11L6.8 17.2L6.89 17.19L6.98 17.18L7.08 17.17L7.17 17.16L7.26 17.15L7.36 17.13L7.45 17.12L7.55 17.1L7.64 17.09L7.74 17.07L7.84 17.05L7.93 17.03L8.03 17.01L8.13 16.99L8.23 16.97L8.33 16.95L8.43 16.92L8.53 16.9L8.63 16.87L8.73 16.85L8.83 16.82L8.93 16.79L9.03 16.76L9.13 16.73L9.24 16.7L9.34 16.67L9.44 16.64L9.55 16.6L9.65 16.57L9.76 16.53L9.86 16.5L9.97 16.46L10.08 16.42L10.18 16.38L10.29 16.34L10.4 16.3L10.85 16.12L11.29 15.92L11.73 15.7L12.17 15.47L12.59 15.22L13.02 14.96L13.43 14.69L13.84 14.4L14.25 14.1L14.64 13.79L14.38 11.42L15.41 13.13L15.78 12.78L16.14 12.42L16.49 12.06L16.83 11.68L17.16 11.3L17.48 10.91L17.78 10.52L18.08 10.11L17.8 7.83L18.63 9.29L18.88 8.87L19.13 8.44L19.35 8.01L19.57 7.58L19.77 7.15L19.95 6.71L20.12 6.27L20.27 5.83L20.4 5.39L20.52 4.95L20.61 4.51L20.7 4.07L20.76 3.63ZM7.75 16.6L17.4 6.95 17.05 6.6 7.4 16.25Z"/><path fill="currentColor" d="M7.3 16.1L7.9 16.7 3.6 21C3.43 21.17 3.17 21.17 3 21 2.83 20.83 2.83 20.57 3 20.4Z"/></symbol>
+                </svg>
+                <svg class="qissa-trust-stats__mark qissa-trust-stats__mark--a" aria-hidden="true"><use href="#qissa-trust-stats-mark-{{ position }}"/></svg>
+                <svg class="qissa-trust-stats__mark qissa-trust-stats__mark--b" aria-hidden="true"><use href="#qissa-trust-stats-mark-{{ position }}"/></svg>
+                <svg class="qissa-trust-stats__mark qissa-trust-stats__mark--d" aria-hidden="true"><use href="#qissa-trust-stats-mark-{{ position }}"/></svg>
+            {% endif %}
+
+            {% if (show_title and component.title) or (show_subtitle and component.subtitle) %}
+                <div class="qissa-trust-stats__head{{ show_decor ? ' qissa-trust-stats__head--decor' : '' }}">
+                    {% if show_title and component.title %}<h2 class="qissa-trust-stats__title">{{ component.title }}</h2>{% endif %}
+                    {% if show_subtitle and component.subtitle %}<p class="qissa-trust-stats__sub">{{ component.subtitle }}</p>{% endif %}
+                </div>
+            {% endif %}
+
+            {% if show_rule %}<div class="qissa-trust-stats__rule" role="presentation"></div>{% endif %}
+
+            {% set first = true %}
+            <dl class="qissa-trust-stats__list" data-stats-list>
+                {% if has_customers %}
+                    <div class="qissa-trust-stats__stat{{ first ? ' is-main' : '' }}" data-stat="customers">
+                        {% if component.customers_label %}<dt class="qissa-trust-stats__label">{{ component.customers_label }}</dt>{% endif %}
+                        <dd class="qissa-trust-stats__value">
+                            <span class="qissa-trust-stats__fig"><span class="qissa-trust-stats__num"><bdi dir="ltr" data-stat-num>{{ component.customers_value }}</bdi>{% if show_decor %}<svg class="qissa-trust-stats__mark qissa-trust-stats__mark--c" aria-hidden="true"><use href="#qissa-trust-stats-mark-{{ position }}"/></svg>{% endif %}</span>{% if component.customers_unit %}<span class="qissa-trust-stats__unit" data-stat-unit>{{ component.customers_unit }}</span>{% endif %}</span>
+                        </dd>
+                    </div>
+                    {% set first = false %}
+                {% endif %}
+                {% if has_rating %}
+                    <div class="qissa-trust-stats__stat{{ first ? ' is-main' : '' }}" data-stat="rating"{% if auto %} hidden{% endif %}{% if component.rating_value %} data-typed="1"{% endif %}>
+                        {% if component.rating_label %}<dt class="qissa-trust-stats__label">{{ component.rating_label }}</dt>{% endif %}
+                        <dd class="qissa-trust-stats__value">
+                            <span class="qissa-trust-stats__fig"><span class="qissa-trust-stats__num"><bdi dir="ltr" data-stat-num>{{ component.rating_value }}</bdi>{% if show_decor %}<svg class="qissa-trust-stats__mark qissa-trust-stats__mark--c" aria-hidden="true"><use href="#qissa-trust-stats-mark-{{ position }}"/></svg>{% endif %}</span>{% if component.rating_unit %}<span class="qissa-trust-stats__unit" data-stat-unit>{{ component.rating_unit }}</span>{% endif %}</span>
+                        {% if show_stars %}<span class="qissa-trust-stats__stars" data-stat-stars aria-hidden="true"><span class="qissa-trust-stats__stars-base"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96L12 2.5z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96L12 2.5z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96L12 2.5z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96L12 2.5z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96L12 2.5z"/></svg></span><span class="qissa-trust-stats__stars-fill"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96L12 2.5z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96L12 2.5z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96L12 2.5z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96L12 2.5z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.5l2.94 5.96 6.58.96-4.76 4.64 1.12 6.55L12 17.52l-5.88 3.09 1.12-6.55L2.48 9.42l6.58-.96L12 2.5z"/></svg></span></span>{% endif %}
+                        </dd>
+                    </div>
+                    {% set first = false %}
+                {% endif %}
+                {% if has_reviews %}
+                    <div class="qissa-trust-stats__stat{{ first ? ' is-main' : '' }}" data-stat="reviews"{% if auto %} hidden{% endif %}{% if component.reviews_value %} data-typed="1"{% endif %}>
+                        {% if component.reviews_label %}<dt class="qissa-trust-stats__label">{{ component.reviews_label }}</dt>{% endif %}
+                        <dd class="qissa-trust-stats__value">
+                            <span class="qissa-trust-stats__fig"><span class="qissa-trust-stats__num"><bdi dir="ltr" data-stat-num>{{ component.reviews_value }}</bdi>{% if show_decor %}<svg class="qissa-trust-stats__mark qissa-trust-stats__mark--c" aria-hidden="true"><use href="#qissa-trust-stats-mark-{{ position }}"/></svg>{% endif %}</span>{% if component.reviews_unit %}<span class="qissa-trust-stats__unit" data-stat-unit>{{ component.reviews_unit }}</span>{% endif %}</span>
+                        </dd>
+                    </div>
+                    {% set first = false %}
+                {% endif %}
+                {% if has_third %}
+                    <div class="qissa-trust-stats__stat{{ first ? ' is-main' : '' }}" data-stat="third">
+                        {% if component.third_label %}<dt class="qissa-trust-stats__label">{{ component.third_label }}</dt>{% endif %}
+                        <dd class="qissa-trust-stats__value">
+                            <span class="qissa-trust-stats__fig"><span class="qissa-trust-stats__num"><bdi dir="ltr" data-stat-num>{{ component.third_value }}</bdi>{% if show_decor %}<svg class="qissa-trust-stats__mark qissa-trust-stats__mark--c" aria-hidden="true"><use href="#qissa-trust-stats-mark-{{ position }}"/></svg>{% endif %}</span>{% if component.third_unit %}<span class="qissa-trust-stats__unit" data-stat-unit>{{ component.third_unit }}</span>{% endif %}</span>
+                        </dd>
+                    </div>
+                    {% set first = false %}
+                {% endif %}
+            </dl>
+        </div>
+    </div>
+</section>

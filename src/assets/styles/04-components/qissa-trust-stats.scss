@@ -1,0 +1,128 @@
+// Stats block (home.qissa-trust-stats) — Trust stats (customers, rating, reviews).
+// One light panel: heading, a thin rule, then one row of figures. The first
+// visible figure is the main one (.is-main, set in the Twig and kept right by
+// qissa-trust-stats.js when the reviews figures arrive). Every colour is a block-scoped
+// custom property the merchant can set; the value after the comma is the brand
+// default. Type sizes come from --chars / --u, which the script sets from the
+// real lengths; the defaults below are safe for a seven-character figure.
+.qissa-trust-stats {
+  --cap-main: 120px;
+  --cap-rest: 68px;
+  background: var(--st-bg, transparent);
+
+  &__wrap { max-width: 1232px; margin: 0 auto; padding: 0 16px; }
+  &--bg &__wrap { padding-block: 48px; }      // a coloured section needs air around the panel
+
+  &__panel {
+    position: relative; overflow: hidden; isolation: isolate;
+    border: 1px solid var(--st-border, #dbe7f0); border-radius: 20px;
+    background: linear-gradient(205deg, var(--st-panel, #ffffff) 0%, var(--st-panel, #ffffff) 34%, var(--st-panel2, #e3f7fc) 100%);
+    padding: 64px 64px 72px;
+  }
+
+  &__title {
+    margin: 0; font-weight: 500; font-size: 32px; line-height: 1.35; letter-spacing: -.01em;
+    color: var(--st-title, #172951); text-wrap: balance; max-width: 16em;
+  }
+  &__sub { margin: 8px 0 0; font-size: 16px; line-height: 1.7; color: var(--st-sub, #5a6874); max-width: 30em; }
+  &__title + &__sub { margin-top: 8px; }
+  &__sub:first-child { margin-top: 0; }
+
+  // hairline with a short brand start
+  &__rule {
+    height: 1px; margin: 36px 0 0;
+    background: linear-gradient(var(--st-rule-accent, #2c348e), var(--st-rule-accent, #2c348e)) right top / 56px 100% no-repeat, var(--st-rule, #dbe7f0);
+    &::after { content: ""; display: block; width: 56px; height: 2px; background: var(--st-rule-accent, #2c348e); }
+  }
+
+  &__list {
+    margin: 44px 0 0; display: grid;
+    grid-template-columns: var(--cols, 2.38fr 1fr 1fr);
+    align-items: end; column-gap: 56px;
+    padding-bottom: 40px;             // room for the stars that hang under the figure line
+    &:first-child { margin-top: 0; }
+    &[hidden] { display: none; }
+  }
+  &__stat { min-width: 0; container-type: inline-size; &[hidden] { display: none; } }
+  &__label {
+    margin: 0 0 18px; font-size: 15px; line-height: 1.65; font-weight: 500;
+    color: var(--st-label, #5a6874); max-width: 18em; text-wrap: balance;
+  }
+  &__value { margin: 0; min-width: 0; position: relative; }
+  &__fig {
+    display: flex; flex-wrap: wrap; align-items: flex-end; column-gap: 14px; row-gap: 12px;
+    min-height: calc(var(--cap-main) * .74); position: relative;
+  }
+  &__num {
+    position: relative; display: block;
+    font-family: "Expo Arabic", WesternDigits, "GE SS Two", sans-serif !important; font-weight: 700; letter-spacing: -.03em; white-space: nowrap; color: var(--st-fig, #172951);
+    font-variant-numeric: lining-nums;
+    font-size: min(var(--cap-rest), calc((100cqi - var(--u, 56px)) * 1.5 / var(--chars, 5)));
+    line-height: 1;
+    bdi { display: block; }
+    b { font-weight: inherit; color: var(--st-plus, #2c348e); }
+  }
+  &__stat.is-main &__num { font-size: min(var(--cap-main), calc((100cqi - var(--u, 56px)) * 1.5 / var(--chars, 7))); }
+  &__unit { font-size: 15px; line-height: 1; font-weight: 500; color: var(--st-unit, #172951); white-space: nowrap; }
+  &__stat.is-main &__unit { font-size: 17px; }
+  @supports (text-box: trim-both cap alphabetic) {
+    &__num bdi, &__unit { text-box: trim-both cap alphabetic; }
+  }
+  @supports not (text-box: trim-both cap alphabetic) {
+    &__num { line-height: .8; }
+  }
+
+  // rating: five stars, filled to the score from the reading side
+  &__stars {
+    position: absolute; top: calc(100% + 20px); right: 0;
+    display: flex; gap: 4px; width: max-content;
+    &[hidden] { display: none; }
+    svg { width: 20px; height: 20px; flex: none; display: block; fill: currentColor; }
+  }
+  &__stars-base { display: flex; gap: inherit; color: var(--st-star-off, #cfd8e3); }
+  &__stars-fill {
+    position: absolute; inset-block: 0; right: 0;
+    width: var(--pct, 100%); overflow: hidden; display: flex; gap: inherit; color: var(--st-star, #2c348e);
+  }
+
+  // the marks: three placed in the corner, one on the main figure
+  &__mark { position: absolute; pointer-events: none; display: block; overflow: visible; }
+  &__mark--a { width: 104px; height: 104px; color: var(--st-decor, #91e6f7); left: 84px; top: 34px; transform: scaleX(-1) rotate(-6deg); }
+  &__mark--b { width: 34px; height: 34px; color: var(--st-decor2, #2c348e); left: 196px; top: 112px; transform: scaleX(-1) rotate(-34deg); }
+  &__mark--d { width: 26px; height: 26px; color: var(--st-decor, #91e6f7); left: 60px; top: 138px; transform: rotate(-24deg); }
+  &__mark--c { width: 36px; height: 36px; color: var(--st-decor2, #2c348e); left: -44px; top: -26px; transform: scaleX(-1) rotate(-6deg); }
+
+  @keyframes qissa-trust-stats-settle {
+    0% { transform: translate(10px, -26px) scaleX(-1) rotate(-38deg); opacity: 0; }
+    60% { opacity: 1; }
+    100% { transform: scaleX(-1) rotate(-6deg); opacity: 1; }
+  }
+  &.is-seen:not(&--still) &__mark--c { animation: qissa-trust-stats-settle 1.2s cubic-bezier(.16, 1, .3, 1) .2s 1 both; }
+  @media (prefers-reduced-motion: reduce) { &.is-seen &__mark--c { animation: none; } }
+  &__num &__mark--c { display: none; }
+  &__stat.is-main &__mark--c { display: block; }
+  &__head--decor { padding-left: 200px; }
+
+  &[data-count="1"] { --cap-main: 148px; }
+
+  @media (max-width: 760px) {
+    --cap-main: 88px; --cap-rest: 54px;
+    &__panel { padding: 36px 24px 44px; border-radius: 16px; }
+    &__head--decor { padding-left: 96px; }
+    &__title { font-size: 26px; }
+    &__sub { font-size: 14px; }
+    &__rule { margin-top: 28px; }
+    &__list { display: block; margin-top: 32px; padding-bottom: 0; }
+    &__stat:not([hidden]) ~ &__stat { margin-top: 34px; }
+    &__label { font-size: 14px; margin-bottom: 14px; }
+    &__fig { min-height: 0; }
+    &__unit, &__stat.is-main &__unit { font-size: 15px; }
+    &__value { display: flex; flex-wrap: wrap; align-items: flex-end; column-gap: 20px; row-gap: 14px; }
+    &__stars { position: relative; top: auto; margin-bottom: 3px; svg { width: 19px; height: 19px; } }
+    &__mark--a { width: 64px; height: 64px; left: 26px; top: 20px; }
+    &__mark--b { width: 22px; height: 22px; left: 92px; top: 74px; }
+    &__mark--d { width: 18px; height: 18px; left: 18px; top: 90px; }
+    &__mark--c { width: 24px; height: 24px; left: -26px; top: -22px; }
+    &[data-count="1"] { --cap-main: 104px; }
+  }
+}

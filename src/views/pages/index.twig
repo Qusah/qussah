@@ -11,4 +11,8 @@
 {% endblock %}
 {% block scripts %}
     <script defer data-cfasync="false" crossorigin="anonymous" src="{{ 'home.js' | asset }}"></script>
+    {# The stats block (home.qissa-trust-stats): fills the rating and the reviews total from the
+       store's reviews. No data-cfasync: it defines no custom element and waits
+       for theme::ready before any salla.* call. #}
+    <script defer src="{{ 'qissa-trust-stats.js' | asset }}"></script>
 {% endblock %}

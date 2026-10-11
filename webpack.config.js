@@ -25,6 +25,7 @@ module.exports = {
         'qissa-hero-counter' : asset('js/partials/qissa-hero-counter.js'),
         'wishlist-card': asset('js/partials/wishlist-card.js'),
         'add-product-toast': asset('js/partials/add-product-toast.js'),
+        'qissa-trust-stats': asset('js/partials/qissa-trust-stats.js'),
         'digital-files': asset('js/partials/digital-files.js'),
         checkout: [asset('js/cart.js'), asset('js/thankyou.js')],
         pages   : [asset('js/loyalty.js'), asset('js/brands.js'),],

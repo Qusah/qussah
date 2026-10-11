@@ -5504,6 +5504,484 @@
                     "maxLength": 30
                 }
             ]
+        },
+        {
+            "key": "5e1c9b7a-3f48-4d26-8a90-c7d4e2b61f03",
+            "title": {
+                "en": "Trust stats (customers, rating, reviews)",
+                "ar": "أرقام الثقة (العملاء، التقييم، التقييمات)"
+            },
+            "icon": "sicon-presentation",
+            "path": "home.qissa-trust-stats",
+            "fields": [
+                {
+                    "type": "static",
+                    "format": "description",
+                    "id": "stats-head-1",
+                    "value": "<div style='background-color:#f5f5f5;border-radius:8px;padding:10px 14px;margin:8px 0 12px;color:#222;font-size:14px;line-height:1.6;direction:inherit;text-align:inherit;'><strong>العنوان</strong></div>"
+                },
+                {
+                    "id": "show_title",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": "إظهار العنوان",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "title",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": "العنوان",
+                    "value": "ثقة بخفّة الريشة",
+                    "required": false,
+                    "maxLength": 120
+                },
+                {
+                    "id": "show_subtitle",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": "إظهار السطر التمهيدي",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "subtitle",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": "السطر التمهيدي",
+                    "value": "شكرًا لكل بيت اختار قصة.",
+                    "required": false,
+                    "maxLength": 200
+                },
+                {
+                    "type": "static",
+                    "format": "description",
+                    "id": "stats-head-2",
+                    "value": "<div style='background-color:#f5f5f5;border-radius:8px;padding:10px 14px;margin:8px 0 12px;color:#222;font-size:14px;line-height:1.6;direction:inherit;text-align:inherit;'><strong>رقم العملاء</strong><br>رقم يكتبه التاجر كما يريد أن يظهر، مثل ‎+45,000‎. علامة + في أوله تأخذ اللون المميز.</div>"
+                },
+                {
+                    "id": "show_customers",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": "إظهار رقم العملاء",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "customers_label",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": "التسمية",
+                    "value": "عملاؤنا وصلوا لأكثر من",
+                    "required": false,
+                    "maxLength": 120
+                },
+                {
+                    "id": "customers_value",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": "الرقم",
+                    "placeholder": "+45,000",
+                    "value": "+800.3K",
+                    "required": false,
+                    "maxLength": 20
+                },
+                {
+                    "id": "customers_unit",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": "الوحدة بجانب الرقم",
+                    "description": "اتركها فارغة لإخفائها",
+                    "value": "عميل",
+                    "required": false,
+                    "maxLength": 30
+                },
+                {
+                    "type": "static",
+                    "format": "description",
+                    "id": "stats-head-3",
+                    "value": "<div style='background-color:#f5f5f5;border-radius:8px;padding:10px 14px;margin:8px 0 12px;color:#222;font-size:14px;line-height:1.6;direction:inherit;text-align:inherit;'><strong>التقييم</strong></div>"
+                },
+                {
+                    "id": "show_rating",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": "إظهار التقييم",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "rating_label",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": "التسمية",
+                    "value": "تقييم عملائنا وصل إلى",
+                    "required": false,
+                    "maxLength": 120
+                },
+                {
+                    "id": "rating_unit",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": "الوحدة بجانب الرقم",
+                    "description": "اتركها فارغة لإخفائها",
+                    "value": "من 5",
+                    "required": false,
+                    "maxLength": 30
+                },
+                {
+                    "id": "show_stars",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": "إظهار النجوم",
+                    "description": "خمس نجوم تمتلئ بقدر التقييم",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "static",
+                    "format": "description",
+                    "id": "stats-head-4",
+                    "value": "<div style='background-color:#f5f5f5;border-radius:8px;padding:10px 14px;margin:8px 0 12px;color:#222;font-size:14px;line-height:1.6;direction:inherit;text-align:inherit;'><strong>عدد التقييمات</strong></div>"
+                },
+                {
+                    "id": "show_reviews",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": "إظهار عدد التقييمات",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "reviews_label",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": "التسمية",
+                    "value": "وكتبوا لنا",
+                    "required": false,
+                    "maxLength": 120
+                },
+                {
+                    "id": "reviews_unit",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": "الوحدة بجانب الرقم",
+                    "description": "اتركها فارغة لإخفائها",
+                    "value": "تقييم",
+                    "required": false,
+                    "maxLength": 30
+                },
+                {
+                    "type": "static",
+                    "format": "description",
+                    "id": "stats-head-5",
+                    "value": "<div style='background-color:#f5f5f5;border-radius:8px;padding:10px 14px;margin:8px 0 12px;color:#222;font-size:14px;line-height:1.6;direction:inherit;text-align:inherit;'><strong>مصدر التقييم وعدد التقييمات</strong></div>"
+                },
+                {
+                    "id": "reviews_auto",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": "أرقام المتجر الحقيقية",
+                    "description": "مفعّل: التقييم هو متوسط آخر 30 تقييماً للمتجر، والعدد هو إجمالي تقييمات المتجر. إذا تعذّر جلبها تظهر القيم المكتوبة أدناه إن وُجدت. غير مفعّل: تظهر القيم المكتوبة أدناه فقط.",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "rating_value",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": "التقييم (يدوي)",
+                    "description": "مثال: 4.9",
+                    "placeholder": "4.9",
+                    "value": null,
+                    "required": false,
+                    "maxLength": 5
+                },
+                {
+                    "id": "reviews_value",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": "عدد التقييمات (يدوي)",
+                    "description": "مثال: 1,250",
+                    "placeholder": "1,250",
+                    "value": null,
+                    "required": false,
+                    "maxLength": 20
+                },
+                {
+                    "id": "min_reviews",
+                    "type": "number",
+                    "format": "integer",
+                    "icon": "sicon-list-numbers",
+                    "label": "الحد الأدنى للتقييمات",
+                    "description": "مع الأرقام الحقيقية: إذا كان إجمالي تقييمات المتجر أقل من هذا العدد لا يظهر التقييم ولا العدد",
+                    "value": 10,
+                    "minimum": 0,
+                    "maximum": 1000,
+                    "required": false
+                },
+                {
+                    "type": "static",
+                    "format": "description",
+                    "id": "stats-head-6",
+                    "value": "<div style='background-color:#f5f5f5;border-radius:8px;padding:10px 14px;margin:8px 0 12px;color:#222;font-size:14px;line-height:1.6;direction:inherit;text-align:inherit;'><strong>رقم إضافي (اختياري)</strong></div>"
+                },
+                {
+                    "id": "show_third",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": "إظهار الرقم الإضافي",
+                    "required": false,
+                    "value": false,
+                    "selected": false
+                },
+                {
+                    "id": "third_label",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": "التسمية",
+                    "placeholder": "طلب تم توصيله",
+                    "value": null,
+                    "required": false,
+                    "maxLength": 120
+                },
+                {
+                    "id": "third_value",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": "الرقم",
+                    "placeholder": "+2.1M",
+                    "value": null,
+                    "required": false,
+                    "maxLength": 20
+                },
+                {
+                    "id": "third_unit",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": "الوحدة بجانب الرقم",
+                    "value": null,
+                    "required": false,
+                    "maxLength": 30
+                },
+                {
+                    "type": "static",
+                    "format": "description",
+                    "id": "stats-head-7",
+                    "value": "<div style='background-color:#f5f5f5;border-radius:8px;padding:10px 14px;margin:8px 0 12px;color:#222;font-size:14px;line-height:1.6;direction:inherit;text-align:inherit;'><strong>الشكل والحركة</strong></div>"
+                },
+                {
+                    "id": "show_decor",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": "إظهار الريش",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "show_rule",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": "إظهار الخط الفاصل تحت العنوان",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "animate",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": "تشغيل الحركة",
+                    "description": "حركة واحدة قصيرة عند ظهور القسم لأول مرة",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "static",
+                    "format": "description",
+                    "id": "stats-head-8",
+                    "value": "<div style='background-color:#f5f5f5;border-radius:8px;padding:10px 14px;margin:8px 0 12px;color:#222;font-size:14px;line-height:1.6;direction:inherit;text-align:inherit;'><strong>الألوان</strong></div>"
+                },
+                {
+                    "id": "title_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": "لون العنوان",
+                    "required": false,
+                    "value": "#172951"
+                },
+                {
+                    "id": "subtitle_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": "لون السطر التمهيدي",
+                    "required": false,
+                    "value": "#5a6874"
+                },
+                {
+                    "id": "label_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": "لون التسميات",
+                    "required": false,
+                    "value": "#5a6874"
+                },
+                {
+                    "id": "figures_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": "لون الأرقام",
+                    "required": false,
+                    "value": "#172951"
+                },
+                {
+                    "id": "plus_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": "لون علامة +",
+                    "required": false,
+                    "value": "#2c348e"
+                },
+                {
+                    "id": "unit_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": "لون الوحدات",
+                    "required": false,
+                    "value": "#172951"
+                },
+                {
+                    "id": "stars_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": "لون النجوم",
+                    "required": false,
+                    "value": "#2c348e"
+                },
+                {
+                    "id": "stars_empty_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": "لون النجوم الفارغة",
+                    "required": false,
+                    "value": "#cfd8e3"
+                },
+                {
+                    "id": "decor_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": "لون الريشة الكبيرة",
+                    "required": false,
+                    "value": "#91e6f7"
+                },
+                {
+                    "id": "decor_color2",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": "لون الريش الصغير",
+                    "required": false,
+                    "value": "#2c348e"
+                },
+                {
+                    "id": "rule_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": "لون الخط الفاصل",
+                    "required": false,
+                    "value": "#dbe7f0"
+                },
+                {
+                    "id": "rule_accent_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": "لون بداية الخط الفاصل",
+                    "required": false,
+                    "value": "#2c348e"
+                },
+                {
+                    "id": "panel_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": "اللوحة: اللون الأول",
+                    "required": false,
+                    "value": "#ffffff"
+                },
+                {
+                    "id": "panel_color2",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": "اللوحة: اللون الثاني (تدرّج)",
+                    "required": false,
+                    "value": "#e3f7fc"
+                },
+                {
+                    "id": "border_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": "لون حد اللوحة",
+                    "required": false,
+                    "value": "#dbe7f0"
+                },
+                {
+                    "id": "bg_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": "خلفية القسم",
+                    "required": false,
+                    "value": null
+                }
+            ]
         }
     ],
     "support_url": "https://qusahstore.com/",
