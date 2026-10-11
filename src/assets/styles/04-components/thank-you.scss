@@ -117,7 +117,8 @@ $qe: cubic-bezier(.16, 1, .3, 1);
     &.is-on .qty-punch__n { color: #fff; }
   }
 }
-.qty-punch__n, .qty-punch__chad { font: 500 21px/1 $f; color: $n; }
+.qty-punch__n, .qty-punch__chad { font: 500 21px/1 $f; color: $n; svg { display: block; } }
+.qty-punch__n { display: flex; }
 .qty-stub[data-state="rated"] [data-rate]:not(.is-on) .qty-punch__n { color: #5b62a8; }
 .qty-punch__chad { position: absolute; top: 0; right: 0; bottom: 0; left: 0; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: #f6fbfe; box-shadow: inset 0 0 0 2px $n, 0 6px 12px rgba(10, 20, 60, .25); opacity: 0; pointer-events: none; }
 .qty-punch__ends { display: flex; justify-content: space-between; gap: 12px; margin-top: -8px; font: 500 13px/1.2 $f; color: $sub; }
@@ -244,7 +245,7 @@ $qe: cubic-bezier(.16, 1, .3, 1);
   .qty-stub__q { font-size: 18px; line-height: 1.5; }
   .qty-stub__hint, .qty-stub__got { font-size: 13px; }
   .qty-punch { gap: 6px; [data-rate] { flex-basis: 52px; height: 52px; } }
-  .qty-punch__n, .qty-punch__chad { font-size: 19px; }
+  .qty-punch__n svg, .qty-punch__chad svg { width: 30px; height: 30px; }
   .qty-punch__ends { margin-top: -6px; font-size: 12px; }
   .qty-stamp { width: 88px; height: 88px; }
   .qty-stamp__in { padding: 0 12px; b { font-size: 13px; } }

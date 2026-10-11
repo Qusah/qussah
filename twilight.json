@@ -722,7 +722,7 @@
                 "id": "csat_hint",
                 "format": "text",
                 "required": false,
-                "value": "ضغطة وحدة تكفي، اختر رقماً"
+                "value": "ضغطة وحدة تكفي، اختر وجهاً"
         },
         {
                 "type": "string",
