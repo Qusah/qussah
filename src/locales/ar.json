@@ -208,7 +208,15 @@
       "rate_of": "{n} من 5، {word}",
       "chosen": "اخترت {n} من 5 · {word}",
       "rated_live": "تم تسجيل تقييمك: {word}.",
-      "optional": "(اختياري)"
+      "optional": "(اختياري)",
+      "rest": "الشحن والرسوم",
+      "pay_cod": "الدفع عند الاستلام",
+      "pay_bank": "تحويل بنكي",
+      "pay_card": "بطاقة ائتمانية",
+      "pay_mada": "مدى",
+      "pay_tabby": "تابي",
+      "pay_tamara": "تمارا",
+      "pay_free": "بدون دفع"
     }
   },
   "pages": {

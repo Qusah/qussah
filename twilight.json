@@ -633,6 +633,17 @@
                 "selected": true
         },
         {
+                "type": "string",
+                "icon": "sicon-format-text-alt",
+                "label": "عنوان صفحة الشكر",
+                "description": "عنوان قصير في أعلى التذكرة حتى يظهر سؤال التقييم في أول الشاشة على الجوال. رسالة الشكر المكتوبة في إعدادات سلة تظهر تحت التذكرة. اتركه فارغاً لتعود رسالة سلة كعنوان",
+                "id": "thank_you_heading",
+                "format": "text",
+                "required": false,
+                "value": "شكراً لك! طلبك وصلنا",
+                "maxLength": 60
+        },
+        {
                 "type": "boolean",
                 "icon": "sicon-smile",
                 "label": "سؤال رضا العميل في صفحة تأكيد الطلب",

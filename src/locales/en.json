@@ -208,7 +208,15 @@
       "rate_of": "{n} of 5, {word}",
       "chosen": "You picked {n} of 5 · {word}",
       "rated_live": "Your rating is in: {word}.",
-      "optional": "(optional)"
+      "optional": "(optional)",
+      "rest": "Shipping and fees",
+      "pay_cod": "Cash on delivery",
+      "pay_bank": "Bank transfer",
+      "pay_card": "Credit card",
+      "pay_mada": "mada",
+      "pay_tabby": "Tabby",
+      "pay_tamara": "Tamara",
+      "pay_free": "No payment"
     }
   },
   "pages": {

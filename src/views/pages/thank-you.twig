@@ -197,7 +197,15 @@
         and store.* are documented for this page — every other order field is guarded,
         so a missing one hides only its own line. #}
     {% hook 'thank-you:start' %}
-    {% set ty_title = (thank_you_title ?: page.title)|trim %}
+    {# The heading is short and fixed (setting thank_you_heading) so the rating sits in the
+       first screen on a phone; the store's own thank-you message from Salla (often a long
+       promo line) is printed under the ticket. An empty setting puts that message back as
+       the heading. #}
+    {% set ty_msg = (thank_you_title ?: page.title)|trim %}
+    {% set ty_head = theme.settings.get('thank_you_heading') %}
+    {% set ty_head = ty_head is null ? 'شكراً لك! طلبك وصلنا' : ty_head|trim %}
+    {% set ty_title = ty_head ?: ty_msg %}
+    {% set ty_note = (ty_head and ty_msg and ty_msg != ty_head) ? ty_msg : '' %}
     {% set ty_parts = ty_title|split('!') %}
     {% set ty_rest = ty_parts|slice(1)|join('!')|trim %}
     {% set ty_name = (order.customer is defined and order.customer and order.customer.first_name is defined and order.customer.first_name) ? order.customer.first_name|trim : '' %}
@@ -217,6 +225,9 @@
     {% if ty_pay is not null and ty_pay.name is defined %}{% set ty_pay = ty_pay.name %}{% endif %}
     {# printed only when it is plain text: echoing an object or a list would abort the render too #}
     {% if ty_pay is not null and (ty_pay|json_encode)|first != '"' %}{% set ty_pay = null %}{% endif %}
+    {# Salla hands the method over as a code («cod»): print its name; an unknown code is printed as it is #}
+    {% set ty_pay_names = {'cod': trans('blocks.thank_you.pay_cod'), 'bank': trans('blocks.thank_you.pay_bank'), 'credit_card': trans('blocks.thank_you.pay_card'), 'mada': trans('blocks.thank_you.pay_mada'), 'apple_pay': 'Apple Pay', 'stc_pay': 'STC Pay', 'tabby_installment': trans('blocks.thank_you.pay_tabby'), 'tamara_installment': trans('blocks.thank_you.pay_tamara'), 'free': trans('blocks.thank_you.pay_free')} %}
+    {% if ty_pay is not null and ty_pay_names[ty_pay|lower|trim] is defined %}{% set ty_pay = ty_pay_names[ty_pay|lower|trim] %}{% endif %}
     {% set ty_receipt = ty_items|length or ty_sub is not null or ty_total is not null %}
     {% set ty_mobile = (store.contacts is defined and store.contacts and store.contacts.mobile is defined) ? store.contacts.mobile : null %}
     {% set ty_wa = (store.contacts is defined and store.contacts and store.contacts.whatsapp is defined) ? store.contacts.whatsapp : null %}
@@ -275,7 +286,7 @@
                     <ul class="qty-tk__items" aria-label="{{ trans('blocks.thank_you.products') }}">
                         {% for item in ty_items|slice(0, 2) %}
                         <li>
-                            {% if item.image is defined and item.image %}<img src="{{ item.image }}" alt="" width="44" height="44">{% else %}<span class="qty-ph" aria-hidden="true"><svg class="qty-i" width="24" height="24"><use href="#qty-i-box"/></svg></span>{% endif %}
+                            {% set ty_pid = (item.product is defined and item.product and item.product.id is defined and item.product.id) ? item.product.id : '' %}{% if item.image is defined and item.image %}<img src="{{ item.image }}" alt="" width="44" height="44"{% if ty_pid %} data-qty-pid="{{ ty_pid }}"{% endif %}>{% else %}<span class="qty-ph" aria-hidden="true"{% if ty_pid %} data-qty-pid="{{ ty_pid }}"{% endif %}><svg class="qty-i" width="24" height="24"><use href="#qty-i-box"/></svg></span>{% endif %}
                             <span class="qty-tk__iname">{{ item.name }}</span>
                             {% if item.quantity is defined and item.quantity %}<span class="qty-tk__iq qty-num">× {{ item.quantity }}</span>{% endif %}
                         </li>
@@ -353,11 +364,21 @@
                 </section>
                 {% endif %}
             </article>
+
+            {# phones and tablets: the two links sit under the ticket, so nothing stands between
+               the order number and the rating (the same links inside the ticket are hidden there) #}
+            <div class="qty-stage__acts">
+                <button type="button" class="qty-btn qty-btn--ghost" onclick="salla.order.show({order_id:'{{ order.id }}', url:'{{ order.url }}'})"><svg class="qty-i" width="19" height="19" aria-hidden="true"><use href="#qty-i-receipt"/></svg>{{ trans('pages.thank_you.order_details') }}</button>
+                {% if ty_receipt %}
+                <a class="qty-stage__jump" href="#qty-receipt">{{ trans('blocks.thank_you.contents') }}<svg class="qty-i" width="18" height="18" aria-hidden="true"><use href="#qty-i-down"/></svg></a>
+                {% endif %}
+            </div>
         </section>
 
         <div class="qty-after">
-            {% if order.instructions or messages|length %}
+            {% if ty_note or order.instructions or messages|length %}
             <div class="qty-note">
+                {% if ty_note %}<p class="qty-note__msg">{{ ty_note }}</p>{% endif %}
                 {% if order.instructions %}
                     <article class="article article--main article--small">{{ order.instructions|raw }}</article>
                 {% endif %}
@@ -376,7 +397,7 @@
                     <ul class="qty-rc__items">
                         {% for item in ty_items %}
                         <li class="qty-rc__it">
-                            {% if item.image is defined and item.image %}<img src="{{ item.image }}" alt="" width="76" height="76" loading="lazy">{% else %}<span class="qty-ph" aria-hidden="true"><svg class="qty-i" width="24" height="24"><use href="#qty-i-box"/></svg></span>{% endif %}
+                            {% set ty_pid = (item.product is defined and item.product and item.product.id is defined and item.product.id) ? item.product.id : '' %}{% if item.image is defined and item.image %}<img src="{{ item.image }}" alt="" width="76" height="76" loading="lazy"{% if ty_pid %} data-qty-pid="{{ ty_pid }}"{% endif %}>{% else %}<span class="qty-ph" aria-hidden="true"{% if ty_pid %} data-qty-pid="{{ ty_pid }}"{% endif %}><svg class="qty-i" width="24" height="24"><use href="#qty-i-box"/></svg></span>{% endif %}
                             <div class="qty-rc__nm">
                                 <b>{{ item.name }}</b>
                                 {% if item.product is defined and item.product and item.product.subtitle is defined and item.product.subtitle %}<span>{{ item.product.subtitle }}</span>{% endif %}
@@ -391,21 +412,23 @@
                     </ul>
                     {% endif %}
                     {% hook 'thank-you:items.end' %}
-                    <dl class="qty-rc__sum">
+                    {# When Salla gives this page no shipping cost the lines above the total do not add up
+                       to it; thankyou.js then adds one «الشحن والرسوم» line with the difference. #}
+                    <dl class="qty-rc__sum" data-qty-sum data-rest-label="{{ trans('blocks.thank_you.rest')|e('html_attr') }}">
                         {% if ty_sub is not null %}
-                        <div><dt>{{ trans('blocks.thank_you.sub_total') }}</dt><dd class="qty-m">{{ ty_sub|money }}</dd></div>
+                        <div data-qty-row="part"><dt>{{ trans('blocks.thank_you.sub_total') }}</dt><dd class="qty-m">{{ ty_sub|money }}</dd></div>
                         {% endif %}
                         {% for d in ty_disc %}{% if d.discount is defined and d.discount %}
-                        <div><dt>{{ d.name is defined and d.name ? d.name : '' }}</dt><dd class="qty-m">{{ d.discount|money }}</dd></div>
+                        <div data-qty-row="part"><dt>{{ d.name is defined and d.name ? d.name : '' }}</dt><dd class="qty-m">{{ d.discount|money }}</dd></div>
                         {% endif %}{% endfor %}
                         {% if ty_ship_cost is not null %}
-                        <div><dt>{{ trans('blocks.thank_you.shipping') }}{{ ty_ship ? ' · ' ~ ty_ship : '' }}</dt><dd class="qty-m">{{ ty_ship_cost|money }}</dd></div>
+                        <div data-qty-row="ship"><dt>{{ trans('blocks.thank_you.shipping') }}{{ ty_ship ? ' · ' ~ ty_ship : '' }}</dt><dd class="qty-m">{{ ty_ship_cost|money }}</dd></div>
                         {% endif %}
                         {% if ty_cod is not null %}
-                        <div><dt>{{ trans('blocks.thank_you.cod') }}</dt><dd class="qty-m">{{ ty_cod|money }}</dd></div>
+                        <div data-qty-row="part"><dt>{{ trans('blocks.thank_you.cod') }}</dt><dd class="qty-m">{{ ty_cod|money }}</dd></div>
                         {% endif %}
                         {% if ty_total is not null %}
-                        <div class="qty-rc__tot"><dt>{{ trans('blocks.thank_you.total') }}</dt><dd class="qty-m">{{ ty_total|money }}</dd></div>
+                        <div class="qty-rc__tot" data-qty-row="total"><dt>{{ trans('blocks.thank_you.total') }}</dt><dd class="qty-m">{{ ty_total|money }}</dd></div>
                         {% endif %}
                         {% if ty_pay %}
                         <div><dt>{{ trans('blocks.thank_you.payment') }}</dt><dd>{{ ty_pay }}</dd></div>
@@ -424,13 +447,14 @@
                 {% set ty_steps = [trans('blocks.thank_you.step_review'), trans('blocks.thank_you.step_progress'), trans('blocks.thank_you.step_shipped'), trans('blocks.thank_you.step_delivered')] %}
                 {% set ty_now = -1 %}
                 {% for s in ty_steps %}{% if ty_status and s == ty_status %}{% set ty_now = loop.index0 %}{% endif %}{% endfor %}
+                {# Shown only when the order's status is one of these steps (or unknown to the page).
+                   A store status outside them («تم التنفيذ» on a new order) used to be slotted in
+                   before «بانتظار المراجعة», which read as nonsense; it is on the ticket already. #}
+                {% if ty_now >= 0 or not ty_status %}
                 <section class="qty-nx" aria-labelledby="qty-nx-t">
                     <h2 id="qty-nx-t" class="qty-side__h">{{ trans('blocks.thank_you.next') }}</h2>
                     <ol class="qty-nx__list">
                         <li class="is-done"><span class="qty-nx__b" aria-hidden="true"><svg class="qty-i" width="14" height="14" stroke-width="3"><use href="#qty-i-check"/></svg></span><span>{{ trans('blocks.thank_you.step_received') }}</span></li>
-                        {% if ty_status and ty_now < 0 %}
-                        <li class="is-now" aria-current="step"><span class="qty-nx__b" aria-hidden="true"></span><span>{{ ty_status }} <em>{{ trans('blocks.thank_you.now') }}</em></span></li>
-                        {% endif %}
                         {% for s in ty_steps %}
                         <li class="{{ ty_now >= 0 and loop.index0 < ty_now ? 'is-done' : (loop.index0 == ty_now ? 'is-now' : '') }}"{{ loop.index0 == ty_now ? ' aria-current="step"' : '' }}>
                             <span class="qty-nx__b" aria-hidden="true">{% if ty_now >= 0 and loop.index0 < ty_now %}<svg class="qty-i" width="14" height="14" stroke-width="3"><use href="#qty-i-check"/></svg>{% endif %}</span>
@@ -439,6 +463,7 @@
                         {% endfor %}
                     </ol>
                 </section>
+                {% endif %}
 
                 <section class="qty-inv" aria-labelledby="qty-inv-t">
                     {% if order.email_sent %}
