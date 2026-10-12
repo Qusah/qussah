@@ -6,7 +6,7 @@
 // Three layouts of one card:
 //   · wide    — gallery on the right, details on the left (qissa-package on
 //               desktop);
-//   · stacked — heading and price, gallery with arrows, sold and rating, what
+//   · stacked — heading and price, gallery, sold and rating, what
 //               the pack holds, the button (the Figma mobile card): every card
 //               on phones;
 //   · compact — the wide layout at half a row (qissa-dual-hero from 769px;
@@ -82,8 +82,28 @@ $qpack-cyan: #91e6f7;
       pointer-events: none;
     }
   }
-  // the arrows belong to the stacked layout
-  .qpack__nav { display: none; }
+  // The arrows: 40px white rounds, 16 in from the photo's sides. Drawn in the
+  // mobile frame only (591:691 / 591:694); the wide layouts take the same ones
+  // at the team's request.
+  .qpack__nav {
+    position: absolute;
+    z-index: 1;
+    top: calc(50% - 20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, .9);
+    cursor: pointer;
+
+    img { display: block; width: 20px; height: 20px; }
+  }
+  .qpack__nav--prev { right: 16px; }
+  .qpack__nav--next { left: 16px; }
 
   // four across, more photos scroll; the row is 110 tall round its 92.5 buttons
   .qpack__thumbs {
@@ -386,27 +406,6 @@ $qpack-cyan: #91e6f7;
       aspect-ratio: 354 / 220;
       border-radius: 12px;
     }
-    // 40px white rounds, 16 in from the photo's sides
-    .qpack__nav {
-      position: absolute;
-      z-index: 1;
-      top: calc(50% - 20px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      padding: 0;
-      border: 0;
-      border-radius: 20px;
-      background: rgba(255, 255, 255, .9);
-      cursor: pointer;
-
-      img { display: block; width: 20px; height: 20px; }
-    }
-    .qpack__nav--prev { right: 16px; }
-    .qpack__nav--next { left: 16px; }
-
     // five across
     .qpack__thumbs {
       gap: 5.08px;
