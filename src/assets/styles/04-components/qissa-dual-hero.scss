@@ -2,8 +2,8 @@
 // Qissa Dual Hero — two Product Hero cards side-by-side.
 // The cards are the shared Product Hero card (partials/qpack-card.twig,
 // styled in qissa-package.scss): its compact wide layout from 769px
-// (.qpack__card--compact — gallery beside the details, ~300px tall), the
-// stacked Figma mobile card below. This file only adds: the section wrapper,
+// (.qpack__card--compact — gallery beside the details), the stacked Figma
+// mobile card below. This file only adds: the section wrapper,
 // a centered heading, the 2-up grid (both cards the same height), and the
 // phones' two merchant-chosen layouts. Loaded AFTER qissa-package, so equal
 // selectors here win on order.
@@ -48,10 +48,9 @@
     min-width: 0;   // grid item: allow shrink below content (no RTL edge cut)
   }
 
-  // stacked cards (phones): the details grow and the buy row drops to the
-  // bottom — the compact layout does the same with its own grid
-  &__card .qpack__info { flex: 1 1 auto; }
-  &__card .qpack__buy { margin-top: auto; }
+  // stacked cards (phones): the button drops to the card's bottom — the
+  // compact layout does the same with its own grid
+  &__card .qpack__buy-btn { margin-top: auto; }
 }
 
 // ---- tablet: one card per row (a half row is too narrow for two columns) ----
@@ -125,37 +124,42 @@
   // minmax(0, 1fr) not 1fr: the card's own content would otherwise force the
   // track wider than half the screen and reintroduce horizontal scroll.
   // At half a phone's width (~180px) the stacked card comes down a step: the
-  // thumbnails and the pack contents go, the price sits over a full-width
-  // button — image, name, rating, price and «اشترِ الآن» stay. Not in the
-  // Figma frames (they only draw the full-width card).
+  // photo goes back on top, so the corner ribbon lies on it and not on the
+  // name; the thumbnails, the arrows and the pack contents go; the rating
+  // sits under the sold count. Photo, name, subtitle, price, the two numbers
+  // and «اشترِ الآن» stay. Not in the Figma frames (they only draw the
+  // full-width card).
   .qdhero__grid[data-qdh-mobile='grid'] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
 
     > .qdhero__card {
       min-width: 0;
-      padding: 10px;
-      border-radius: 18px;
+      gap: 10px;
+      padding-top: 7.5px;
     }
 
     .qpack__thumbs,
+    .qpack__nav,
     .qpack__inside { display: none; }
 
-    .qpack__gallery { margin-bottom: 12px; }
-    .qpack__main { border-radius: 14px; }
-    .qpack__ribbon { height: 24px; margin: 0 -10px 10px; }
-    .qpack__ribbon-item { font-size: 9px; line-height: 14px; }
-    .qpack__info { gap: 8px; }
+    .qpack__gallery { order: 0; }
+    // a slimmer band: 24 tall about (29, 25.5), on the photo's corner
+    .qpack__ribbon { top: 13px; left: -166.5px; height: 24px; }
+    .qpack__ribbon-item { font-size: 9px; }
+    .qpack__head { gap: 4px; padding-left: 0; }
     .qpack__name { font-size: 15px; line-height: 21px; }
-    .qpack__meta { flex-direction: column; align-items: flex-start; gap: 4px; }
-    .qpack__buy { flex-direction: column; align-items: stretch; gap: 8px; }
+    .qpack__sub { font-size: 11px; line-height: 14px; }
+    .qpack__price { gap: 0 6px; margin-top: -4px; }
     .qpack__price .qpack__price-now { font-size: 18px; line-height: 22px; }
-    .qpack__buy-btn {
-      flex: none;
-      width: 100%;
-      height: 40px;
-      border-radius: 8px;
-      font-size: 13px;
+    .qpack__stats {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      font-size: 11px;
+      line-height: 14px;
     }
+    .qpack__rating { margin-right: 0; }
+    .qpack__buy-btn { height: 40px; font-size: 13px; }
   }
 }

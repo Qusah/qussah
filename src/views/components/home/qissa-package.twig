@@ -2,16 +2,17 @@
 | Variable              | Type      | Description                                        |
 |-----------------------|-----------|----------------------------------------------------|
 | component             | object    | merchant settings from twilight.json               |
-| component.heading     | string    | not shown since the revamp (no section title in the frame) |
+| component.heading     | string    | the small navy line above the product name; empty hides it |
 | component.subheading  | string    | not shown since the revamp                         |
 | component.products    | Product[] | featured product (the FIRST selected is used)      |
 | component.show_marquee| bool      | show/hide the «الأكثر مبيعًا» ribbon               |
 | component.marquee_text| string    | ribbon label (default «الأكثر مبيعًا»)             |
 | position              | int       | sorting block                                      |
 
-Product Hero — Figma "Qusah Re-Vamp": desktop 326:491, mobile 290:8165.
+Product Hero — Figma "Qusah Re-Vamp": desktop 592:973, mobile 591:732.
 One featured product in the shared Product Hero card (partials/qpack-card):
-gallery on the right, details on the left, stacked on phones.
+gallery on the right, details on the left; on phones the heading and price,
+then the gallery, then the rest.
 #}
 {% set product = component.products|first %}
 <section class="s-block qpack" id="qpack-{{ position }}">
@@ -19,6 +20,7 @@ gallery on the right, details on the left, stacked on phones.
         {% if product %}
             {% include 'components.partials.qpack-card' with {
                 product: product,
+                eyebrow: component.heading,
                 ribbon: component.show_marquee ? component.marquee_text|default(trans('blocks.qissa.best_seller')) : false
             } %}
         {% endif %}

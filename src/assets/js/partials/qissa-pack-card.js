@@ -2,10 +2,12 @@
  * Product Hero card (components/partials/qpack-card.twig) — qissa-package and
  * qissa-dual-hero. Wires every [data-qpack] card on the page once:
  *
- *   · the swipeable main image, synced with its thumbnails;
- *   · «ماذا يوجد في البكج» — the quick view's own description parser, so the
- *     card and the ticket list the same pack contents (subtitle split on «،»
- *     when the description has no list; hidden when there is nothing);
+ *   · the swipeable main image, synced with its thumbnails and its arrows;
+ *   · what the pack holds — the quick view's own description parser, so the
+ *     card and the ticket list the same contents (hidden when there is
+ *     nothing). The hero card shows each line as a bold count and a name; the
+ *     product page's boxes take the line whole, or the subtitle split on «،»
+ *     when the description has no list;
  *   · «اشترِ الآن» — add one, then straight to checkout, the quick view's buy
  *     flow (salla.cart.submit sends a guest to Salla's login first). If the add
  *     fails (options, stock…) the product's page takes over; if only the
@@ -16,11 +18,25 @@
  */
 import { insideLines } from './qissa-quick-view';
 
-const INSIDE_MAX = 6;   // Figma: three rows of two
+const INSIDE_MAX = 6;   // three rows of two
+
+// A description line as [count, name]. «1 كرتون مناديل 600 مفرد / 32 عبوة» carries
+// its count after the slash; «32 عبوة مناديل قصة 600» opens with it (the number
+// and its unit). Any other line is all name.
+function countAndName(text) {
+  const cut = text.lastIndexOf('/');
+  if (cut > 0) {
+    const count = text.slice(cut + 1).trim(), name = text.slice(0, cut).trim();
+    if (name && count.length <= 24 && /^[\d٠-٩]/.test(count)) return [count, name];
+  }
+  const m = text.match(/^([\d٠-٩][\d٠-٩.,٫٬]*\s*[^\s\d٠-٩]+)\s+(.+)$/);
+  return m ? [m[1], m[2]] : ['', text];
+}
 
 function fillInside(card) {
   const list = card.querySelector('[data-qpack-inside]');
   if (!list) return;
+  const split = list.hasAttribute('data-qpack-split');   // the hero card's panel
   let items = insideLines(list.getAttribute('data-qpack-inside') || '');
   if (!items.length) {
     items = (list.getAttribute('data-qpack-sub') || '').split('،').map(s => s.trim()).filter(Boolean);
@@ -28,8 +44,14 @@ function fillInside(card) {
   items.slice(0, INSIDE_MAX).forEach(text => {
     const li = document.createElement('li');
     li.className = 'qpack__inside-item';
-    li.textContent = text;
-    li.title = text;   // the wide layout's boxes are one line; the full line on hover
+    li.title = text;   // a long line is cut short; the full line on hover
+    if (split) {
+      const [count, name] = countAndName(text);
+      if (count) li.appendChild(document.createElement('b')).textContent = count;
+      li.appendChild(document.createElement('span')).textContent = name;
+    } else {
+      li.textContent = text;
+    }
     list.appendChild(li);
   });
   if (items.length) list.hidden = false;
@@ -77,6 +99,10 @@ function gallery(card) {
 
   setActive(0);
   thumbBtns.forEach((btn, i) => btn.addEventListener('click', () => go(i)));
+  // the arrows go round: past the last photo comes the first
+  card.querySelectorAll('[data-qpack-nav]').forEach(btn => btn.addEventListener('click', () => {
+    go((idx + Number(btn.getAttribute('data-qpack-nav')) + slides.length) % slides.length);
+  }));
 
   main.addEventListener('scroll', () => {
     if (raf) cancelAnimationFrame(raf);

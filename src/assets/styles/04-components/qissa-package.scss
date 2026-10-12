@@ -1,14 +1,17 @@
 // ====================================================================
 // Product Hero card (partials/qpack-card.twig) — Figma "Qusah Re-Vamp":
-// desktop 326:491 (1440 page, section frame at x 20 / 1400 wide), mobile
-// 290:8165 (402 page). Values are the scaled file's (2 dp).
+// desktop 592:973 (1440 page, the card at x 20, 1400 × 502), mobile 591:732
+// (402 page, the card at x 16, 370 wide). Values are the scaled file's (2 dp).
 //
-// Two layouts of one card:
-//   · wide    — gallery on the right, details on the left, the «الأكثر مبيعًا»
-//               ribbon across the corner (qissa-package on desktop);
-//   · stacked — gallery, ribbon strip, details (the Figma mobile card): every
-//               card on phones, and always .qpack__card--stacked
-//               (qissa-dual-hero, whose cards get half the row).
+// Three layouts of one card:
+//   · wide    — gallery on the right, details on the left (qissa-package on
+//               desktop);
+//   · stacked — heading and price, gallery with arrows, sold and rating, what
+//               the pack holds, the button (the Figma mobile card): every card
+//               on phones;
+//   · compact — the wide layout at half a row (qissa-dual-hero from 769px;
+//               not in the frames).
+// The «الأكثر مبيعًا» ribbon is a band across the card's corner in all three.
 // The section chrome is at the end: .qpack here, .qdhero in qissa-dual-hero.scss.
 // ====================================================================
 
@@ -22,40 +25,42 @@ $qpack-cyan: #91e6f7;
 .qpack__card {
   position: relative;
   display: grid;
-  // rtl: the first column is the right one
-  grid-template-columns: minmax(0, 565.16fr) minmax(0, 513.66fr);
-  grid-template-areas: 'gallery info';
-  column-gap: 37.45px;
-  align-items: start;
+  // rtl: the first column is the right one — the 434 gallery, then the details
+  grid-template-columns: minmax(0, 434fr) minmax(0, 888.69fr);
+  column-gap: 45.31px;
+  align-items: center;
   width: 100%;
-  max-width: 1190.88px;
+  max-width: 1400px;
   margin-inline: auto;
-  // physical: gallery 36.47 from the right edge, details 36.28 from the left
-  padding: 36.63px 36.47px 24.71px 36.28px;
+  padding: 15.43px;   // Figma's 16, less the border it draws inside the frame
   overflow: hidden;   // clips the corner ribbon
   background: #fff;
-  border: .93px solid rgba(0, 0, 0, .08);
-  border-radius: 14.89px;
+  border: .57px solid rgba(0, 0, 0, .08);
+  border-radius: 13.59px;
+  color: #000;
   direction: rtl;
+
+  &,
+  & *:not([class*='sicon-']) { font-family: $qpack-font !important; }
 
   // ---- gallery ----
   .qpack__gallery {
-    grid-area: gallery;
     display: flex;
     flex-direction: column;
-    gap: 11.16px;
+    gap: 9.03px;
     min-width: 0;
   }
+  .qpack__stage { position: relative; }
   .qpack__main {
     display: flex;
-    aspect-ratio: 565.26 / 285.9;
+    aspect-ratio: 434 / 351;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     background: #f4f5f6;
-    border-radius: 14.89px;   // the card's own corner; the Figma 29.77 read as a pill
+    border-radius: 9.03px;
     direction: rtl;
     cursor: grab;
 
@@ -77,56 +82,52 @@ $qpack-cyan: #91e6f7;
       pointer-events: none;
     }
   }
-  // four across, more photos scroll
+  // the arrows belong to the stacked layout
+  .qpack__nav { display: none; }
+
+  // four across, more photos scroll; the row is 110 tall round its 92.5 buttons
   .qpack__thumbs {
     display: flex;
-    gap: 11.16px;
+    gap: 14px;
+    padding-block: 8.75px;
     overflow-x: auto;
     scrollbar-width: none;
 
     &::-webkit-scrollbar { display: none; }
   }
   .qpack__thumb {
-    flex: 0 0 calc((100% - 3 * 11.16px) / 4);
-    aspect-ratio: 132.94 / 105.17;
-    padding: 0;
-    overflow: hidden;
-    background: #f4f5f6;
+    flex: 0 0 calc((100% - 3 * 14px) / 4);
+    padding: 2.26px;
+    background: #efefef;
     border: 0;
-    border-radius: 7.44px;
+    border-radius: 6.77px;
     cursor: pointer;
-    opacity: .6;
-    transition: opacity .2s ease;
 
-    // the photo on show: full strength with a navy ring (inside, the row clips)
-    &[aria-current='true'] {
-      opacity: 1;
-      outline: 2px solid $qpack-navy;
-      outline-offset: -2px;
-    }
-    &:hover,
-    &:focus-visible { opacity: 1; }
+    // the photo on show: a navy line round its button (inside, the row clips)
+    &[aria-current='true'] { box-shadow: inset 0 0 0 1px #30378e; }
 
     img {
       display: block;
       width: 100%;
-      height: 100%;
+      aspect-ratio: 127.25 / 120.41;
       object-fit: cover;
+      border-radius: 4.52px;
     }
   }
 
-  // ---- «الأكثر مبيعًا» ribbon: a -45° band across the top-left corner ----
-  // Figma: a 333.04×31.34 band centred at (64.82, 78.14) inside the card
+  // ---- «الأكثر مبيعًا» ribbon: a band across the top-left corner ----
+  // Figma: a 441.76 × 41.91 band turned -42.65° about its centre, which is
+  // (77.55, 65.95) into the card; top / left are that, less the border
   .qpack__ribbon {
     position: absolute;
     z-index: 2;
-    top: 62.47px;
-    left: -101.7px;
-    width: 333.04px;
-    height: 31.34px;
+    top: 44.43px;
+    left: -143.9px;
+    width: 441.76px;
+    height: 41.91px;
     overflow: hidden;
-    background: $qpack-cyan;
-    transform: rotate(-45deg);
+    background: $qpack-navy;
+    transform: rotate(-42.65deg);
     direction: ltr;   // left-anchors the looping track
   }
   .qpack__ribbon-track {
@@ -139,179 +140,185 @@ $qpack-cyan: #91e6f7;
     display: flex;
     flex: 0 0 auto;
     align-items: center;
-    gap: 6.37px;
-    padding: 2.79px 3.19px;   // half the item gap each side keeps the loop seamless
+    gap: 11.33px;
+    padding-inline: 5.66px;   // half the gap each side keeps the loop seamless
   }
+  // the label, then the frame's star (handed over by the template)
   .qpack__ribbon-item {
-    color: $qpack-navy;
-    font-family: $qpack-font !important;
-    font-size: 10.23px;
-    font-weight: 500;
-    line-height: 16.37px;
+    display: flex;
+    align-items: center;
+    gap: 11.33px;
+    color: #fff;
+    font-size: 13.59px;
+    font-weight: 700;
+    line-height: 1;
     white-space: nowrap;
-    direction: rtl;   // the star stays before the Arabic words
+    direction: rtl;
+
+    &::after {
+      content: '';
+      flex: none;
+      width: 11.99px;
+      height: 11.4px;
+      background: var(--qpack-star) center / contain no-repeat;
+    }
   }
 
   // ---- details ----
   .qpack__info {
-    grid-area: info;
     display: flex;
     flex-direction: column;
-    gap: 10.09px;
+    gap: 27.19px;
     min-width: 0;
-    margin-top: 5.23px;   // Figma: 41.86 from the top vs the gallery's 36.63
+  }
+  // the small line, the name, the subtitle
+  .qpack__head {
+    display: flex;
+    flex-direction: column;
+    gap: 11.33px;
+  }
+  // The band lies over the heading's left end. The text is right-aligned and
+  // the frame's name stops well short of it; a long one wraps at the band's
+  // edge (121 into the card where the name's line starts) and not under it.
+  &--ribbon .qpack__head { padding-left: 106px; }
+  .qpack__eyebrow {
+    margin: 0;
+    color: $qpack-navy;
+    font-size: 16.99px;
+    font-weight: 700;
+    line-height: 20px;
   }
   .qpack__name {
-    min-height: 76.28px;
     margin: 0;
-    padding-top: 11.16px;
-    color: #082033;
-    font-family: $qpack-font !important;
-    font-size: 40.93px;
-    font-weight: 400;
-    line-height: 51.17px;
-    text-align: right;
+    color: #000;
+    font-size: 36.25px;
+    font-weight: 500;
+    line-height: 43px;
 
     a { color: inherit; }
     a:hover { color: $qpack-navy; }
   }
-
-  // rating row, then the sold row
-  .qpack__meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;   // rtl → right
-    gap: 10.09px;
-  }
-  .qpack__rating {
-    display: flex;
-    align-items: center;
-    gap: 7.44px;
-    height: 35.35px;
-  }
-  .qpack__stars {
-    display: flex;
-    align-items: center;
-    gap: 1.86px;
-
-    img { display: block; width: 12.09px; height: 11.54px; }
-  }
-  .qpack__rate {
-    color: #6c757d;
-    font-size: 13.02px;
-    font-weight: 500;
-    line-height: 1;
-  }
-  .qpack__sold {
-    display: flex;
-    align-items: center;
-    gap: 1.6px;
-    height: 20.72px;
+  .qpack__sub {
     margin: 0;
-    color: $qpack-navy;
-    font-size: 12.76px;
-    font-weight: 500;
-    line-height: 15.27px;
-
-    img { display: block; width: 19.94px; height: 19.94px; }
+    color: #5a6874;
+    font-size: 18.12px;
+    font-weight: 400;
+    line-height: 22px;
   }
 
-  // «ماذا يوجد في البكج» — a titled, ticked list (not the frame's grey boxes,
-  // at the merchant's request): one item a line, up to two lines each. The
-  // title is the list's own aria-label, so it hides with an empty list.
-  .qpack__inside {
-    display: grid;
-    gap: 6px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-
-    &[hidden] { display: none; }
-
-    &::before {
-      content: attr(aria-label);
-      color: $qpack-navy;
-      font-size: 14px;
-      font-weight: 700;
-      line-height: 22px;
-    }
-  }
-  .qpack__inside-item {
-    position: relative;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    padding-right: 24px;   // the tick's column — rtl: a line starts on the right
-    color: #082033;
-    font-family: $qpack-font !important;
-    font-size: 13px;
-    font-weight: 500;
-    line-height: 20px;
-    text-align: right;
-
-    // images/qcard/check.svg, handed over by the template
-    &::before {
-      content: '';
-      position: absolute;
-      top: 2px;
-      right: 0;
-      width: 16px;
-      height: 16px;
-      background: var(--qpack-tick) center / contain no-repeat;
-    }
-  }
-
-  // price, then «اشترِ الآن»
-  .qpack__buy {
-    display: flex;
-    flex-direction: column;
-    gap: 13.81px;
-  }
+  // the price, then what it was, on one baseline
   .qpack__price {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 7.45px;
+    gap: 0 22.65px;
   }
   .qpack__price .qpack__price-now {
     color: $qpack-navy;
-    font-family: $qpack-font !important;
-    font-size: 52.1px;
+    font-size: 49.84px;
     font-weight: 700;
-    line-height: 52.1px;
+    line-height: 1.1;
 
-    .sicon-sar { font-size: 11.16px; }   // Figma: an 11px «ر.س» beside 52px digits
+    .sicon-sar { font-size: 13.59px; }
   }
   .qpack__price .qpack__price-old {
     color: #e90000;
-    font-family: $qpack-font !important;
-    font-size: 20.47px;
+    font-size: 20.39px;
     font-weight: 400;
-    line-height: 32.75px;
+    line-height: 24px;
     text-decoration: line-through;
 
-    .sicon-sar { font-size: 11.16px; }
+    .sicon-sar { font-size: 11.33px; }
   }
+
+  // sold on the right, rating on the left
+  .qpack__stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15.86px;
+    font-weight: 500;
+    line-height: 19px;
+  }
+  .qpack__sold,
+  .qpack__rating {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    white-space: nowrap;
+  }
+  .qpack__sold {
+    gap: 6.8px;
+
+    picture { display: contents; }
+    source { display: none; }   // an empty box otherwise, and it takes a gap
+    // the flame's stroke runs past its 13.59 × 18.12 frame, as drawn
+    img {
+      display: block;
+      width: 15.86px;
+      height: 21.22px;
+      margin: -1.97px -1.13px -1.13px;
+    }
+  }
+  .qpack__rating {
+    gap: 5.66px;
+    margin-right: auto;   // physical: the row's left end, with or without the sold count
+
+    img { display: block; width: 16.99px; height: 16.99px; }
+  }
+
+  // what the pack holds: a bold count and a name, two to a row. A name too
+  // long for its half wraps under itself; nothing is cut.
+  .qpack__inside {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 13.59px;
+    margin: 0;
+    padding: 4.53px 13.59px;
+    list-style: none;
+    background: #fbfbfb;
+    border-radius: 9.06px;
+
+    &[hidden] { display: none; }
+  }
+  .qpack__inside-item {
+    display: flex;
+    align-items: baseline;
+    gap: 9.06px;
+    min-width: 0;
+    padding-block: 13.59px;
+    font-size: 16.99px;
+    font-weight: 400;
+    line-height: 20px;
+
+    b {
+      flex: none;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    span { min-width: 0; }
+  }
+
+  // «اشترِ الآن»
   .qpack__buy-btn {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 48.38px;
-    padding: 0 26.05px;
+    height: 63.43px;
+    padding: 0 16px;
     border: 0;
-    border-radius: 7.44px;
-    background: $qpack-cyan;
-    color: $qpack-navy;
-    font-size: 14.89px;
+    border-radius: 9.06px;
+    background: $qpack-navy;
+    color: #fff;
+    font-size: 21.52px;
     font-weight: 700;
-    line-height: 22.33px;
+    line-height: 26px;
     white-space: nowrap;
     cursor: pointer;
     transition: background-color .15s ease, color .15s ease, opacity .15s ease;
 
-    &:hover { background: $qpack-navy; color: #fff; }
+    &:hover { background: $qpack-cyan; color: $qpack-navy; }   // the revamp's button hover
     &[aria-busy] { opacity: .7; cursor: progress; }
   }
   .qpack__buy-btn--oos {
@@ -330,231 +337,227 @@ $qpack-cyan: #91e6f7;
   to   { transform: translateX(-50%); }
 }
 
-// ---- stacked layout: Figma 290:8165 ---------------------------------
-// Written against the card (&), emitted after the base rules so equal
-// selectors win on order.
-@mixin qpack-stacked {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;   // the wide grid's `start` would size the ribbon to its looping track
-  max-width: none;
-  padding: 19.94px;
-  border-width: 1.05px;
-  border-color: rgba(0, 0, 0, .17);
-  border-radius: 29.38px;
-
-  .qpack__gallery {
-    gap: 12.59px;
-    margin-bottom: 30.43px;
-  }
-  .qpack__main {
-    aspect-ratio: 336.83 / 170.37;
-    border-radius: 16px;
-  }
-  .qpack__thumbs { gap: 12.59px; }
-  .qpack__thumb {
-    flex-basis: calc((100% - 3 * 12.59px) / 4);
-    aspect-ratio: 1;
-    border-radius: 10px;
-  }
-
-  // the ribbon becomes a full-bleed strip between the gallery and the name
-  .qpack__ribbon {
-    position: static;
-    width: auto;
-    height: 35.35px;
-    margin: 0 -19.94px 18px;
-    transform: none;
-  }
-  .qpack__ribbon-group {
-    gap: 7.19px;
-    padding: 3.15px 3.6px;
-  }
-  .qpack__ribbon-item {
-    font-size: 11.54px;
-    line-height: 18.47px;
-  }
-
-  .qpack__info {
-    gap: 18px;
-    margin-top: 0;
-  }
-  .qpack__name {
-    min-height: 0;
-    padding-top: 0;
-    font-size: 31.48px;
-    line-height: 39.35px;
-  }
-
-  // rating (right) and sold (left) share one row
-  .qpack__meta {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .qpack__rating {
-    gap: 2.7px;
-    height: auto;
-  }
-  .qpack__stars {
-    gap: 1.8px;
-    img { width: 11.68px; height: 11.15px; }
-  }
-  .qpack__rate {
-    font-family: $qpack-font !important;   // Figma mobile: Expo Arabic Medium
-    font-size: 9.89px;
-  }
-  .qpack__sold {
-    gap: 1.54px;
-    height: 16.22px;
-    font-size: 12.36px;
-    line-height: 14.78px;
-    img { width: 19.3px; height: 19.3px; }
-  }
-
-  // price (right) beside the button (left); only the price itself
-  .qpack__buy {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-  }
-  .qpack__price { flex-wrap: wrap; gap: 0 6px; }
-  .qpack__price .qpack__price-now {
-    font-size: 26px;
-    line-height: 26px;
-    .sicon-sar { font-size: 12px; }
-  }
-  .qpack__price .qpack__price-old { font-size: 13px; line-height: 20px; }
-  .qpack__buy-btn {
-    flex: 0 1 223px;
-    width: auto;
-    height: 52px;
-    padding: 0 12px;
-    border-radius: 8px;
-    font-size: 16px;
-    line-height: 24px;
-  }
-}
-
-.qpack__card--stacked { @include qpack-stacked; }
-
+// ---- stacked layout: Figma 591:732 -----------------------------------
+// The details dissolve into the card's own column (display: contents), so the
+// heading and the price can sit above the gallery and the rest below it.
 @media (max-width: 768px) {
-  .qpack__card { @include qpack-stacked; }
+  .qpack__card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;   // the wide grid's centring would shrink every part to its text
+    gap: 20px;
+    max-width: none;
+    // 16 / 8 / 8, less the border; every part is 354 wide in the 370 card
+    padding: 15.5px 7.5px 7.5px;
+    border-width: .5px;
+    border-radius: 12px;
+
+    .qpack__info { display: contents; }
+
+    .qpack__head { order: 1; gap: 8px; }
+    // the phone band crosses the name's line from 71 down to 40: 48 keeps the
+    // letters clear of it and the frame's name on one line at 360
+    &--ribbon .qpack__head { padding-left: 48px; }
+    .qpack__eyebrow { font-size: 12.98px; line-height: 16px; }
+    .qpack__name { font-size: 24px; line-height: 29px; }
+    .qpack__sub { font-size: 13px; line-height: 16px; }
+
+    // the price belongs to the heading: 8 under the subtitle, not the card's 20
+    .qpack__price {
+      order: 2;
+      gap: 0 15px;
+      margin-top: -12px;
+    }
+    .qpack__price .qpack__price-now {
+      font-size: 31.73px;
+      line-height: 32px;
+
+      .sicon-sar { font-size: 6.8px; }
+    }
+    .qpack__price .qpack__price-old {
+      font-size: 12.47px;
+      line-height: 19.95px;
+
+      .sicon-sar { font-size: 6.8px; }
+    }
+
+    .qpack__gallery { order: 3; gap: 10px; }
+    .qpack__main {
+      aspect-ratio: 354 / 220;
+      border-radius: 12px;
+    }
+    // 40px white rounds, 16 in from the photo's sides
+    .qpack__nav {
+      position: absolute;
+      z-index: 1;
+      top: calc(50% - 20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border: 0;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, .9);
+      cursor: pointer;
+
+      img { display: block; width: 20px; height: 20px; }
+    }
+    .qpack__nav--prev { right: 16px; }
+    .qpack__nav--next { left: 16px; }
+
+    // five across
+    .qpack__thumbs {
+      gap: 5.08px;
+      padding-block: 1.37px;
+    }
+    .qpack__thumb {
+      flex-basis: calc((100% - 4 * 5.08px) / 5);
+      padding: 2px;
+      border-radius: 10px;
+
+      &[aria-current='true'] { box-shadow: inset 0 0 0 1.37px #30378e; }
+
+      img { border-radius: 8px; }
+    }
+
+    .qpack__stats {
+      order: 4;
+      font-size: 12.98px;
+      line-height: 16px;
+    }
+    .qpack__sold {
+      gap: 6px;
+
+      img { width: 16px; height: 16px; margin: 0; }
+    }
+    .qpack__rating {
+      gap: 4px;
+
+      img { width: 13.43px; height: 12.81px; }
+    }
+
+    // 358 wide: 2 past the other parts on each side
+    .qpack__inside {
+      order: 5;
+      column-gap: 8px;
+      margin-inline: -2px;
+      padding: 4px;
+      border-radius: 8px;
+    }
+    .qpack__inside-item {
+      justify-content: center;
+      gap: 8px;
+      padding-block: 8px;
+      font-size: 13.91px;
+      line-height: 17px;
+
+      span { color: #6d6d6d; }
+    }
+
+    .qpack__buy-btn {
+      order: 6;
+      height: 52px;
+      border-radius: 8px;
+      font-size: 16.69px;
+      line-height: 20px;
+    }
+
+    // a 390 × 37 band about (44.65, 39.23)
+    .qpack__ribbon {
+      top: 20.23px;
+      left: -150.85px;
+      width: 390px;
+      height: 37px;
+    }
+    .qpack__ribbon-group { gap: 9.27px; padding-inline: 4.64px; }
+    .qpack__ribbon-item {
+      gap: 9.27px;
+      font-size: 12px;
+
+      &::after {
+        width: 10.58px;
+        height: 10.06px;
+        background-image: var(--qpack-star-sm);
+      }
+    }
+  }
 }
 
 // ---- compact wide layout: half-row cards (qissa-dual-hero) ------------
 // Not in the Figma frames. The wide layout sized for a ~580px card, so two
-// sit side by side and each is seen whole (~300px tall): equal columns, the
-// Figma mobile type scale, one-line pack items, the price beside the button.
-// The ribbon moves to the gallery's corner — on the details side, at this
-// size, it would run over the name. Details fill the card's height and the
-// buy row sits at the bottom, so cards in a row line their buttons up.
-// Phones get the stacked layout like every card.
+// sit side by side and each is seen whole: equal columns, the Figma mobile
+// type scale, one-line pack items. The ribbon takes the gallery's corner —
+// on the details' side, at this size, it would run over the name. Details
+// fill the card's height and the button sits at the bottom, so cards in a
+// row line their buttons up. Phones get the stacked layout like every card.
 @media (min-width: 769px) {
   .qpack__card--compact {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 20px;
     align-items: stretch;
     max-width: none;
-    padding: 20px;
 
-    .qpack__gallery {
-      align-self: start;
-      gap: 8px;
-    }
-    .qpack__main { border-radius: 16px; }
-    .qpack__thumbs { gap: 8px; }
-    .qpack__thumb {
-      flex-basis: calc((100% - 3 * 8px) / 4);
-      border-radius: 10px;
-    }
+    .qpack__gallery { align-self: start; }
+    .qpack__thumbs { gap: 8px; padding-block: 0; }
+    .qpack__thumb { flex-basis: calc((100% - 3 * 8px) / 4); }
 
+    // the phone band, mirrored onto the top-right corner
     .qpack__ribbon {
-      right: -101.7px;
+      top: 20.23px;
+      right: -150.85px;
       left: auto;
-      transform: rotate(45deg);
+      width: 390px;
+      height: 37px;
+      transform: rotate(42.65deg);
     }
+    .qpack__ribbon-item { font-size: 12px; }
 
-    .qpack__info {
-      gap: 10px;
-      margin-top: 0;
-    }
+    .qpack__info { gap: 12px; }
+    .qpack__head { gap: 6px; padding-left: 0; }   // the band is on the gallery here
     .qpack__name {
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
-      min-height: 0;
-      padding-top: 0;
       overflow: hidden;
       font-size: 22px;
       line-height: 28px;
     }
-
-    // rating (right) and sold (left) share one row
-    .qpack__meta {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-    .qpack__rating {
-      gap: 2.7px;
-      height: auto;
-    }
-    .qpack__rate { font-size: 11px; }
-    .qpack__sold {
-      gap: 1.54px;
-      height: 16.22px;
-      font-size: 12.36px;
-      line-height: 14.78px;
-      img { width: 19.3px; height: 19.3px; }
-    }
-
-    // one-line items, the full line on hover (title)
-    .qpack__inside {
-      gap: 3px;
-
-      &::before {
-        font-size: 12px;
-        line-height: 18px;
-      }
-    }
-    .qpack__inside-item {
-      display: block;
-      font-size: 11px;
-      line-height: 16px;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-
-      &::before {
-        top: 1px;
-        width: 14px;
-        height: 14px;
-      }
-    }
-
-    .qpack__buy {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-top: auto;
-    }
-    .qpack__price { flex-wrap: wrap; gap: 0 6px; }
+    .qpack__sub { font-size: 13px; line-height: 16px; }
+    .qpack__price { gap: 0 12px; }
     .qpack__price .qpack__price-now {
       font-size: 26px;
-      line-height: 26px;
+
       .sicon-sar { font-size: 12px; }
     }
     .qpack__price .qpack__price-old { font-size: 13px; line-height: 20px; }
+
+    .qpack__stats { font-size: 12.98px; line-height: 16px; }
+    .qpack__sold img { width: 14px; height: 18.74px; margin: -1.74px -1px -1px; }
+    .qpack__rating img { width: 13.43px; height: 13.43px; }
+
+    // one item a line, the full line on hover (title)
+    .qpack__inside {
+      grid-template-columns: minmax(0, 1fr);
+      padding: 4px 10px;
+    }
+    .qpack__inside-item {
+      gap: 6px;
+      padding-block: 4px;
+      font-size: 12px;
+      line-height: 16px;
+
+      span {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+
     .qpack__buy-btn {
-      flex: 1 1 auto;
-      max-width: 223px;
-      width: auto;
       height: 44px;
-      padding: 0 12px;
+      margin-top: auto;
       border-radius: 8px;
       font-size: 14px;
       line-height: 22px;
@@ -569,7 +572,7 @@ $qpack-cyan: #91e6f7;
 // ---- qissa-package section chrome ------------------------------------
 .qpack .container {
   max-width: none;
-  padding-inline: 20px;   // the section frame sits 20px in from the page edges
+  padding-inline: 20px;   // the card sits 20px in from the page edges
 }
 
 @media (min-width: 769px) {
@@ -582,9 +585,6 @@ $qpack-cyan: #91e6f7;
 }
 
 @media (max-width: 768px) {
-  // the card sits at x 11 in the 402 frame, 379 wide
-  .qpack .container {
-    padding-left: 11px;
-    padding-right: 12px;
-  }
+  // the card sits at x 16 in the 402 frame, 370 wide
+  .qpack .container { padding-inline: 16px; }
 }

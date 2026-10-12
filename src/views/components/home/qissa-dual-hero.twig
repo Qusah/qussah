@@ -11,7 +11,7 @@
 | component.marquee_text | string    | ribbon label                                       |
 | component.show_rating  | bool      | the rating                                         |
 | component.show_sold    | bool      | the «مباع N مرة» line                              |
-| component.show_chips   | bool      | the «ماذا يوجد في البكج» boxes                     |
+| component.show_chips   | bool      | what the pack holds (the contents panel)           |
 | component.show_price   | bool      | the price                                          |
 | component.show_add     | bool      | the «اشترِ الآن» button                            |
 | component.show_badge / show_wishlist / show_brand / show_qty | bool | nothing to switch since the revamp — the card has no badge, heart, brand line or stepper |
@@ -21,7 +21,7 @@ Two featured products side by side, each in the shared Product Hero card
 (partials/qpack-card, the design of qissa-package) in its compact wide layout
 (.qpack__card--compact: gallery beside the details, sized so both cards are
 seen whole, same height, buttons aligned); phones get the stacked Figma mobile
-card (290:8165). Every element is merchant-toggleable. Dynamic Salla data only.
+card (591:732). Every element is merchant-toggleable. Dynamic Salla data only.
 #}
 <section class="s-block qdhero" id="qdhero-{{ position }}">
     <div class="container">
