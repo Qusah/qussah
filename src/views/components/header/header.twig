@@ -5,10 +5,12 @@
 | cart.items_count | int     |                                 |
 | cart.total       | string  |                                 |
 #}
-{# Nav bar — Figma "Qusah Re-Vamp": desktop 182:30750, mobile 295:182.
+{# Nav bar — Figma "Qusah Re-Vamp". On the hero banner (the home's first block)
+   it rides on the photo: desktop 592:1044, mobile 577:746. Everywhere else it
+   is the navy bar: desktop 182:30750, mobile 295:182 (qissa-header.scss).
    RTL row: [burger — mobile] · logo · pill menu — desktop · actions.
-   Desktop actions read left→right avatar · cart · wishlist, so in RTL DOM
-   order they go wishlist → cart → account. #}
+   Desktop actions read left→right avatar · cart, so in RTL DOM order they go
+   cart → account. The wishlist is in the footer and the mobile drawer. #}
 <header class="store-header qheader">
 
   {# The packs countdown moved into the hero banner's LED frame
@@ -37,7 +39,7 @@
       <a href="{{ store.url }}/%D8%B9%D9%86-%D9%82%D8%B5%D8%A9/page-944077204">{{ trans('blocks.qissa.nav_about') }}</a>
     </nav>
 
-    {# actions (left) — wishlist + account are desktop only (the drawer has them on mobile) #}
+    {# actions (left) — the account button is desktop only (the drawer has it on mobile) #}
     <div class="qheader-actions">
       {# Required Twilight components. The visible cart/account controls below are the
          custom Qussah (Figma) header, so Salla's own cart-summary & user-menu are kept
@@ -49,9 +51,6 @@
           <i slot="icon" class="header-btn__icon icon sicon-shopping-bag"></i>
         </salla-cart-summary>
       </div>
-      <a href="{{ link('/wishlist') }}" class="qheader-act qheader-act--wishlist" aria-label="{{ trans('blocks.qissa.wishlist') }}">
-        <img src="{{ 'images/qheader/heart.svg' | asset }}" alt="" width="20" height="20"/>
-      </a>
       {# `is-empty` hides the badge; app.js (initAddToCart) keeps it and the count in sync live #}
       <a href="{{ link('/cart') }}" class="qheader-act qheader-act--cart{{ (cart.items_count|default(0) > 0) ? '' : ' is-empty' }}" aria-label="{{ trans('blocks.header.cart') }}"{% if theme.settings.get('cart_drawer_enabled', true) %} data-qcd-open{% endif %}>
         <img src="{{ 'images/qheader/cart.svg' | asset }}" alt="" width="17" height="17"/>

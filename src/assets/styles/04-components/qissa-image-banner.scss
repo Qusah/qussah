@@ -1,6 +1,8 @@
 // ====================================================================
 // Qissa banners — one or more full-image banners in a slider.
-// Figma "Qusah Re-Vamp": desktop Hero Banner 182:30993, mobile image 386.25×309.
+// Figma "Qusah Re-Vamp". As the page's first block it is the hero, with the
+// navbar on its photo: desktop Hero Banner 592:1042, mobile 577:744. Anywhere
+// else: desktop 182:30993, mobile image 386.25×309.
 //
 // Fixed shapes: the banner is the design's frame, and artwork is exported to
 // it (see FIXED SHAPE below). Text and CTA sit on a 3×3 placement grid, always
@@ -19,15 +21,29 @@
   // plain :first-child misses when one sits before the banner — the real
   // condition is "no visible block before it". A banner placed mid-page keeps
   // the normal block rhythm.
+  //
+  // THE HERO. That first block is also where the navbar gives up its bar and
+  // rides on the photo (qissa-header.scss, same test), so it takes the Hero
+  // Banner frame instead: x 20, 1400 × 590, and on phones x 8, 386 × 382, plus
+  // the frame's own tint over the photo.
   &:first-child,
-  &:not(.s-block ~ *):not(.s-blocks-wrapper:not(:empty) ~ *) { margin-top: 0; padding-top: 0; }
+  &:not(.s-block ~ *):not(.s-blocks-wrapper:not(:empty) ~ *) {
+    margin-top: 0;
+    padding-top: 0;
+    --qib-l: 20px;
+    --qib-r: 20px;
+    --qib-rm: 8px;
+    --qib-ratio: 1400 / 590;
+    --qib-ratio-m: 386 / 382;
+    --qib-tint: '';
+  }
 
   // Track the navbar's edges exactly, not a container default: Figma puts the
   // banner at x 15.81, 1408.46 wide in the 1440 frame — the bar's own insets.
   .container {
     max-width: none;
-    padding-left: 15.81px;
-    padding-right: 15.73px;
+    padding-left: var(--qib-l, 15.81px);
+    padding-right: var(--qib-r, 15.73px);
   }
 
   // ── viewport / track ────────────────────────────────────────────
@@ -56,13 +72,23 @@
 
   // FIXED SHAPE. Every slide is the Figma frame: 1408.46 × 474.45 (2817×949
   // artwork at 2×), and on phones 386.25 × 309 (773×618) when the slide has
-  // its own mobile file — without one the desktop artwork keeps its shape
+  // its own mobile file; the hero's are 1400 × 590 (2800×1180) and 386 × 382
+  // (772×764). Without a mobile file the desktop artwork keeps its shape
   // rather than losing half its width to a 5:4 crop. Artwork made to size
   // shows whole; a file that doesn't match is cropped from the centre instead
   // of changing the page layout. The merchant's fixed-height mode (--fixed,
   // below) still wins: its explicit height overrides the ratio.
-  &__slide { aspect-ratio: 1408.46 / 474.45; }
+  &__slide { aspect-ratio: var(--qib-ratio, 1408.46 / 474.45); }
   &__slide > picture { position: absolute; inset: 0; display: block; }
+
+  // The hero's tint (Figma 592:1043, a fill over the photo): an even 18% navy
+  // down to 55%, fading out to the bottom. It goes with the desktop artwork.
+  &__slide > picture::after {
+    content: var(--qib-tint, none);
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(23, 41, 81, .18) 55.288%, rgba(52, 93, 183, 0));
+  }
 
   &__img {
     display: block;
@@ -292,7 +318,7 @@
   @media (max-width: 1150px) {
     .container {
       padding-left: 8px;
-      padding-right: 7.75px;
+      padding-right: var(--qib-rm, 7.75px);
     }
 
     &__viewport { border-radius: 15.76px; }
@@ -308,7 +334,8 @@
   @media (max-width: 768px) {
     padding-block: 8px;
 
-    &__slide.has-mobile-img { aspect-ratio: 386.25 / 309; }
+    &__slide.has-mobile-img { aspect-ratio: var(--qib-ratio-m, 386.25 / 309); }
+    &__slide.has-mobile-img > picture::after { content: none; }
     &--fixed &__viewport { height: var(--qib-height-sm, 380px); }
 
     &__overlay { padding: 20px; }

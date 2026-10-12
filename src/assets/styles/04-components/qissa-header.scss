@@ -1,35 +1,68 @@
-// Qissa header nav bar — Figma "Qusah Re-Vamp": desktop 182:30750 (1440 frame),
-// mobile 295:182. The design is scaled ≈0.93, so its values are fractional;
-// they are kept as Figma gives them (2 dp).
+// Qissa header nav bar — Figma "Qusah Re-Vamp".
+//   On the hero: no bar — the logo, menu and buttons ride on the banner's photo.
+//     desktop 592:1044 inside banner 592:1042, mobile 577:746 inside 577:744
+//   Everywhere else, and once pinned: the navy bar.
+//     desktop 182:30750 (1440 frame), mobile 295:182
+// The design is scaled ≈0.93, so its values are fractional; they are kept as
+// Figma gives them (2 dp).
+//
+// The four cases differ only in the insets below (--qh-*). The bar's box is the
+// same size with or without its navy, so pinning — which fades the navy in and
+// spreads it to the viewport's edges — never changes the header's height.
 body, main, #app { background: transparent; }
 
+// the banner is the page's first block: the banner's own test (qissa-image-banner.scss)
+$qh-on-hero: '.qheader:has(~ main > .qibanner:not(.s-block ~ *):not(.s-blocks-wrapper:not(:empty) ~ *))';
+
 .qheader {
+  // Figma 182:30750: bar at x 15.81 / y 21.40 in the 1440 frame, 1408.46 wide → 15.73 on the right
+  --qh-t: 21.4px;
+  --qh-r: 15.73px;
+  --qh-l: 15.81px;
+  --qh-gap: 18.6px;   // the first block starts 18.6 below the bar
+  // inside the bar: the logo ends 31.96 from its right edge, the buttons start 37 from its left
+  --qh-nr: 31.96px;
+  --qh-nl: 37px;
+
   position: sticky;
   // pinned, the top inset scrolls away so the bar sits flush with the viewport
   // top — the header's own height never changes, so the page doesn't jump
-  top: -21.4px;
+  top: calc(-1 * var(--qh-t));
   z-index: 100;
-  // Figma: bar at x 15.81 / y 21.40 in the 1440 frame, 1408.46 wide → 15.73 on the right
-  padding: 21.4px 15.73px 0 15.81px;
-  margin-bottom: 18.6px;   // Figma: the hero banner starts 18.6 below the bar (y 123.73)
+  padding: var(--qh-t) var(--qh-r) 0 var(--qh-l);
+  margin-bottom: var(--qh-gap);
   font-family: 'GE SS Two', sans-serif;
   color: #fff;
-  // once pinned, the transparent inset around the floating bar must not
-  // swallow clicks on the page scrolling underneath it
+  // the transparent inset around the floating bar must not swallow clicks on
+  // the page underneath it
   pointer-events: none;
   transition: padding .3s ease;
 
   .qheader-nav {
-    pointer-events: auto;
+    position: relative;
+    // on the hero the gaps between logo, menu and buttons let clicks through to the banner
+    pointer-events: var(--qh-pe, auto);
     display: flex;
     align-items: center;
     justify-content: space-between;   // Figma: equal 387px gaps between logo · menu · actions
     height: 83.73px;
-    // physical sides: the logo ends 31.96 from the right edge, the actions start 37 from the left
-    padding: 17.68px 31.96px 17.68px 37px;
+    padding: 17.68px var(--qh-nr) 17.68px var(--qh-nl);
     border-radius: 14.89px;
-    background: linear-gradient(174.12deg, #172951 7.735%, #25307a 54.226%, #30378e 92.265%);
     transition: padding .3s ease, border-radius .3s ease;
+
+    > * { pointer-events: auto; }
+
+    // the navy, on its own layer so it can fade in when the bar pins over the hero
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: inherit;
+      background: linear-gradient(174.12deg, #172951 7.735%, #25307a 54.226%, #30378e 92.265%);
+      opacity: var(--qh-navy, 1);
+      transition: opacity .3s ease;
+    }
   }
 
   // logo — the wordmark (93.03×32.97) sits at the top of a 92.95×44.65 link box
@@ -90,10 +123,9 @@ body, main, #app { background: transparent; }
     filter: drop-shadow(0 7.44px 11.16px rgba(8, 32, 51, .06));
 
     > img { display: block; }
-    // guest / no-photo account — not in the frame; sized and coloured like the heart
+    // guest / no-photo account — not in the frame; a navy user icon on the white circle
     i { font-size: 19.54px; line-height: 1; color: #172951; }
   }
-  .qheader-act--wishlist > img { width: 19.54px; height: 19.54px; }
   .qheader-act--cart > img { width: 16.91px; height: 16.75px; }
 
   // customer photo — Figma avatar: cover-fit circle with its own soft shadow
@@ -152,14 +184,37 @@ body, main, #app { background: transparent; }
 
   .qheader-nav {
     border-radius: 0;
-    padding-left: 52.81px;    // 37 + 15.81
-    padding-right: 47.69px;   // 31.96 + 15.73
+    padding-left: calc(var(--qh-nl) + var(--qh-l));
+    padding-right: calc(var(--qh-nr) + var(--qh-r));
+    pointer-events: auto;
+
+    &::before { opacity: 1; }
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .qheader,
-  .qheader .qheader-nav { transition: none; }
+  .qheader .qheader-nav,
+  .qheader .qheader-nav::before { transition: none; }
+}
+
+// ---- on the hero — the banner is the page's first block ----
+// A browser without :has() keeps the navy bar above the banner.
+#{$qh-on-hero} {
+  // Figma 592:1042: banner at x 20 / y 20, 1400 wide. Its row (592:1044) is 48.38 tall,
+  // 22 down the banner, so the bar's box — 17.68 of padding around that row — starts at
+  // y 24.32 and the banner slides up under it to its own y 20.
+  --qh-t: 24.32px;
+  --qh-r: 20px;
+  --qh-l: 20px;
+  --qh-gap: -88.05px;   // 20 − (24.32 + 83.73)
+  // the row's frame: x 32, 1335.36 wide, the row centred in it 2.07 over each side.
+  // (Figma draws the row left-anchored since the wishlist button left it, which puts
+  // the logo 80.81 from the banner's right edge: --qh-nr for that reading.)
+  --qh-nr: 30.57px;
+  --qh-nl: 29.93px;
+  --qh-navy: 0;
+  --qh-pe: none;
 }
 
 // hero starts right after the nav
@@ -179,27 +234,42 @@ body, main, #app { background: transparent; }
   .qissa-hero { margin: 0 16px !important; border-radius: 24px !important; }
 }
 
-// ---- MOBILE + TABLET — Figma 295:182 ----
+// ---- MOBILE + TABLET ----
 // Up to 1150px (the existing tablet switch): burger · centred logo · cart.
-// The pill menu, wishlist and account move into the .qside drawer.
+// The pill menu and the account button move into the .qside drawer.
 @media (max-width: 1150px) {
-  // Figma: bar at x 6 / y 16, 389 wide (402 frame → 7 on the right)
   .qheader {
-    top: -16px;
-    padding: 16px 7px 0 6px;
-    margin-bottom: 8.3px;   // Figma: bar ends y 80.7, the banner image starts y 89
+    // Figma 295:182: bar at x 6 / y 16, 389 wide (402 frame → 7 on the right)
+    --qh-t: 16px;
+    --qh-r: 7px;
+    --qh-l: 6px;
+    --qh-gap: 8.3px;   // bar ends y 80.7, the first block starts y 89
+    // as drawn: the cart starts 11.05 from the bar's left, the burger ends 6.28 from its right
+    --qh-nr: 6.28px;
+    --qh-nl: 11.05px;
+  }
+
+  #{$qh-on-hero} {
+    // Figma 577:744: banner at x 8 / y 10, 386 wide. Its row (577:746) sits 10 in from
+    // each side and 11 down — the bar's own top padding, so the box starts with the banner.
+    --qh-t: 10px;
+    --qh-r: 8px;
+    --qh-l: 8px;
+    --qh-gap: -64.7px;   // 10 − (10 + 64.7)
+    --qh-nr: 10px;
+    --qh-nl: 10px;
   }
 
   .qheader .qheader-nav {
     height: 64.7px;
-    // physical sides, as drawn: the cart starts 11.05 from the left, the burger ends 6.28 from the right
-    padding: 11px 6.28px 11.11px 11.05px;
+    padding-top: 11px;
+    padding-bottom: 11.11px;
     border-radius: 11.05px;
-    background: #30378e;
+
+    &::before { background: #30378e; }
   }
 
   .qheader .qheader-menu,
-  .qheader .qheader-act--wishlist,
   .qheader .qheader-act--account { display: none; }
   .qheader .qheader-burger { display: inline-flex; }
 
@@ -221,12 +291,6 @@ body, main, #app { background: transparent; }
     border-radius: 9.68px;
     font-size: 10.65px;
     line-height: 17.04px;
-  }
-
-  // pinned: fold the 6 / 7 side insets into the bar's padding
-  .qheader.is-stuck .qheader-nav {
-    padding-left: 17.05px;    // 11.05 + 6
-    padding-right: 13.28px;   // 6.28 + 7
   }
 }
 
