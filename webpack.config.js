@@ -19,9 +19,10 @@ module.exports = {
         'main-menu' : asset('js/partials/main-menu.js'),
         'footer-accordion' : asset('js/partials/footer-accordion.js'),
         'qissa-cart-drawer' : asset('js/partials/qissa-cart-drawer.js'),
-        'qissa-packs-counter' : asset('js/partials/qissa-packs-counter.js'),
+        // Not built: js/partials/qissa-packs-counter.js and qissa-packs-bar.js. Both are
+        // retired from the page (see header.twig) and every file in public/ counts toward
+        // Salla's 1 MB theme limit. Restoring one needs its entry back here.
         'qissa-image-banner' : asset('js/partials/qissa-image-banner.js'),
-        'qissa-packs-bar' : asset('js/partials/qissa-packs-bar.js'),
         'qissa-hero-counter' : asset('js/partials/qissa-hero-counter.js'),
         'wishlist-card': asset('js/partials/wishlist-card.js'),
         'add-product-toast': asset('js/partials/add-product-toast.js'),

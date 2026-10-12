@@ -16,8 +16,9 @@
   {# The packs countdown moved into the hero banner's LED frame
      (home.qissa-image-banner → "عرض العداد داخل البانر"). The promo bar
      (components.qissa-packs-bar) and the LED notch (components.qissa-packs-counter)
-     are retired from the header; their files stay in the repo, so restoring
-     either is a one-line include here plus its script tag in master.twig. #}
+     are retired from the header and left out of the build; their files stay in
+     the repo. Restoring either takes its include here, its script tag in
+     master.twig, its entry in webpack.config.js and its @import in app.scss. #}
 
   <div class="qheader-nav">
 

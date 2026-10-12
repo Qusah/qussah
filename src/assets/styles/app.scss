@@ -118,8 +118,8 @@
 @import './04-components/filters';
 @import './04-components/add-product-toast';
 @import './04-components/qissa-cart-toast';
-@import './04-components/qissa-packs-counter';
-@import './04-components/qissa-packs-bar';
+// Not built: qissa-packs-counter and qissa-packs-bar, retired from the page (see
+// header.twig); 9.5 KB of app.css. Restoring one needs its @import back here.
 @import './04-components/satisfaction';
 @import './04-components/thank-you';
 @import './04-components/qissa-cart-drawer';
