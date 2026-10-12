@@ -1,7 +1,9 @@
 // ====================================================================
 // Global Store Footer — Qussah revamp. Figma "Qusah Re-Vamp":
-// desktop 113:35234 (frame ≈ the 1440 page), mobile 290:8762 (402).
-//   1. navy help bar   — «تحتاج مساعدة؟» · social / WhatsApp / email
+// desktop 326:1558 (frame ≈ the 1440 page), mobile 290:8762 (402).
+// The desktop values were read off 113:35234, the same drawing a hair larger
+// (every one within 0.2px of 326:1558), and stand.
+//   1. navy help bar   — «تحتاج مساعدة؟» · email / WhatsApp / social
 //   2. white body      — About · important links · account (RTL, right → left);
 //                        phones stack them, the lists as closed accordions
 //   3. bottom          — payment logos · CR / copyright + VAT lines
@@ -20,7 +22,7 @@ $qfooter-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
   background: #fff;
   direction: rtl;
 
-  // ---- 1. help bar (113:35235) ----
+  // ---- 1. help bar (326:1559) ----
   // 20.48 + the 39.08 pills + 20.48 = Figma's 80.02; wraps only when a
   // store lists more social links than the row holds
   &__bar {
@@ -42,15 +44,17 @@ $qfooter-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     line-height: 22.34px;
     white-space: nowrap;
   }
-  // DOM: social · WhatsApp · email → right to left in RTL
+  // both frames run these left → right: email · WhatsApp · the social list
+  // in Salla's own order (Instagram, X, …)
   &__reach {
+    direction: ltr;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 13.03px;
     min-width: 0;
   }
-  // 113:35237 / 113:35244 — white pill: icon (right) + LTR text
+  // 326:1561 / 326:1568 — white pill: its text, then the icon (a <picture>)
   &__pill {
     display: inline-flex;
     flex: none;
@@ -76,7 +80,7 @@ $qfooter-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     white-space: nowrap;
   }
 
-  // 113:35251 — <salla-social>: ul.s-social-list > li.s-social-link > a > span > svg
+  // 326:1575 — <salla-social>: ul.s-social-list > li.s-social-link > a > span > svg
   // (Salla's own icons; its component CSS draws round outlined 2rem links)
   &__social {
     display: block;
@@ -109,7 +113,7 @@ $qfooter-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     }
   }
 
-  // ---- 2. body (113:35267) ----
+  // ---- 2. body (326:1591) ----
   &__main {
     padding: 37.23px 40.95px 16.88px;   // bottom: what Figma draws below the logos
   }
@@ -131,7 +135,7 @@ $qfooter-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     min-width: 0;
   }
 
-  // About (113:35299): logo frame 93.07 × 44.67 with the mark in its top 32.98,
+  // About (326:1623): logo frame 93.07 × 44.67 with the mark in its top 32.98,
   // drawn like the header's (qissa-header.scss) — the merchant's own logo
   &__about {
     flex: 0 0 383.46px;
@@ -216,7 +220,7 @@ $qfooter-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     &:hover { color: #30378e; }
   }
 
-  // ---- 3. bottom (113:35309): payments RIGHT · legal lines LEFT ----
+  // ---- 3. bottom (326:1633): payments RIGHT · legal lines LEFT ----
   &__bottom {
     display: flex;
     align-items: center;
@@ -245,7 +249,7 @@ $qfooter-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
       list-style: none;
     }
     .s-payments-list > div { display: contents; }   // the slot wrappers
-    // 113:35315 — boxes as drawn: white at 5% on white, so only the logo shows
+    // 326:1639 — boxes as drawn: white at 5% on white, so only the logo shows
     .s-payments-list-item {
       display: flex;
       flex: none;
@@ -273,7 +277,7 @@ $qfooter-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     }
   }
 
-  // Figma's desktop copyright line (113:35311), now with the CR line above it
+  // Figma's desktop copyright line (326:1636), now with the CR line above it
   &__legal {
     display: flex;
     flex-direction: column;
@@ -307,7 +311,7 @@ $qfooter-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
 
 // ---- mobile: Figma 290:8762 ----
 @media (max-width: 768px) {
-  // help bar (290:8805): 86 tall (24 + the 38 squares + 24), 12 in on the
+  // help bar (549:596): 86 tall (24 + the 38 squares + 24), 12 in on the
   // right, 7 on the left
   .qfooter__bar {
     min-height: 86px;
@@ -318,7 +322,8 @@ $qfooter-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     line-height: 24px;
   }
   .qfooter__reach { gap: 8px; }
-  // WhatsApp / email become white icon squares (290:8808, 290:8813)
+  // WhatsApp / email become squares like the social ones, their icons the
+  // frame's white ones (549:599, 549:605); WhatsApp leads here
   .qfooter__pill {
     position: relative;
     justify-content: center;
@@ -326,7 +331,9 @@ $qfooter-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     height: 38px;
     padding: 0;
     border-radius: 10px;
+    background: rgba(255, 255, 255, .16);
   }
+  .qfooter__pill--wa { order: -1; }
   .qfooter__pill-icon {
     width: 20px;
     height: 20px;

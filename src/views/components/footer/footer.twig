@@ -1,10 +1,11 @@
 {#
   Global store footer — Qussah revamp.
-  Figma "Qusah Re-Vamp": desktop 113:35234 · mobile 290:8762.
+  Figma "Qusah Re-Vamp": desktop 326:1558 · mobile 290:8762.
 
-  1. Navy help bar: «تحتاج مساعدة؟» (right) · social, WhatsApp, email (left).
-     Desktop shows WhatsApp/email as white pills with their text; phones as
-     white icon squares beside the social squares.
+  1. Navy help bar: «تحتاج مساعدة؟» (right) · the contact buttons (left), which
+     both frames run left to right: email, WhatsApp, the social links.
+     Desktop shows email/WhatsApp as white pills with their text; phones as
+     squares like the social ones, icons in white, WhatsApp first.
   2. White body, RTL right → left: About (logo + description) · important links
      (merchant footer menu) · account links. Phones stack them; the two link
      lists become accordions (footer-accordion.js), closed as Figma draws them.
@@ -26,30 +27,39 @@
 {% set email = store.contacts.email %}
 <footer class="qfooter" data-ftg-closed>
 
-  {# ---- help bar (desktop 113:35235 / mobile 290:8805) ---- #}
+  {# ---- help bar (desktop 326:1559 / mobile 549:596). The row reads left to
+       right (footer.scss): email · WhatsApp · social, each pill its text then
+       its icon. Phones swap in the frame's white icons and put WhatsApp
+       first. ---- #}
   <div class="qfooter__bar">
     <h3 class="qfooter__help">{{ trans('blocks.qissa.need_help') }}</h3>
     <div class="qfooter__reach">
-      <salla-social class="qfooter__social"></salla-social>
-      {% if whatsapp %}
-        <a class="qfooter__pill" href="https://wa.me/{{ whatsapp|replace({'+': '', ' ': ''}) }}" target="_blank" rel="noopener">
-          <img class="qfooter__pill-icon" src="{{ 'images/qfooter/whatsapp.svg'|asset }}" alt="" width="20" height="20"/>
-          <span class="qfooter__pill-text" dir="ltr">{{ whatsapp }}</span>
-        </a>
-      {% endif %}
       {% if email %}
         <a class="qfooter__pill" href="mailto:{{ email }}">
-          <img class="qfooter__pill-icon" src="{{ 'images/qfooter/mail.svg'|asset }}" alt="" width="20" height="20"/>
           <span class="qfooter__pill-text" dir="ltr">{{ email }}</span>
+          <picture class="qfooter__pill-icon">
+            <source media="(max-width: 768px)" srcset="{{ 'images/qfooter/mail-white.svg'|asset }}"/>
+            <img src="{{ 'images/qfooter/mail.svg'|asset }}" alt="" width="20" height="20"/>
+          </picture>
         </a>
       {% endif %}
+      {% if whatsapp %}
+        <a class="qfooter__pill qfooter__pill--wa" href="https://wa.me/{{ whatsapp|replace({'+': '', ' ': ''}) }}" target="_blank" rel="noopener">
+          <span class="qfooter__pill-text" dir="ltr">{{ whatsapp }}</span>
+          <picture class="qfooter__pill-icon">
+            <source media="(max-width: 768px)" srcset="{{ 'images/qfooter/whatsapp-white.svg'|asset }}"/>
+            <img src="{{ 'images/qfooter/whatsapp.svg'|asset }}" alt="" width="20" height="20"/>
+          </picture>
+        </a>
+      {% endif %}
+      <salla-social class="qfooter__social"></salla-social>
     </div>
   </div>
 
   <div class="qfooter__main">
     <div class="qfooter__cols">
 
-      {# About (RIGHT) — 113:35299 / 290:8766 #}
+      {# About (RIGHT) — 326:1623 / 290:8766 #}
       <div class="qfooter__col qfooter__about">
         {% if store.logo %}
           <a class="qfooter__logo" href="{{ link('/') }}">
@@ -61,14 +71,14 @@
         {% endif %}
       </div>
 
-      {# Important links (middle) — 113:35284 / 290:8776. Figma titles this
+      {# Important links (middle) — 326:1608 / 290:8776. Figma titles this
          desktop column «إدارة الحساب» too; its mobile twin reads «روابط مهمة». #}
       <nav class="qfooter__col qfooter__links-col qfooter__links-col--pages" aria-label="{{ trans('blocks.qissa.important_links') }}">
         <h3 class="qfooter__title">{{ trans('blocks.qissa.important_links') }}</h3>
         <salla-menu class="qfooter__menu" source="footer" with-cookie-preferences></salla-menu>
       </nav>
 
-      {# Account (LEFT; first list on phones) — 113:35269 / 290:8770 #}
+      {# Account (LEFT; first list on phones) — 326:1593 / 290:8770 #}
       <nav class="qfooter__col qfooter__links-col qfooter__links-col--account" aria-label="{{ trans('blocks.qissa.account_manage') }}">
         <h3 class="qfooter__title">{{ trans('blocks.qissa.account_manage') }}</h3>
         <ul class="qfooter__list">
@@ -82,7 +92,7 @@
     </div>
 
     {# ---- bottom: payments (RIGHT / top) · legal lines (LEFT / below) —
-       113:35309 / 290:8782 + 290:8801 ---- #}
+       326:1633 / 290:8782 + 290:8801 ---- #}
     <div class="qfooter__bottom">
       <div class="qfooter__payments">
         <salla-payments></salla-payments>
