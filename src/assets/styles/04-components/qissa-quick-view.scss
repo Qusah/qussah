@@ -159,10 +159,11 @@ body { --qqv-ear: #{$navy}; --qqv-ink: #fff; }
 }
 
 // The short ticket a cart line turns into: photos, name, «ماذا يوجد» and the
-// description. Everything that sells — price, quantity, add, buy, the product
-// page link, the trust row, the steps — is left out; the cart already has it.
+// description (the JS fills those two for this ticket only). Everything that
+// sells — price, quantity, add, buy, the product page link, the steps — is
+// left out; the cart already has it.
 .qqv-lite {
-  .qqv-steps, .qqv-price, .qqv-buy, .qqv-pdp, .qqv-trust { display: none !important; }
+  .qqv-steps, .qqv-price, .qqv-buy, .qqv-pdp { display: none !important; }
   .qqv-top { justify-content: flex-end; }
   // the description is what this ticket is for: six lines, not the card's two
   .qqv-desc { -webkit-line-clamp: 6; }
@@ -279,19 +280,18 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
 .qqv-ticket:not(.is-ordered) .qqv-order { transform: translateX(-34%); }
 
 // ---- product step ----
-// Two groups, the photos (+ description) and the details, then the trust row.
-// On a narrow back they dissolve into the ticket's one column, in its original
-// order; on a widened desktop card (.qqv-split) the groups stand side by side,
-// photos on the right, and the trust row runs under both.
+// Two groups: the photos (+ the description, on a cart line's ticket) and the
+// details. On a narrow back they dissolve into the ticket's one column, in its
+// original order; on a widened desktop card (.qqv-split) they stand side by
+// side, photos on the right. A card's ticket is short on purpose (team review,
+// Oct 2026): photos, name, pill + rating, price, the buttons, the product link.
 .qqv-c1, .qqv-c2 { display: contents; }
 .qqv-desc { order: 1; }
 .qqv-buy { order: 2; }
-.qqv-trust { order: 3; }
 .qqv-pdp { order: 4; }
 .qqv-split .qqv-prod { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: start; gap: 12px 18px; }
 .qqv-split .qqv-c1, .qqv-split .qqv-c2 { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .qqv-split .qqv-img { aspect-ratio: 1; }
-.qqv-split .qqv-trust { grid-column: 1 / -1; }
 
 // gallery: the card's scroll-snap track (qissa-product-card.scss) + thumbnails,
 // framed like the revamp card's photo (7.44 on #f4f5f6; 11.91 on phones)
@@ -427,16 +427,6 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
 }
 .qqv-err { font-size: 13px; line-height: 1.6; color: #ffd2d4; background: rgba(227, 32, 42, .18); border-radius: 7.44px; padding: 8px 12px; }
 
-.qqv-trust {
-  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin-top: 4px !important; padding-top: 14px !important;
-  border-top: 1px solid rgba(255, 255, 255, .12);
-  li { display: grid; justify-items: center; text-align: center; gap: 4px; padding: 0 4px; position: relative; }
-  li + li::before { content: ''; position: absolute; right: 0; top: 12px; bottom: 12px; border-right: 1px dotted rgba(255, 255, 255, .3); }
-  .qqv-i { color: $cyan; }
-  b { font-size: 12.5px; line-height: 1.35; }
-  small { font-size: 11.5px; line-height: 1.35; color: rgba(255, 255, 255, .66); }
-}
 .qqv-pdp {
   display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
   min-height: 44px; font-size: 14px; font-weight: 500; line-height: 1;

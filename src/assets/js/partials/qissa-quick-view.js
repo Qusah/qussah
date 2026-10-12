@@ -16,12 +16,15 @@
  *      (always there on phones and touch screens; with a pointer it folds
  *      out on hover/focus). It turns THAT card over, in place: at the edge-on
  *      moment the card widens — two grid columns, or the whole row when the
- *      grid has fewer than three; its own width inside a slider or a flex row —
- *      and its back is the navy ticket. Product step: gallery (every photo: a
+ *      grid has fewer than three; its own width inside a slider or a flex row,
+ *      and when it is already wide enough for the two-column back («بكجات
+ *      قصة»: two wide cards to a row) — and its back is the navy ticket. Product step: gallery (every photo: a
  *      swipeable scroll-snap track from card-carousel.js + a row of
- *      thumbnails), name, subtitle, rating, «ماذا يوجد في البكج» read from the
- *      description (4 boxes, then «عرض N عناصر أخرى» opens the rest in place),
- *      price + saving, qty + add, buy now, trust lines. After an add it slides
+ *      thumbnails), name, subtitle, rating, price + saving, qty + add, buy
+ *      now, and the link to the product page. Kept to that on purpose (team
+ *      review, Oct 2026: the preview gives the gist, the product page the
+ *      rest) — what the pack holds, the description and the trust lines are
+ *      not shown here. After an add it slides
  *      to «طلبك», built from the cart the add returned. ×, «أكمل التسوق» and Esc
  *      turn it back and hand focus to the corner. One card open at a time.
  *      Choreography, timing and layout rules are Bareq's (bareq-quick-view.js);
@@ -34,8 +37,10 @@
  *   3. The cart page. Each cart line (`.qcart__item[data-qqv-cart]`, cart.twig)
  *      gets the same corner on its photo and turns over the same way, at its
  *      own width, into a SHORT ticket: the gallery, the name, the subtitle and
- *      rating, «ماذا يوجد» and the description — no price, no quantity, no
- *      buttons, no «طلبك» step (`.qqv-lite`). The line's own fields (quantity,
+ *      rating, «ماذا يوجد في البكج» read from the description (4 boxes, then
+ *      «عرض N عناصر أخرى» opens the rest in place) and the description — no
+ *      price, no quantity, no buttons, no «طلبك» step (`.qqv-lite`). It is
+ *      the only ticket that shows those two. The line's own fields (quantity,
  *      remove, the hidden id) stay in the DOM under the back, so the cart's
  *      form and cart.js keep working on them; a line removed while open lets
  *      the ticket go. The cart drawer's lines (`.qcd__item[data-qqv-cart]`,
@@ -94,12 +99,6 @@ const T = {
   cod: 'الدفع عند الاستلام أو تقسيط تابي وتمارا',
   going: 'جاري تحويلك لإتمام الطلب…',
   goingSr: 'جاري تحويلك لصفحة إتمام الطلب',
-  trust: 'مزايا الشراء من قصة',
-  trustItems: [
-    ['box', 'من المصنع مباشرة', 'بدون وسيط'],
-    ['truck', 'توصيل لبابك', 'لكل مدن المملكة'],
-    ['shield', 'الدفع عند الاستلام', 'أو تقسيط تابي وتمارا'],
-  ],
   rating: s => `التقييم ${s} من 5`,
   ratings: n => (n === 1 ? 'تقييم واحد' : n === 2 ? 'تقييمان' : n <= 10 ? `${n} تقييمات` : `${n} تقييم`),
   addedSr: (name, n) => `أُضيف ${name} للسلة. في السلة ${n}`,
@@ -122,8 +121,6 @@ const IC = {
   right: svg('<path d="m9 6 6 6-6 6"/>'),
   down: svg('<path d="m6 9 6 6 6-6"/>'),
   star: '<svg class="qqv-st" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.6l2.9 6 6.5.8-4.8 4.5 1.2 6.5L12 17.2l-5.8 3.2 1.2-6.5-4.8-4.5 6.5-.8z"/></svg>',
-  box: svg('<path d="M12 3 20 7.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9M8 5.3l8 4.5"/>'),
-  truck: svg('<path d="M2.5 6.5h11v9h-11zM13.5 9.5h4l3 3v3h-7"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>'),
   shield: svg('<path d="M12 3 19 6v5.5c0 4.3-2.9 7.8-7 9.5-4.1-1.7-7-5.2-7-9.5V6z"/><path d="m9 12 2.2 2.2L15.5 10"/>'),
 };
 
@@ -133,6 +130,7 @@ const RM = window.matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : 
 const E_OUT = 'cubic-bezier(.16,1,.3,1)';
 const E_ACC = 'cubic-bezier(.55,0,.9,.45)';
 const CONFIRM_MS = 850;
+const SPLIT_W = 440;   // from this width the back stands photos beside details
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
 const num = v => { const n = Number(v); return Number.isFinite(n) ? n : 0; };
@@ -711,7 +709,7 @@ const Ticket = {
   build() {
     if (this.bk) return;
     const tmp = document.createElement('div');
-    tmp.innerHTML = `<div class="qqv-bk" id="qqv-bk" role="region"><div class="qqv-ticket"><div class="qqv-top"><ol class="qqv-steps" aria-label="${T.steps}"><li class="is-on" data-st="1" aria-current="step"><i>${latin(1)}</i>${T.stepProduct}</li><li class="qqv-line" aria-hidden="true"></li><li data-st="2"><i>${latin(2)}</i>${T.stepOrder}</li></ol><button class="qqv-x qqv-c" type="button" data-act="close" aria-label="${T.close}">${IC.x}</button></div><div class="qqv-stack"><section class="qqv-pane qqv-prod" aria-labelledby="qqv-title"><div class="qqv-c1"><div class="qqv-gal"><div class="qqv-img"></div><div class="qqv-ths" role="group" aria-label="${T.images}"></div></div><p class="qqv-desc"></p></div><div class="qqv-c2"><h2 id="qqv-title" tabindex="-1"></h2><div class="qqv-meta"><span class="qqv-pill"></span><div class="qqv-rate"></div></div><section class="qqv-in" aria-labelledby="qqv-in-h"><h3 id="qqv-in-h"></h3><ul class="qqv-in-list" id="qqv-in-list"></ul><button class="qqv-more" type="button" data-act="more" aria-expanded="false" aria-controls="qqv-in-list"><span></span>${IC.down}</button></section><div class="qqv-price"></div><div class="qqv-buy"><div class="qqv-row"><div class="qqv-qty" role="group" aria-label="${T.qty}"><button type="button" data-q="1" aria-label="${T.inc}">${IC.plus}</button><output aria-live="polite">1</output><button type="button" data-q="-1" aria-label="${T.dec}">${IC.minus}</button></div><button class="qqv-btn qqv-w qqv-c" type="button" data-act="add"><span class="qqv-spin"></span><span class="qqv-lbl">${T.add}</span></button></div><button class="qqv-btn qqv-cy qqv-c" type="button" data-act="buy"><span class="qqv-spin"></span><span class="qqv-lbl">${T.buy}</span></button><a class="qqv-btn qqv-w qqv-c qqv-opts" href="#" hidden>${T.options}</a><p class="qqv-err" role="alert" hidden></p></div><a class="qqv-pdp" href="#">${T.pdp}${IC.left}</a></div><ul class="qqv-trust" aria-label="${T.trust}">${T.trustItems.map(([i, b, s]) => `<li>${IC[i]}<b>${b}</b><small>${s}</small></li>`).join('')}</ul></section><section class="qqv-pane qqv-order" aria-labelledby="qqv-order-h" inert><div class="qqv-okh"><span class="qqv-okc qqv-c">${IC.check}</span><div><h2 id="qqv-order-h" tabindex="-1">${T.ordered}</h2><p class="qqv-order-sub"></p></div></div><ul class="qqv-lines" aria-label="${T.lines}"></ul><dl class="qqv-sum"></dl><p class="qqv-err qqv-order-err" role="alert" hidden></p><button class="qqv-btn qqv-cy qqv-c" type="button" data-act="checkout"><span class="qqv-lbl">${T.checkout}</span></button><button class="qqv-btn qqv-gh qqv-c" type="button" data-act="continue">${T.keepShopping}</button><p class="qqv-cod qqv-c">${IC.shield}${T.cod}</p><button class="qqv-back" type="button" data-act="back">${IC.right}${T.back}</button></section></div></div></div>`;
+    tmp.innerHTML = `<div class="qqv-bk" id="qqv-bk" role="region"><div class="qqv-ticket"><div class="qqv-top"><ol class="qqv-steps" aria-label="${T.steps}"><li class="is-on" data-st="1" aria-current="step"><i>${latin(1)}</i>${T.stepProduct}</li><li class="qqv-line" aria-hidden="true"></li><li data-st="2"><i>${latin(2)}</i>${T.stepOrder}</li></ol><button class="qqv-x qqv-c" type="button" data-act="close" aria-label="${T.close}">${IC.x}</button></div><div class="qqv-stack"><section class="qqv-pane qqv-prod" aria-labelledby="qqv-title"><div class="qqv-c1"><div class="qqv-gal"><div class="qqv-img"></div><div class="qqv-ths" role="group" aria-label="${T.images}"></div></div><p class="qqv-desc"></p></div><div class="qqv-c2"><h2 id="qqv-title" tabindex="-1"></h2><div class="qqv-meta"><span class="qqv-pill"></span><div class="qqv-rate"></div></div><section class="qqv-in" aria-labelledby="qqv-in-h"><h3 id="qqv-in-h"></h3><ul class="qqv-in-list" id="qqv-in-list"></ul><button class="qqv-more" type="button" data-act="more" aria-expanded="false" aria-controls="qqv-in-list"><span></span>${IC.down}</button></section><div class="qqv-price"></div><div class="qqv-buy"><div class="qqv-row"><div class="qqv-qty" role="group" aria-label="${T.qty}"><button type="button" data-q="1" aria-label="${T.inc}">${IC.plus}</button><output aria-live="polite">1</output><button type="button" data-q="-1" aria-label="${T.dec}">${IC.minus}</button></div><button class="qqv-btn qqv-w qqv-c" type="button" data-act="add"><span class="qqv-spin"></span><span class="qqv-lbl">${T.add}</span></button></div><button class="qqv-btn qqv-cy qqv-c" type="button" data-act="buy"><span class="qqv-spin"></span><span class="qqv-lbl">${T.buy}</span></button><a class="qqv-btn qqv-w qqv-c qqv-opts" href="#" hidden>${T.options}</a><p class="qqv-err" role="alert" hidden></p></div><a class="qqv-pdp" href="#">${T.pdp}${IC.left}</a></div></section><section class="qqv-pane qqv-order" aria-labelledby="qqv-order-h" inert><div class="qqv-okh"><span class="qqv-okc qqv-c">${IC.check}</span><div><h2 id="qqv-order-h" tabindex="-1">${T.ordered}</h2><p class="qqv-order-sub"></p></div></div><ul class="qqv-lines" aria-label="${T.lines}"></ul><dl class="qqv-sum"></dl><p class="qqv-err qqv-order-err" role="alert" hidden></p><button class="qqv-btn qqv-cy qqv-c" type="button" data-act="checkout"><span class="qqv-lbl">${T.checkout}</span></button><button class="qqv-btn qqv-gh qqv-c" type="button" data-act="continue">${T.keepShopping}</button><p class="qqv-cod qqv-c">${IC.shield}${T.cod}</p><button class="qqv-back" type="button" data-act="back">${IC.right}${T.back}</button></section></div></div></div>`;
     this.bk = tmp.firstChild;
     this.tk = $('.qqv-ticket', this.bk);
     this.prod = $('.qqv-prod', this.bk);
@@ -777,9 +775,11 @@ const Ticket = {
       : '';
     $('.qqv-meta', prod).hidden = !d.subtitle && !stars;
 
-    // «ماذا يوجد في البكج»
+    // «ماذا يوجد في البكج» and, below, the description: the cart line's short
+    // ticket only. A card's ticket stays brief — the product page has both.
     // Only the HTML from getDetails is parsed; card data carries plain text.
-    const list = d.description ? insideLines(d.description) : (first ? [] : this._inside || []);
+    const lite = this.bk.classList.contains('qqv-lite');
+    const list = !lite ? [] : d.description ? insideLines(d.description) : (first ? [] : this._inside || []);
     this._inside = list;
     const box = $('.qqv-in', prod);
     box.hidden = !list.length;
@@ -798,7 +798,7 @@ const Ticket = {
       : '';
 
     const desc = $('.qqv-desc', prod);
-    const plain = d.plain || (d.description ? textOf(d.description) : '');
+    const plain = lite ? d.plain || (d.description ? textOf(d.description) : '') : '';
     desc.textContent = plain;
     desc.hidden = !plain;
 
@@ -1164,7 +1164,10 @@ const Ticket = {
     document.body.classList.add('qqv-flip');
     if (this.grid) {
       this.grid.classList.add('qqv-grid');
-      this.item.style.gridColumn = getComputedStyle(this.grid).gridTemplateColumns.split(' ').length >= 3 ? 'span 2' : '1 / -1';
+      // A card that is already wide enough keeps its place and its width: across
+      // the whole row of «بكجات قصة» the photo outgrew the screen beside a short
+      // column of details.
+      if (this.item.offsetWidth < SPLIT_W) this.item.style.gridColumn = getComputedStyle(this.grid).gridTemplateColumns.split(' ').length >= 3 ? 'span 2' : '1 / -1';
     } else if (this.track) this.track.classList.add('qqv-track');
     c.classList.add('is-qv-open');
     // on a cart drawer line the ticket has the panel to itself: the sums and the checkout button step aside
@@ -1173,7 +1176,7 @@ const Ticket = {
     // Photos beside the details once the widened card has the room — every
     // desktop grid. offsetWidth, not the box: mid-turn the card is a sliver.
     // A cart line is as wide as the list, grid or not.
-    c.classList.toggle('qqv-split', (!!this.grid || c.classList.contains('qqv-row')) && c.offsetWidth >= 440);
+    c.classList.toggle('qqv-split', (!!this.grid || c.classList.contains('qqv-row')) && c.offsetWidth >= SPLIT_W);
   },
 
   unlay() {
