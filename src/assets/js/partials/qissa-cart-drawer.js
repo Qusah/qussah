@@ -1,4 +1,5 @@
 import { swipeToClose } from './qissa-swipe-close';
+import { bindQuantityFields, typingIn } from './qissa-cart-quantity';
 
 /**
  * Qussah cart drawer — Figma "Qusah Re-Vamp" 339:3416: empty (339:3553),
@@ -18,9 +19,10 @@ import { swipeToClose } from './qissa-swipe-close';
  *             an empty cart or a store without a threshold.
  *   items     name, a grey second line (the product's subtitle when Salla
  *             sends one, else the chosen options), price · − n + stepper, and
- *             the photo on the right. No delete button: − at 1 removes the
- *             line (the user's call, 1 Oct 2026). No «تفريغ السلة», no coupon
- *             link — the design has neither.
+ *             the photo on the right. The n is a field: tapped, the shopper
+ *             types the quantity (qissa-cart-quantity.js). No delete button:
+ *             − at 1 removes the line (the user's call, 1 Oct 2026). No
+ *             «تفريغ السلة», no coupon link — the design has neither.
  *   foot      المجموع الفرعي · الخصم (N%) when there is one · الشحن (مجاني /
  *             يحسب عند الدفع) · dashed rule · الإجمالي · «إتمام الشراء».
  *   empty     server-rendered into a <template> in layouts/master.twig (copy,
@@ -72,6 +74,7 @@ class QissaCartDrawer {
       checkout: 'إتمام الشراء',
       inc: 'زيادة الكمية',
       dec: 'إنقاص الكمية',
+      qty: 'الكمية',
       remove: 'حذف المنتج',
       close: 'إغلاق السلة',
       out: 'غير متوفر',
@@ -82,6 +85,14 @@ class QissaCartDrawer {
     this.bindTriggers();
     this.bindCartEvents();
     document.addEventListener('theme::ready', () => this.bindCartEvents());
+
+    // the number between + and −, typed: bound once, on the panel the lines are redrawn in
+    bindQuantityFields(
+      this.panel,
+      (line, quantity) => this.setQuantity([...this.panel.querySelectorAll('.qcd__item')].find(row => row.dataset.itemId === line), quantity),
+      // the redraw held back while it was typed in — unless a line is being saved: the cart event redraws then
+      () => { if (this.redrawWaiting && !this.panel.querySelector('.qcd__item.is-busy')) { this.render(); } }
+    );
 
     // The panel sits against the left edge: a swipe to the left closes it. A
     // quick view open on one of the lines is the layer on top and keeps its
@@ -206,6 +217,9 @@ class QissaCartDrawer {
 
   render() {
     if (!this.panel) { return; }
+    // a redraw would take the field, and a phone's keyboard, from under a shopper typing a quantity: once they leave it
+    this.redrawWaiting = typingIn(this.panel);
+    if (this.redrawWaiting) { return; }
     const cart = this.cart || {};
     const items = Array.isArray(cart.items) ? cart.items : [];
     const pending = this.cart === null;
@@ -296,7 +310,7 @@ class QissaCartDrawer {
               <input type="hidden" name="quantity" value="${qty}" />
               <div class="qcd__qty" role="group" aria-label="${QissaCartDrawer.attr(name)}">
                 <button type="button" class="qcd__step" data-qcd-step="1" aria-label="${QissaCartDrawer.attr(this.s.inc)}"${max && qty >= max ? ' disabled' : ''}>${this.icon('plus')}</button>
-                <output class="qcd__n" aria-live="polite">${this.number(qty)}</output>
+                <input class="qcd__n" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="done" maxlength="5" value="${qty}" data-qty-field="${item.id}" data-product="${QissaCartDrawer.attr(item.product_id || '')}" aria-label="${QissaCartDrawer.attr(this.s.qty)}" />
                 <button type="button" class="qcd__step" data-qcd-step="-1" aria-label="${QissaCartDrawer.attr(qty > 1 ? this.s.dec : this.s.remove)}">${this.icon('minus')}</button>
               </div>
             </form>
@@ -341,17 +355,21 @@ class QissaCartDrawer {
     this.panel.querySelector('[data-qcd-checkout]')?.addEventListener('click', () => salla.cart.submit());
   }
 
-  /** + / −. At 1, − removes the line. The cart events re-render the panel. */
+  /** + / −. At 1, − removes the line. */
   step(button, delta) {
     const row = button.closest('.qcd__item');
+    if (row) { this.setQuantity(row, QissaCartDrawer.num(row.dataset.qty) + delta); }
+  }
+
+  /** A line's new quantity, from a step or typed. The cart events re-render the panel. */
+  setQuantity(row, next) {
     const id = row?.dataset.itemId; // a STRING, never Number()
     if (!id || row.classList.contains('is-busy')) { return; }
-    const next = QissaCartDrawer.num(row.dataset.qty) + delta;
     const max = QissaCartDrawer.num(row.dataset.max);
     if (max && next > max) { return; }
 
     row.classList.add('is-busy');
-    row.querySelectorAll('[data-qcd-step]').forEach(b => { b.disabled = true; });
+    row.querySelectorAll('[data-qcd-step], .qcd__n').forEach(control => { control.disabled = true; });
     const settle = () => this.fetch();
 
     if (next < 1) {
@@ -363,7 +381,7 @@ class QissaCartDrawer {
 
     const form = row.querySelector('.qcd__form');
     form.elements.quantity.value = String(next);
-    row.querySelector('.qcd__n').textContent = this.number(next);
+    row.querySelector('.qcd__n').value = String(next);
     salla.cart.updateItem(new FormData(form))
       .catch(() => { /* onItemUpdatedFailed says why and re-fetches */ });
   }

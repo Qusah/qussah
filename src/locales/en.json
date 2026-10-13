@@ -164,6 +164,7 @@
         "checkout": "Checkout",
         "inc": "Increase quantity",
         "dec": "Decrease quantity",
+        "qty": "Quantity",
         "remove": "Remove item",
         "close": "Close cart",
         "qty_failed": "Could not update the quantity",

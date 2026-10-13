@@ -157,7 +157,23 @@ $qcd-green: #008036;
     &:disabled { opacity: 0.4; cursor: default; }
   }
   &__i { display: block; width: 14.24px; height: 14.24px; }
-  &__n { width: 26.44px; color: $qcd-ink; font-size: 14.24px; font-weight: 500; line-height: 21.36px; text-align: center; }
+  // The quantity is a field that reads as the plain number until it is tapped
+  // (qissa-cart-quantity.js), three digits wide. Written against the element
+  // so the theme's form-field look (border, padding, focus ring) stays off it.
+  & input#{&}__n {
+    box-sizing: content-box; width: 3ch; min-width: 26.44px; height: 26.44px; margin: 0; padding: 0;
+    border: 0; border-radius: 6.1px; background: none; box-shadow: none;
+    // !important: the theme sets every field to 16px (03-elements/form.scss)
+    color: $qcd-ink; font-size: 14.24px !important; font-weight: 500; line-height: 21.36px; text-align: center;
+    cursor: text;
+    transition: background-color 0.15s ease;
+    &:hover:not(:disabled) { background: #f3f3f3; }
+    &:focus { outline: none; background: #f3f3f3; box-shadow: inset 0 0 0 1px $qcd-navy; }
+    // a line being saved: the stepper dims as a whole, the number keeps its ink
+    &:disabled { color: $qcd-ink; -webkit-text-fill-color: $qcd-ink; opacity: 1; }
+    // under 16px iOS zooms the page when a field takes focus
+    @media (pointer: coarse) { font-size: 16px !important; }
+  }
   &__item.is-busy &__qty { opacity: 0.6; }
   // a line turned over into the quick view's short ticket (qissa-quick-view.js)
   &__item.is-qv-open { display: block; margin: 10px 12px; }

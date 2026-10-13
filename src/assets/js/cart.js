@@ -1,5 +1,6 @@
 import BasePage from './base-page';
 import {validateProductOptions} from './partials/validate-product-options';
+import {guardSallaQuantity, lineProduct} from './partials/qissa-cart-quantity';
 class Cart extends BasePage {
     onReady() {
         // keep update the dom base in the events
@@ -21,6 +22,9 @@ class Cart extends BasePage {
 
         this.initSubmitCart();
         validateProductOptions();
+        // a line's quantity, typed: an emptied field keeps the quantity it had, Enter does not
+        // reload the page, and nothing above the product's limit is sent
+        guardSallaQuantity(document, host => lineProduct(host.getAttribute('cart-item-id')));
     }
 
     initSubmitCart() {
