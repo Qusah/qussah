@@ -134,9 +134,10 @@ class QissaCartDrawer {
 
     // Adds, deletes and quantity changes alike (the SDK's `itemUpdated` calls
     // `updated` first). The summary it hands over has totals but not lines, so
-    // it only triggers a full re-fetch.
-    salla.cart.event.onUpdated(() => {
-      if (this.isOpen) { this.fetch(); }
+    // it only triggers a full re-fetch. Not for the answer to fetch()'s own
+    // «which cart is it» question: the lines are already on their way then.
+    salla.cart.event.onUpdated(summary => {
+      if (this.isOpen && !summary?.fromLatestFetched) { this.fetch(); }
     });
 
     // A refused quantity change: say why, then re-read what the server holds.
@@ -160,8 +161,17 @@ class QissaCartDrawer {
     this.isOpen = true;
     this.root.hidden = false;
     document.body.classList.add('qcd-open');
+    // no sign of a cart: the empty state at once, not the skeleton, while fetch() still asks
+    if (this.cart === null && !this.cartExpected()) { this.cart = {}; }
     this.render();
     this.fetch();
+  }
+
+  /** The SDK holds a cart, or the header's own note of the last count it was told (app.js, COUNT_NOTE) is not zero. */
+  cartExpected() {
+    if (typeof salla === 'undefined' || !salla.storage) { return true; }
+    if (salla.storage.get('cart.id')) { return true; }
+    try { return Number(localStorage.getItem('qissa-cart:count')) > 0; } catch (e) { return false; }
   }
 
   close() {
@@ -170,10 +180,22 @@ class QissaCartDrawer {
     document.body.classList.remove('qcd-open');
   }
 
-  /** `cart.api.details`, not `latest`: only `details` carries the lines. */
+  /**
+   * `cart.api.details`, not `latest`: only `details` carries the lines.
+   *
+   * The cart's id is asked for first. On a page where the SDK holds no cart —
+   * it drops the stored one when the page's HTML names another guest (app.js,
+   * «the cart the SDK forgets») — `details` on its own answers «no cart yet»
+   * for a shopper who has one, and the drawer showed the empty state over a
+   * full cart. `getCurrentCartId` hands back the stored id, or asks Salla which
+   * cart is this visitor's.
+   */
   fetch() {
     if (typeof salla === 'undefined' || !salla.cart?.api?.details) { return; }
-    salla.cart.api.details(null, ['options'])
+    Promise.resolve()
+      .then(() => salla.api.cart.getCurrentCartId(false, 'qissa-cart-drawer'))
+      .catch(() => null)
+      .then(id => salla.cart.api.details(id || null, ['options']))
       .then(response => {
         const cart = response?.data?.cart;
         if (cart) { this.cart = cart; this.render(); } else { this.settleEmpty(); }

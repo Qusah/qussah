@@ -340,10 +340,19 @@ isElementLoaded(selector, timeout = 8000){
       document.querySelectorAll('.qheader-act--cart').forEach(el => el.classList.toggle('is-empty', empty));
     };
 
+    // The theme's own note of the last count the SDK reported, in a key the SDK
+    // does not clear: see «the cart the SDK forgets» below.
+    const COUNT_NOTE = 'qissa-cart:count';
+    const notedCount = () => { try { return Number(localStorage.getItem(COUNT_NOTE)) || 0; } catch (e) { return 0; } };
+    const noteCount = count => { try { localStorage.setItem(COUNT_NOTE, String(Number(count) || 0)); } catch (e) { /* private mode: best effort */ } };
+    // what the server printed in the header, read before anything here rewrites it
+    const printedCount = Number(document.querySelector('[data-cart-count]')?.textContent) || 0;
+
     const seedCount = salla.storage.get('cart.summary.count');
     if (seedCount != null) {
       document.querySelectorAll('[data-cart-count]').forEach(el => el.innerText = salla.helpers.number(seedCount));
       syncCartCta(seedCount);
+      noteCount(seedCount);
     }
     const seedTotal = salla.storage.get('cart.summary.total');
     if (seedTotal != null) {
@@ -354,7 +363,28 @@ isElementLoaded(selector, timeout = 8000){
       document.querySelectorAll('[data-cart-total]').forEach(el => el.innerHTML = salla.money(summary.total));
       document.querySelectorAll('[data-cart-count]').forEach(el => el.innerText = salla.helpers.number(summary.count));
       syncCartCta(summary.count);
+      // an update that carries no cart says nothing about the count
+      if (summary && typeof summary.count !== 'undefined') { noteCount(summary.count); }
     });
+
+    // The cart the SDK forgets (measured on the live stores, 13 Oct 2026). For a
+    // guest the page's HTML can name a guest id that is not the visitor's own: a
+    // cached copy carries the id of whoever it was rendered for. While starting
+    // up the SDK compares that id with the one its stored cart is filed under
+    // (_checkCurrentCart) and, finding them different, drops the cart it had —
+    // id, count and cookie — without a cart event. Nothing is lost on the
+    // server, but this page then has no count: the header read 0 after every
+    // move to another page, until the next add. So when the SDK holds no cart
+    // while the note above, or the count the server printed, says there is one,
+    // the cart is asked for once (the call the SDK makes itself before an add).
+    // Its answer arrives through onUpdated above. A visitor who never had a cart
+    // has neither sign and costs no request.
+    if (!salla.storage.get('cart.id') && (notedCount() > 0 || printedCount > 0)) {
+      const ask = () => salla.api.cart.latest('qissa-header');
+      Promise.resolve()
+        .then(() => (typeof salla.api.withoutNotifier === 'function' ? salla.api.withoutNotifier(ask) : ask()))
+        .catch(() => { /* the header stays as it is; the next page asks again */ });
+    }
 
     salla.cart.event.onItemAdded((response, prodId) => {
       app.element('salla-cart-summary').animateToCart(app.element(`#product-${prodId} img`));
