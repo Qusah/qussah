@@ -63,6 +63,7 @@
 | order.rating                     | ?OrderRatings                     |                                                                                          |
 | order.rating.store               | ?Rating                           |                                                                                          |
 | order.rating.shipping            | ?Rating                           |                                                                                          |
+| order.rating.product             | ?array                            | Product ratings array with factor_reviews                                                |
 | order.links                      | array                             |                                                                                          |
 | order.links[].url                | string                            |                                                                                          |
 | order.links[].label              | string                            |                                                                                          |
@@ -335,77 +336,10 @@
                                 </div>
                             {% endif %}
                             
-                            {% if item.rating %}
-                                <section class="flex justify-between items-start border-t mt-10 pt-8">
-                                    <div>
-                                        <p>{{ item.rating.content|raw }}</p>
-                                        {% if item.rating.is_pending %}
-                                            <span>{{ trans('pages.rating.pending') }}</span>
-                                        {% endif %}
-                                        <div class="flex flex-row flex-wrap items-center gap-2">
-                                            <salla-rating-stars with-label size="small" value="{{item.rating.stars}}"></salla-rating-stars>
-                                            {# Review factor tags — self-hides when the review has no factors #}
-                                            <salla-review-factors-tags
-                                                order-id="{{ order.id }}"
-                                                rating-id="{{ item.rating.id }}"
-                                                item-id="{{ item.id }}"
-                                                {% if item.product %}product-id="{{ item.product.id }}"{% endif %}
-                                            ></salla-review-factors-tags>
-                                        </div>
-                                        {% if item.rating.images|length %}
-                                            <div class="flex items-center gap-2 mt-2">
-                                                {% for image in item.rating.images %}
-                                                    <img class="w-20 h-20 object-cover rounded-md" src="{{image}}"/>
-                                                {% endfor %}
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                    <div class="rating-actions">
-                                        {% if store.settings.rating.allow_update %}
-                                            <div class="tooltip-toggle tooltip-toggle--hover icon-trigger mobile-shifted">
-                                                {% if not item.rating.can_update %}
-                                                    <div class="tooltip-content shadow-md rounded">
-                                                        <small> {{trans('pages.order.edit_period_ended')}}.</small>
-                                                    </div>
-                                                {% endif %}
-                                                <salla-button 
-                                                    loader-position="center" 
-                                                    {% if not item.rating.can_update %} disabled {% endif %} 
-                                                    shape="icon" 
-                                                    fill="outline" 
-                                                    color="dark" 
-                                                    size="medium" 
-                                                    {% if item.rating.can_update %} 
-                                                        onclick="salla.event.dispatch('rating::edit', {type: 'product', feedback_id: '{{item.rating.id}}' })"
-                                                    {% endif %} 
-                                                    >
-                                                    <i class="sicon-format-border-color text-xl"></i>
-                                                </salla-button>
-                                            </div>
-                                            <div class="tooltip-toggle tooltip-toggle--hover icon-trigger mobile-shifted">
-                                                {% if not item.rating.can_update %}
-                                                    <div class="tooltip-content shadow-md rounded">
-                                                        <small> {{trans('pages.order.delete_period_ended')}}.</small>
-                                                    </div>
-                                                {% endif %}
-                                                <salla-button 
-                                                    loader-position="center" 
-                                                    shape="icon" 
-                                                    {% if not item.rating.can_update %} disabled {% endif %} 
-                                                    color="danger" 
-                                                    fill="outline" 
-                                                    size="medium" 
-                                                    {% if item.rating.can_update %}
-                                                        onclick="salla.event.dispatch('rating::delete', {feedback_id: '{{item.rating.id}}' })"
-                                                    {% endif %} 
-                                                    >
-                                                    <i class="sicon-trash-2 text-xl"></i>
-                                                </salla-button>
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                </section>
-                            {% endif %}
+                            {# The customer's review of this product (text, stars, factor tags, photos,
+                               edit / delete): Salla's component reads the order's ratings itself and
+                               draws nothing while the product has no review. #}
+                            <salla-review-order-item product-id="{{ item.product.id }}"></salla-review-order-item>
                         </div>
                     {% endfor %}
                 </div>

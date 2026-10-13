@@ -9,16 +9,19 @@
   2. White body, RTL right → left: About (logo + description) · important links
      (merchant footer menu) · account links. Phones stack them; the two link
      lists become accordions (footer-accordion.js), closed as Figma draws them.
-  3. Bottom: payment logos · the legal lines. Figma's mobile frame carries
+  3. Bottom: payment logos · the legal block. Figma's mobile frame carries
      «legal name · السجل التجاري» and «الحقوق محفوظة … · الرقم الضريبي»; the
      desktop frame only the copyright — the user had desktop show both lines too.
+     The register itself is now Salla's badge (<salla-trust-badges>, required by
+     Salla's theme review), so the first line keeps the legal name only.
 
   Dynamic Salla data:
     - logo / about : store.logo, store.description
     - help bar     : store.contacts.{whatsapp,email}, <salla-social>
     - links        : <salla-menu source="footer">
     - payments     : <salla-payments> (enabled methods + SBC certificate)
-    - legal lines  : theme setting legal_entity_name, store.settings.commercial_number,
+    - legal block  : <salla-trust-badges> (commercial register, or the freelance
+                     document), theme setting legal_entity_name,
                      store.settings.tax.number
   Account links have no Salla data source → the standard customer pages.
   The newsletter banner is the separate `qissa-footer-newsletter` component.
@@ -98,26 +101,28 @@
         <salla-payments></salla-payments>
       </div>
 
-      {# Two different numbers — do not swap them:
-           · السجل التجاري / CR  → cr_number_label  + store.settings.commercial_number
-           · الرقم الضريبي / VAT → tax_number_label + store.settings.tax.number
-         The legal name is a theme setting (Theme settings → الاسم الرسمي للمنشأة)
-         because Salla exposes no legal-entity field; hidden while empty. Both
-         numbers fall back to the store's registered values while the dashboard
-         fields are empty — fill them and the live values win. #}
+      {# The store's legal identity. Its register is Salla's own badge:
+         <salla-trust-badges> reads store.settings.commercial_number and
+         freelance_number itself — the commercial register first, the freelance
+         document for a store that works under one, nothing when it has neither.
+         Keep it outside every condition: Salla's theme review requires it, and
+         <salla-payments> reports a KSA footer where it is missing or hidden.
+         Beside it: the legal name (Theme settings → الاسم الرسمي للمنشأة — Salla
+         exposes no legal-entity field; hidden while empty), then the copyright
+         and the store's VAT number (store.settings.tax.number) when it has one.
+         No number is written in the theme: each comes from the store's settings. #}
       {% set legal_entity_name = theme.settings.get('legal_entity_name', '') %}
-      {% set commercial_number = store.settings.commercial_number|default('7021220244') %}
       <div class="qfooter__legal">
-        {% if legal_entity_name or commercial_number %}
+        <salla-trust-badges class="qfooter__badge"></salla-trust-badges>
+        <div class="qfooter__lines">
+          {% if legal_entity_name %}
+            <p class="qfooter__legal-line">{{ legal_entity_name }}</p>
+          {% endif %}
           <p class="qfooter__legal-line">
-            {%- if legal_entity_name %}{{ legal_entity_name }}{% endif -%}
-            {%- if legal_entity_name and commercial_number %} · {% endif -%}
-            {%- if commercial_number %}{{ trans('blocks.qissa.cr_number_label') }} <span dir="ltr">{{ commercial_number }}</span>{% endif -%}
+            {{- trans('blocks.qissa.copyright') }} <span dir="ltr">{{ "now"|date("Y") }}</span>
+            {%- if store.settings.tax.number %} · {{ trans('blocks.qissa.tax_number_label') }} <span dir="ltr">{{ store.settings.tax.number }}</span>{% endif -%}
           </p>
-        {% endif %}
-        <p class="qfooter__legal-line">
-          {{- trans('blocks.qissa.copyright') }} <span dir="ltr">{{ "now"|date("Y") }}</span> · {{ trans('blocks.qissa.tax_number_label') }} <span dir="ltr">{{ store.settings.tax.number|default('311345967400003') }}</span>
-        </p>
+        </div>
       </div>
     </div>
   </div>

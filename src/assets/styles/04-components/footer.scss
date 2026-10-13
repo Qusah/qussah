@@ -6,9 +6,11 @@
 //   1. navy help bar   — «تحتاج مساعدة؟» · email / WhatsApp / social
 //   2. white body      — About · important links · account (RTL, right → left);
 //                        phones stack them, the lists as closed accordions
-//   3. bottom          — payment logos · CR / copyright + VAT lines
+//   3. bottom          — payment logos · Salla's register badge · legal name /
+//                        copyright + VAT lines
 // Dynamic data: store.logo/description, store.contacts.*, <salla-social>,
-// <salla-menu source="footer">, <salla-payments>, CR/VAT store settings.
+// <salla-menu source="footer">, <salla-payments>, <salla-trust-badges>, the
+// store's VAT number.
 //
 // Type: the bar, About text and legal lines are Expo Arabic in Figma (not
 // embedded yet — the stack falls through to the theme's digits + GE SS Two);
@@ -225,6 +227,7 @@ $qfooter-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;   // the legal block drops under the logos once both no longer fit
     gap: 22.34px;   // only once the row is tight
     margin-top: 22.34px;
     padding-top: 18.61px;
@@ -277,20 +280,40 @@ $qfooter-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     }
   }
 
-  // Figma's desktop copyright line (326:1636), now with the CR line above it
+  // The legal block: Salla's register badge, then the lines — Figma's desktop
+  // copyright line (326:1636) with the legal name above it.
+  // <salla-trust-badges> draws a 55px seal (KSA stores), «السجل التجاري» or
+  // «وثيقة العمل الحر», and the number. It is not in Figma — Salla's theme
+  // review requires it — so it wears the lines' type and stands beside them,
+  // the row's own gap away. Never hide it: <salla-payments> reports a KSA
+  // footer that does.
   &__legal {
+    display: flex;
+    align-items: center;
+    gap: 22.34px;
+    flex: none;
+    color: #292929;
+    font-size: 11.17px;
+    line-height: 16.75px;
+  }
+  &__badge:empty { display: none; }   // a store with neither document: Salla draws nothing
+  &__lines {
     display: flex;
     flex-direction: column;
     align-items: flex-end;   // RTL → hugs the left gutter like the copyright
-    flex: none;
+  }
+  // p / b: the badge's label and number (their own classes carry Salla's sizes)
+  &__legal-line,
+  &__badge p,
+  &__badge b {
+    margin: 0;
+    color: inherit;
+    font-family: $qfooter-font !important;
+    font-size: inherit;
+    line-height: inherit;
   }
   &__legal-line {
-    margin: 0;
-    color: #292929;
-    font-family: $qfooter-font !important;
-    font-size: 11.17px;
     font-weight: 400;
-    line-height: 16.75px;
     white-space: nowrap;
 
     span { vertical-align: top; }   // the digit spans would deepen the line
@@ -305,7 +328,6 @@ $qfooter-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     row-gap: 37.23px;
   }
   .qfooter__about { flex-basis: 100%; }
-  .qfooter__bottom { flex-wrap: wrap; }
   .qfooter__legal-line { white-space: normal; }
 }
 
@@ -450,15 +472,21 @@ $qfooter-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     }
     .s-payments-list-item img { height: 18px; }
   }
+  // the badge first, then the lines — all from the right, as the lines are drawn
   .qfooter__legal {
-    align-items: flex-start;   // RTL → right, as drawn
+    flex-direction: column;
+    align-items: flex-start;   // RTL → right
     gap: 16px;
     margin-top: 12px;
-  }
-  .qfooter__legal-line {
     color: #5a6874;
     font-size: 12px;
     line-height: 19.2px;
+  }
+  .qfooter__lines {
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .qfooter__legal-line {
     white-space: normal;
     text-align: right;
   }
