@@ -151,8 +151,10 @@ class QissaCartDrawer {
       if (this.isOpen) { this.fetch(); }
     });
 
+    // Not the reset fetch() itself brought on: the SDK also resets when its
+    // «which cart» request fails, and asking again from here would loop.
     salla.cart.event.onSuccessReset?.(() => {
-      if (this.isOpen) { this.cart = null; this.fetch(); }
+      if (this.isOpen && Date.now() > (this.resetQuietUntil || 0)) { this.cart = null; this.fetch(); }
     });
   }
 
@@ -194,7 +196,8 @@ class QissaCartDrawer {
     if (typeof salla === 'undefined' || !salla.cart?.api?.details) { return; }
     Promise.resolve()
       .then(() => salla.api.cart.getCurrentCartId(false, 'qissa-cart-drawer'))
-      .catch(() => null)
+      // the SDK resets its cart when that request fails: see onSuccessReset
+      .catch(() => { this.resetQuietUntil = Date.now() + 2000; return null; })
       .then(id => salla.cart.api.details(id || null, ['options']))
       .then(response => {
         const cart = response?.data?.cart;
