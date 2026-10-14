@@ -29,7 +29,8 @@ $qh-on-hero: '.qheader:has(~ main > .qibanner:not(.s-block ~ *):not(.s-blocks-wr
   // top — the header's own height never changes, so the page doesn't jump
   top: calc(-1 * var(--qh-t));
   z-index: 100;
-  padding: var(--qh-t) var(--qh-r) 0 var(--qh-l);
+  // --qh-x: the side inset while the bar rides on the hero (set below)
+  padding: var(--qh-t) var(--qh-x, var(--qh-r)) 0 var(--qh-x, var(--qh-l));
   margin-bottom: var(--qh-gap);
   font-family: 'GE SS Two', sans-serif;
   color: #fff;
@@ -215,6 +216,11 @@ $qh-on-hero: '.qheader:has(~ main > .qibanner:not(.s-block ~ *):not(.s-blocks-wr
   --qh-nl: 29.93px;
   --qh-navy: 0;
   --qh-pe: none;
+  // The bar keeps the banner's own side inset (--qhx, qissa-image-banner.scss), so
+  // the row stays 30 (phones: 10) inside the photo even where the banner is set in
+  // further than Figma's 20. Pinned, the bar spreads to the edges as before: the
+  // row then sits --qh-l / --qh-r + its own padding from them.
+  --qh-x: var(--qhx);
 }
 
 // hero starts right after the nav
