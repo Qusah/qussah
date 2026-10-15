@@ -272,6 +272,10 @@ const Pill = {
   added(res, productId) {
     this.settle();
     if (quietNow()) return;
+    // «اشترِ الآن» on the Product Hero (partials/qpack-card.twig) goes straight on
+    // to checkout: nothing to choose here, and «عرض السلة» would lose to the redirect.
+    const t = recentTap();
+    if (t && t.matches('[data-qpack-buy]')) { this.hide(); return; }
     clearTimeout(this.syncT);
     const cart = res && res.data && res.data.cart;
     if (cart && Array.isArray(cart.items)) { this.showAdded(cart, productId); return; }
