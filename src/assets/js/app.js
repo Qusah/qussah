@@ -394,22 +394,12 @@ isElementLoaded(selector, timeout = 8000){
   /**
    * Server-rendered product cards carry the product description as HTML in
    * data-qdesc (theme setting card_show_description). Turn it into the plain
-   * two-line excerpt the JS card shows, so both card kinds read the same.
+   * two-line excerpt the JS card shows, so both card kinds read the same:
+   * product-card.js's own QissaCardText, which that file sets as it loads
+   * (before this one, on every page).
    */
   hydrateCardDescriptions() {
-    const toText = (html) => {
-      if (window.QissaCardText) return window.QissaCardText.fromHtml(html, 220);
-      let text = '';
-      try {
-        const body = new DOMParser().parseFromString(String(html), 'text/html').body;
-        body.querySelectorAll('br').forEach(br => br.replaceWith(' '));
-        body.querySelectorAll('td,th,tr,p,li,div,h1,h2,h3,h4,h5,h6').forEach(el => el.append(' '));
-        text = body.textContent || '';
-      }
-      catch (e) { text = String(html).replace(/<[^>]*>/g, ' '); }
-      text = text.replace(/\s+/g, ' ').trim();
-      return text.length > 220 ? text.slice(0, 220).replace(/\s+\S*$/, '') + '…' : text;
-    };
+    const toText = html => (window.QissaCardText ? window.QissaCardText.fromHtml(html, 220) : '');
     document.querySelectorAll('[data-qdesc]').forEach((el) => {
       const text = toText(el.getAttribute('data-qdesc'));
       el.removeAttribute('data-qdesc');
@@ -423,12 +413,16 @@ isElementLoaded(selector, timeout = 8000){
    * them once for the cards on the page and print the same two lines the JS
    * card (product-card.js) and partials/qprod-card.twig draw. A card with no
    * rating keeps an empty line in its place, so every card measures the same.
+   * The Product Hero (partials/qpack-card.twig) leaves its sold line in a
+   * <template data-qpack-sold> for the same reason; the same request fills it.
    */
   hydrateCardMeta() {
     const bare = c => !c.querySelector('.qprod__sold, .qprod__rating:not(.is-empty)');
-    const cards = [...document.querySelectorAll('.qprod, custom-salla-product-card.qprod-js')].filter(c => c.querySelector('.qprod__info') && bare(c) && !c.hasAttribute('data-qmeta'));
+    const cards = [...document.querySelectorAll('.qprod, custom-salla-product-card.qprod-js')].filter(c => c.querySelector('.qprod__info') && bare(c) && !c.hasAttribute('data-qmeta'))
+      .concat([...document.querySelectorAll('template[data-qpack-sold]:not([data-qmeta])')]);
     if (!cards.length || !(salla.product && salla.product.fetch)) return;
     const idOf = (card) => {
+      if (card.dataset.qpackSold) return card.dataset.qpackSold;
       const like = card.querySelector('.qprod__like[data-id]');
       if (like) return like.dataset.id;
       const m = /id:\s*'(\d+)'/.exec((card.querySelector('.qprod__add') || card).getAttribute('onclick') || '');
@@ -456,6 +450,11 @@ isElementLoaded(selector, timeout = 8000){
           <span>${word('sold')} <bdi>${sold}</bdi> ${word('times')}</span>
         </p>` : '';
       (byId.get(String(product.id)) || []).forEach((card) => {
+        // the hero's line: its own markup with the figure in it (none under 10)
+        if (card.dataset.qpackSold) {
+          if (sold) { const row = card.content.cloneNode(true); row.querySelector('bdi').textContent = sold; card.replaceWith(row); }
+          return;
+        }
         if (!bare(card)) return;
         card.querySelectorAll('.qprod__rating').forEach(el => el.remove());
         card.querySelector('.qprod__info').insertAdjacentHTML('beforeend', rating + line);

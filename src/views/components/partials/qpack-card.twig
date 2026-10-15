@@ -108,19 +108,30 @@
         {# sold (right) and rating (left) on one row. The sold figure is rounded
            («مباع +300 مرة») and not shown under 10: partials/qsold-count.twig.
            The flame is the frame's, one drawing per layout. The rating reads
-           value · star · how many rated it, counted the Arabic way. #}
+           value · star · how many rated it, counted the Arabic way.
+           The home page's product objects come without the sold count (only the
+           products API carries it), so the line is then printed into a
+           <template data-qpack-sold> and app.js hydrateCardMeta() puts the
+           figure in after load, as it does for the product cards. The rating
+           shows only where the store's rating settings let Salla send it. #}
         {% set has_rating = show_rating and product.rating and product.rating.stars %}
         {% set has_sold = show_sold and product.sold_quantity >= 10 %}
+        {% set late_sold = show_sold and not has_sold %}
+        {% set sold_line %}
+            <p class="qpack__sold">
+                <picture>
+                    <source media="(max-width: 768px)" srcset="{{ 'images/qcard/flame.svg' | asset }}"/>
+                    <img src="{{ 'images/qcard/flame-lg.svg' | asset }}" alt="" width="16" height="21"/>
+                </picture>
+                <span>{{ trans('blocks.qissa.sold') }} {% if has_sold %}{% include 'components.partials.qsold-count' with { count: product.sold_quantity } %}{% else %}<bdi></bdi>{% endif %} {{ trans('blocks.qissa.times') }}</span>
+            </p>
+        {% endset %}
         {% if has_rating or has_sold %}
             <div class="qpack__stats">
                 {% if has_sold %}
-                    <p class="qpack__sold">
-                        <picture>
-                            <source media="(max-width: 768px)" srcset="{{ 'images/qcard/flame.svg' | asset }}"/>
-                            <img src="{{ 'images/qcard/flame-lg.svg' | asset }}" alt="" width="16" height="21"/>
-                        </picture>
-                        <span>{{ trans('blocks.qissa.sold') }} {% include 'components.partials.qsold-count' with { count: product.sold_quantity } %} {{ trans('blocks.qissa.times') }}</span>
-                    </p>
+                    {{ sold_line }}
+                {% elseif late_sold %}
+                    <template data-qpack-sold="{{ product.id }}">{{ sold_line }}</template>
                 {% endif %}
                 {% if has_rating %}
                     {% set rated = product.rating.count|default(0) %}
@@ -137,6 +148,8 @@
                     </p>
                 {% endif %}
             </div>
+        {% elseif late_sold %}
+            <template data-qpack-sold="{{ product.id }}"><div class="qpack__stats">{{ sold_line }}</div></template>
         {% endif %}
 
         {# What the pack holds — a bold count and a name per line, two to a row.
