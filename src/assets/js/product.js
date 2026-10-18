@@ -75,35 +75,50 @@ class Product extends BasePage {
 
     // The comments run in one row. Scrolled near its end, press Salla's own
     // «عرض المزيد» (hidden) for the next page; scroll does not bubble — capture.
-    // Ratings left without words are not shown (the stylesheet hides them), so
-    // while fewer than four comments show, ask for more — a few pages at most.
+    // Salla hands them over 5 at a time, so once the section is near, keep asking
+    // until six show and the row fills — at most 20 pages. Ratings left without
+    // words show too (most are; hidden, a product could show none at all). Salla
+    // adds a page one comment at a time: the next press waits until the list
+    // stops growing.
     initComments() {
         const comments = document.querySelector('.qpd-more salla-comments');
         if (!comments) {
             return;
         }
-        let busy = false, count = -1, tries = 0;
-        const more = () => {
+        let busy = false, count = -1, fills = 0, near = false, settle;
+        const shown = () => Array.from(comments.querySelectorAll('.s-comments-item')).filter(item => item.offsetParent).length;
+        const ready = () => {
+            busy = false;
+            near && shown() < 6 && more(true);
+        };
+        const more = fill => {
             const button = comments.querySelector('.s-infinite-scroll-btn');
-            if (busy || !button) {
+            if (busy || !button || (fill && fills >= 20)) {
                 return;
             }
             busy = true;
+            fills += fill ? 1 : 0;
             button.click();
-            setTimeout(() => { busy = false; }, 1500);
+            settle = setTimeout(ready, 4000);   // nothing came back: try again
         };
         comments.addEventListener('scroll', ({target: row}) => {
             row.matches?.('.s-comments-container > div') && Math.abs(row.scrollLeft) + row.clientWidth > row.scrollWidth - 400 && more();
         }, true);
         new MutationObserver(() => {
-            const items = comments.querySelectorAll('.s-comments-item');
-            if (items.length === count) {
-                return;
+            const items = comments.querySelectorAll('.s-comments-item').length;
+            if (items !== count) {
+                count = items;
+                clearTimeout(settle);
+                settle = setTimeout(ready, 400);
             }
-            count = items.length;
-            busy = false;
-            Array.from(items).filter(item => item.offsetParent).length < 4 && tries++ < 6 && more();
         }).observe(comments, {childList: true, subtree: true});
+        new IntersectionObserver(([entry], observer) => {
+            if (entry.isIntersecting) {
+                near = true;
+                observer.disconnect();
+                busy || ready();
+            }
+        }, {rootMargin: '600px 0px'}).observe(comments);
     }
 
     initImagesZooming() {

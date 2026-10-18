@@ -432,13 +432,7 @@ isElementLoaded(selector, timeout = 8000){
           const s = row.querySelector('.qpack__sold');
           const r = row.querySelector('.qpack__rating');
           if (s) { if (sold) s.querySelector('bdi').textContent = sold; else s.remove(); }
-          if (r) {
-            const n = Number(product.rating && product.rating.count) || 0;
-            if (stars) {
-              r.firstElementChild.textContent = stars.toFixed(1);
-              r.lastElementChild.textContent = n === 1 ? word('ratings_one') : n === 2 ? word('ratings_two') : n > 2 ? `${n} ${word(n > 10 ? 'ratings_many' : 'ratings_few')}` : '';
-            } else r.remove();
-          }
+          if (r) { if (stars) r.firstElementChild.textContent = `(${stars.toFixed(1)})`; else r.remove(); }
           if (row.querySelector('p')) card.replaceWith(row);
           return;
         }

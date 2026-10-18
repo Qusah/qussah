@@ -456,7 +456,9 @@ $qpd-muted: #5a6874;
     line-height: 52.15px;
     white-space: nowrap;
 
-    .sicon-sar { font-size: 11.18px; }   // Figma: an 11px «ر.س» beside 52px digits
+    // half the digits, as on the hero: the frame's 11px «ر.س» size is too small
+    // to read as the riyal sign (phones keep their 11.86px, already about half)
+    .sicon-sar { font-size: .5em; }
   }
   &__price-old {
     color: #e90000;
@@ -1071,9 +1073,6 @@ $qpd-muted: #5a6874;
     scroll-snap-align: center;
     animation: none;
   }
-  // a rating left without words has nothing to quote: the summary counts it,
-  // the row skips it (product.js asks for more until a few comments show)
-  .s-comments-container .s-comments-item:has(.s-comments-item-content-container > p:empty):not(:has(salla-attachments)) { display: none; }
   .s-comments-item-wrapper,
   .s-comments-item-inner {
     display: block;

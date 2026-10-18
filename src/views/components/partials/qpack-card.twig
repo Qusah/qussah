@@ -108,7 +108,8 @@
         {# sold (right) and rating (left) on one row. The sold figure is rounded
            («مباع +300 مرة») and not shown under 10: partials/qsold-count.twig.
            The flame is the frame's, one drawing per layout. The rating reads
-           value · star · how many rated it, counted the Arabic way.
+           like the product cards' (asked for over the frame's «4.8 ★ تقييمان»):
+           one star and the value in brackets.
            The home page's product objects come without the sold count and the
            rating (only the products API carries them), so a missing line is
            printed into a <template data-qpack-stats> and app.js
@@ -118,9 +119,9 @@
         {% set has_sold = show_sold and product.sold_quantity >= 10 %}
         {% set late_sold = show_sold and not has_sold %}
         {% set late_rating = show_rating and not has_rating %}
-        {# the rating line as the script fills it: the value, the star, how many rated it #}
+        {# the rating line as the script fills it: «(5.0)» and the star #}
         {% set rating_line %}
-            <p class="qpack__rating"><span></span><img src="{{ 'images/qcard/star.svg' | asset }}" alt="" width="17" height="17"/><span></span></p>
+            <p class="qpack__rating"><span></span><img src="{{ 'images/qcard/star.svg' | asset }}" alt="" width="17" height="17"/></p>
         {% endset %}
         {% set sold_line %}
             <p class="qpack__sold">
@@ -139,17 +140,9 @@
                     <template data-qpack-stats="{{ product.id }}">{{ sold_line }}</template>
                 {% endif %}
                 {% if has_rating %}
-                    {% set rated = product.rating.count|default(0) %}
                     <p class="qpack__rating">
-                        <span>{{ product.rating.stars|number_format(1, '.', '') }}</span>
+                        <span>({{ product.rating.stars|number_format(1, '.', '') }})</span>
                         <img src="{{ 'images/qcard/star.svg' | asset }}" alt="" width="17" height="17"/>
-                        {% if rated == 1 %}
-                            <span>{{ trans('blocks.qissa.ratings_one') }}</span>
-                        {% elseif rated == 2 %}
-                            <span>{{ trans('blocks.qissa.ratings_two') }}</span>
-                        {% elseif rated >= 3 %}
-                            <span>{{ rated }} {{ trans(rated <= 10 ? 'blocks.qissa.ratings_few' : 'blocks.qissa.ratings_many') }}</span>
-                        {% endif %}
                     </p>
                 {% elseif late_rating %}
                     <template data-qpack-stats="{{ product.id }}">{{ rating_line }}</template>
