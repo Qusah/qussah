@@ -83,7 +83,7 @@ row is right before the script runs).
 {% if component.border_color %}{% set styles = styles|merge(['--st-border: ' ~ component.border_color]) %}{% endif %}
 {% if component.bg_color %}{% set styles = styles|merge(['--st-bg: ' ~ component.bg_color]) %}{% endif %}
 
-<section class="s-block qissa-trust-stats{{ animate ? '' : ' qissa-trust-stats--still' }}{{ component.bg_color ? ' qissa-trust-stats--bg' : '' }}" id="qissa-trust-stats-{{ position }}" data-stats data-stats-auto="{{ auto ? '1' : '0' }}" data-stats-min="{{ min_reviews }}"{% if styles|length %} style="{{ styles|join('; ') }}"{% endif %}>
+<section class="s-block qissa-trust-stats{{ animate ? '' : ' qissa-trust-stats--still' }}{{ component.bg_color ? ' qissa-trust-stats--bg' : '' }}" id="qissa-trust-stats-{{ position }}" data-stats data-stats-auto="{{ auto ? '1' : '0' }}" data-stats-min="{{ min_reviews }}" data-stats-digits="{{ component.digits_arabic ? 'ar' : 'en' }}"{% if styles|length %} style="{{ styles|join('; ') }}"{% endif %}>
     <div class="qissa-trust-stats__wrap">
         <div class="qissa-trust-stats__panel">
             {% if show_decor %}

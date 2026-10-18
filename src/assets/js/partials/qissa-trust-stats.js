@@ -14,7 +14,8 @@
  *   3. Adds `is-seen` once and toggles `is-inview`, which is all the motion in
  *      the stylesheet waits for, and counts every figure up from 0 that first
  *      time (not with the motion switch off or under reduced motion).
- *   4. Writes long numbers grouped: a typed 1000000 shows as 1,000,000.
+ *   4. Writes long numbers grouped: a typed 1000000 shows as 1,000,000, in
+ *      English digits, or Arabic ones (١٬٠٠٠٬٠٠٠) with «أرقام عربية» on.
  *
  * `salla.api.request('reviews', {params:{type:'store', per_page:30, page:1}}, 'get')`
  * answers { data: [{stars}], pagination: {total} } (measured on the live stores,
@@ -42,9 +43,19 @@
     return m[1] + Number(m[2]).toLocaleString('en-US') + (m[3] ? '.' + m[3] : '') + m[4];
   }
 
+  /* The digit set the merchant chose («أرقام عربية»): English by default. */
+  function digits(el, text) {
+    var section = el.closest('[data-stats]');
+    if (section && section.getAttribute('data-stats-digits') === 'ar') {
+      return text.replace(/\d/g, function (d) { return String.fromCharCode(0x0660 + Number(d)); })
+                 .replace(/(\S),(?=\S)/g, '$1٬').replace(/([٠-٩])\.(?=[٠-٩])/g, '$1٫');
+    }
+    return latin(text);
+  }
+
   /* A leading "+" is wrapped so the stylesheet can colour it on its own. */
   function paint(el, text) {
-    text = group(String(text == null ? '' : text).replace(/\s+/g, ' ').trim());
+    text = digits(el, group(String(text == null ? '' : text).replace(/\s+/g, ' ').trim()));
     el.textContent = '';
     if (text.charAt(0) === '+' && text.length > 1) {
       var plus = document.createElement('b');
@@ -82,7 +93,7 @@
 
       var stars = stat.querySelector('[data-stat-stars]');
       if (stars) {
-        var score = parseFloat(textOf(stat.querySelector('[data-stat-num]')));
+        var score = parseFloat(latin(textOf(stat.querySelector('[data-stat-num]'))));
         if (score > 0) stars.style.setProperty('--pct', Math.max(0, Math.min(100, score / 5 * 100)).toFixed(1) + '%');
         stars.hidden = !(score > 0);
       }
@@ -122,7 +133,7 @@
       var template = el.getAttribute('data-template') || '';
       var count = total == null ? (el.getAttribute('data-typed-n') || '') : Number(total).toLocaleString('en-US');
       if (!template || (!count && template.indexOf('{n}') > -1)) return;
-      el.textContent = template.replace(/\{n\}/g, count);
+      el.textContent = template.replace(/\{n\}/g, digits(el, count));
       el.hidden = false;
     });
   }
@@ -288,6 +299,7 @@
     if (!sections.length) return;
     sections.forEach(function (section) {
       all(section, '[data-stat-num]').forEach(function (el) { paint(el, el.textContent); });
+      all(section, '[data-stat-unit]').forEach(function (el) { el.textContent = digits(el, el.textContent); });   // «من 5»
       if (section.getAttribute('data-stats-auto') !== '1') note(section, null);
       layout(section);
       watch(section);

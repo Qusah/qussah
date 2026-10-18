@@ -5759,6 +5759,17 @@
                     "required": false
                 },
                 {
+                    "id": "digits_arabic",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": "أرقام عربية (١٢٣)",
+                    "description": "غير مفعّل: الأرقام إنجليزية مثل 1,000,000. مفعّل: الأرقام عربية مثل ١٬٠٠٠٬٠٠٠",
+                    "required": false,
+                    "value": false,
+                    "selected": false
+                },
+                {
                     "type": "static",
                     "format": "description",
                     "id": "stats-head-6",
