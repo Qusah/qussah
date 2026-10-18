@@ -1,4 +1,5 @@
 import BasePage from './base-page';
+import { loadLiveStatus } from './partials/thankyou-live';
 
 class ThankYou extends BasePage {
     onReady() {
@@ -13,6 +14,31 @@ class ThankYou extends BasePage {
         });
         this.fixReceiptSum();
         this.loadItemPhotos();
+        document.addEventListener('ty::status', e => this.markSteps(e.detail && e.detail.name));
+        loadLiveStatus();
+    }
+
+    /**
+     * The three steps under «ماذا بعد», from the order's live status (thankyou-live.js): «تم الشحن» /
+     * «جاري التوصيل» makes the second the current one, «تم التوصيل» marks all three done. Anything else
+     * leaves only «تم استلام الطلب» done, as rendered.
+     */
+    markSteps(name) {
+        const list = document.querySelector('.qty-nx__list[data-ty-shipped]');
+        if (!list || !name) return;
+        const shipped = (list.getAttribute('data-ty-shipped') || '').split('|').map(v => v.trim());
+        const at = name === list.getAttribute('data-ty-delivered') ? 2 : (shipped.includes(name) ? 1 : 0);
+        if (!at) return;
+        const steps = Array.from(list.children);
+        const check = steps[0] && steps[0].querySelector('.qty-nx__b svg');
+        steps.forEach((step, i) => {
+            const done = i === 0 || i < at || (i === 2 && at === 2);
+            step.classList.toggle('is-done', done);
+            step.classList.toggle('is-now', !done && i === at);
+            if (!done && i === at) step.setAttribute('aria-current', 'step'); else step.removeAttribute('aria-current');
+            const badge = step.querySelector('.qty-nx__b');
+            if (done && badge && check && !badge.querySelector('svg')) badge.appendChild(check.cloneNode(true));
+        });
     }
 
     /**
