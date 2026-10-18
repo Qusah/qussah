@@ -5838,7 +5838,7 @@
                     "format": "switch",
                     "icon": "sicon-toggle-off",
                     "label": "تشغيل الحركة",
-                    "description": "حركة واحدة قصيرة عند ظهور القسم لأول مرة",
+                    "description": "حركة واحدة قصيرة عند ظهور القسم لأول مرة، والأرقام تعدّ من الصفر إلى قيمتها",
                     "required": false,
                     "value": true,
                     "selected": true

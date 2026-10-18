@@ -12,7 +12,9 @@
  *      merchant's typed values are shown instead, and if nothing was typed
  *      they stay hidden. Under «الحد الأدنى للتقييمات» both stay hidden.
  *   3. Adds `is-seen` once and toggles `is-inview`, which is all the motion in
- *      the stylesheet waits for.
+ *      the stylesheet waits for, and counts every figure up from 0 that first
+ *      time (not with the motion switch off or under reduced motion).
+ *   4. Writes long numbers grouped: a typed 1000000 shows as 1,000,000.
  *
  * `salla.api.request('reviews', {params:{type:'store', per_page:30, page:1}}, 'get')`
  * answers { data: [{stars}], pagination: {total} } (measured on the live stores,
@@ -25,9 +27,24 @@
     return Array.prototype.slice.call(root.querySelectorAll(selector));
   }
 
+  /* A figure as written: any prefix ("+"), the number, any suffix ("K", "٪").
+     Arabic-Indic digits are read as Latin ones, the store's digit set. */
+  var FIGURE = /^(\D*?)(\d[\d,]*)(?:\.(\d+))?(.*)$/;
+  function latin(text) {
+    return String(text).replace(/[٠-٩]/g, function (d) { return String(d.charCodeAt(0) - 0x0660); })
+                       .replace(/[٬،]/g, ',').replace(/٫/g, '.');
+  }
+
+  /* 1000000 → 1,000,000. A number the merchant already grouped is left alone. */
+  function group(text) {
+    var m = latin(text).match(FIGURE);
+    if (!m || m[2].indexOf(',') > -1 || m[2].length < 4) return text;
+    return m[1] + Number(m[2]).toLocaleString('en-US') + (m[3] ? '.' + m[3] : '') + m[4];
+  }
+
   /* A leading "+" is wrapped so the stylesheet can colour it on its own. */
   function paint(el, text) {
-    text = String(text == null ? '' : text).replace(/\s+/g, ' ').trim();
+    text = group(String(text == null ? '' : text).replace(/\s+/g, ' ').trim());
     el.textContent = '';
     if (text.charAt(0) === '+' && text.length > 1) {
       var plus = document.createElement('b');
@@ -124,6 +141,9 @@
       });
       note(section, null);
       layout(section);
+      if (section.__countStarted) {
+        count(section, [rating, reviews].filter(Boolean).map(function (stat) { return stat.querySelector('[data-stat-num]'); }));
+      }
     }
 
     if (!window.salla || !salla.api || typeof salla.api.request !== 'function') return typed();
@@ -147,8 +167,67 @@
         }
         note(section, total);
         layout(section);
+        if (section.__countStarted) {
+          count(section, [rating, reviews].filter(Boolean).map(function (stat) { return stat.querySelector('[data-stat-num]'); }));
+        }
       })
       .catch(typed);
+  }
+
+  /* --- the count: every figure runs from 0 to its value the first time the
+     section comes into view. Off with the block's «تشغيل الحركة» switch (the
+     section then carries a `--still` class) and under reduced motion. The
+     figure's final width is held while it counts, so the row never jumps. */
+  var COUNT_MS = 1600;
+  /* the visitor has scrolled: what is on screen now is where they are reading */
+  var scrolled = false;
+  window.addEventListener('scroll', function () { scrolled = true; }, { once: true, passive: true });
+  function still(section) {
+    return /--still(\s|$)/.test(section.className) ||
+      (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }
+
+  function count(section, nums) {
+    if (still(section)) return;
+    nums.forEach(function (el) {
+      var stat = el.closest('[data-stat]');
+      if (el.__counted || (stat && stat.hidden)) return;
+      var final = textOf(el);
+      var m = latin(final).match(FIGURE);
+      if (!m) return;
+      el.__counted = true;
+      var target = Number(m[2].replace(/,/g, '') + (m[3] ? '.' + m[3] : ''));
+      var places = m[3] ? m[3].length : 0;
+      var grouped = m[2].indexOf(',') > -1 || m[2].length > 3;
+      if (!(target > 0)) return;
+
+      var inline = window.getComputedStyle(el).display === 'inline';
+      el.style.minWidth = el.getBoundingClientRect().width + 'px';
+      if (inline) el.style.display = 'inline-block';
+
+      var start = null;
+      function frame(now) {
+        if (start === null) start = now;
+        var t = Math.min(1, (now - start) / COUNT_MS);
+        var eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);   // ease-out, fast then settling
+        var value = target * eased;
+        var shown = places ? value.toFixed(places) : String(Math.floor(value));
+        if (grouped) {
+          var parts = shown.split('.');
+          shown = Number(parts[0]).toLocaleString('en-US') + (parts[1] ? '.' + parts[1] : '');
+        }
+        if (t < 1) {
+          paint(el, m[1] + shown + m[4]);
+          window.requestAnimationFrame(frame);
+        } else {
+          paint(el, final);
+          el.style.removeProperty('min-width');
+          if (inline) el.style.removeProperty('display');
+        }
+      }
+      paint(el, m[1] + (places ? (0).toFixed(places) : '0') + m[4]);
+      window.requestAnimationFrame(frame);
+    });
   }
 
   function watch(section) {
@@ -161,6 +240,29 @@
       section.classList.toggle('is-inview', on);
       if (on) section.classList.add('is-seen');
     }, { threshold: 0.25 }).observe(section);
+    /* The count starts the moment the section's edge comes on screen, before
+       its figures do, so nobody sees the final number and then a reset to 0. */
+    /* Only after the visitor's first scroll: until then the rows above it may
+       not be drawn yet (Salla's product lists render after the page loads), so
+       the section can sit on the first screen for a moment and be pushed down,
+       and the count would be over before anyone reaches it. A section that
+       really is on the first screen just shows its figures. And only once it
+       has stayed on screen for a beat. */
+    var counter = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting || section.__countStarted) return;
+      if (!scrolled) {
+        window.addEventListener('scroll', function () { counter.unobserve(section); counter.observe(section); }, { once: true, passive: true });
+        return;
+      }
+      setTimeout(function () {
+        var box = section.getBoundingClientRect();
+        if (section.__countStarted || box.bottom <= 0 || box.top >= window.innerHeight) return;
+        counter.disconnect();
+        section.__countStarted = true;
+        count(section, all(section, '[data-stat-num]'));
+      }, 60);
+    }, { threshold: 0 });
+    counter.observe(section);
   }
 
   /* Never touch salla.* before the SDK is up (Cloudflare Rocket Loader runs it
