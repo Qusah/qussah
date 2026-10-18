@@ -109,14 +109,19 @@
            («مباع +300 مرة») and not shown under 10: partials/qsold-count.twig.
            The flame is the frame's, one drawing per layout. The rating reads
            value · star · how many rated it, counted the Arabic way.
-           The home page's product objects come without the sold count (only the
-           products API carries it), so the line is then printed into a
-           <template data-qpack-sold> and app.js hydrateCardMeta() puts the
-           figure in after load, as it does for the product cards. The rating
-           shows only where the store's rating settings let Salla send it. #}
+           The home page's product objects come without the sold count and the
+           rating (only the products API carries them), so a missing line is
+           printed into a <template data-qpack-stats> and app.js
+           hydrateCardMeta() puts the figures in after load, as it does for the
+           product cards — or drops the line when there is nothing to say. #}
         {% set has_rating = show_rating and product.rating and product.rating.stars %}
         {% set has_sold = show_sold and product.sold_quantity >= 10 %}
         {% set late_sold = show_sold and not has_sold %}
+        {% set late_rating = show_rating and not has_rating %}
+        {# the rating line as the script fills it: the value, the star, how many rated it #}
+        {% set rating_line %}
+            <p class="qpack__rating"><span></span><img src="{{ 'images/qcard/star.svg' | asset }}" alt="" width="17" height="17"/><span></span></p>
+        {% endset %}
         {% set sold_line %}
             <p class="qpack__sold">
                 <picture>
@@ -131,7 +136,7 @@
                 {% if has_sold %}
                     {{ sold_line }}
                 {% elseif late_sold %}
-                    <template data-qpack-sold="{{ product.id }}">{{ sold_line }}</template>
+                    <template data-qpack-stats="{{ product.id }}">{{ sold_line }}</template>
                 {% endif %}
                 {% if has_rating %}
                     {% set rated = product.rating.count|default(0) %}
@@ -146,10 +151,12 @@
                             <span>{{ rated }} {{ trans(rated <= 10 ? 'blocks.qissa.ratings_few' : 'blocks.qissa.ratings_many') }}</span>
                         {% endif %}
                     </p>
+                {% elseif late_rating %}
+                    <template data-qpack-stats="{{ product.id }}">{{ rating_line }}</template>
                 {% endif %}
             </div>
-        {% elseif late_sold %}
-            <template data-qpack-sold="{{ product.id }}"><div class="qpack__stats">{{ sold_line }}</div></template>
+        {% elseif late_sold or late_rating %}
+            <template data-qpack-stats="{{ product.id }}"><div class="qpack__stats">{% if late_sold %}{{ sold_line }}{% endif %}{% if late_rating %}{{ rating_line }}{% endif %}</div></template>
         {% endif %}
 
         {# What the pack holds — a bold count and a name per line, two to a row.
@@ -158,7 +165,7 @@
            label is the quick view's (a package by its name, a carton otherwise)
            and is read out only. #}
         {% if show_inside %}
-            <ul class="qpack__inside" aria-label="{{ trans(product.name matches '/بكج|باقة|مجموعة/' ? 'blocks.qissa.inside_pack' : 'blocks.qissa.inside_box') }}" data-qpack-inside="{{ product.description|default('')|slice(0, 5000) }}" data-qpack-split hidden></ul>
+            <ul class="qpack__inside" aria-label="{{ trans(product.name matches '/بكج|باقة|مجموعة/' ? 'blocks.qissa.inside_pack' : 'blocks.qissa.inside_box') }}" data-qpack-inside="{{ product.description|default('')|slice(0, 5000) }}" hidden></ul>
         {% endif %}
 
         {% if show_buy %}

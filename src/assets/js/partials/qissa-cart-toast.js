@@ -135,6 +135,8 @@ function onTap(e) {
   // a card's add slot as a whole: the add button folds into the − n + stepper in the same cell
   const el = e.target.closest('.qqv-slot') || e.target.closest(TAP);
   if (el) tap = { el, at: Date.now() };
+  // «اشترِ الآن» heads for checkout: an open pill steps aside at once (see added())
+  if (el && el.matches('[data-qpack-buy]')) Pill.hide();
 }
 const recentTap = () => (tap && Date.now() - tap.at < 20000 && tap.el.isConnected ? tap.el : null);
 
@@ -523,17 +525,19 @@ const Pill = {
     }, 280);
   },
 
-  /** Keep the pressed button (and the stepper it turns into) in sight. */
+  /** Keep the pressed button (and the stepper it turns into) in sight. Not on
+      phones: lifted there, the pill sat mid-screen over the products (review,
+      Oct 2026), so it keeps to the foot of the screen. */
   lift() {
     let lift = 0;
     const t = this.target && this.target.isConnected ? this.target : null;
-    if (t && this.on) {
+    if (t && this.on && !PHONE.matches) {
       const b = t.getBoundingClientRect();
       const vh = window.innerHeight;
       const base = vh - this.probe.getBoundingClientRect().top;
       const w = this.el.offsetWidth;
       const top = vh - base - this.el.offsetHeight;
-      const across = PHONE.matches || (b.left < (window.innerWidth + w) / 2 && b.right > (window.innerWidth - w) / 2);
+      const across = b.left < (window.innerWidth + w) / 2 && b.right > (window.innerWidth - w) / 2;
       if (b.width && across && b.bottom > top - 8 && b.top < vh - base) {
         lift = Math.max(0, Math.min(vh - b.top + 10 - base, vh * 0.6));
       }

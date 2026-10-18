@@ -1,4 +1,3 @@
-import MobileMenu from 'mmenu-light';
 import Swal from 'sweetalert2';
 import Anime from './partials/anime';
 import initTootTip from './partials/tooltip';
@@ -16,7 +15,6 @@ class App extends AppHelpers {
   loadTheApp() {
     this.commonThings();
     this.initiateNotifier();
-    this.initiateMobileMenu();
     this.initiateSideMenuSwipe();
     if (header_is_sticky) {
       this.initiateStickyMenu();
@@ -189,8 +187,8 @@ isElementLoaded(selector, timeout = 8000){
 
   /**
    * The mobile menu is the .qside drawer in components/header/header.twig — its
-   * own script opens and closes it; initiateMobileMenu() below is the starter
-   * theme's mmenu path, which this header never reaches. The panel sits against
+   * own script opens and closes it (the starter theme's mmenu-light path, which
+   * this header never reached, is gone with its library). The panel sits against
    * the right edge, so a swipe to the right closes it (qissa-swipe-close.js).
    * Closing goes through the overlay's click, which is header.twig's closeSide().
    */
@@ -203,31 +201,6 @@ isElementLoaded(selector, timeout = 8000){
       backdrop: side.querySelector('.qside__overlay'),
       enabled: () => side.classList.contains('is-open'),
     });
-  }
-
-  initiateMobileMenu() {
-
-  this.isElementLoaded('#mobile-menu').then((menu) => {
-
- 
-  const mobileMenu = new MobileMenu(menu, "(max-width: 1024px)", "( slidingSubmenus: false)");
-
-  salla.lang.onLoaded(() => {
-    mobileMenu.navigation({ title: salla.lang.get('blocks.header.main_menu') });
-  });
-  const drawer = mobileMenu.offcanvas({ position: salla.config.get('theme.is_rtl') ? "right" : 'left' });
-
-  this.onClick("a[href='#mobile-menu']", event => {
-    document.body.classList.add('menu-opened');
-    event.preventDefault() || drawer.close() || drawer.open()
-    
-  });
-  this.onClick(".close-mobile-menu", event => {
-    document.body.classList.remove('menu-opened');
-    event.preventDefault() || drawer.close()
-  });
-  });
-
   }
 
   initiateStickyMenu() {
@@ -409,20 +382,22 @@ isElementLoaded(selector, timeout = 8000){
 
   /**
    * Server-rendered product cards come without the rating and the sold count:
-   * the page's product objects do not carry them, the products API does. Fetch
-   * them once for the cards on the page and print the same two lines the JS
-   * card (product-card.js) and partials/qprod-card.twig draw. A card with no
-   * rating keeps an empty line in its place, so every card measures the same.
-   * The Product Hero (partials/qpack-card.twig) leaves its sold line in a
-   * <template data-qpack-sold> for the same reason; the same request fills it.
+   * the page's product objects do not carry them. The products list has the
+   * sold count; since Oct 2026 Salla leaves the rating out of it, and only
+   * fetchOptions (with rating) still has it — so both are asked, once for the
+   * cards on the page, and the answers merged. Each card gets the same two lines
+   * the JS card (product-card.js) and partials/qprod-card.twig draw. A card with
+   * no rating keeps an empty line in its place, so every card measures the same.
+   * The Product Hero (partials/qpack-card.twig) leaves its sold / rating lines
+   * in <template data-qpack-stats> for the same reason; the same answers fill them.
    */
   hydrateCardMeta() {
     const bare = c => !c.querySelector('.qprod__sold, .qprod__rating:not(.is-empty)');
     const cards = [...document.querySelectorAll('.qprod, custom-salla-product-card.qprod-js')].filter(c => c.querySelector('.qprod__info') && bare(c) && !c.hasAttribute('data-qmeta'))
-      .concat([...document.querySelectorAll('template[data-qpack-sold]:not([data-qmeta])')]);
+      .concat([...document.querySelectorAll('template[data-qpack-stats]:not([data-qmeta])')]);
     if (!cards.length || !(salla.product && salla.product.fetch)) return;
     const idOf = (card) => {
-      if (card.dataset.qpackSold) return card.dataset.qpackSold;
+      if (card.dataset.qpackStats) return card.dataset.qpackStats;
       const like = card.querySelector('.qprod__like[data-id]');
       if (like) return like.dataset.id;
       const m = /id:\s*'(\d+)'/.exec((card.querySelector('.qprod__add') || card).getAttribute('onclick') || '');
@@ -450,9 +425,21 @@ isElementLoaded(selector, timeout = 8000){
           <span>${word('sold')} <bdi>${sold}</bdi> ${word('times')}</span>
         </p>` : '';
       (byId.get(String(product.id)) || []).forEach((card) => {
-        // the hero's line: its own markup with the figure in it (none under 10)
-        if (card.dataset.qpackSold) {
-          if (sold) { const row = card.content.cloneNode(true); row.querySelector('bdi').textContent = sold; card.replaceWith(row); }
+        // the hero's lines: their own markup with the figures in; a line with
+        // nothing to say (sold under 10, no rating) goes, and with both gone, all
+        if (card.dataset.qpackStats) {
+          const row = card.content.cloneNode(true);
+          const s = row.querySelector('.qpack__sold');
+          const r = row.querySelector('.qpack__rating');
+          if (s) { if (sold) s.querySelector('bdi').textContent = sold; else s.remove(); }
+          if (r) {
+            const n = Number(product.rating && product.rating.count) || 0;
+            if (stars) {
+              r.firstElementChild.textContent = stars.toFixed(1);
+              r.lastElementChild.textContent = n === 1 ? word('ratings_one') : n === 2 ? word('ratings_two') : n > 2 ? `${n} ${word(n > 10 ? 'ratings_many' : 'ratings_few')}` : '';
+            } else r.remove();
+          }
+          if (row.querySelector('p')) card.replaceWith(row);
           return;
         }
         if (!bare(card)) return;
@@ -462,8 +449,15 @@ isElementLoaded(selector, timeout = 8000){
     };
     const ids = [...byId.keys()];
     for (let i = 0; i < ids.length; i += 20) {
-      salla.product.fetch({ source: 'selected', source_value: ids.slice(i, i + 20) })
-        .then(res => (res && res.data || []).forEach(paint))
+      const part = ids.slice(i, i + 20);
+      Promise.all([
+        salla.product.fetch({ source: 'selected', source_value: part }),
+        salla.product.fetchOptions(part, { with: ['rating'] }).catch(() => null),
+      ])
+        .then(([res, opt]) => {
+          const rated = new Map(((opt && opt.data) || []).map(p => [String(p.id), p.rating]));
+          (res && res.data || []).forEach(p => { p.rating = p.rating || rated.get(String(p.id)); paint(p); });
+        })
         .catch(() => { /* the cards stay as the page printed them */ });
     }
   }

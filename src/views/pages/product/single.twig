@@ -88,9 +88,9 @@
   beside the frames (356:4125). Styles: 04-components/qissa-product-detail.scss,
   behaviour: js/product.js.
 
-  · The boxes under the rating are the product's contents lines, read from its
-    description by the Product Hero card's own filler (qissa-pack-card.js works
-    on any [data-qpack] > [data-qpack-inside]); the subtitle is the fallback.
+  · Under the rating, the opening of the description as a short paragraph
+    (504:2273 / 504:1534): app.js hydrateCardDescriptions() writes the plain
+    text in, as it does for the cards' excerpt.
   · «تفاصيل المنتج» is the description. A package is a product whose page the
     merchant gave a «محتويات البكج» block (components/home/qissa-pack-contents,
     added in the theme editor under «تخصيص منتج محدد», «before reviews» slot):
@@ -352,8 +352,7 @@
             </script>
             {% endif %}
 
-            {# data-qpack: qissa-pack-card.js fills the contents boxes below #}
-            <div class="main-content qpd__info" data-qpack>
+            <div class="main-content qpd__info">
                 {% hook 'product:single.description.start' %}
 
                 {% if product.brand.name %}
@@ -403,9 +402,10 @@
                     {% endif %}
                 </div>
 
-                {# the contents lines, two to a row — filled by qissa-pack-card.js;
-                   stays hidden when the description and subtitle give none #}
-                <ul class="qpd__boxes" data-qpack-inside="{{ product.description|default('')|slice(0, 5000) }}" data-qpack-sub="{{ product.subtitle|default('') }}" hidden></ul>
+                {# the description's opening as plain text (app.js); removed when there is none #}
+                {% if product.description %}
+                    <p class="qpd__lead" data-qdesc="{{ product.description|slice(0, 1500) }}"></p>
+                {% endif %}
 
                 {# tags, as chips linking to each tag's page #}
                 {% if product.tags|length and theme.settings.get('show_tags', true) %}

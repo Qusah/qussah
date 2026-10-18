@@ -320,20 +320,22 @@ $qpack-cyan: #91e6f7;
   }
 
   // «اشترِ الآن»
+  // The product page's «اشترِ الآن» (168:7980), not the hero frame's 63px one:
+  // the review (Oct 2026) found that one too big on desktop.
   .qpack__buy-btn {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 63.43px;
+    height: 48.43px;
     padding: 0 16px;
     border: 0;
-    border-radius: 9.06px;
+    border-radius: 7.45px;
     background: $qpack-navy;
     color: #fff;
-    font-size: 21.52px;
+    font-size: 14.9px;
     font-weight: 700;
-    line-height: 26px;
+    line-height: 22.35px;
     white-space: nowrap;
     cursor: pointer;
     transition: background-color .15s ease, color .15s ease, opacity .15s ease;
@@ -392,7 +394,7 @@ $qpack-cyan: #91e6f7;
       font-size: 31.73px;
       line-height: 32px;
 
-      .sicon-sar { font-size: 6.8px; }
+      .sicon-sar { font-size: 12px; }   // the frame's 6.8px «ر.س» size could not be read as the riyal sign
     }
     .qpack__price .qpack__price-old {
       font-size: 12.47px;

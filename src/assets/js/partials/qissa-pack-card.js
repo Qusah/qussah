@@ -5,9 +5,7 @@
  *   · the swipeable main image, synced with its thumbnails and its arrows;
  *   · what the pack holds — the quick view's own description parser, so the
  *     card and the ticket list the same contents (hidden when there is
- *     nothing). The hero card shows each line as a bold count and a name; the
- *     product page's boxes take the line whole, or the subtitle split on «،»
- *     when the description has no list;
+ *     nothing), each line as a bold count and a name;
  *   · «اشترِ الآن» — add one, then straight to checkout, the quick view's buy
  *     flow (salla.cart.submit sends a guest to Salla's login first). If the add
  *     fails (options, stock…) the product's page takes over; if only the
@@ -36,22 +34,14 @@ function countAndName(text) {
 function fillInside(card) {
   const list = card.querySelector('[data-qpack-inside]');
   if (!list) return;
-  const split = list.hasAttribute('data-qpack-split');   // the hero card's panel
-  let items = insideLines(list.getAttribute('data-qpack-inside') || '');
-  if (!items.length) {
-    items = (list.getAttribute('data-qpack-sub') || '').split('،').map(s => s.trim()).filter(Boolean);
-  }
+  const items = insideLines(list.getAttribute('data-qpack-inside') || '');
   items.slice(0, INSIDE_MAX).forEach(text => {
     const li = document.createElement('li');
     li.className = 'qpack__inside-item';
     li.title = text;   // a long line is cut short; the full line on hover
-    if (split) {
-      const [count, name] = countAndName(text);
-      if (count) li.appendChild(document.createElement('b')).textContent = count;
-      li.appendChild(document.createElement('span')).textContent = name;
-    } else {
-      li.textContent = text;
-    }
+    const [count, name] = countAndName(text);
+    if (count) li.appendChild(document.createElement('b')).textContent = count;
+    li.appendChild(document.createElement('span')).textContent = name;
     list.appendChild(li);
   });
   if (items.length) list.hidden = false;

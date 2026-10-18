@@ -257,31 +257,21 @@ $qpd-muted: #5a6874;
     line-height: 16px;
   }
 
-  // ---- contents boxes (168:8074): the lines qissa-pack-card.js adds ----
-  &__boxes {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 4.79px 5.32px;
-    margin: 22px 2.8px 0 0;
-    padding: 0;
-    list-style: none;
-
-    &[hidden] { display: none; }
-  }
-  .qpack__inside-item {
-    height: 28.71px;
-    padding: 0 18.08px 0 3.61px;
+  // ---- the description's opening (504:2273): plain text, written in by app.js
+  // hydrateCardDescriptions(). Its two lines are held from the start, so the
+  // price and the buttons below never move when the text arrives. ----
+  &__lead {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    border: .3px solid #e5e7eb;
-    border-radius: 3.61px;
-    background: #f9f9f9;
-    color: $qpd-muted;
+    min-height: 58px;
+    margin: 19.76px 0 0;
+    color: #666;
     font-family: $qpd-font !important;
-    font-size: 10.63px;
-    font-weight: 400;
-    line-height: 28.11px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 29px;
   }
 
   // ---- restored from the previous design (not in the revamp frames): the tag
@@ -1651,22 +1641,13 @@ $qpd-muted: #5a6874;
       img { width: 21.24px; height: 21.24px; }
     }
 
-    // 290:10014 — boxes of two lines
-    &__boxes {
-      gap: 9px 10px;
+    // 504:1534 — three lines on phones
+    &__lead {
+      -webkit-line-clamp: 3;
+      min-height: 52.95px;
       margin-top: 16px;
-    }
-    .qpack__inside-item {
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      height: 54px;
-      padding: 6.78px 6.78px 0;
-      border-width: .57px;
-      border-radius: 6.78px;
-      font-size: 12px;
-      line-height: 18px;
-      white-space: normal;
+      font-size: 12.08px;
+      line-height: 17.65px;
     }
 
     &__form,
