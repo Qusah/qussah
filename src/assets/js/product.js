@@ -104,7 +104,30 @@ class Product extends BasePage {
         comments.addEventListener('scroll', ({target: row}) => {
             row.matches?.('.s-comments-container > div') && Math.abs(row.scrollLeft) + row.clientWidth > row.scrollWidth - 400 && more();
         }, true);
+        // Until the shopper moves the row, it stays at its start (the first written review): as Salla adds a page the
+        // row's scroll snapping jumps to whichever card's centre is nearest — on an iPhone four cards in, onto ratings
+        // without words (Ghaida, Oct 2026: «8 تعليقات» and nothing to read)
+        // a scroll more than 1.5s after the list last changed is the shopper's (the snap lands well within that)
+        let touched = false, landed = 0;
+        const touch = () => { touched = true; };
+        ['pointerdown', 'touchstart', 'wheel', 'keydown'].forEach(type => comments.addEventListener(type, touch, {passive: true, capture: true}));
+        comments.addEventListener('scroll', ({target: row}) => {
+            row.matches?.('.s-comments-container > div:not([class])') && Date.now() - landed > 1500 && touch();
+        }, {passive: true, capture: true});
+        const toStart = () => {
+            const row = comments.querySelector('.s-comments-container > div:not([class])');
+            if (!touched && row && row.scrollLeft !== 0) {
+                row.scrollLeft = 0;
+            }
+        };
+        let startTimer;
         new MutationObserver(() => {
+            // any change in the list is a landing: Salla inserts a page's cards (and the row snaps) before it gives
+            // them their .s-comments-item class
+            landed = Date.now();
+            requestAnimationFrame(() => requestAnimationFrame(toStart));
+            clearTimeout(startTimer);
+            startTimer = setTimeout(toStart, 700);   // and once their entrance has ended
             const items = comments.querySelectorAll('.s-comments-item').length;
             if (items !== count) {
                 count = items;

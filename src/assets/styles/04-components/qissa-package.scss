@@ -593,3 +593,12 @@ $qpack-cyan: #91e6f7;
   // the card sits at x 16 in the 402 frame, 370 wide
   .qpack .container { padding-inline: 16px; }
 }
+
+// the section heading over the card (show_section_head, default on): the home sections' own heading
+// (.qprods__head / __title / __subtitle, qissa-products.scss), at the same distance from its content
+.qpack__head {
+  margin-bottom: 28.54px;   // .qprods__box gap: heading block → content
+}
+@media (max-width: 768px) {
+  .qpack__head { margin-bottom: 24px; }
+}

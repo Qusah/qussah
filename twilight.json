@@ -1529,13 +1529,38 @@
                     "value": "البكج الشامل"
                 },
                 {
+                    "type": "boolean",
+                    "id": "show_section_head",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Show the section heading",
+                        "ar": "إظهار عنوان القسم"
+                    },
+                    "description": "عنوان كبير في المنتصف وسطر تحته فوق بطاقة المنتج، بنفس شكل عناوين باقي أقسام الصفحة",
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "section_title",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Section heading",
+                        "ar": "عنوان القسم"
+                    },
+                    "description": "يظهر فوق بطاقة المنتج. اتركه فارغًا ليظهر «اختيار عملاء قصة»",
+                    "value": "اختيار عملاء قصة"
+                },
+                {
                     "id": "subheading",
                     "type": "string",
                     "format": "textarea",
                     "label": {
                         "en": "Subtitle",
-                        "ar": "النص الفرعي"
+                        "ar": "النص تحت عنوان القسم"
                     },
+                    "description": "سطر تحت عنوان القسم. اتركه فارغًا لإخفائه",
                     "value": "مجموعة قصة الشاملة لتوفير أكبر"
                 },
                 {
@@ -3204,6 +3229,19 @@
                             "required": false
                         }
                     ]
+                },
+                {
+                    "id": "full_width",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Full-width banner at the top of the page",
+                        "ar": "البانر بعرض الصفحة كاملة"
+                    },
+                    "description": "عندما يكون البانر أول قسم في الصفحة: يمتد من طرف الشاشة إلى طرفها ومن أعلى الصفحة، وشريط التنقل فوق الصورة. أطفئه ليعود البانر بإطار وزوايا دائرية",
+                    "value": true,
+                    "selected": true
                 },
                 {
                     "id": "transition",

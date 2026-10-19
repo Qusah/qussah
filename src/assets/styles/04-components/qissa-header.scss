@@ -223,6 +223,18 @@ $qh-on-hero: '.qheader:has(~ main > .qibanner:not(.s-block ~ *):not(.s-blocks-wr
   --qh-x: var(--qhx);
 }
 
+// the full-width hero (qissa-image-banner.scss, .qibanner--bleed): the banner starts at the page top, under the
+// bar's own top inset, instead of 20 (phones 10) down — the bar box (top inset + the 83.73 / 64.7 row) is pulled back whole
+$qh-on-bleed: '.qheader.qheader:has(~ main > .qibanner.qibanner--bleed:not(.s-block ~ *):not(.s-blocks-wrapper:not(:empty) ~ *))';
+#{$qh-on-bleed} {
+  --qh-gap: calc(-1 * (var(--qh-t) + 83.73px));
+}
+@media (max-width: 1150px) {
+  #{$qh-on-bleed} {
+    --qh-gap: calc(-1 * (var(--qh-t) + 64.7px));
+  }
+}
+
 // hero starts right after the nav
 .qissa-hero {
   margin: 0 50px !important;

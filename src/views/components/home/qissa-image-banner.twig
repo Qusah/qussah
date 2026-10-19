@@ -110,7 +110,9 @@ content re-isolates its own RTL for the Arabic text.
        the retired header counter, so the merchant keeps one endpoint setting. #}
     {% set counter_base = theme.settings.get('packs_counter_endpoint', 'https://salla-pipeline.onrender.com')|trim %}
 
-    <section class="s-block qibanner{{ fixed ? ' qibanner--fixed' : '' }} qibanner--{{ transition }}{{ slides|length > 1 ? ' qibanner--multi' : '' }}"
+    {# full_width (default on; never saved reads as on): as the page's first block, edge to edge and from the page top #}
+    {% set bleed = not (component.full_width is not null and not component.full_width) %}
+    <section class="s-block qibanner{{ bleed ? ' qibanner--bleed' : '' }}{{ fixed ? ' qibanner--fixed' : '' }} qibanner--{{ transition }}{{ slides|length > 1 ? ' qibanner--multi' : '' }}"
              id="qibanner-{{ position }}"
              style="{{ css }}"
              data-qib
