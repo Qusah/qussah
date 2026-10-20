@@ -150,7 +150,9 @@
 /* ───────── desktop ───────── */
 @media (min-width:769px){
   .qcmp{--w-crit:230px;--w-ours:236px;--w-comp:150px;--rise:calc(124px * var(--k-rise));--bulge:8px;
-    max-width:1120px;margin:0 auto 40px;border-radius:var(--r);padding:40px 48px 14px}
+    /* width:100% — the product page's <main> is a flex column, where auto side margins shrink the block
+       to its content (~490px on every desktop screen, our pillar squeezed to 74px) */
+    width:100%;max-width:1120px;margin:0 auto 40px;border-radius:var(--r);padding:40px 48px 14px}
   .qcmp[data-c="4"]{--w-crit:190px;--w-ours:214px;--w-comp:150px}
   .qcmp[data-c="3"],.qcmp[data-c="4"]{--w-comp:150px}
   .qcmp__title{font-size:calc(30px * var(--k-type))}
