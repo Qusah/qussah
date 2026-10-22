@@ -67,6 +67,17 @@
             "selected": false
         },
         {
+            "type": "boolean",
+            "icon": "sicon-toggle-off",
+            "label": "التصميم الجديد لبطاقات المنتجات",
+            "description": "السعر داخل زر «أضف للسلة بـ»، ونسبة الخصم والسعر قبل الخصم فوق الزر، وشارة العرض برتقالية. يطبَّق على كل بطاقات المنتجات في كل الصفحات. أطفئه ليعود التصميم السابق",
+            "id": "product_card_v2",
+            "format": "switch",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
             "type": "string",
             "icon": "sicon-paint",
             "label": "لون خلفية الصفحات",

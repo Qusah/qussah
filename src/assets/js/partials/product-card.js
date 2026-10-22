@@ -372,8 +372,49 @@ class ProductCard extends HTMLElement {
       </p>`;
   }
 
+  // product_card_v2 (default on; switched off, master.twig puts body.qcard-v1): Figma «card variant» 706:1805 —
+  // the price in the button, «خصم N%» and the struck price on a line over it. Same markup as partials/qprod-card.twig.
+  get qcardV2() { return !document.body.classList.contains('qcard-v1'); }
+
+  // v2, on sale: «خصم 20%» and the struck regular price; a starting price: «يبدأ من» and the price
+  qcardDeal() {
+    const p = this.product;
+    if (p?.donation?.can_donate) return '';
+    if (p.is_on_sale && Number(p.regular_price) > 0) {
+      const off = Math.round((p.regular_price - p.sale_price) / p.regular_price * 100);
+      return `<div class="qprod__price qprod__deal">
+          ${off >= 1 ? `<span class="qprod__off">${salla.lang.get('blocks.qissa.sale') || 'خصم'} ${off}<span class="qprod__pct">%</span></span>` : ''}
+          <s class="qprod__price-old">${this.getPriceFormat(p.regular_price)}</s>
+        </div>`;
+    }
+    if (p.starting_price) {
+      return `<div class="qprod__price qprod__deal">
+          <span class="qprod__price-from">${this.startingPrice}</span>
+          <b class="qprod__price-now">${this.getPriceFormat(p.starting_price)}</b>
+        </div>`;
+    }
+    return '';
+  }
+
+  // the button's words: «أضف للسلة بـ» and the price (v2, a plain priced product), else the usual label
+  qcardAddLabel() {
+    const p = this.product;
+    const plain = p.add_to_cart_label ? p.add_to_cart_label : this.getAddButtonLabel();
+    const priced = this.qcardV2 && !p.add_to_cart_label && !p.starting_price && !p?.donation
+      && !p.has_preorder_campaign && p.type !== 'booking'
+      && !p.is_out_of_stock && p.status === 'sale' && Number(p.is_on_sale ? p.sale_price : p.price) > 0;
+    if (!priced) return `<span>${plain}</span>`;
+    // a store whose locale files predate the key answers with the key itself
+    const said = salla.lang.get('blocks.qissa.add_to_cart_for');
+    const words = said && said !== 'blocks.qissa.add_to_cart_for' ? said
+      : (document.documentElement.dir === 'ltr' ? 'Add to cart for' : 'أضف للسلة بـ');
+    return `<span class="qprod__add-label">${words}</span>
+      <b class="qprod__price-now">${this.getPriceFormat(p.is_on_sale ? p.sale_price : p.price)}</b>`;
+  }
+
   qcardPrice() {
     const p = this.product;
+    if (this.qcardV2) return this.qcardDeal();
     if (p?.donation?.can_donate) return '';
     let inner;
     if (p.is_on_sale) {
@@ -424,7 +465,7 @@ class ProductCard extends HTMLElement {
               product-id="${p.id}"
               product-status="${this.effectiveStatus}"
               product-type="${p.type}">
-              <span>${p.add_to_cart_label ? p.add_to_cart_label : this.getAddButtonLabel()}</span>
+              ${this.qcardAddLabel()}
             </salla-add-product-button>
           </div>
         </div>`
@@ -451,6 +492,7 @@ class ProductCard extends HTMLElement {
     // The plain vertical card is the Qussah card (qcardHTML); the featured
     // special / minimal / full-image / horizontal variants keep Salla's layout.
     this.classList.toggle('qprod-js', this.isPlainVertical);
+    this.classList.toggle('qprod--v2', this.isPlainVertical && this.qcardV2);
     // a list that came without rating and sold count (the offers page): app.js fetches them
     if (this.isPlainVertical && !this.product?.sold_quantity && !this.product?.rating?.stars && window.QissaCardMeta) window.QissaCardMeta();
     // Recompute the card photos for this render (translation reloads re-render).

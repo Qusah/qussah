@@ -24,6 +24,10 @@
 {% set sp = show_price is not defined or show_price %}
 {% set sa = show_add is not defined or show_add %}
 {% set sw = show_wishlist is not defined or show_wishlist %}
+{# product_card_v2 (store setting, default on; never saved reads as on): Figma «card variant» 706:1805 — the price
+   inside the button («أضف للسلة بـ 196»), «خصم N%» and the struck price on a line above it, the orange badge #}
+{% set v2 = theme.settings.get('product_card_v2') is not same as(false) %}
+{% set price_now = product.is_on_sale ? product.sale_price : product.price %}
 
 {# the merchant's promotion title when there is one, otherwise «خصم» on sale #}
 {% set badge_text = null %}
@@ -33,7 +37,7 @@
     {% set badge_text = trans('blocks.qissa.sale') %}
 {% endif %}
 
-<article class="qprod{{ card_class ? ' ' ~ card_class : '' }}"{% if price_attr %} data-price="{{ product.is_on_sale ? product.sale_price : product.price }}"{% endif %}>
+<article class="qprod{{ v2 ? ' qprod--v2' : '' }}{{ card_class ? ' ' ~ card_class : '' }}"{% if price_attr %} data-price="{{ product.is_on_sale ? product.sale_price : product.price }}"{% endif %}>
     {% include 'components.partials.qprod-image' with { product: product, badge_text: badge_text, like: sw } %}
 
     {% if body_wrap %}<div class="qprod__body">{% endif %}
@@ -71,8 +75,17 @@
         {% endif %}
     </div>
 
+    {# v2: on sale, «خصم N%» and the struck regular price on one line over the button (the price is in the button) #}
+    {% if v2 %}
+        {% if sp and product.is_on_sale and product.regular_price > 0 %}
+            {% set off = ((product.regular_price - product.sale_price) / product.regular_price * 100)|round %}
+            <div class="qprod__price qprod__deal">
+                {% if off >= 1 %}<span class="qprod__off">{{ trans('blocks.qissa.sale') }} {{ off }}<span class="qprod__pct">%</span></span>{% endif %}
+                <s class="qprod__price-old">{{ product.regular_price|money }}</s>
+            </div>
+        {% endif %}
     {# price — sale first (right), the struck regular price after it #}
-    {% if sp %}
+    {% elseif sp %}
         <div class="qprod__price">
             {% if product.is_on_sale %}
                 <b class="qprod__price-now">{{ product.sale_price|money }}</b>
@@ -92,7 +105,12 @@
                 </button>
             {% else %}
                 <button class="qprod__add" type="button" onclick="salla.cart.addItem({ id: '{{ product.id }}', quantity: 1 })">
-                    <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
+                    {% if v2 and sp %}
+                        <span class="qprod__add-label">{{ trans('blocks.qissa.add_to_cart_for') }}</span>
+                        <b class="qprod__price-now">{{ price_now|money }}</b>
+                    {% else %}
+                        <span>{{ trans('blocks.qissa.add_to_cart') }}</span>
+                    {% endif %}
                 </button>
             {% endif %}
         </div>

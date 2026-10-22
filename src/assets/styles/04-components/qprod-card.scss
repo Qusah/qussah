@@ -491,3 +491,182 @@ custom-salla-product-card.qprod-js {
     }
   }
 }
+
+// ====================================================================
+// v2 — Figma «card variant» 706:1805 (Oct 2026), the store setting product_card_v2 (default on): the twig card
+// (article.qprod.qprod--v2) and the JS card (custom-salla-product-card.qprod--v2) alike.
+// The price goes into the button («أضف للسلة بـ 196 ﷼»); on sale, «خصم 20%» and the struck price sit on a line
+// above it; the badge is the orange «خيارك الافضل» pill. The frame is the phone card (181 wide); desktop keeps
+// its sizes and takes the same parts.
+// ====================================================================
+.qprod--v2 {
+  .qprod__badge {
+    background: #f27f0c;
+    color: #fff;
+    font-weight: 400;
+  }
+  .qprod__rate {
+    color: #767676;
+    font-weight: 500;
+  }
+  .qprod__sold { color: #737373; }
+
+  // «خصم 20%» then the regular price, struck — at the right, over the button
+  .qprod__deal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 6px;
+    margin: 0;
+    padding: 12px 4px 14px;
+    font-family: $qcard-font !important;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+  .qprod__off { color: #e08200; font-family: $qcard-font !important; }
+  // the theme's digits face (WesternDigits) draws no «%»: the sign takes the Arabic face
+  .qprod__off .qprod__pct { font-family: 'GE SS Two', Tahoma, sans-serif !important; }
+  .qprod__deal .qprod__price-old {
+    color: #9a9a9a;
+    font-size: inherit;
+    font-weight: 500;
+    line-height: inherit;
+
+    .sicon-sar { display: none; }   // the frame strikes the figure alone
+  }
+  // a starting price («يبدأ من 49»), the same line
+  .qprod__deal .qprod__price-now {
+    color: $qcard-navy;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: inherit;
+  }
+
+  // the button: the words, then the price and its riyal, 6 apart
+  .qprod__add-label { font-family: $qcard-font !important; }
+  .qprod__add,
+  .qprod__btns salla-add-product-button .s-button-text {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .qprod__btns .qprod__price-now {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+    color: inherit;
+    font-family: $qcard-font !important;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+    white-space: nowrap;
+
+    .sicon-sar { font-size: .95em; }
+  }
+  .qprod__add { border-radius: 12px; }
+  .qprod__btns salla-add-product-button {
+    &::part(base),
+    button,
+    .s-button-btn,
+    .s-button-element { border-radius: 12px !important; }
+  }
+}
+
+// the phone frame itself (181 wide, two to a row)
+@media (max-width: 768px) {
+  .qprod.qprod--v2,
+  custom-salla-product-card.qprod-js.qprod--v2 {
+    padding: 4px;
+    border-width: .52px;
+    border-color: rgba(0, 0, 0, .1);
+    border-radius: 16px;
+  }
+  .qprod--v2 {
+    .qprod__img {
+      height: auto;
+      aspect-ratio: 171.97 / 211;
+      margin-bottom: 0;
+      border-radius: 13.83px;
+    }
+    // the heart (left) and the badge (right) on one line, 3.5 from the photo's top
+    .qprod__badge {
+      top: 3.48px;
+      right: 3px;
+      max-width: calc(100% - 40px);
+      height: auto;
+      padding: 4px;
+      font-size: 10px;
+      line-height: 16px;
+    }
+    .qprod__img .qprod__like {
+      top: 3.48px;
+      left: 3px;
+      width: 28px;
+      height: 28px;
+      filter: drop-shadow(0 6.59px 9.88px rgba(8, 32, 51, .06));
+    }
+    .qprod__like-ic { width: 14px; height: 14px; }
+    .qprod__img .qpc-dots {
+      bottom: 6.94px;
+      padding: 4px;
+    }
+
+    // sold and rating, 4 in from the edges; the name and its line under them
+    .qprod__info {
+      gap: 4px;
+      padding: 4px 4px 0;
+    }
+    .qprod__sold {
+      height: auto;
+      font-size: 12px;
+      line-height: 1.3;
+    }
+    .qprod__rating { height: 17.56px; }
+    .qprod__rate {
+      font-size: 12px;
+      line-height: 1.3;
+    }
+    .qprod__head { gap: 4px; }
+    .qprod__name {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+    .qprod__desc {
+      color: #767676;
+      font-size: 12px;
+      line-height: 1.3;
+    }
+
+    .qprod__deal {
+      margin: 4px 0 0;
+      padding: 0;
+      font-size: 12px;
+    }
+    .qprod__btns { margin-top: auto; padding-top: 4px; }
+    .qprod__add {
+      height: 45px;
+      padding: 0 8px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+    .qprod__btns .qprod__price-now { font-size: 16px; }
+    .qprod__btns salla-add-product-button {
+      &::part(base),
+      button,
+      .s-button-btn,
+      .s-button-element {
+        height: 45px !important;
+        min-height: 45px !important;
+        padding: 0 8px !important;
+        border-radius: 12px !important;
+        font-size: 14px !important;
+        line-height: 1.3 !important;
+      }
+    }
+  }
+}
