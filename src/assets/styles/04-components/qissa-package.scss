@@ -570,8 +570,345 @@ $qpack-cyan: #91e6f7;
   }
 }
 
+// ---- v2: the Oct 2026 redesign (look 'v2', qissa-package's new_card_design) ----
+// Figma «مجموعة المنزل · Desktop 1400» 723:761 (a 1400 card) and «· Desktop» 721:620 (the 343 phone card).
+// Wide from 1024: the gallery on the right (650 of the 1368 inside), the details beside it — what the offer
+// is at the top, the price and the button at the foot. Under 1024 one column: the photo, then the details.
+// Values are the frames' own; the border is drawn inside the frame, so the padding is less its .57.
+.qpack__card--v2 {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 24px;
+  padding: 15.43px;
+  border-radius: 20px;
+
+  // ---- gallery: the photo and its dots ----
+  .qpack__gallery {
+    flex: 0 0 calc((100% - 24px) * 650 / 1344);
+    gap: 0;
+  }
+  // the photo is 650 × 586 at least, and runs the details' height when they are taller
+  .qpack__stage {
+    display: flex;
+    flex: 1 0 auto;
+  }
+  .qpack__main {
+    width: 100%;
+    aspect-ratio: 650 / 586;
+    border-radius: 12px;
+  }
+  // the dots: a frosted pill 26 up from the photo's foot, centred
+  .qpack__dots {
+    position: absolute;
+    z-index: 1;
+    bottom: 26px;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 6px;
+    overflow: visible;
+    background: rgba(244, 245, 246, .7);
+    -webkit-backdrop-filter: blur(10.98px);
+    backdrop-filter: blur(10.98px);
+    border-radius: 999px;
+    transform: translateX(-50%);
+  }
+  .qpack__dot {
+    position: relative;
+    flex: none;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    background: rgba(44, 52, 142, .24);
+    border-radius: 999px;
+    box-shadow: none;
+    transition: width .25s cubic-bezier(.22, 1, .36, 1), background-color .25s ease;
+
+    // the photo on show: a long navy pill
+    &[aria-current='true'] { width: 40px; background: $qpack-navy; box-shadow: none; }
+    // a bigger tap area than the dot
+    &::after { content: ''; position: absolute; inset: -6px -3px; }
+    &:focus-visible { outline: 2px solid $qpack-navy; outline-offset: 2px; }
+  }
+
+  // ---- the ribbon: across the top-right corner, over the gallery ----
+  // a 662.6 × 62.86 band turned 45° about (61.95 in from the right, 104.92 down)
+  .qpack__ribbon {
+    top: 73.49px;
+    right: -269.35px;
+    left: auto;
+    width: 662.6px;
+    height: 62.86px;
+    transform: rotate(45deg);
+  }
+  .qpack__ribbon-group { gap: 17px; padding-inline: 8.5px; }
+  .qpack__ribbon-item {
+    gap: 17px;
+    font-size: 20px;
+
+    &::after { width: 18.92px; height: 17.99px; }
+  }
+
+  // ---- details ----
+  .qpack__info {
+    flex: 1 1 0;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 16px;
+  }
+  .qpack__offer {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  // sold and rating, then the name and the contents' line
+  &.qpack__card--ribbon .qpack__head,
+  .qpack__head {
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+  }
+  .qpack__intro {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .qpack__name {
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+  .qpack__inside-title {
+    margin: 0;
+    color: #555;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.2;
+
+    &[hidden] { display: none; }
+  }
+
+  // sold on the right, rating on the left
+  .qpack__stats {
+    justify-content: space-between;
+    gap: 12px;
+    color: #000;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+  .qpack__sold {
+    gap: 8px;
+
+    picture { display: contents; }
+    source { display: none; }
+    // the flame's stroke runs past its 14 × 19 frame, as drawn
+    img {
+      width: 16.27px;
+      height: 22.13px;
+      margin: -1.99px -1.14px -1.13px;
+    }
+  }
+  .qpack__rating {
+    gap: 8px;
+
+    span {
+      color: #000;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+    picture { display: contents; }
+    source { display: none; }
+    img { width: 21px; height: 21px; }
+  }
+
+  // the contents: three to a row, white cells on a pale ground, the count over the name. A short last row
+  // (the live pack lists five) shares the full width instead of leaving an empty cell.
+  .qpack__inside {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 8px;
+  }
+  .qpack__inside-item {
+    flex: 1 1 calc((100% - 8px) / 3);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 18px 8px;
+    background: #fff;
+    text-align: center;
+    font-size: 16px;
+    line-height: 1.2;
+
+    b {
+      color: #000;
+      font-size: 20px;
+      font-weight: 700;
+      white-space: normal;
+    }
+    span { color: #555; font-weight: 400; }
+  }
+
+  // the price and the button, at the foot
+  .qpack__purchase {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .qpack__price {
+    gap: 0 20px;
+    margin: 0;
+  }
+  .qpack__price .qpack__price-now {
+    font-size: 56px;
+    line-height: 1.1;
+
+    .sicon-sar { font-size: 18px; }
+  }
+  .qpack__price .qpack__price-old {
+    color: #767676;
+    font-size: 26px;
+    line-height: 1.2;
+
+    .sicon-sar { font-size: 16px; }
+  }
+  .qpack__buy-btn {
+    height: 68px;
+    border-radius: 10px;
+    font-size: 24px;
+    line-height: 1.2;
+  }
+}
+
+// one column: the photo, then the details
+@media (max-width: 1023px) {
+  .qpack__card--v2 {
+    flex-direction: column;
+    gap: 16px;
+
+    .qpack__gallery { flex: none; }
+    .qpack__main { aspect-ratio: 327 / 295; }
+    .qpack__info { padding: 0 8px 8px; }
+
+    // the phone band: 331.32 × 31.43 about (27.41 in from the right, 39.51 down)
+    .qpack__ribbon {
+      top: 23.79px;
+      right: -138.25px;
+      width: 331.32px;
+      height: 31.43px;
+    }
+    .qpack__ribbon-group { gap: 8.5px; padding-inline: 4.25px; }
+    .qpack__ribbon-item {
+      gap: 8.5px;
+      font-size: 10px;
+
+      &::after { width: 9.46px; height: 9px; background-image: var(--qpack-star); }
+    }
+  }
+}
+
+// phones: the 343 frame (721:620)
+@media (max-width: 768px) {
+  .qpack__card--v2 {
+    gap: 16px;
+    padding: 7.43px;
+    border-width: .57px;
+    border-radius: 20px;
+
+    // the stacked layout's display: contents does not apply to this look
+    .qpack__info {
+      display: flex;
+      gap: 12px;
+      padding: 0;
+    }
+    .qpack__gallery,
+    .qpack__head,
+    .qpack__price,
+    .qpack__stats,
+    .qpack__inside,
+    .qpack__buy-btn { order: 0; }
+
+    .qpack__dots {
+      bottom: 14.5px;
+      gap: 4px;
+      height: 18px;
+      padding: 4px;
+    }
+    .qpack__dot {
+      width: 10px;
+      height: 10px;
+
+      &[aria-current='true'] { width: 26px; }
+      &::after { inset: -10px -2px; }
+    }
+
+    .qpack__offer { gap: 12px; }
+    .qpack__head { gap: 8px; }
+    .qpack__intro { gap: 4px; }
+    .qpack__name { font-size: 24px; line-height: 1.2; }
+    .qpack__inside-title { font-size: 12px; }
+
+    .qpack__stats { font-size: 14px; line-height: 1.3; }
+    .qpack__sold {
+      gap: 6px;
+      padding-inline: 8px;
+      margin-inline-start: -8px;   // the frame's white chip, flush with the card's text edge
+
+      img { width: 13.27px; height: 18.13px; margin: -1.99px -1.13px -1.13px; }
+    }
+    .qpack__rating {
+      gap: 5.66px;
+
+      span { font-size: 16px; }
+      img { width: 16.99px; height: 16.99px; }
+    }
+
+    .qpack__inside { margin-inline: 0; }
+    .qpack__inside-item {
+      gap: 8px;
+      padding: 8px 2px;
+      font-size: 12px;
+
+      b { font-size: 14px; }
+      span { color: #555; }
+    }
+
+    .qpack__purchase { gap: 12px; }
+    .qpack__price {
+      gap: 0 10px;
+      margin-top: 0;
+    }
+    .qpack__price .qpack__price-now {
+      font-size: 40px;
+      line-height: 1.1;
+
+      .sicon-sar { font-size: 14px; }
+    }
+    .qpack__price .qpack__price-old {
+      font-size: 20px;
+      line-height: 1.2;
+
+      .sicon-sar { font-size: 12px; }
+    }
+    .qpack__buy-btn {
+      height: 63.43px;
+      border-radius: 9.06px;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .qpack__card .qpack__ribbon-track { animation: none; }
+  .qpack__card--v2 .qpack__dot { transition: none; }
 }
 
 // ---- qissa-package section chrome ------------------------------------

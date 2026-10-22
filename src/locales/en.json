@@ -97,6 +97,8 @@
       "sold": "Sold",
       "purchased": "Purchased",
       "times": "times",
+      "times_bought": "purchases",
+      "inside_title": "Includes:",
       "rated": "Rated",
       "review_word": "review",
       "ratings_one": "1 rating",

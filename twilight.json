@@ -1518,6 +1518,30 @@
             "path": "home.qissa-package",
             "fields": [
                 {
+                    "type": "boolean",
+                    "id": "new_card_design",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "New product card design",
+                        "ar": "التصميم الجديد لبطاقة المنتج"
+                    },
+                    "description": "التقييم وعدد مرات الشراء فوق الاسم، ومحتويات البكج ثلاثة في كل صف، والسعر وزر الشراء أسفل البطاقة، ونقاط للصور بدل الأسهم والصور المصغرة. أطفئه ليعود التصميم السابق",
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "inside_title",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Line above the contents (new design)",
+                        "ar": "السطر فوق محتويات البكج (التصميم الجديد)"
+                    },
+                    "description": "يظهر فوق محتويات البكج عندما يكون لها محتويات. اتركه فارغًا لإخفائه",
+                    "value": "تتضمن الآتي:"
+                },
+                {
                     "id": "heading",
                     "type": "string",
                     "format": "text",
@@ -1525,7 +1549,7 @@
                         "en": "Title",
                         "ar": "العنوان"
                     },
-                    "description": "سطر صغير يظهر أعلى اسم المنتج. اتركه فارغًا لإخفائه",
+                    "description": "سطر صغير يظهر أعلى اسم المنتج في التصميم السابق. اتركه فارغًا لإخفائه",
                     "value": "البكج الشامل"
                 },
                 {

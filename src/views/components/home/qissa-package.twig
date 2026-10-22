@@ -9,6 +9,8 @@
 | component.products    | Product[] | featured product (the FIRST selected is used)      |
 | component.show_marquee| bool      | show/hide the «الأكثر مبيعًا» ribbon               |
 | component.marquee_text| string    | ribbon label (default «الأكثر مبيعًا»)             |
+| component.new_card_design | bool  | the Oct 2026 card (default on; never saved reads as on)  |
+| component.inside_title | string   | new card: the line over the contents (never saved → «تتضمن الآتي:», empty hides it) |
 | position              | int       | sorting block                                      |
 
 Product Hero — Figma "Qusah Re-Vamp": desktop 592:973, mobile 591:732.
@@ -21,6 +23,8 @@ then the gallery, then the rest.
    other home section (.qprods__head), so it no longer reads as part of the banner above it #}
 {% set show_head = not (component.show_section_head is not null and not component.show_section_head) %}
 {% set section_title = component.section_title|default(trans('blocks.qissa.package_heading')) %}
+{# new_card_design (default on; never saved reads as on): the Oct 2026 card, Figma 723:761 / 721:620 #}
+{% set card_v2 = not (component.new_card_design is not null and not component.new_card_design) %}
 <section class="s-block qpack{{ show_head ? ' qpack--headed' : '' }}" id="qpack-{{ position }}">
     <div class="container">
         {% if product and show_head %}
@@ -35,7 +39,9 @@ then the gallery, then the rest.
             {% include 'components.partials.qpack-card' with {
                 product: product,
                 eyebrow: component.heading,
-                ribbon: component.show_marquee ? component.marquee_text|default(trans('blocks.qissa.best_seller')) : false
+                ribbon: component.show_marquee ? component.marquee_text|default(trans('blocks.qissa.best_seller')) : false,
+                look: card_v2 ? 'v2' : '',
+                inside_title: component.inside_title is null ? trans('blocks.qissa.inside_title') : component.inside_title
             } %}
         {% endif %}
     </div>
