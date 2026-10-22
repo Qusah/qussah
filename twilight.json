@@ -67,6 +67,16 @@
             "selected": false
         },
         {
+            "type": "string",
+            "icon": "sicon-paint",
+            "label": "لون خلفية الصفحات",
+            "description": "خلفية رمادية فاتحة تبرز البطاقات والصناديق البيضاء. اتركه فارغاً لخلفية بيضاء",
+            "id": "page_bg_color",
+            "format": "color",
+            "required": false,
+            "value": "#F7F7F7"
+        },
+        {
             "type": "boolean",
             "id": "is_more_button_enabled",
             "label": "عرض (زر الكل) في الصفحة الرئيسية",

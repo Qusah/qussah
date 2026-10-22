@@ -1,5 +1,8 @@
 html {
   scroll-behavior: smooth;
+  // the page ground (Figma 705:1106, Oct 2026): a light grey, so the white cards and boxes stand out. The body
+  // and main stay transparent (qissa-header.scss); master.twig sets --q-page-bg from the page_bg_color setting.
+  background-color: var(--q-page-bg, #f7f7f7);
 }
 
 // using salla.document.onClick(...), become effective when all children are none pointer events.
