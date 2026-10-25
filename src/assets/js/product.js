@@ -75,21 +75,26 @@ class Product extends BasePage {
 
     // The comments run in one row. Scrolled near its end, press Salla's own
     // «عرض المزيد» (hidden) for the next page; scroll does not bubble — capture.
-    // Salla hands them over 5 at a time, so once the section is near, keep asking
-    // until six show and the row fills — at most 20 pages. Ratings left without
-    // words show too (most are; hidden, a product could show none at all). Salla
-    // adds a page one comment at a time: the next press waits until the list
-    // stops growing.
+    // Salla hands them over 5 at a time, newest first, and most are ratings left
+    // without words (they show too, after the written ones — qissa-product-detail.scss).
+    // So once the section is near, keep asking until six WRITTEN reviews are in, or
+    // the list ends — at most 20 pages. Counting every card stopped after two pages:
+    // مجموعة المنزل (917 ratings) then opened on ten without a word («الأحدث» showed
+    // nothing to read, «الأقدم» did). Salla adds a page one comment at a time: the
+    // next press waits until the list stops growing.
     initComments() {
         const comments = document.querySelector('.qpd-more salla-comments');
         if (!comments) {
             return;
         }
         let busy = false, count = -1, fills = 0, near = false, settle;
-        const shown = () => Array.from(comments.querySelectorAll('.s-comments-item')).filter(item => item.offsetParent).length;
+        // a stars-only rating comes with an empty <p>. The text box is matched by part of its class: written out
+        // whole, Tailwind reads the name here and adds Salla's own rule for it to app.css
+        const written = () => Array.from(comments.querySelectorAll('.s-comments-item'))
+            .filter(item => item.offsetParent && item.querySelector('[class*="item-content-container"] > p')?.textContent.trim()).length;
         const ready = () => {
             busy = false;
-            near && shown() < 6 && more(true);
+            near && written() < 6 && more(true);
         };
         const more = fill => {
             const button = comments.querySelector('.s-infinite-scroll-btn');
