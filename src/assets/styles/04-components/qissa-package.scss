@@ -575,6 +575,9 @@ $qpack-cyan: #91e6f7;
 // Wide from 1024: the gallery on the right (650 of the 1368 inside), the details beside it — what the offer
 // is at the top, the price and the button at the foot. Under 1024 one column: the photo, then the details.
 // Values are the frames' own; the border is drawn inside the frame, so the padding is less its .57.
+// SMALLER THAN THE FRAMES (client, 25 Oct 2026: «اشترِ الآن» was below the fold). The card has to fit the
+// screen under the pinned header: a shorter photo (650 / 500 here, the old card's 354 / 220 in one column)
+// and smaller price, button, name, gaps and contents cells. Text sizes of the contents and the stats stay.
 .qpack__card--v2 {
   display: flex;
   flex-direction: row;
@@ -588,14 +591,14 @@ $qpack-cyan: #91e6f7;
     flex: 0 0 calc((100% - 24px) * 650 / 1344);
     gap: 0;
   }
-  // the photo is 650 × 586 at least, and runs the details' height when they are taller
+  // the photo is 650 × 500 at least (the frame's 586, cut down), and runs the details' height when they are taller
   .qpack__stage {
     display: flex;
     flex: 1 0 auto;
   }
   .qpack__main {
     width: 100%;
-    aspect-ratio: 650 / 586;
+    aspect-ratio: 650 / 500;
     border-radius: 12px;
   }
   // the dots: a frosted pill 26 up from the photo's foot, centred
@@ -662,12 +665,12 @@ $qpack-cyan: #91e6f7;
   .qpack__offer {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
   }
   // sold and rating, then the name and the contents' line
   &.qpack__card--ribbon .qpack__head,
   .qpack__head {
-    gap: 20px;
+    gap: 16px;
     margin: 0;
     padding: 0;
   }
@@ -677,7 +680,7 @@ $qpack-cyan: #91e6f7;
     gap: 8px;
   }
   .qpack__name {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 500;
     line-height: 1.2;
   }
@@ -740,8 +743,8 @@ $qpack-cyan: #91e6f7;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    padding: 18px 8px;
+    gap: 6px;
+    padding: 12px 8px;
     background: #fff;
     text-align: center;
     font-size: 16px;
@@ -760,29 +763,29 @@ $qpack-cyan: #91e6f7;
   .qpack__purchase {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
   }
   .qpack__price {
     gap: 0 20px;
     margin: 0;
   }
   .qpack__price .qpack__price-now {
-    font-size: 56px;
+    font-size: 44px;
     line-height: 1.1;
-
-    .sicon-sar { font-size: 18px; }
-  }
-  .qpack__price .qpack__price-old {
-    color: #767676;
-    font-size: 26px;
-    line-height: 1.2;
 
     .sicon-sar { font-size: 16px; }
   }
+  .qpack__price .qpack__price-old {
+    color: #767676;
+    font-size: 22px;
+    line-height: 1.2;
+
+    .sicon-sar { font-size: 14px; }
+  }
   .qpack__buy-btn {
-    height: 68px;
+    height: 56px;
     border-radius: 10px;
-    font-size: 24px;
+    font-size: 20px;
     line-height: 1.2;
   }
 }
@@ -794,7 +797,8 @@ $qpack-cyan: #91e6f7;
     gap: 16px;
 
     .qpack__gallery { flex: none; }
-    .qpack__main { aspect-ratio: 327 / 295; }
+    // the old card's phone photo (354 / 220), never taller than 440 — a tablet's full-width photo ran 674
+    .qpack__main { aspect-ratio: 354 / 220; max-height: 440px; }
     .qpack__info { padding: 0 8px 8px; }
 
     // the phone band: 331.32 × 31.43 about (27.41 in from the right, 39.51 down)
@@ -817,7 +821,7 @@ $qpack-cyan: #91e6f7;
 // phones: the 343 frame (721:620)
 @media (max-width: 768px) {
   .qpack__card--v2 {
-    gap: 16px;
+    gap: 12px;
     padding: 7.43px;
     border-width: .57px;
     border-radius: 20px;
@@ -835,6 +839,9 @@ $qpack-cyan: #91e6f7;
     .qpack__inside,
     .qpack__buy-btn { order: 0; }
 
+    // a wider photo than one column's (client, 25 Oct 2026): the section heading and the button fit one screen
+    .qpack__main { aspect-ratio: 2 / 1; }
+
     .qpack__dots {
       bottom: 14.5px;
       gap: 4px;
@@ -850,9 +857,11 @@ $qpack-cyan: #91e6f7;
     }
 
     .qpack__offer { gap: 12px; }
+    // the ribbon's selector too: the desktop rule names it, and its 16 used to win here
+    &.qpack__card--ribbon .qpack__head,
     .qpack__head { gap: 8px; }
     .qpack__intro { gap: 4px; }
-    .qpack__name { font-size: 24px; line-height: 1.2; }
+    .qpack__name { font-size: 22px; line-height: 1.2; }
     .qpack__inside-title { font-size: 12px; }
 
     .qpack__stats { font-size: 14px; line-height: 1.3; }
@@ -872,35 +881,35 @@ $qpack-cyan: #91e6f7;
 
     .qpack__inside { margin-inline: 0; }
     .qpack__inside-item {
-      gap: 8px;
-      padding: 8px 2px;
+      gap: 4px;
+      padding: 6px 2px;
       font-size: 12px;
 
       b { font-size: 14px; }
       span { color: #555; }
     }
 
-    .qpack__purchase { gap: 12px; }
+    .qpack__purchase { gap: 10px; }
     .qpack__price {
       gap: 0 10px;
       margin-top: 0;
     }
     .qpack__price .qpack__price-now {
-      font-size: 40px;
+      font-size: 32px;
       line-height: 1.1;
-
-      .sicon-sar { font-size: 14px; }
-    }
-    .qpack__price .qpack__price-old {
-      font-size: 20px;
-      line-height: 1.2;
 
       .sicon-sar { font-size: 12px; }
     }
-    .qpack__buy-btn {
-      height: 63.43px;
-      border-radius: 9.06px;
+    .qpack__price .qpack__price-old {
       font-size: 18px;
+      line-height: 1.2;
+
+      .sicon-sar { font-size: 11px; }
+    }
+    .qpack__buy-btn {
+      height: 50px;
+      border-radius: 9.06px;
+      font-size: 16px;
       line-height: 1.2;
     }
   }
