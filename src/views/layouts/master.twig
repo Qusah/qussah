@@ -159,6 +159,9 @@
             --color-primary-dark: {{ theme.color.darker(0.15) }};
             --color-primary-light: {{ theme.color.lighter(0.15) }};
             --color-primary-reverse: {{ theme.color.reverse_text }};
+            {# page_bg_color: never saved → the stylesheet's #F7F7F7; emptied → white; a colour → that colour #}
+            {% set q_page_bg = theme.settings.get('page_bg_color') %}
+            {% if q_page_bg is not null %}--q-page-bg: {{ q_page_bg matches '/^#[0-9a-fA-F]{3,8}$/' ? q_page_bg : '#ffffff' }};{% endif %}
         }
     </style>
     {# tracking services, custom css feature. #}
@@ -168,6 +171,7 @@
   {{ theme.settings.get('footer_is_dark') ? ' footer-is-dark' : ' footer-is-light' }}
   {{ theme.settings.get('topnav_is_dark') ? ' topnav-is-dark' : '' }}
   {{ theme.settings.get('sticky_add_to_cart') ? ' is-sticky-product-bar' : '' }}
+  {{ theme.settings.get('product_card_v2') is same as(false) ? ' qcard-v1' : '' }}
   ">
 <noscript>
     To get full functionality of this site you need to enable JavaScript. Here is how

@@ -2095,3 +2095,36 @@ body.qpd-has-sticky,
 body.is-sticky-product-bar.product-single.qpd-has-sticky {
   padding-bottom: var(--qpd-sticky-h, 76px);
 }
+
+// ====================================================================
+// Ratings left without words (Ghaida's note, Oct 2026: «8 تعليقات» and nothing to read). Salla hands them over as
+// comments with an empty text (<p></p>), newest first, so a product whose last buyers only tapped the stars opened its
+// row on a run of blank cards (بكج الأنعم مهما قارنت: 6 blank before the first words). Written reviews now come first;
+// a stars-only rating stays (it is a real buyer's rating) but fills its card with what it has: the stars, large, and
+// Salla's own «مشتري موثَّق , تم التقييم» under the name — never an empty quote box.
+// ====================================================================
+.qpd-more .s-comments-container .s-comments-item:has(.s-comments-item-content-container > p:empty) {
+  order: 1;
+
+  .s-comments-item-content { display: none; }
+
+  .s-comments-item-inner .s-comments-flex-1 > div:has(> salla-rating-stars) {
+    grid-area: 1 / 1 / 2 / -1;
+    align-self: center;
+    justify-self: center;
+
+    svg { width: 30px; height: 30px; }
+  }
+
+  .s-comments-item-user-info > .s-comments-flex {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+    color: #62748e;
+    font-size: 12px;
+    line-height: 16px;
+
+    svg { width: 12px; height: 12px; fill: currentColor; }
+  }
+}

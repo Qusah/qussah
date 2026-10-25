@@ -44,7 +44,11 @@ function fillInside(card) {
     li.appendChild(document.createElement('span')).textContent = name;
     list.appendChild(li);
   });
-  if (items.length) list.hidden = false;
+  if (items.length) {
+    list.hidden = false;
+    const title = card.querySelector('[data-qpack-inside-title]');   // v2's «تتضمن الآتي:»
+    if (title) title.hidden = false;
+  }
 }
 
 function gallery(card) {

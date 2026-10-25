@@ -17,6 +17,12 @@
     ribbon           string   «الأكثر مبيعًا» ribbon label; empty/false hides it
     show_thumbnails, show_rating, show_sold, show_inside, show_price, show_buy
                      bool     per-element switches (qissa-dual-hero); unset reads as on
+    look             string   'v2' = the Oct 2026 redesign (Figma «مجموعة المنزل · Desktop 1400» 723:761,
+                              mobile 721:620; qissa-package's new_card_design): sold and rating over the
+                              name, «تتضمن الآتي:» and the contents three across, the price and the button at
+                              the bottom; photo dots instead of arrows and thumbnails; the ribbon on the
+                              gallery's corner. Empty = the first revamp's card.
+    inside_title     string   v2: the line over the contents (empty hides it)
 #}
 {% set name_tag = name_tag|default('h2') %}
 {% set show_thumbnails = show_thumbnails is not defined or show_thumbnails %}
@@ -25,6 +31,7 @@
 {% set show_inside = show_inside is not defined or show_inside %}
 {% set show_price = show_price is not defined or show_price %}
 {% set show_buy = show_buy is not defined or show_buy %}
+{% set v2 = look is defined and look == 'v2' %}
 
 {# real photos only — skip videos / 3D models a gallery can't show #}
 {% set images = [] %}
@@ -37,7 +44,7 @@
     {% set images = [{ 'url': product.image.url, 'alt': product.name }] %}
 {% endif %}
 
-<article class="qpack__card{{ ribbon ? ' qpack__card--ribbon' : '' }}{{ card_class ? ' ' ~ card_class : '' }}" data-qpack>
+<article class="qpack__card{{ v2 ? ' qpack__card--v2' : '' }}{{ ribbon ? ' qpack__card--ribbon' : '' }}{{ card_class ? ' ' ~ card_class : '' }}" data-qpack>
 
     {# ---- gallery: swipeable main image, arrows, thumbnails ---- #}
     <div class="qpack__gallery">
@@ -49,8 +56,17 @@
                     </a>
                 {% endfor %}
             </div>
+            {# v2: a dot per photo over the photo's foot, the one on show a long navy pill. They are the
+               thumbnails to qissa-pack-card.js (same data attributes), so a tap goes to that photo #}
+            {% if v2 and images|length > 1 %}
+                <div class="qpack__dots" data-qpack-thumbs>
+                    {% for img in images %}
+                        <button type="button" class="qpack__thumb qpack__dot" data-qpack-thumb="{{ loop.index0 }}" aria-label="{{ trans('blocks.qissa.image') }} {{ loop.index }}"></button>
+                    {% endfor %}
+                </div>
+            {% endif %}
             {# rtl: the next photo comes in from the left, so the left arrow is "next" #}
-            {% if images|length > 1 %}
+            {% if not v2 and images|length > 1 %}
                 <button type="button" class="qpack__nav qpack__nav--prev" data-qpack-nav="-1" aria-label="{{ trans('blocks.qissa.prev_photo') }}">
                     <img src="{{ 'images/qcard/arrow-right.svg' | asset }}" alt="" width="20" height="20"/>
                 </button>
@@ -59,7 +75,7 @@
                 </button>
             {% endif %}
         </div>
-        {% if show_thumbnails and images|length > 1 %}
+        {% if not v2 and show_thumbnails and images|length > 1 %}
             <div class="qpack__thumbs" data-qpack-thumbs>
                 {% for img in images %}
                     <button type="button" class="qpack__thumb" data-qpack-thumb="{{ loop.index0 }}" aria-label="{{ trans('blocks.qissa.image') }} {{ loop.index }}">
@@ -86,14 +102,19 @@
     {% endif %}
 
     {# ---- details ---- #}
+    {# The parts are captured first and printed at the end in the look's order. #}
     <div class="qpack__info">
+        {% set name %}<{{ name_tag }} class="qpack__name"><a href="{{ product.url }}">{{ product.name }}</a></{{ name_tag }}>{% endset %}
+        {% if not v2 %}
         <div class="qpack__head">
             {% if eyebrow %}<p class="qpack__eyebrow">{{ eyebrow }}</p>{% endif %}
-            <{{ name_tag }} class="qpack__name"><a href="{{ product.url }}">{{ product.name }}</a></{{ name_tag }}>
+            {{ name }}
             {% if product.subtitle %}<p class="qpack__sub">{{ product.subtitle }}</p>{% endif %}
         </div>
+        {% endif %}
 
         {# the price, then what it was #}
+        {% set price %}
         {% if show_price %}
             <div class="qpack__price">
                 {% if product.is_on_sale %}
@@ -104,6 +125,8 @@
                 {% endif %}
             </div>
         {% endif %}
+        {% endset %}
+        {% if not v2 %}{{ price }}{% endif %}
 
         {# sold (right) and rating (left) on one row. The sold figure is rounded
            («مباع +300 مرة») and not shown under 10: partials/qsold-count.twig.
@@ -119,19 +142,46 @@
         {% set has_sold = show_sold and product.sold_quantity >= 10 %}
         {% set late_sold = show_sold and not has_sold %}
         {% set late_rating = show_rating and not has_rating %}
-        {# the rating line as the script fills it: «(5.0)» and the star #}
+        {# the rating line as the script fills it: «(5.0)» and the star (v2: «4.8», no brackets — data-bare) #}
         {% set rating_line %}
-            <p class="qpack__rating"><span></span><img src="{{ 'images/qcard/star.svg' | asset }}" alt="" width="17" height="17"/></p>
+            {% if v2 %}
+                <p class="qpack__rating" data-bare><span></span><picture><source media="(max-width: 768px)" srcset="{{ 'images/qcard/hero-star-sm.svg' | asset }}"/><img src="{{ 'images/qcard/hero-star.svg' | asset }}" alt="" width="21" height="21"/></picture></p>
+            {% else %}
+                <p class="qpack__rating"><span></span><img src="{{ 'images/qcard/star.svg' | asset }}" alt="" width="17" height="17"/></p>
+            {% endif %}
         {% endset %}
+        {% set sold_figure %}{% if has_sold %}{% include 'components.partials.qsold-count' with { count: product.sold_quantity } %}{% else %}<bdi></bdi>{% endif %}{% endset %}
         {% set sold_line %}
+            {% if v2 %}
+                {# «+500 مرة شراء»: the frame's words, the store's rounded figure (partials/qsold-count) #}
+                <p class="qpack__sold">
+                    <picture>
+                        <source media="(max-width: 768px)" srcset="{{ 'images/qcard/hero-flame.svg' | asset }}"/>
+                        <img src="{{ 'images/qcard/hero-flame-lg.svg' | asset }}" alt="" width="16" height="22"/>
+                    </picture>
+                    <span>{{ sold_figure }} {{ trans('blocks.qissa.times_bought') }}</span>
+                </p>
+            {% else %}
             <p class="qpack__sold">
                 <picture>
                     <source media="(max-width: 768px)" srcset="{{ 'images/qcard/flame.svg' | asset }}"/>
                     <img src="{{ 'images/qcard/flame-lg.svg' | asset }}" alt="" width="16" height="21"/>
                 </picture>
-                <span>{{ trans('blocks.qissa.sold') }} {% if has_sold %}{% include 'components.partials.qsold-count' with { count: product.sold_quantity } %}{% else %}<bdi></bdi>{% endif %} {{ trans('blocks.qissa.times') }}</span>
+                <span>{{ trans('blocks.qissa.sold') }} {{ sold_figure }} {{ trans('blocks.qissa.times') }}</span>
             </p>
+            {% endif %}
         {% endset %}
+        {% set rating_now %}
+            {% if v2 %}
+                <p class="qpack__rating" data-bare><span>{{ has_rating ? product.rating.stars|number_format(1, '.', '') : '' }}</span><picture><source media="(max-width: 768px)" srcset="{{ 'images/qcard/hero-star-sm.svg' | asset }}"/><img src="{{ 'images/qcard/hero-star.svg' | asset }}" alt="" width="21" height="21"/></picture></p>
+            {% else %}
+                <p class="qpack__rating">
+                    <span>({{ has_rating ? product.rating.stars|number_format(1, '.', '') : '' }})</span>
+                    <img src="{{ 'images/qcard/star.svg' | asset }}" alt="" width="17" height="17"/>
+                </p>
+            {% endif %}
+        {% endset %}
+        {% set stats %}
         {% if has_rating or has_sold %}
             <div class="qpack__stats">
                 {% if has_sold %}
@@ -140,10 +190,7 @@
                     <template data-qpack-stats="{{ product.id }}">{{ sold_line }}</template>
                 {% endif %}
                 {% if has_rating %}
-                    <p class="qpack__rating">
-                        <span>({{ product.rating.stars|number_format(1, '.', '') }})</span>
-                        <img src="{{ 'images/qcard/star.svg' | asset }}" alt="" width="17" height="17"/>
-                    </p>
+                    {{ rating_now }}
                 {% elseif late_rating %}
                     <template data-qpack-stats="{{ product.id }}">{{ rating_line }}</template>
                 {% endif %}
@@ -151,22 +198,49 @@
         {% elseif late_sold or late_rating %}
             <template data-qpack-stats="{{ product.id }}"><div class="qpack__stats">{% if late_sold %}{{ sold_line }}{% endif %}{% if late_rating %}{{ rating_line }}{% endif %}</div></template>
         {% endif %}
+        {% endset %}
+        {% if not v2 %}{{ stats }}{% endif %}
 
         {# What the pack holds — a bold count and a name per line, two to a row.
            Filled by qissa-pack-card.js from the product description (the quick
            view's own parser); hidden when the description lists nothing. The
            label is the quick view's (a package by its name, a carton otherwise)
            and is read out only. #}
+        {% set inside %}
         {% if show_inside %}
             <ul class="qpack__inside" aria-label="{{ trans(product.name matches '/بكج|باقة|مجموعة/' ? 'blocks.qissa.inside_pack' : 'blocks.qissa.inside_box') }}" data-qpack-inside="{{ product.description|default('')|slice(0, 5000) }}" hidden></ul>
         {% endif %}
+        {% endset %}
 
+        {% set buy %}
         {% if show_buy %}
             {% if product.is_out_of_stock %}
                 <button type="button" class="qpack__buy-btn qpack__buy-btn--oos" disabled>{{ trans('blocks.qissa.out_of_stock') }}</button>
             {% else %}
                 <button type="button" class="qpack__buy-btn" data-qpack-buy data-id="{{ product.id }}" data-url="{{ product.url }}" data-cart="{{ link('/cart') }}">{{ trans('blocks.qissa.buy_now') }}</button>
             {% endif %}
+        {% endif %}
+        {% endset %}
+
+        {% if v2 %}
+            {# what the offer is (sold and rating, the name, the contents) at the top; the price and the button at
+               the foot — the details run the gallery's height on desktop. The contents' line shows with the
+               contents (qissa-pack-card.js): no list, no line. #}
+            <div class="qpack__offer">
+                <div class="qpack__head">
+                    {{ stats }}
+                    <div class="qpack__intro">
+                        {{ name }}
+                        {% if show_inside and inside_title is defined and inside_title %}<p class="qpack__inside-title" data-qpack-inside-title hidden>{{ inside_title }}</p>{% endif %}
+                    </div>
+                </div>
+                {{ inside }}
+            </div>
+            {% if show_price or show_buy %}
+                <div class="qpack__purchase">{{ price }}{{ buy }}</div>
+            {% endif %}
+        {% else %}
+            {{ inside }}{{ buy }}
         {% endif %}
     </div>
 </article>

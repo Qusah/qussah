@@ -366,3 +366,20 @@
     &--fade &__slide { transition: none; }
   }
 }
+
+// FULL WIDTH (component setting full_width, default on — Ghaida's note, Oct 2026: like Bareq and Latafa).
+// As the hero (the page's first block) the banner runs edge to edge with square corners and starts at the
+// page top; the navbar still rides on the photo with its own side inset (qissa-header.scss, the --bleed rule),
+// so the logo and buttons keep their distance from the screen edge. Off = the inset, rounded Figma frame.
+.qibanner--bleed:first-child,
+.qibanner--bleed:not(.s-block ~ *):not(.s-blocks-wrapper:not(:empty) ~ *) {
+  --qib-l: 0px;
+  --qib-r: 0px;
+  --qib-rm: 0px;
+  padding-block-start: 0;
+
+  .qibanner__viewport { border-radius: 0; }
+
+  // the store's custom CSS (dashboard) pins `.qibanner > .container` to 50px on each side; full width wins over it
+  &.qibanner > .container { padding-left: 0; padding-right: 0; }
+}
