@@ -516,7 +516,7 @@ custom-salla-product-card.qprod-js {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    gap: 4px 6px;
+    gap: 4px 12px;   // 12 between the struck price and «خصم» (client, Oct 2026; Figma 4) — the quick view's price row gap
     margin: 0;
     padding: 12px 4px 14px;
     font-family: $qcard-font !important;
