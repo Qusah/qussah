@@ -373,18 +373,18 @@ class ProductCard extends HTMLElement {
   }
 
   // product_card_v2 (default on; switched off, master.twig puts body.qcard-v1): Figma «card variant» 706:1805 —
-  // the price in the button, «خصم N%» and the struck price on a line over it. Same markup as partials/qprod-card.twig.
+  // the price in the button, the struck price and «خصم N%» on a line over it. Same markup as partials/qprod-card.twig.
   get qcardV2() { return !document.body.classList.contains('qcard-v1'); }
 
-  // v2, on sale: «خصم 20%» and the struck regular price; a starting price: «يبدأ من» and the price
+  // v2, on sale: the struck regular price (right) and «خصم 20%»; a starting price: «يبدأ من» and the price
   qcardDeal() {
     const p = this.product;
     if (p?.donation?.can_donate) return '';
     if (p.is_on_sale && Number(p.regular_price) > 0) {
       const off = Math.round((p.regular_price - p.sale_price) / p.regular_price * 100);
       return `<div class="qprod__price qprod__deal">
-          ${off >= 1 ? `<span class="qprod__off">${salla.lang.get('blocks.qissa.sale') || 'خصم'} ${off}<span class="qprod__pct">%</span></span>` : ''}
           <s class="qprod__price-old">${this.getPriceFormat(p.regular_price)}</s>
+          ${off >= 1 ? `<span class="qprod__off">${salla.lang.get('blocks.qissa.sale') || 'خصم'} ${off}<span class="qprod__pct">%</span></span>` : ''}
         </div>`;
     }
     if (p.starting_price) {

@@ -25,7 +25,7 @@
 {% set sa = show_add is not defined or show_add %}
 {% set sw = show_wishlist is not defined or show_wishlist %}
 {# product_card_v2 (store setting, default on; never saved reads as on): Figma «card variant» 706:1805 — the price
-   inside the button («أضف للسلة بـ 196»), «خصم N%» and the struck price on a line above it, the orange badge #}
+   inside the button («أضف للسلة بـ 196»), the struck price and «خصم N%» on a line above it, the red badge #}
 {% set v2 = theme.settings.get('product_card_v2') is not same as(false) %}
 {% set price_now = product.is_on_sale ? product.sale_price : product.price %}
 
@@ -75,13 +75,13 @@
         {% endif %}
     </div>
 
-    {# v2: on sale, «خصم N%» and the struck regular price on one line over the button (the price is in the button) #}
+    {# v2: on sale, the struck regular price (right) then «خصم N%» on one line over the button (the price is in the button) #}
     {% if v2 %}
         {% if sp and product.is_on_sale and product.regular_price > 0 %}
             {% set off = ((product.regular_price - product.sale_price) / product.regular_price * 100)|round %}
             <div class="qprod__price qprod__deal">
-                {% if off >= 1 %}<span class="qprod__off">{{ trans('blocks.qissa.sale') }} {{ off }}<span class="qprod__pct">%</span></span>{% endif %}
                 <s class="qprod__price-old">{{ product.regular_price|money }}</s>
+                {% if off >= 1 %}<span class="qprod__off">{{ trans('blocks.qissa.sale') }} {{ off }}<span class="qprod__pct">%</span></span>{% endif %}
             </div>
         {% endif %}
     {# price — sale first (right), the struck regular price after it #}

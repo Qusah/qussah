@@ -496,12 +496,12 @@ custom-salla-product-card.qprod-js {
 // v2 — Figma «card variant» 706:1805 (Oct 2026), the store setting product_card_v2 (default on): the twig card
 // (article.qprod.qprod--v2) and the JS card (custom-salla-product-card.qprod--v2) alike.
 // The price goes into the button («أضف للسلة بـ 196 ﷼»); on sale, «خصم 20%» and the struck price sit on a line
-// above it; the badge is the orange «خيارك الافضل» pill. The frame is the phone card (181 wide); desktop keeps
-// its sizes and takes the same parts.
+// above it; the badge is the red «خيارك الافضل» pill (#CE1F3C, the client's colour over Figma's orange, Oct 2026).
+// The frame is the phone card (181 wide); desktop keeps its sizes and takes the same parts.
 // ====================================================================
 .qprod--v2 {
   .qprod__badge {
-    background: #f27f0c;
+    background: #ce1f3c;
     color: #fff;
     font-weight: 400;
   }
@@ -511,7 +511,7 @@ custom-salla-product-card.qprod-js {
   }
   .qprod__sold { color: #737373; }
 
-  // «خصم 20%» then the regular price, struck — at the right, over the button
+  // the regular price, struck, then «خصم 20%» — at the right, over the button (Figma 706:1761: 299 rightmost)
   .qprod__deal {
     display: flex;
     flex-wrap: wrap;
@@ -524,7 +524,7 @@ custom-salla-product-card.qprod-js {
     font-weight: 500;
     line-height: 1.3;
   }
-  .qprod__off { color: #e08200; font-family: $qcard-font !important; }
+  .qprod__off { color: #ce1f3c; font-family: $qcard-font !important; }
   // the theme's digits face (WesternDigits) draws no «%»: the sign takes the Arabic face
   .qprod__off .qprod__pct { font-family: 'GE SS Two', Tahoma, sans-serif !important; }
   .qprod__deal .qprod__price-old {
