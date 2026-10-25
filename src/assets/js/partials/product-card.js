@@ -15,9 +15,23 @@ bootQuickView();
 bindGallery('.image-slider');
 
 // Product Hero cards (qissa-package / qissa-dual-hero): gallery, pack contents,
-// «اشترِ الآن». They only need the DOM, so they don't wait for the SDK.
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => initPackCards());
-else initPackCards();
+// «اشترِ الآن». They only need the DOM, so they don't wait for the SDK — nor do the cards' discounts below.
+// The server-rendered cards' «خصم N%» (partials/qprod-card.twig): Twig on Salla can't do sums on prices, so the
+// card prints both as text and N is worked out here. Arabic digits and separators read as numbers.
+const priceNum = (s) => {
+  const m = String(s || '').replace(/[٠-٩]/g, d => d.charCodeAt(0) - 1632).replace(/٫/g, '.').match(/\d[\d,٬]*(?:\.\d+)?/);
+  return m ? parseFloat(m[0].replace(/[,٬]/g, '')) : 0;
+};
+const fillCardDeals = () => document.querySelectorAll('.qprod__off[data-was][hidden]').forEach((off) => {
+  const was = priceNum(off.dataset.was), now = priceNum(off.dataset.now);
+  const n = was > now && now > 0 ? Math.round((was - now) / was * 100) : 0;
+  if (n < 1) return;
+  off.insertBefore(document.createTextNode(n), off.querySelector('.qprod__pct'));
+  off.hidden = false;
+});
+const onDom = () => { initPackCards(); fillCardDeals(); };
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', onDom);
+else onDom();
 
 /* Plain text out of a product's HTML description — shared by the JS card here
    and the server-rendered cards (app.js hydrates [data-qdesc] with the same). */

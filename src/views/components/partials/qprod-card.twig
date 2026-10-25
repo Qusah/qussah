@@ -75,13 +75,15 @@
         {% endif %}
     </div>
 
-    {# v2: on sale, the struck regular price (right) then «خصم N%» on one line over the button (the price is in the button) #}
+    {# v2: on sale, the struck regular price (right) then «خصم N%» on one line over the button (the price is in the button).
+       No sums or comparisons on prices here: Salla's renderer drops the whole section over them (they blanked the
+       product page and the thank-you page before). The two prices go out as text; product-card.js works out N
+       (fillCardDeals) and shows the line's «خصم». #}
     {% if v2 %}
-        {% if sp and product.is_on_sale and product.regular_price > 0 %}
-            {% set off = ((product.regular_price - product.sale_price) / product.regular_price * 100)|round %}
+        {% if sp and product.is_on_sale and product.regular_price %}
             <div class="qprod__price qprod__deal">
                 <s class="qprod__price-old">{{ product.regular_price|money }}</s>
-                {% if off >= 1 %}<span class="qprod__off">{{ trans('blocks.qissa.sale') }} {{ off }}<span class="qprod__pct">%</span></span>{% endif %}
+                <span class="qprod__off" data-was="{{ product.regular_price|money|striptags|trim }}" data-now="{{ product.sale_price|money|striptags|trim }}" hidden>{{ trans('blocks.qissa.sale') }} <span class="qprod__pct">%</span></span>
             </div>
         {% endif %}
     {# price — sale first (right), the struck regular price after it #}
