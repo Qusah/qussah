@@ -1563,6 +1563,53 @@
                     "value": "تتضمن الآتي:"
                 },
                 {
+                    "type": "boolean",
+                    "id": "inside_from_product",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Read the contents from the product description",
+                        "ar": "محتويات البكج من وصف المنتج"
+                    },
+                    "description": "شغّله لتُقرأ المحتويات من وصف المنتج تلقائيًا. أطفئه لتكتبها بنفسك في (محتويات البكج) تحته، فلا تتأثر بتعديل الوصف",
+                    "value": false,
+                    "selected": false
+                },
+                {
+                    "id": "inside_items",
+                    "type": "collection",
+                    "format": "collection",
+                    "maxLength": 6,
+                    "label": "محتويات البكج (تكتب يدويًا)",
+                    "description": "تظهر في البطاقة بالترتيب، حتى 6. تُستخدم عندما يكون (محتويات البكج من وصف المنتج) مطفأ",
+                    "item_label": "منتج",
+                    "value": [],
+                    "fields": [
+                        {
+                            "type": "string",
+                            "icon": "sicon-format-text-alt",
+                            "label": "الكمية",
+                            "id": "inside_items.qty",
+                            "value": null,
+                            "required": false,
+                            "format": "text",
+                            "multilanguage": true,
+                            "placeholder": "32 عبوة"
+                        },
+                        {
+                            "type": "string",
+                            "icon": "sicon-format-text-alt",
+                            "label": "اسم المنتج",
+                            "id": "inside_items.name",
+                            "value": null,
+                            "required": false,
+                            "format": "text",
+                            "multilanguage": true,
+                            "placeholder": "مناديل قصة 600"
+                        }
+                    ]
+                },
+                {
                     "id": "heading",
                     "type": "string",
                     "format": "text",

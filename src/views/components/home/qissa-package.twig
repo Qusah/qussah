@@ -11,6 +11,8 @@
 | component.marquee_text| string    | ribbon label (default «الأكثر مبيعًا»)             |
 | component.new_card_design | bool  | the Oct 2026 card (default on; never saved reads as on)  |
 | component.inside_title | string   | new card: the line over the contents (never saved → «تتضمن الآتي:», empty hides it) |
+| component.inside_from_product | bool | contents read from the product description (off or never saved → the list below) |
+| component.inside_items | array    | the contents as written by the merchant: {qty, name}, up to 6 |
 | position              | int       | sorting block                                      |
 
 Product Hero — Figma "Qusah Re-Vamp": desktop 592:973, mobile 591:732.
@@ -41,7 +43,8 @@ then the gallery, then the rest.
                 eyebrow: component.heading,
                 ribbon: component.show_marquee ? component.marquee_text|default(trans('blocks.qissa.best_seller')) : false,
                 look: card_v2 ? 'v2' : '',
-                inside_title: component.inside_title is null ? trans('blocks.qissa.inside_title') : component.inside_title
+                inside_title: component.inside_title is null ? trans('blocks.qissa.inside_title') : component.inside_title,
+                inside_items: component.inside_from_product ? null : component.inside_items ?: []
             } %}
         {% endif %}
     </div>

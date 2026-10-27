@@ -23,6 +23,8 @@
                               the bottom; photo dots instead of arrows and thumbnails; the ribbon on the
                               gallery's corner. Empty = the first revamp's card.
     inside_title     string   v2: the line over the contents (empty hides it)
+    inside_items     array    the contents as written in the component ({qty, name}, up to 6); not given or
+                              null → read from the product description
 #}
 {% set name_tag = name_tag|default('h2') %}
 {% set show_thumbnails = show_thumbnails is not defined or show_thumbnails %}
@@ -202,13 +204,27 @@
         {% if not v2 %}{{ stats }}{% endif %}
 
         {# What the pack holds — a bold count and a name per line, two to a row.
-           Filled by qissa-pack-card.js from the product description (the quick
-           view's own parser); hidden when the description lists nothing. The
-           label is the quick view's (a package by its name, a carton otherwise)
-           and is read out only. #}
+           inside_items given (the component's own list, written by the merchant): drawn here as written.
+           Otherwise filled by qissa-pack-card.js from the product description (the quick view's own parser);
+           hidden when the description lists nothing. The label is the quick view's (a package by its name, a
+           carton otherwise) and is read out only. #}
+        {% set inside_label = trans(product.name matches '/بكج|باقة|مجموعة/' ? 'blocks.qissa.inside_pack' : 'blocks.qissa.inside_box') %}
+        {% set inside_manual = inside_items is defined and inside_items is not null %}
+        {% set inside_list = [] %}
+        {% if inside_manual and inside_items is iterable %}
+            {% for item in inside_items %}{% if (item.qty or item.name) and inside_list|length < 6 %}{% set inside_list = inside_list|merge([item]) %}{% endif %}{% endfor %}
+        {% endif %}
         {% set inside %}
-        {% if show_inside %}
-            <ul class="qpack__inside" aria-label="{{ trans(product.name matches '/بكج|باقة|مجموعة/' ? 'blocks.qissa.inside_pack' : 'blocks.qissa.inside_box') }}" data-qpack-inside="{{ product.description|default('')|slice(0, 5000) }}" hidden></ul>
+        {% if show_inside and inside_manual %}
+            {% if inside_list|length %}
+                <ul class="qpack__inside" aria-label="{{ inside_label }}">
+                    {% for item in inside_list %}
+                        <li class="qpack__inside-item" title="{{ item.qty }} {{ item.name }}">{% if item.qty %}<b>{{ item.qty }}</b>{% endif %}{% if item.name %}<span>{{ item.name }}</span>{% endif %}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% elseif show_inside %}
+            <ul class="qpack__inside" aria-label="{{ inside_label }}" data-qpack-inside="{{ product.description|default('')|slice(0, 5000) }}" hidden></ul>
         {% endif %}
         {% endset %}
 
@@ -231,7 +247,7 @@
                     {{ stats }}
                     <div class="qpack__intro">
                         {{ name }}
-                        {% if show_inside and inside_title is defined and inside_title %}<p class="qpack__inside-title" data-qpack-inside-title hidden>{{ inside_title }}</p>{% endif %}
+                        {% if show_inside and inside_title is defined and inside_title and (not inside_manual or inside_list|length) %}<p class="qpack__inside-title"{% if not inside_manual %} data-qpack-inside-title hidden{% endif %}>{{ inside_title }}</p>{% endif %}
                     </div>
                 </div>
                 {{ inside }}
