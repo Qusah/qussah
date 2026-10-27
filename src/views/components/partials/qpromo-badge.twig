@@ -1,0 +1,21 @@
+{#
+  A promotion-title badge (the merchant's «النص الترويجي», or «خصم»).
+
+  A title with commas — Latin «,» or Arabic «،» — prints its first part only, with the whole value in
+  data-promo-cycle; partials/promo-cycle.js then turns the parts every two seconds. A title with one
+  part prints as it is, with nothing added.
+
+  Params:
+    text    string   required
+    class   string   the badge's class
+    badge_tag  string  'span' (default) or 'div'
+#}
+{%- set promo_raw = text ~ '' -%}
+{%- set promo_parts = [] -%}
+{%- for part in promo_raw|replace({',': '،'})|split('،') -%}
+    {%- if part|trim != '' -%}{%- set promo_parts = promo_parts|merge([part|trim]) -%}{%- endif -%}
+{%- endfor -%}
+{#- a value with a comma never shows the comma: its first part (also when the other parts are empty) -#}
+{%- set promo_text = promo_raw|replace({',': '', '،': ''}) != promo_raw ? (promo_parts|length ? promo_parts|first : '') : promo_raw -%}
+{%- set tag = badge_tag|default('span') -%}
+<{{ tag }} class="{{ class }}"{% if promo_parts|length > 1 %} data-promo-cycle="{{ promo_raw }}"{% endif %}>{{ promo_text }}</{{ tag }}>

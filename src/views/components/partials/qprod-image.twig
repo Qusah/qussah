@@ -62,7 +62,8 @@
         </a>
     {% endif %}
 
-    {% if badge_text %}<span class="{{ badge_class }}">{{ badge_text }}</span>{% endif %}
+    {# a title with commas turns its parts (partials/qpromo-badge.twig) #}
+    {% if badge_text %}{% include 'components.partials.qpromo-badge' with { text: badge_text, class: badge_class } %}{% endif %}
 
     {# The heart is the Figma icon used as a mask, so its colour can follow the
        wishlist state; an <img> here would also be read as a product photo by

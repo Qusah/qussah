@@ -4,10 +4,16 @@ import { bootQuickView, enhanceJsCard } from './qissa-quick-view';
 import { initPackCards } from './qissa-pack-card';
 import { bindGallery } from './image-viewer';
 import { soldLabel } from './qissa-sold-count';
+import { bootPromoCycle, promoFirst, promoBadgeAttr } from './promo-cycle';
 
 // Card add → «✓ أُضيف» → stepper, and the quick-view ticket (every page loads
 // this file). Waits for theme::ready itself — nothing touches salla.* here.
 bootQuickView();
+
+// A promotion title with commas turns its parts on every badge, two seconds each
+// (partials/promo-cycle.js). Every page loads this file, so the product page and
+// the home sections are covered too. DOM only — no wait.
+bootPromoCycle();
 
 // The product page gallery opens the zooming viewer. Bound here, where the
 // viewer is already bundled for the quick view, so product.js does not carry a
@@ -115,7 +121,8 @@ class ProductCard extends HTMLElement {
     }
 
     if (this.product.promotion_title) {
-      return `<div class="s-product-card-promotion-title">${this.product.promotion_title}</div>`
+      const promo = this.product.promotion_title;
+      return `<div class="s-product-card-promotion-title"${promoBadgeAttr(promo, s => this.escapeHTML(s))}>${this.escapeHTML(promoFirst(promo))}</div>`
     }
     if (this.showQuantity && this.product?.quantity) {
       return `<div
@@ -355,7 +362,12 @@ class ProductCard extends HTMLElement {
   // Preorder label, else the merchant's promotion title, else «خصم» on sale.
   qcardBadge() {
     const p = this.product;
-    const text = p?.preorder?.label || p?.promotion_title
+    // only the promotion title turns its comma parts (partials/promo-cycle.js); a preorder label stays put
+    if (!p?.preorder?.label && p?.promotion_title) {
+      const promo = p.promotion_title;
+      return `<span class="qprod__badge"${promoBadgeAttr(promo, s => this.escapeHTML(s))}>${this.escapeHTML(promoFirst(promo))}</span>`;
+    }
+    const text = p?.preorder?.label
       || (p?.is_on_sale ? (salla.lang.get('blocks.qissa.sale') || 'خصم') : '');
     if (text) return `<span class="qprod__badge">${this.escapeHTML(text)}</span>`;
     return this.showQuantity ? this.getProductBadge() : '';

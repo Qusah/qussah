@@ -93,7 +93,7 @@
                         {# image (right in RTL) #}
                         <a href="{{ product.url }}" class="qoffer__img">
                             {% if product.is_on_sale %}
-                                <span class="qoffer__badge">{{ product.promotion_title|default(trans('blocks.qissa.sale')) }}</span>
+                                {% include 'components.partials.qpromo-badge' with { text: product.promotion_title|default(trans('blocks.qissa.sale')), class: 'qoffer__badge' } %}
                             {% endif %}
                             <img src="{{ product.image.url|default(product.images[0].url) }}" alt="{{ product.name }}" loading="lazy"/>
                         </a>

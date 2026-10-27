@@ -90,6 +90,39 @@ custom-salla-product-card.qprod-js {
   text-overflow: ellipsis;
 }
 
+// A promotion title with commas (partials/promo-cycle.js): every part sits in one grid cell, so the badge
+// keeps the width of its longest part, and one is shown at a time. Shared by every badge that turns —
+// .qprod__badge, .qpd__badge, .qoffer__badge, .s-product-card-promotion-title. The badge's own look stays.
+.promo-cycle__stack {
+  display: inline-grid;
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 100%;
+  vertical-align: top;
+}
+.promo-cycle__part {
+  grid-area: 1 / 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: center;
+  opacity: 0;
+  transition: opacity .25s ease;        // the outgoing and the next part cross, so the badge is never empty
+  &.is-on { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .promo-cycle__part, .promo-cycle__part.is-on { transition: none; }
+}
+// read once, whole, by screen readers; the turning parts are aria-hidden
+.promo-cycle__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 // wishlist heart — top left of the photo. Raised selector: Salla's
 // `.s-product-card-vertical .s-product-card-wishlist-btn` dims and moves it.
 .qprod__img .qprod__like {

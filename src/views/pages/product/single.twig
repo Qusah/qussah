@@ -129,7 +129,7 @@
                         show-thumbs-controls="false"
                         thumbs-config='{"spaceBetween":4.52,"breakpoints":{"769":{"spaceBetween":9.31}}}'>
                     {% if badge %}
-                        <div class="qpd__badge">{{ badge }}</div>
+                        {% include 'components.partials.qpromo-badge' with { text: badge, class: 'qpd__badge', badge_tag: 'div' } %}
                     {% endif %}
 
                     {# Wishlist, share and zoom are not drawn in the frames; they stay on the
