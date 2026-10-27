@@ -1,7 +1,8 @@
 {
   "blocks": {
     "header": {
-      "cart": "السلة"
+      "cart": "السلة",
+      "checkout": "إتمام الطلب"
     },
     "appBanner": {
       "download_now": "حمله الان"

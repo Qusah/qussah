@@ -52,8 +52,10 @@
           <i slot="icon" class="header-btn__icon icon sicon-shopping-bag"></i>
         </salla-cart-summary>
       </div>
-      {# `is-empty` hides the badge; app.js (initAddToCart) keeps it and the count in sync live #}
+      {# `is-empty` hides the badge and the «إتمام الطلب» label; app.js (initAddToCart) keeps
+         it and the count in sync live. The label is first so RTL puts it on the icon's right. #}
       <a href="{{ link('/cart') }}" class="qheader-act qheader-act--cart{{ (cart.items_count|default(0) > 0) ? '' : ' is-empty' }}" aria-label="{{ trans('blocks.header.cart') }}"{% if theme.settings.get('cart_drawer_enabled', true) %} data-qcd-open{% endif %}>
+        <span class="qheader-act__label">{{ trans('blocks.header.checkout') }}</span>
         <img src="{{ 'images/qheader/cart.svg' | asset }}" alt="" width="17" height="17"/>
         <span class="qheader-act__badge" data-cart-count>{{ cart.items_count|default(0) }}</span>
       </a>

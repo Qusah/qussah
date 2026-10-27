@@ -43,9 +43,14 @@ $qh-on-hero: '.qheader:has(~ main > .qibanner:not(.s-block ~ *):not(.s-blocks-wr
     position: relative;
     // on the hero the gaps between logo, menu and buttons let clicks through to the banner
     pointer-events: var(--qh-pe, auto);
-    display: flex;
+    // Figma: equal 387px gaps between logo · menu · actions. Three tracks rather than
+    // space-between: the logo and the buttons are about as wide, which gives the same
+    // gaps, and the middle item stays centred when the cart grows its «إتمام الطلب»
+    // label. Each child places itself (justify-self below); the burger (phones) and the
+    // menu (desktop) are display:none in turn, so three items fill the three tracks.
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
-    justify-content: space-between;   // Figma: equal 387px gaps between logo · menu · actions
     height: 83.73px;
     padding: 17.68px var(--qh-nr) 17.68px var(--qh-nl);
     border-radius: 14.89px;
@@ -70,6 +75,7 @@ $qh-on-hero: '.qheader:has(~ main > .qibanner:not(.s-block ~ *):not(.s-blocks-wr
   .qheader-logo {
     display: flex;
     align-items: flex-start;
+    justify-self: start;   // the first track: right in RTL
     width: 92.95px;
     height: 44.65px;
   }
@@ -86,6 +92,7 @@ $qh-on-hero: '.qheader:has(~ main > .qibanner:not(.s-block ~ *):not(.s-blocks-wr
   .qheader-menu {
     display: flex;
     align-items: center;
+    justify-self: center;
     gap: 36.12px;
     padding: 13.95px 23.26px;
     background: rgba(255, 255, 255, .06);
@@ -109,6 +116,7 @@ $qh-on-hero: '.qheader:has(~ main > .qibanner:not(.s-block ~ *):not(.s-blocks-wr
   .qheader-actions {
     display: flex;
     align-items: center;
+    justify-self: end;     // the last track: left in RTL
     gap: 9.3px;
   }
   .qheader-act {
@@ -158,6 +166,32 @@ $qh-on-hero: '.qheader:has(~ main > .qibanner:not(.s-block ~ *):not(.s-blocks-wr
     line-height: 16.37px;
   }
   .qheader-act--cart.is-empty .qheader-act__badge { display: none; }
+
+  // «إتمام الطلب» beside the cart icon while the cart holds something (merchant request,
+  // no Figma node). Empty = the round icon button the design draws; with items the circle
+  // stretches into a pill [label][icon], so in RTL the icon keeps the left end and the
+  // badge stays on its corner. app.js (initAddToCart) owns `is-empty` from the live count.
+  .qheader-act__label {
+    display: none;
+    font-size: 13.02px;    // the menu's size
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    color: #172951;        // the navy of the account icon
+  }
+  .qheader-act--cart:not(.is-empty) {
+    gap: 7.44px;
+    width: auto;
+    padding-inline: 13.95px;   // symmetric: a start/end pair would be flipped to LTR by the build
+    border-radius: 9999px;
+
+    .qheader-act__label { display: block; }
+  }
+  // English: the label comes first on the left, so the badge moves to the icon's corner
+  [dir="ltr"] & .qheader-act--cart:not(.is-empty) .qheader-act__badge {
+    left: auto;
+    right: -2.79px;
+  }
 
   // hamburger — mobile/tablet only
   .qheader-burger {
@@ -289,10 +323,10 @@ $qh-on-bleed: '.qheader.qheader:has(~ main > .qibanner.qibanner--bleed:not(.s-bl
 
   .qheader .qheader-menu,
   .qheader .qheader-act--account { display: none; }
-  .qheader .qheader-burger { display: inline-flex; }
+  .qheader .qheader-burger { display: inline-flex; justify-self: start; }
 
-  // burger and cart are both 42.59 wide, so space-between centres the logo
-  .qheader .qheader-logo { width: 64.49px; height: 22.85px; }
+  // burger · logo · cart in the three tracks: the logo stays centred while the cart grows its label
+  .qheader .qheader-logo { justify-self: center; width: 64.49px; height: 22.85px; }
   .qheader .qheader-logo img { width: 64.49px; height: 22.85px; object-position: center; }
 
   .qheader .qheader-act--cart {
@@ -310,6 +344,16 @@ $qh-on-bleed: '.qheader.qheader:has(~ main > .qibanner.qibanner--bleed:not(.s-bl
     font-size: 10.65px;
     line-height: 17.04px;
   }
+}
+
+// narrow phones: the cart's «إتمام الطلب» pill tightens so it keeps clear of the centred
+// logo (at 360 the full pill leaves 7px; this leaves 23, and still clears it at 320)
+@media (max-width: 374px) {
+  .qheader .qheader-act--cart:not(.is-empty) {
+    gap: 5px;
+    padding-inline: 10px;
+  }
+  .qheader .qheader-act__label { font-size: 12px; }
 }
 
 // ====================================================================
