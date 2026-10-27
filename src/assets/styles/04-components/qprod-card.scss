@@ -543,6 +543,19 @@ custom-salla-product-card.qprod-js {
     line-height: inherit;
   }
 
+  // card_price_in_button off: the price over the button, large, then the struck price and «خصم N%» (body.qcard-price-out)
+  .qprod__deal--full {
+    gap: 4px 10px;
+    padding-bottom: 12px;
+
+    .qprod__price-now {
+      font-size: 22px;
+      line-height: 1.2;
+
+      .sicon-sar { font-size: .72em; }
+    }
+  }
+
   // the button: the words, then the price and its riyal, 6 apart
   .qprod__add-label { font-family: $qcard-font !important; }
   .qprod__add,
@@ -655,6 +668,7 @@ custom-salla-product-card.qprod-js {
       line-height: 1.3;
     }
     .qprod__btns .qprod__price-now { font-size: 16px; }
+    .qprod__deal--full .qprod__price-now { font-size: 18px; }
     .qprod__btns salla-add-product-button {
       &::part(base),
       button,

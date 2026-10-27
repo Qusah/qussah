@@ -389,11 +389,23 @@ class ProductCard extends HTMLElement {
   // product_card_v2 (default on; switched off, master.twig puts body.qcard-v1): Figma «card variant» 706:1805 —
   // the price in the button, the struck price and «خصم N%» on a line over it. Same markup as partials/qprod-card.twig.
   get qcardV2() { return !document.body.classList.contains('qcard-v1'); }
+  // card_price_in_button (default on; switched off, master.twig puts body.qcard-price-out): the price over the
+  // button, large, with the struck price and «خصم N%» beside it; the button says «أضف للسلة»
+  get qcardPriceIn() { return this.qcardV2 && !document.body.classList.contains('qcard-price-out'); }
 
   // v2, on sale: the struck regular price (right) and «خصم 20%»; a starting price: «يبدأ من» and the price
   qcardDeal() {
     const p = this.product;
     if (p?.donation?.can_donate) return '';
+    if (!this.qcardPriceIn && !p.starting_price) {
+      const sale = p.is_on_sale && Number(p.regular_price) > 0;
+      const off = sale ? Math.round((p.regular_price - p.sale_price) / p.regular_price * 100) : 0;
+      return `<div class="qprod__price qprod__deal qprod__deal--full">
+          <b class="qprod__price-now">${this.getPriceFormat(sale ? p.sale_price : p.price)}</b>
+          ${sale ? `<s class="qprod__price-old">${this.getPriceFormat(p.regular_price)}</s>` : ''}
+          ${off >= 1 ? `<span class="qprod__off">${salla.lang.get('blocks.qissa.sale') || 'خصم'} ${off}<span class="qprod__pct">%</span></span>` : ''}
+        </div>`;
+    }
     if (p.is_on_sale && Number(p.regular_price) > 0) {
       const off = Math.round((p.regular_price - p.sale_price) / p.regular_price * 100);
       return `<div class="qprod__price qprod__deal">
@@ -414,7 +426,7 @@ class ProductCard extends HTMLElement {
   qcardAddLabel() {
     const p = this.product;
     const plain = p.add_to_cart_label ? p.add_to_cart_label : this.getAddButtonLabel();
-    const priced = this.qcardV2 && !p.add_to_cart_label && !p.starting_price && !p?.donation
+    const priced = this.qcardPriceIn && !p.add_to_cart_label && !p.starting_price && !p?.donation
       && !p.has_preorder_campaign && p.type !== 'booking'
       && !p.is_out_of_stock && p.status === 'sale' && Number(p.is_on_sale ? p.sale_price : p.price) > 0;
     if (!priced) return `<span>${plain}</span>`;

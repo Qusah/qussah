@@ -27,6 +27,9 @@
 {# product_card_v2 (store setting, default on; never saved reads as on): Figma «card variant» 706:1805 — the price
    inside the button («أضف للسلة بـ 196»), the struck price and «خصم N%» on a line above it, the red badge #}
 {% set v2 = theme.settings.get('product_card_v2') is not same as(false) %}
+{# card_price_in_button (store setting, default on; never saved reads as on): off, v2 puts the price over the button
+   instead — the price large, the struck price and «خصم N%» beside it — and the button says «أضف للسلة» #}
+{% set price_in = v2 and theme.settings.get('card_price_in_button') is not same as(false) %}
 {% set price_now = product.is_on_sale ? product.sale_price : product.price %}
 
 {# the merchant's promotion title when there is one, otherwise «خصم» on sale #}
@@ -79,7 +82,15 @@
        No sums or comparisons on prices here: Salla's renderer drops the whole section over them (they blanked the
        product page and the thank-you page before). The two prices go out as text; product-card.js works out N
        (fillCardDeals) and shows the line's «خصم». #}
-    {% if v2 %}
+    {% if v2 and sp and not price_in %}
+        <div class="qprod__price qprod__deal qprod__deal--full">
+            <b class="qprod__price-now">{{ price_now|money }}</b>
+            {% if product.is_on_sale and product.regular_price %}
+                <s class="qprod__price-old">{{ product.regular_price|money }}</s>
+                <span class="qprod__off" data-was="{{ product.regular_price|money|striptags|trim }}" data-now="{{ product.sale_price|money|striptags|trim }}" hidden>{{ trans('blocks.qissa.sale') }} <span class="qprod__pct">%</span></span>
+            {% endif %}
+        </div>
+    {% elseif v2 %}
         {% if sp and product.is_on_sale and product.regular_price %}
             <div class="qprod__price qprod__deal">
                 <s class="qprod__price-old">{{ product.regular_price|money }}</s>
@@ -107,7 +118,7 @@
                 </button>
             {% else %}
                 <button class="qprod__add" type="button" onclick="salla.cart.addItem({ id: '{{ product.id }}', quantity: 1 })">
-                    {% if v2 and sp %}
+                    {% if price_in and sp %}
                         <span class="qprod__add-label">{{ trans('blocks.qissa.add_to_cart_for') }}</span>
                         <b class="qprod__price-now">{{ price_now|money }}</b>
                     {% else %}

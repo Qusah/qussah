@@ -78,6 +78,17 @@
             "selected": true
         },
         {
+            "type": "boolean",
+            "icon": "sicon-toggle-off",
+            "label": "السعر داخل زر الإضافة للسلة",
+            "description": "مع التصميم الجديد للبطاقات: شغّله ليظهر السعر داخل زر «أضف للسلة بـ». أطفئه ليظهر السعر فوق الزر بخط كبير مع السعر قبل الخصم ونسبة الخصم، ويبقى الزر «أضف للسلة»",
+            "id": "card_price_in_button",
+            "format": "switch",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
             "type": "string",
             "icon": "sicon-paint",
             "label": "لون خلفية الصفحات",
