@@ -19,13 +19,19 @@ import { insideLines } from './qissa-quick-view';
 const INSIDE_MAX = 6;   // three rows of two
 
 // A description line as [count, name]. «1 كرتون مناديل 600 مفرد / 32 عبوة» carries
-// its count after the slash; «32 عبوة مناديل قصة 600» opens with it (the number
-// and its unit). Any other line is all name.
+// its count after the slash; a spec line «عدد الشدات: 10 شدات» its value after the
+// colon, which takes the bold line and leaves its label under it; «32 عبوة مناديل
+// قصة 600» opens with it (the number and its unit). Any other line is all name.
 function countAndName(text) {
   const cut = text.lastIndexOf('/');
   if (cut > 0) {
     const count = text.slice(cut + 1).trim(), name = text.slice(0, cut).trim();
     if (name && count.length <= 24 && /^[\d٠-٩]/.test(count)) return [count, name];
+  }
+  const colon = text.search(/[:：]/);
+  if (colon > 0) {
+    const label = text.slice(0, colon).trim(), value = text.slice(colon + 1).trim();
+    if (value && label.length <= 32) return [value, label];
   }
   const m = text.match(/^([\d٠-٩][\d٠-٩.,٫٬]*\s*[^\s\d٠-٩]+)\s+(.+)$/);
   return m ? [m[1], m[2]] : ['', text];

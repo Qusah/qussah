@@ -71,18 +71,20 @@ $qh-on-hero: '.qheader:has(~ main > .qibanner:not(.s-block ~ *):not(.s-blocks-wr
     }
   }
 
-  // logo — the wordmark (93.03×32.97) sits at the top of a 92.95×44.65 link box
+  // logo — larger than the frame's 93.03×32.97 wordmark (client, 27 Oct 2026: too small, then larger still):
+  // 56 tall, centred on the 44.65 link box and running into the bar's paddings, which keeps the bar's height
   .qheader-logo {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-self: start;   // the first track: right in RTL
-    width: 92.95px;
+    width: 140px;
     height: 44.65px;
   }
   .qheader-logo img {
     display: block;
-    width: 93.03px;
-    height: 32.97px;
+    flex: none;
+    width: 140px;
+    height: 56px;
     object-fit: contain;
     object-position: right center;
     filter: brightness(0) invert(1);   // merchant logo → white on the navy bar
@@ -325,9 +327,12 @@ $qh-on-bleed: '.qheader.qheader:has(~ main > .qibanner.qibanner--bleed:not(.s-bl
   .qheader .qheader-act--account { display: none; }
   .qheader .qheader-burger { display: inline-flex; justify-self: start; }
 
-  // burger · logo · cart in the three tracks: the logo stays centred while the cart grows its label
-  .qheader .qheader-logo { justify-self: center; width: 64.49px; height: 22.85px; }
-  .qheader .qheader-logo img { width: 64.49px; height: 22.85px; object-position: center; }
+  // burger · logo · cart in the three tracks: the logo stays centred while the cart grows its label.
+  // Larger than the frame's 64.49×22.85 (client, 27 Oct 2026): 36 tall, running into the bar's paddings. The
+  // centred logo has to clear the cart's «إتمام الطلب» pill: 36 (the store logo, 250×127, draws 71 wide)
+  // keeps 8+ between them from 320 up; at 40 they touched from 360 to 390
+  .qheader .qheader-logo { justify-self: center; width: 71px; height: 31px; }
+  .qheader .qheader-logo img { width: 71px; height: 36px; object-position: center; }
 
   .qheader .qheader-act--cart {
     width: 42.59px;
@@ -347,8 +352,8 @@ $qh-on-bleed: '.qheader.qheader:has(~ main > .qibanner.qibanner--bleed:not(.s-bl
 }
 
 // narrow phones: the cart's «إتمام الطلب» pill tightens so it keeps clear of the centred
-// logo (at 360 the full pill leaves 7px; this leaves 23, and still clears it at 320)
-@media (max-width: 374px) {
+// logo — up to 389 since the logo grew (27 Oct 2026; the full pill at 375 met it)
+@media (max-width: 389px) {
   .qheader .qheader-act--cart:not(.is-empty) {
     gap: 5px;
     padding-inline: 10px;
