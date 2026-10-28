@@ -4,6 +4,7 @@ import Fslightbox from 'fslightbox';
 window.fslightbox = Fslightbox;
 import { zoom } from './partials/image-zoom';
 import { initCompare } from './partials/qissa-compare';
+import initProductAccordion from './partials/qissa-product-accordion';
 
 const quiet = fn => (salla.api && typeof salla.api.withoutNotifier === 'function' ? salla.api.withoutNotifier(fn) : fn());
 
@@ -18,6 +19,7 @@ class Product extends BasePage {
         });
 
         this.initProductOptionValidations();
+        initProductAccordion();   // «تفاصيل المنتج» split into items (theme setting, on by default)
         this.initPack();
         initCompare();   // «جدول المقارنة»: shown on the products it was added for
         this.initRelated();
