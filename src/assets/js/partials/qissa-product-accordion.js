@@ -23,7 +23,8 @@
  * bold run (strong, b, or font-weight ≥ 600); a bold run that is a whole
  * <br>-separated line. At most 80 characters, with letters or digits in it
  * (not «<h3><br></h3>» or «****»), and with something under it before the next
- * label or the end. A paragraph that merely starts
+ * label or the end (two or more such empty bold lines mean the description is
+ * written in bold body text: then nothing is a label). A paragraph that merely starts
  * with a bold word is body copy (Bareq's script also split those; the brief
  * for this port says not to: «<strong>مناديل قصة 600</strong> صُممت…» is copy).
  *
@@ -178,6 +179,13 @@ function collectSections(container) {
     }
     return false;
   });
+
+  // Two or more bold lines with nothing under them: the description is written
+  // in bold body text, not labelled — treat it as having no labels at all.
+  const empty = candidate.filter((c, i) => c && !isLabel[i]).length;
+  if (empty >= 2) {
+    return [];
+  }
 
   const sections = [];
   let current = null;
