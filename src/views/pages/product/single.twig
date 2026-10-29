@@ -91,7 +91,8 @@
   · Under the rating, the opening of the description as a short paragraph
     (504:2273 / 504:1534): app.js hydrateCardDescriptions() writes the plain
     text in, as it does for the cards' excerpt.
-  · «تفاصيل المنتج» is the description. A package is a product whose page the
+  · «تفاصيل المنتج» is the description, as an accordion split at the merchant's
+    labels (Bareeq's, js/partials/qissa-product-details.js). A package is a product whose page the
     merchant gave a «محتويات البكج» block (components/home/qissa-pack-contents,
     added in the theme editor under «تخصيص منتج محدد», «before reviews» slot):
     its navy graphic takes the description's place on that product's page
@@ -100,19 +101,6 @@
     updates, add to cart, instalments, gifting, comments, offers, hooks.
 #}
 {% block content %}
-    {#- «تفاصيل المنتج» as an accordion (theme setting pdp_accordion_enabled; null = on). Off: the page exactly as before.
-        On: the whole description sits in the accordion's first panel, server-rendered; js/partials/qissa-product-accordion.js
-        moves its opening (up to the second label) into .qpd__lead and each further label into its own item. -#}
-    {%- set qacc_set = theme.settings.get('pdp_accordion_enabled') -%}
-    {%- set qacc_on = qacc_set is not defined or qacc_set is null or qacc_set -%}
-    {%- set qacc_css = '' -%}
-    {%- if qacc_on -%}
-        {%- for qacc_key, qacc_var in {'pdp_accordion_heading_color': 'heading', 'pdp_accordion_item_bg': 'bg', 'pdp_accordion_item_bg_open': 'bg-open', 'pdp_accordion_title_color': 'title', 'pdp_accordion_title_color_open': 'title-open', 'pdp_accordion_toggle_bg': 'toggle', 'pdp_accordion_toggle_bg_open': 'toggle-open', 'pdp_accordion_icon_color': 'icon', 'pdp_accordion_icon_color_open': 'icon-open', 'pdp_accordion_border_color': 'border'} -%}
-            {%- if theme.settings.get(qacc_key) -%}
-                {%- set qacc_css = qacc_css ~ '--qacc-' ~ qacc_var ~ ':' ~ theme.settings.get(qacc_key) ~ ';' -%}
-            {%- endif -%}
-        {%- endfor -%}
-    {%- endif %}
     {% if theme.settings.get('product_show_breadcrumbs', true) %}
         <nav class="qlisting-crumbs qpd-crumbs" aria-label="{{ trans('blocks.qissa.breadcrumb') }}">
             <salla-breadcrumb></salla-breadcrumb>
@@ -417,7 +405,7 @@
 
                 {# the description's opening as plain text (app.js); removed when there is none #}
                 {% if product.description %}
-                    <p class="qpd__lead" data-qdesc="{{ product.description|slice(0, 1500) }}"{% if qacc_on %} data-qacc-lead{% endif %}></p>
+                    <p class="qpd__lead" data-qdesc="{{ product.description|slice(0, 1500) }}"></p>
                 {% endif %}
 
                 {# tags, as chips linking to each tag's page #}
@@ -739,23 +727,53 @@
         {% if qcmp_sale %}<span data-was>{{ product.regular_price|money }}</span>{% endif %}
     </template>
 
-    <section class="qpd-more{% if qacc_on %} qpd-more--acc{% endif %}" data-qpd-more{% if qacc_on and qacc_css %} style="{{ qacc_css }}"{% endif %}>
+    <section class="qpd-more" data-qpd-more>
         <div class="qpd-more__details">
             <h2 class="qpd-more__title">{{ trans('blocks.qissa.product_details') }}<span class="qpd-more__title-m"> {{ trans('blocks.qissa.product_details_more') }}</span></h2>
 
+            {# The description as an accordion — Bareeq's, ported as is (29 Oct 2026). The whole
+               description is printed here once, in one open «وصف المنتج» item, so it is in the server
+               HTML for crawlers and a reader with JS off sees all of it. js/partials/qissa-product-details.js
+               then lifts each label the merchant wrote (a heading, a bold line of its own, or a bold
+               «label:» opening a line) and everything under it into its own item; no labels, one item.
+               The toggle span is cloned for every item the script builds. This replaces the read-more
+               article, and with it the second unescaped print of the description. #}
             <div class="qpd-more__desc product__description">
-                {% if product.has_read_more and not qacc_on %}
-                    <article class="article article--main relative overflow-hidden transition-all duration-300" id="more-content" style="max-height:8.3rem">
-                        {{ product.description|raw }}
-                    </article>
-                    <a id="btn-show-more" class="link--primary inline-block mt-2 cursor-pointer">{{ trans('pages.products.read_more') }}</a>
-                {% else %}
-                    {% if qacc_on %}<div class="qacc" data-qacc><section class="qacc__item is-open" data-qacc-item><h3 class="qacc__heading"><button type="button" class="qacc__head" id="qacc-head-0-{{ product.id }}" aria-controls="qacc-panel-0-{{ product.id }}" aria-expanded="true"><span class="qacc__title">{{ trans('blocks.qissa.product_description') }}</span><span class="qacc__toggle" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.33 8h9.34" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path class="qacc__toggle-bar" d="M8 3.33v9.34" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span></button></h3><div class="qacc__panel" id="qacc-panel-0-{{ product.id }}" role="region" aria-labelledby="qacc-head-0-{{ product.id }}"><div class="qacc__body article--main">{% else %}<article class="article--main">{% endif %}
+                <div class="qpd-details" data-testid="store-product-details">
+                    <div class="qpd-details__card">
+                        <section class="qpd-details__item is-open" data-details-item>
+                            <h3 class="qpd-details__heading">
+                                <button type="button"
+                                        class="qpd-details__head"
+                                        id="qpd-details-head-0-{{ product.id }}"
+                                        aria-controls="qpd-details-panel-0-{{ product.id }}"
+                                        aria-expanded="true">
+                                    <span class="qpd-details__title">{{ trans('blocks.qissa.product_description') }}</span>
 
-                        {{ product.description|raw }}
-                    {% if qacc_on %}</div></div></section></div>{% else %}</article>{% endif %}
+                                    {# one glyph for both states: the horizontal bar is the minus, the
+                                       vertical bar is what makes it a plus #}
+                                    <span class="qpd-details__toggle" aria-hidden="true">
+                                        <svg viewBox="0 0 15.9983 15.9983" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M3.33298 7.99915H12.6653"
+                                                  stroke="currentColor" stroke-width="1.33319" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path class="qpd-details__toggle-bar" d="M7.99915 3.33298V12.6653"
+                                                  stroke="currentColor" stroke-width="1.33319" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </span>
+                                </button>
+                            </h3>
 
-                {% endif %}
+                            <div class="qpd-details__panel"
+                                 id="qpd-details-panel-0-{{ product.id }}"
+                                 role="region"
+                                 aria-labelledby="qpd-details-head-0-{{ product.id }}">
+                                <div class="qpd-details__body">
+                                    {{ product.description|replace({"&nbsp;":" "})|raw }}
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
             </div>
 
             {#

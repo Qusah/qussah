@@ -1,0 +1,208 @@
+// ====================================================================
+// «تفاصيل المنتج» as an accordion — Bareeq's (bareq-product-details.scss,
+// Bareeq «PDP Final» 2693:5335 / 2673:20309), ported 29 Oct 2026. The Qusah
+// frames (168:8093) draw the description as running text, so there is no
+// Qusah node for the accordion: its shape is Bareeq's, in Qusah's colours.
+// Markup in pages/product/single.twig (.qpd-more__desc), behaviour in
+// js/partials/qissa-product-details.js.
+//
+//   card    1px #e2e2e2 · radius 14 · white · clipped
+//   divider 1px #eaeaea between items
+//   head    padding 18 · space-between
+//   toggle  30 circle · closed #f3f3f3 + #6f6f6f plus · open navy + white minus
+//   title   16/24 bold ink on the phone; on desktop the description's own
+//           19.14, so the head never reads smaller than the copy under it
+//   panel   px 18 · pb 20 · gap 12
+//   body    the description's type, unchanged (qissa-product-detail.scss
+//           .qpd-more__desc: 19.14/32.97 light #666, phone 12.08/17.65)
+//   list    gap 8 · a 6px navy dot centred on the first line
+//
+// The open toggle, the dots and links are Qusah's navy (#2c348e, $qpd-navy —
+// the add to cart's colour) where Bareeq uses its red.
+//
+// Nothing collapses until the script adds `--enhanced`: a reader with JS off
+// gets the whole description. postcss flips logical properties to LTR sides
+// in this build, so only physical or symmetric ones are used here.
+// ====================================================================
+
+$qpdd-ink: #082033;     // $qpd-ink
+$qpdd-navy: #2c348e;    // $qpd-navy
+$qpdd-line: #e2e2e2;
+$qpdd-rule: #eaeaea;
+$qpdd-subtle: #f3f3f3;
+$qpdd-muted: #6f6f6f;
+
+.qpd-details {
+  width: 100%;
+
+  &__card {
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid $qpdd-line;
+    border-radius: 14px;
+  }
+
+  &__item + &__item { border-top: 1px solid $qpdd-rule; }
+
+  // the heading is there for the outline only: a toggle has to be a button,
+  // and a button may not wrap a heading
+  &__heading {
+    margin: 0;
+    font: inherit;
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 18px;
+    font-family: inherit;
+    text-align: inherit;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+  }
+
+  &__title {
+    color: $qpdd-ink;
+    font-size: 19.14px;
+    font-weight: 700;
+    line-height: 26.8px;
+  }
+
+  // closed is the resting state, so it is the base
+  &__toggle {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    color: $qpdd-muted;
+    background: $qpdd-subtle;
+    border-radius: 50%;
+    transition: background-color .2s ease, color .2s ease;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  // open: the plus becomes a minus as its vertical bar turns away
+  &__toggle-bar {
+    transform-origin: center;
+    transition: transform .25s ease, opacity .25s ease;
+  }
+  &__item.is-open &__toggle {
+    color: #fff;
+    background: $qpdd-navy;
+  }
+  &__item.is-open &__toggle-bar {
+    opacity: 0;
+    transform: rotate(90deg);
+  }
+
+  &__panel { overflow: hidden; }
+
+  // ---- collapsing, once the script has split the description ----
+  &--enhanced &__panel {
+    max-height: 0;
+    // visibility follows the collapse, so a shut panel leaves the tab order
+    visibility: hidden;
+    transition: max-height .3s ease, visibility 0s linear .3s;
+  }
+  &--enhanced &__item.is-open &__panel {
+    visibility: visible;
+    transition: max-height .3s ease, visibility 0s linear 0s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &--enhanced &__panel,
+    &--enhanced &__item.is-open &__panel,
+    &__toggle,
+    &__toggle-bar { transition: none; }
+  }
+}
+
+// ---- the panel: merchant HTML, so styled by element ----
+// It sits inside .product__description (04-components/product.scss), whose
+// list and link rules are !important at one class and load after this file;
+// the root's class here outranks them.
+.qpd-details .qpd-details__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 18px 20px;
+
+  > :first-child { margin-top: 0; }
+  > :last-child { margin-bottom: 0; }
+
+  p { margin: 0; }
+
+  strong,
+  b {
+    color: $qpdd-ink;
+    font-weight: 700;
+  }
+
+  a {
+    color: $qpdd-navy;
+    text-decoration: underline;
+  }
+
+  img { max-width: 100%; height: auto; }
+
+  // the merchant's own <ul>/<ol> as rows with a navy dot
+  ul,
+  ol {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none !important;
+  }
+
+  li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    list-style: none !important;
+  }
+
+  // 6px, pushed down to sit on the middle of the first line (32.97 high)
+  li::before {
+    content: '';
+    flex: none;
+    width: 6px;
+    height: 6px;
+    margin-top: 13.49px;
+    background: $qpdd-navy;
+    border-radius: 50%;
+  }
+
+  // a numbered list keeps its numbers instead of the dot
+  ol { counter-reset: qpd-details; }
+  ol li { counter-increment: qpd-details; }
+  ol li::before {
+    content: counter(qpd-details) '.';
+    width: auto;
+    height: auto;
+    margin-top: 0;
+    color: $qpdd-navy;
+    font-weight: 500;
+    background: none;
+    border-radius: 0;
+  }
+}
+
+// ---- phone (290:10110) — the description is 12.08/17.65 here ----
+@media (max-width: 768px) {
+  .qpd-details__title {
+    font-size: 16px;
+    line-height: 24px;
+  }
+  .qpd-details .qpd-details__body li::before { margin-top: 5.83px; }
+}
