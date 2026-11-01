@@ -371,6 +371,17 @@
             "required": true
         },
         {
+            "id": "pdp_hide_empty_reviews",
+            "type": "boolean",
+            "format": "switch",
+            "icon": "sicon-toggle-off",
+            "label": "إخفاء قسم التقييمات عند عدم وجود تقييمات أو تعليقات",
+            "description": "في صفحة المنتج: يختفي قسم التقييمات عندما لا يكون للمنتج أي تقييم أو تعليق. عند الإيقاف يبقى القسم ظاهرًا دائمًا",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
             "type": "boolean",
             "icon": "sicon-toggle-off",
             "label": "تكبير الصور في سليدر صور المنتج",

@@ -1199,6 +1199,7 @@ $qpd-muted: #5a6874;
 
 // ---- a package, desktop: the reviews card (113:35801) left of the graphic ----
 @media (min-width: 1101px) {
+  .qpd-more.is-pack.qpd-more--no-reviews { grid-template-columns: minmax(0, 1fr) !important; }
   .qpd-more.is-pack {
     display: grid;
     grid-template-columns: minmax(0, 741.49fr) minmax(0, 626.77fr);   // RTL: the first is the right one

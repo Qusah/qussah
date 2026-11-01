@@ -786,7 +786,8 @@
             <div class="s-blocks-wrapper s-before-reviews">{% hook 'product.single.before_customer_reviews' %}</div>
         </div>
 
-        <div class="qpd-more__reviews" style="--qpd-comment-label: '{{ trans('blocks.qissa.add_your_comment') }}'">
+        {% set hide_empty_reviews = theme.settings.get('pdp_hide_empty_reviews', true) %}
+        <div class="qpd-more__reviews" {% if hide_empty_reviews is null or hide_empty_reviews %}data-hide-empty-reviews="{{ product.id }}"{% endif %} style="--qpd-comment-label: '{{ trans('blocks.qissa.add_your_comment') }}'">
             <h2 class="qpd-more__title qpd-more__title--rev">{{ trans('blocks.qissa.product_reviews') }}</h2>
             <p class="qpd-more__title--card" aria-hidden="true">{{ trans('blocks.qissa.reviews_opinions') }}</p>
             <salla-comments item-id="{{ product.id }}" type="product" hide-title></salla-comments>
