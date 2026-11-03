@@ -408,6 +408,19 @@
                     <p class="qpd__lead" data-qdesc="{{ product.description|slice(0, 1500) }}"></p>
                 {% endif %}
 
+                {# «اقرأ المزيد» — down to «تفاصيل المنتج», which
+                   partials/qissa-product-details.js opens on the way (ClickUp
+                   z91pu68tnw). A plain anchor, so it still lands with JS off.
+                   Theme setting `pdp_read_more`, on until saved off. #}
+                {% if product.description and theme.settings.get('pdp_read_more', true) %}
+                    <a class="qpd__more" href="#product-description" data-read-more>
+                        {{ trans('blocks.qissa.read_more') }}
+                        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" aria-hidden="true">
+                            <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </a>
+                {% endif %}
+
                 {# tags, as chips linking to each tag's page #}
                 {% if product.tags|length and theme.settings.get('show_tags', true) %}
                     <div class="qpd__chips">
@@ -728,7 +741,7 @@
     </template>
 
     <section class="qpd-more" data-qpd-more>
-        <div class="qpd-more__details">
+        <div class="qpd-more__details" id="product-description">
             <h2 class="qpd-more__title">{{ trans('blocks.qissa.product_details') }}<span class="qpd-more__title-m"> {{ trans('blocks.qissa.product_details_more') }}</span></h2>
 
             {# The description as an accordion — Bareeq's, ported as is (29 Oct 2026). The whole

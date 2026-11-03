@@ -382,6 +382,17 @@
             "selected": true
         },
         {
+            "id": "pdp_read_more",
+            "type": "boolean",
+            "format": "switch",
+            "icon": "sicon-toggle-off",
+            "label": "رابط «اقرأ المزيد» تحت الوصف المختصر",
+            "description": "في صفحة المنتج: يظهر «اقرأ المزيد» تحت الوصف المختصر، والضغط عليه ينزل إلى وصف المنتج الكامل ويفتحه",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
             "type": "boolean",
             "icon": "sicon-toggle-off",
             "label": "تكبير الصور في سليدر صور المنتج",

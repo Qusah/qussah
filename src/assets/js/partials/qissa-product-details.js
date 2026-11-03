@@ -71,6 +71,69 @@ export default function initProductDetails() {
       setOpen(item, !item.classList.contains('is-open'), true);
     });
   });
+
+  bindReadMore(root);
+}
+
+/* -------------------------------------------------------------- read more */
+
+/**
+ * «اقرأ المزيد» under the lead (single.twig): open «وصف المنتج» if the
+ * shopper closed it, then bring «تفاصيل المنتج» up under the sticky header.
+ * The link is a plain #product-description anchor, so with JS off it still
+ * lands.
+ */
+function bindReadMore(root) {
+  const target = document.getElementById('product-description') || root;
+
+  document.querySelectorAll('[data-read-more]').forEach(link => {
+    link.addEventListener('click', event => {
+      const first = root.querySelector(ITEM);
+
+      event.preventDefault();
+
+      if (first && !first.classList.contains('is-open')) {
+        setOpen(first, true, false);
+      }
+
+      const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const gap = () => target.getBoundingClientRect().top - headerOffset() - 16;
+
+      window.scrollTo({ top: Math.max(window.scrollY + gap(), 0), behavior: still ? 'auto' : 'smooth' });
+      first?.querySelector(HEAD)?.focus({ preventScroll: true });
+
+      /* The header pins (and changes height) only once the page scrolls, so
+         the offset read at the click is not the one at the end. Measure again
+         when the scroll settles and close the difference. */
+      const settle = () => {
+        const off = gap();
+        if (Math.abs(off) > 4) {
+          window.scrollBy({ top: off, behavior: 'auto' });
+        }
+      };
+      if ('onscrollend' in window) {
+        window.addEventListener('scrollend', settle, { once: true });
+      }
+      window.setTimeout(settle, 1200);
+    });
+  });
+}
+
+/** The bottom edge of whatever is pinned to the top of the screen. */
+function headerOffset() {
+  let bottom = 0;
+
+  document.elementsFromPoint(window.innerWidth / 2, 1).forEach(el => {
+    for (let node = el; node && node !== document.body; node = node.parentElement) {
+      const position = getComputedStyle(node).position;
+      if (position === 'fixed' || position === 'sticky') {
+        bottom = Math.max(bottom, node.getBoundingClientRect().bottom);
+        break;
+      }
+    }
+  });
+
+  return bottom;
 }
 
 /* ------------------------------------------------------------------ split */

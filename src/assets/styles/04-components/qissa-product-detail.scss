@@ -283,6 +283,42 @@ $qpd-muted: #5a6874;
     gap: 10px;
     margin-top: 12px;
   }
+  /* «اقرأ المزيد» — not in the frames (ClickUp z91pu68tnw). Under the lead in
+     the chips' navy, a link rather than a button; the chevron says where it
+     goes. */
+  &__more {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    margin: 6px 0 0;
+    font-family: $qpd-font !important;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 22px;
+    color: #30378e;
+    text-decoration: none;
+
+    svg {
+      flex: none;
+      transition: transform 0.2s ease;
+    }
+
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 3px;
+
+      svg {
+        transform: translateY(2px);
+      }
+    }
+
+    &:focus-visible {
+      border-radius: 4px;
+      outline: 2px solid #30378e;
+      outline-offset: 2px;
+    }
+  }
+
   &__chip {
     display: inline-flex;
     align-items: center;
