@@ -1599,6 +1599,19 @@
                     "selected": true
                 },
                 {
+                    "id": "discount_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Discount percentage colour",
+                        "ar": "لون نسبة الخصم"
+                    },
+                    "description": "لون «خصم 14%». اتركه فارغًا ليأخذ لون السعر القديم",
+                    "required": false,
+                    "value": null
+                },
+                {
                     "id": "inside_title",
                     "type": "string",
                     "format": "text",
@@ -2670,6 +2683,19 @@
                     "required": false,
                     "value": true,
                     "selected": true
+                },
+                {
+                    "id": "discount_color",
+                    "type": "string",
+                    "format": "color",
+                    "icon": "sicon-paint",
+                    "label": {
+                        "en": "Discount percentage colour",
+                        "ar": "لون نسبة الخصم"
+                    },
+                    "description": "لون «خصم 14%». اتركه فارغًا ليأخذ لون السعر القديم",
+                    "required": false,
+                    "value": null
                 },
                 {
                     "type": "boolean",

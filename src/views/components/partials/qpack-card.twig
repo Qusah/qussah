@@ -17,6 +17,7 @@
     ribbon           string   «الأكثر مبيعًا» ribbon label; empty/false hides it
     show_thumbnails, show_rating, show_sold, show_inside, show_price, show_buy, show_discount
                      bool     per-element switches (qissa-dual-hero; show_discount in both blocks); unset reads as on
+    discount_color   string   colour of «خصم 14%»; empty = the struck price's colour
     look             string   'v2' = the Oct 2026 redesign (Figma «مجموعة المنزل · Desktop 1400» 723:761,
                               mobile 721:620; qissa-package's new_card_design): sold and rating over the
                               name, «تتضمن الآتي:» and the contents three across, the price and the button at
@@ -128,7 +129,7 @@
                     {% if show_discount and product.regular_price > 0 and product.regular_price > product.sale_price %}
                         {% set off_pct = ((product.regular_price - product.sale_price) / product.regular_price * 100)|round(0, 'floor') %}
                         {% if off_pct >= 1 %}
-                            <span class="qpack__price-off">{{ trans('blocks.qissa.discount_off')|replace({':pct': off_pct}) }}</span>
+                            <span class="qpack__price-off"{% if discount_color is defined and discount_color %} style="color: {{ discount_color }}"{% endif %}>{{ trans('blocks.qissa.discount_off')|replace({':pct': off_pct}) }}</span>
                         {% endif %}
                     {% endif %}
                 {% else %}
