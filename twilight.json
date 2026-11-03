@@ -1585,6 +1585,20 @@
                     "selected": true
                 },
                 {
+                    "type": "boolean",
+                    "id": "show_discount",
+                    "format": "switch",
+                    "icon": "sicon-percentage",
+                    "label": {
+                        "en": "Show discount percentage",
+                        "ar": "إظهار نسبة الخصم"
+                    },
+                    "description": "«خصم 14%» بعد السعر القديم عندما يكون المنتج مخفّضًا، وتُحسب النسبة من السعرين",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
                     "id": "inside_title",
                     "type": "string",
                     "format": "text",
@@ -2639,6 +2653,20 @@
                         "en": "Show price",
                         "ar": "إظهار السعر"
                     },
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_discount",
+                    "format": "switch",
+                    "icon": "sicon-percentage",
+                    "label": {
+                        "en": "Show discount percentage",
+                        "ar": "إظهار نسبة الخصم"
+                    },
+                    "description": "«خصم 14%» بعد السعر القديم عندما يكون المنتج مخفّضًا، وتُحسب النسبة من السعرين",
                     "required": false,
                     "value": true,
                     "selected": true

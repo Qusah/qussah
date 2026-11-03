@@ -243,7 +243,8 @@ $qpack-cyan: #91e6f7;
     // read as the riyal sign (review, Oct 2026)
     .sicon-sar { font-size: .5em; }
   }
-  .qpack__price .qpack__price-old {
+  .qpack__price .qpack__price-old,
+  .qpack__price .qpack__price-off {
     color: #e90000;
     font-size: 20.39px;
     font-weight: 400;
@@ -404,7 +405,8 @@ $qpack-cyan: #91e6f7;
       font-size: 31.73px;
       line-height: 32px;
     }
-    .qpack__price .qpack__price-old {
+    .qpack__price .qpack__price-old,
+    .qpack__price .qpack__price-off {
       font-size: 12.47px;
       line-height: 19.95px;
 
@@ -535,7 +537,8 @@ $qpack-cyan: #91e6f7;
     .qpack__sub { font-size: 13px; line-height: 16px; }
     .qpack__price { gap: 0 12px; }
     .qpack__price .qpack__price-now { font-size: 26px; }
-    .qpack__price .qpack__price-old { font-size: 13px; line-height: 20px; }
+    .qpack__price .qpack__price-old,
+    .qpack__price .qpack__price-off { font-size: 13px; line-height: 20px; }
 
     .qpack__stats { font-size: 12.98px; line-height: 16px; }
     .qpack__sold img { width: 14px; height: 18.74px; margin: -1.74px -1px -1px; }
@@ -780,7 +783,8 @@ $qpack-cyan: #91e6f7;
 
     .sicon-sar { font-size: 18px; }
   }
-  .qpack__price .qpack__price-old {
+  .qpack__price .qpack__price-old,
+  .qpack__price .qpack__price-off {
     color: #767676;
     font-size: 26px;
     line-height: 1.2;
@@ -902,7 +906,8 @@ $qpack-cyan: #91e6f7;
 
       .sicon-sar { font-size: 14px; }
     }
-    .qpack__price .qpack__price-old {
+    .qpack__price .qpack__price-old,
+    .qpack__price .qpack__price-off {
       font-size: 20px;
       line-height: 1.2;
 
@@ -949,4 +954,13 @@ $qpack-cyan: #91e6f7;
 }
 @media (max-width: 768px) {
   .qpack__head { margin-bottom: 24px; }
+}
+
+// «خصم 14%» after the struck price (ClickUp z91pu68tp9). It takes the struck price's size and colour in every
+// layout above (each rule lists both), and drops the strike. Size and colour wait on Eng. Mahmoud's approval:
+// change them here.
+.qpack__card .qpack__price .qpack__price-off {
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
 }

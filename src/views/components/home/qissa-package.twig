@@ -43,6 +43,7 @@ then the gallery, then the rest.
                 eyebrow: component.heading,
                 ribbon: component.show_marquee ? component.marquee_text|default(trans('blocks.qissa.best_seller')) : false,
                 look: card_v2 ? 'v2' : '',
+                show_discount: component.show_discount,
                 inside_title: component.inside_title is null ? trans('blocks.qissa.inside_title') : component.inside_title,
                 inside_items: component.inside_from_product ? null : component.inside_items ?: []
             } %}

@@ -15,8 +15,8 @@
     name_tag         string   heading level of the product name (default h2)
     eyebrow          string   the small line above the name; empty hides it
     ribbon           string   «الأكثر مبيعًا» ribbon label; empty/false hides it
-    show_thumbnails, show_rating, show_sold, show_inside, show_price, show_buy
-                     bool     per-element switches (qissa-dual-hero); unset reads as on
+    show_thumbnails, show_rating, show_sold, show_inside, show_price, show_buy, show_discount
+                     bool     per-element switches (qissa-dual-hero; show_discount in both blocks); unset reads as on
     look             string   'v2' = the Oct 2026 redesign (Figma «مجموعة المنزل · Desktop 1400» 723:761,
                               mobile 721:620; qissa-package's new_card_design): sold and rating over the
                               name, «تتضمن الآتي:» and the contents three across, the price and the button at
@@ -33,6 +33,7 @@
 {% set show_inside = show_inside is not defined or show_inside %}
 {% set show_price = show_price is not defined or show_price %}
 {% set show_buy = show_buy is not defined or show_buy %}
+{% set show_discount = show_discount is not defined or show_discount is null or show_discount %}
 {% set v2 = look is defined and look == 'v2' %}
 
 {# real photos only — skip videos / 3D models a gallery can't show #}
@@ -122,6 +123,14 @@
                 {% if product.is_on_sale %}
                     <b class="qpack__price-now">{{ product.sale_price|money }}</b>
                     <s class="qpack__price-old">{{ product.regular_price|money }}</s>
+                    {# «خصم 14%» — from the two prices, rounded down so it never claims more than the
+                       real discount; not shown under 1% (ClickUp z91pu68tp9) #}
+                    {% if show_discount and product.regular_price > 0 and product.regular_price > product.sale_price %}
+                        {% set off_pct = ((product.regular_price - product.sale_price) / product.regular_price * 100)|round(0, 'floor') %}
+                        {% if off_pct >= 1 %}
+                            <span class="qpack__price-off">{{ trans('blocks.qissa.discount_off')|replace({':pct': off_pct}) }}</span>
+                        {% endif %}
+                    {% endif %}
                 {% else %}
                     <b class="qpack__price-now">{{ product.price|money }}</b>
                 {% endif %}
