@@ -11,7 +11,7 @@
  *   wheel                  zoom at the pointer
  *   + / −  ·  0            zoom in / out  ·  back to 1×
  *   ← →                    previous / next (mirrored in Arabic)
- *   Esc, ✕, the backdrop   close; focus goes back to what opened it
+ *   Esc, ✕, the backdrop, the phone's back gesture   close; focus goes back to what opened it
  *
  * Used by the product page gallery (bindGallery) and by the quick view's photo
  * (openImageViewer). One instance for the page, kept on `window` because two
@@ -126,6 +126,15 @@ class ImageViewer {
     document.documentElement.style.overflow = 'hidden';
     document.addEventListener('keydown', this.onKey, true);
     this.show(clamp(index, 0, list.length - 1));
+    // The phone's back gesture closes the viewer instead of leaving the page:
+    // one history entry while it is open, taken back when it closes.
+    if (!this.pushed) {
+      try { history.pushState({ imgv: 1 }, ''); this.pushed = true; } catch (e) {}
+    }
+    if (!this.onPop) {
+      this.onPop = () => { if (this.isOpen) { this.pushed = false; this.close(); } };
+      window.addEventListener('popstate', this.onPop);
+    }
     requestAnimationFrame(() => this.root.classList.add('is-open'));
     this.root.querySelector('[data-imgv="close"]').focus({ preventScroll: true });
     return true;
@@ -139,6 +148,7 @@ class ImageViewer {
     this.root.hidden = true;
     document.documentElement.style.overflow = this.pageOverflow || '';
     document.removeEventListener('keydown', this.onKey, true);
+    if (this.pushed) { this.pushed = false; history.back(); }
     const back = this.trigger;
     if (back && back.isConnected && back.focus) back.focus({ preventScroll: true });
   }

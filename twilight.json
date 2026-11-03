@@ -393,6 +393,92 @@
             "selected": true
         },
         {
+            "id": "pdp_thumb_ring",
+            "type": "boolean",
+            "format": "switch",
+            "icon": "sicon-toggle-off",
+            "label": "تمييز الصورة المختارة في معرض الصور",
+            "description": "في صفحة المنتج: الصورة المصغرة المعروضة يحيطها إطار بلون المتجر بدل أن تبهت",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
+            "id": "pdp_crumbs_links",
+            "type": "boolean",
+            "format": "switch",
+            "icon": "sicon-toggle-off",
+            "label": "مسار التنقل بشكل روابط",
+            "description": "في صفحة المنتج: «الرئيسية / القسم» أكبر قليلاً وبلون الروابط ومساحة ضغط أوسع",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
+            "id": "pdp_qty_min_hint",
+            "type": "boolean",
+            "format": "switch",
+            "icon": "sicon-toggle-off",
+            "label": "تعطيل زر تقليل الكمية عند 1",
+            "description": "في صفحة المنتج: زر «−» يظهر معطلاً عندما تكون الكمية 1، والضغط عليه يعرض «الحد الأدنى للكمية 1»",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
+            "id": "pdp_hide_loyalty_banner",
+            "type": "boolean",
+            "format": "switch",
+            "icon": "sicon-toggle-off",
+            "label": "إخفاء بانر نقاط الولاء في صفحة المنتج",
+            "description": "يخفي بانر «اكسب نقاط ولاء» تحت السعر في صفحة المنتج",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
+            "id": "side_menu_hide_meta",
+            "type": "boolean",
+            "format": "switch",
+            "icon": "sicon-toggle-off",
+            "label": "إخفاء المدينة واللغة من القائمة الجانبية",
+            "description": "يخفي «الرياض» و«ر.س | العربية» من القائمة الجانبية في الجوال",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
+            "id": "pdp_trust_sheets",
+            "type": "boolean",
+            "format": "switch",
+            "icon": "sicon-toggle-off",
+            "label": "نوافذ التوصيل والدفع في صفحة المنتج",
+            "description": "الضغط على «توصيل لبابك» أو «الدفع عند الاستلام» يفتح نافذة سفلية بالنص المكتوب في الحقلين التاليين. الحقل الفارغ يبقي عنصره بلا ضغط",
+            "required": false,
+            "value": true,
+            "selected": true
+        },
+        {
+            "id": "pdp_delivery_info",
+            "type": "string",
+            "format": "textarea",
+            "icon": "sicon-edit",
+            "label": "نص نافذة التوصيل",
+            "description": "مدة التوصيل وتكلفته، يظهر عند الضغط على «توصيل لبابك»",
+            "required": false,
+            "value": ""
+        },
+        {
+            "id": "pdp_payment_info",
+            "type": "string",
+            "format": "textarea",
+            "icon": "sicon-edit",
+            "label": "نص نافذة الدفع",
+            "description": "طرق الدفع وشرح التقسيط عبر تابي وتمارا، يظهر عند الضغط على «الدفع عند الاستلام»",
+            "required": false,
+            "value": ""
+        },
+        {
             "type": "boolean",
             "icon": "sicon-toggle-off",
             "label": "تكبير الصور في سليدر صور المنتج",

@@ -125,7 +125,9 @@
     </nav>
 
     {# language / currency / location — STATIC read-only info (not selectors).
-       Styled as muted labels with an info icon so they don't look tappable. #}
+       Shoppers still tapped them (Clarity, Oct 2026: 32 dead clicks), so they are
+       hidden unless «إخفاء المدينة واللغة من القائمة الجانبية» is saved off. #}
+    {% if theme.settings.get('side_menu_hide_meta') is same as(false) %}
     <div class="qside__meta">
       <span class="qside__meta-box">
         <i class="sicon-location qside__meta-icon" aria-hidden="true"></i>
@@ -142,6 +144,7 @@
         <span>{{ trans('blocks.qissa.lang_arabic') }}</span>
       </span>
     </div>
+    {% endif %}
 
     {# contact — dynamic store email/phone #}
     <div class="qside__contact">

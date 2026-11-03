@@ -151,6 +151,8 @@
       "copy_link": "انسخ رابط المنتج",
       "tax_alt": "ضريبة القيمة المضافة",
       "discount_off": "خصم :pct%",
+      "qty_min_hint": "الحد الأدنى للكمية 1",
+      "sheet_close": "إغلاق",
       "best_seller": "الأكثر مبيعًا",
       "package_heading": "اختيار عملاء قصة",
       "buy_now": "اشترِ الآن",

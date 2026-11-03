@@ -535,7 +535,7 @@
                             {% if product.is_hidden_quantity or product.type == 'booking' %}
                                 <input type="hidden" value="1" name="quantity" aria-label="{{ trans('pages.products.quantity') }}"/>
                             {% else %}
-                                <div class="qpd__qty">
+                                <div class="qpd__qty"{% if theme.settings.get('pdp_qty_min_hint', true) %} data-qty-min-hint="{{ trans('blocks.qissa.qty_min_hint') }}"{% endif %}>
                                     <salla-quantity-input max="{{ product.max_quantity }}" value="1" name="quantity" aria-label="{{ trans('pages.products.quantity') }}"></salla-quantity-input>
                                 </div>
                             {% endif %}
@@ -560,23 +560,51 @@
                 {# Tabby / Tamara — their own widgets, when the store has them on #}
                 <salla-installment class="qpd__installment" price="{{ product.price }}"></salla-installment>
 
-                {# trust badges (168:8022) #}
-                <ul class="qpd__trust">
+                {# trust badges (168:8022). With «نوافذ التوصيل والدفع» on, the delivery and
+                   payment items open a bottom sheet with the merchant's text (pdp_delivery_info,
+                   pdp_payment_info; partials/qissa-pdp-taps.js). An empty text leaves its item
+                   as plain text. Clarity, Oct 2026: 66 dead clicks on these lines. #}
+                {% set trust_sheets = theme.settings.get('pdp_trust_sheets', true) %}
+                {% set delivery_info = theme.settings.get('pdp_delivery_info', '')|trim %}
+                {% set payment_info = theme.settings.get('pdp_payment_info', '')|trim %}
+                <ul class="qpd__trust" data-qsheet-close="{{ trans('blocks.qissa.sheet_close') }}">
                     <li class="qpd__trust-item">
                         <img src="{{ 'images/qpd/factory.svg'|asset }}" alt="" width="20" height="20" loading="lazy"/>
                         <b>{{ trans('blocks.qissa.trust_factory') }}</b>
                         <small>{{ trans('blocks.qissa.trust_factory_sub') }}</small>
                     </li>
+                    {% if trust_sheets and delivery_info %}
+                    <li class="qpd__trust-item qpd__trust-item--tap">
+                        <button type="button" class="qpd__trust-btn" data-qsheet="delivery" aria-haspopup="dialog">
+                            <img src="{{ 'images/qpd/truck.svg'|asset }}" alt="" width="20" height="20" loading="lazy"/>
+                            <b>{{ trans('blocks.qissa.trust_delivery') }}</b>
+                            <small>{{ trans('blocks.qissa.trust_delivery_sub') }}</small>
+                        </button>
+                        <template data-qsheet-body="delivery">{{ delivery_info }}</template>
+                    </li>
+                    {% else %}
                     <li class="qpd__trust-item">
                         <img src="{{ 'images/qpd/truck.svg'|asset }}" alt="" width="20" height="20" loading="lazy"/>
                         <b>{{ trans('blocks.qissa.trust_delivery') }}</b>
                         <small>{{ trans('blocks.qissa.trust_delivery_sub') }}</small>
                     </li>
+                    {% endif %}
+                    {% if trust_sheets and payment_info %}
+                    <li class="qpd__trust-item qpd__trust-item--tap">
+                        <button type="button" class="qpd__trust-btn" data-qsheet="cod" aria-haspopup="dialog">
+                            <img src="{{ 'images/qpd/shield.svg'|asset }}" alt="" width="20" height="20" loading="lazy"/>
+                            <b>{{ trans('blocks.qissa.trust_cod') }}</b>
+                            <small>{{ trans('blocks.qissa.trust_cod_sub') }}</small>
+                        </button>
+                        <template data-qsheet-body="cod">{{ payment_info }}</template>
+                    </li>
+                    {% else %}
                     <li class="qpd__trust-item">
                         <img src="{{ 'images/qpd/shield.svg'|asset }}" alt="" width="20" height="20" loading="lazy"/>
                         <b>{{ trans('blocks.qissa.trust_cod') }}</b>
                         <small>{{ trans('blocks.qissa.trust_cod_sub') }}</small>
                     </li>
+                    {% endif %}
                 </ul>
 
                 {# gift box — opens Salla's gifting (its own tile is hidden in qusah-overrides) #}

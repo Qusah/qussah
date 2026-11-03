@@ -91,6 +91,7 @@ function bindReadMore(root) {
       const first = root.querySelector(ITEM);
 
       event.preventDefault();
+      try { if (typeof window.clarity === 'function') window.clarity('event', 'pdp_read_more'); } catch (e) {}
 
       if (first && !first.classList.contains('is-open')) {
         setOpen(first, true, false);

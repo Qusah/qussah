@@ -151,6 +151,8 @@
       "copy_link": "Copy product link",
       "tax_alt": "Value added tax",
       "discount_off": ":pct% off",
+      "qty_min_hint": "The minimum quantity is 1",
+      "sheet_close": "Close",
       "best_seller": "Best seller",
       "package_heading": "Our customers' pick",
       "buy_now": "Buy now",

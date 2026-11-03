@@ -6,6 +6,7 @@ import { zoom } from './partials/image-zoom';
 import { initCompare } from './partials/qissa-compare';
 import initProductDetails from './partials/qissa-product-details';
 import initHideEmptyReviews from './partials/qissa-hide-empty-reviews';
+import initPdpTaps from './partials/qissa-pdp-taps';
 
 const quiet = fn => (salla.api && typeof salla.api.withoutNotifier === 'function' ? salla.api.withoutNotifier(fn) : fn());
 
@@ -26,6 +27,7 @@ class Product extends BasePage {
         this.initRelated();
         this.initComments();
         initHideEmptyReviews();   // no rating and no comment: the reviews go (setting pdp_hide_empty_reviews)
+        initPdpTaps();   // «−» at 1 says the minimum; delivery / payment open a sheet (dead clicks, Oct 2026)
         // A click on a gallery photo opens the zoomable viewer instead of
         // fslightbox (videos still go to fslightbox) — bound by product-card.js,
         // which loads on every page and already carries partials/image-viewer.js.

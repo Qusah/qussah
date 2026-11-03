@@ -2165,3 +2165,198 @@ body.is-sticky-product-bar.product-single.qpd-has-sticky {
     svg { width: 12px; height: 12px; fill: currentColor; }
   }
 }
+
+// =====================================================================
+// Taps that went nowhere (Clarity dead clicks, Oct 2026; ClickUp z91pu68wfh).
+// Each one has a theme setting; a setting saved off puts a body class
+// (layouts/master.twig) or leaves the markup out (single.twig).
+// =====================================================================
+
+// The photo on show: a navy ring, where it used to be washed out and read as
+// the one not chosen (setting pdp_thumb_ring).
+body:not(.qpd-thumbs-plain) .qpd .details-slider .slide--one-fourth.swiper-slide-thumb-active::after {
+  background: none;
+  box-shadow: inset 0 0 0 2px $qpd-navy;
+}
+
+// The photo arrows draw 40px; their tap area is 48 (the circle stays as drawn).
+.qpd__gallery-arrow::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+}
+
+// «اقرأ المزيد»: a 44px tall tap target, the text where it was.
+.qpd__more {
+  min-height: 44px;
+  margin-top: -5px;
+}
+
+// The breadcrumb reads as links: navy, a little larger, each with room to tap
+// (setting pdp_crumbs_links). The last item, the product itself, stays grey.
+body:not(.qpd-crumbs-plain) .qpd-crumbs {
+  .s-breadcrumb-wrapper {
+    font-size: 13px;
+    line-height: 20px;
+  }
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    color: $qpd-navy;
+    text-decoration: underline;
+    text-decoration-color: rgba(44, 52, 142, .35);
+    text-underline-offset: 3px;
+  }
+}
+
+// Salla's «اكسب +2990 نقطة ولاء» banner leads nowhere (setting pdp_hide_loyalty_banner).
+body:not(.qpd-loyalty-on) .qpd salla-loyalty-points-banner { display: none !important; }
+
+// «−» at quantity 1: drawn disabled, still answers a tap with the minimum (qissa-pdp-taps.js).
+.qpd__qty[data-qty-min-hint] {
+  position: relative;
+
+  .s-quantity-input-decrease-button.is-at-min { opacity: .35; }
+}
+.qpd__qty-hint {
+  position: absolute;
+  z-index: 4;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: $qpd-ink;
+  color: #fff;
+  font-family: $qpd-font !important;
+  font-size: 12px;
+  line-height: 18px;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  transition: opacity .18s ease, transform .18s ease;
+  pointer-events: none;
+
+  &.is-on {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+// «توصيل لبابك» / «الدفع عند الاستلام» with a text set: the whole card opens the sheet.
+.qpd__trust-item--tap {
+  // a small chevron in the card's far corner says there is more
+  &::after {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 6px;
+    height: 6px;
+    border-bottom: 1.6px solid $qpd-navy;
+    border-left: 1.6px solid $qpd-navy;
+    transform: rotate(45deg);
+    pointer-events: none;
+  }
+}
+.qpd__trust-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: inherit;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+
+  // the tap area is the whole card
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    border-radius: inherit;
+  }
+  &:focus-visible { outline: none; }
+  &:focus-visible::after { box-shadow: 0 0 0 2px $qpd-navy; border-radius: 14px; }
+}
+
+// the bottom sheet
+// above the store's floating WhatsApp button, which otherwise sits on the text
+.qsheet {
+  position: fixed;
+  z-index: 2147483000;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  &__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 18, 30, .45);
+    opacity: 0;
+    transition: opacity .2s ease;
+  }
+  &__panel {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    max-height: 80vh;
+    overflow: auto;
+    padding: 18px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+    border-radius: 20px 20px 0 0;
+    background: #fff;
+    transform: translateY(100%);
+    transition: transform .26s cubic-bezier(.2, .8, .2, 1);
+  }
+  &.is-open &__backdrop { opacity: 1; }
+  &.is-open &__panel { transform: none; }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  &__title {
+    margin: 0;
+    color: $qpd-ink;
+    font-family: $qpd-font !important;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 26px;
+  }
+  &__close {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin: -8px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: $qpd-ink;
+    cursor: pointer;
+  }
+  &__body {
+    color: $qpd-muted;
+    font-family: $qpd-font !important;
+    font-size: 14px;
+    line-height: 24px;
+    white-space: pre-line;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__backdrop,
+    &__panel { transition: none; }
+  }
+}
+html.qsheet-open { overflow: hidden; }
