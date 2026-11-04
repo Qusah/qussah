@@ -355,7 +355,7 @@ class ProductCard extends HTMLElement {
     return salla.url.asset(`images/qcard/${name}.svg`);
   }
 
-  // Preorder label, else the merchant's promotion title, else «خصم» on sale.
+  // Preorder label, else the merchant's promotion title — no «خصم» in its place (partials/qprod-card.twig).
   qcardBadge() {
     const p = this.product;
     // only the promotion title turns its comma parts (partials/promo-cycle.js); a preorder label stays put
@@ -363,8 +363,7 @@ class ProductCard extends HTMLElement {
       const promo = p.promotion_title;
       return `<span class="qprod__badge"${promoBadgeAttr(promo, s => this.escapeHTML(s))}>${this.escapeHTML(promoFirst(promo))}</span>`;
     }
-    const text = p?.preorder?.label
-      || (p?.is_on_sale ? (salla.lang.get('blocks.qissa.sale') || 'خصم') : '');
+    const text = p?.preorder?.label;
     if (text) return `<span class="qprod__badge">${this.escapeHTML(text)}</span>`;
     return this.showQuantity ? this.getProductBadge() : '';
   }

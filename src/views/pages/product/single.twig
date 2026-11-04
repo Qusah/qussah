@@ -118,8 +118,8 @@
         <div class="qpd__row" id="product-{{ product.id }}">
             <div class="qpd__gallery">
                 {% set has_many_images = product.images|length > 1 %}
-                {# the card's rule: the merchant's promotion title, else «خصم» on sale #}
-                {% set badge = product.promotion_title ?: ((product.is_on_sale and product.sale_price) ? trans('blocks.qissa.sale') : '') %}
+                {# the card's rule: the merchant's promotion title only (qprod-card.twig) #}
+                {% set badge = product.promotion_title ?: '' %}
                 <salla-slider
                         id="details-slider-{{ product.id }}"
                         class="details-slider image-slider"
