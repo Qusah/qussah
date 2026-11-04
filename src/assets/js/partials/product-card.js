@@ -1,7 +1,7 @@
 import BasePage from '../base-page';
 import { enhanceCarousels } from './card-carousel';
 import { bootQuickView, enhanceJsCard } from './qissa-quick-view';
-import { initPackCards } from './qissa-pack-card';
+import { initPackCards, priceNum } from './qissa-pack-card';
 import { bindGallery } from './image-viewer';
 import { soldLabel } from './qissa-sold-count';
 import { bootPromoCycle, promoFirst, promoBadgeAttr } from './promo-cycle';
@@ -23,11 +23,7 @@ bindGallery('.image-slider');
 // Product Hero cards (qissa-package / qissa-dual-hero): gallery, pack contents,
 // «اشترِ الآن». They only need the DOM, so they don't wait for the SDK — nor do the cards' discounts below.
 // The server-rendered cards' «خصم N%» (partials/qprod-card.twig): Twig on Salla can't do sums on prices, so the
-// card prints both as text and N is worked out here. Arabic digits and separators read as numbers.
-const priceNum = (s) => {
-  const m = String(s || '').replace(/[٠-٩]/g, d => d.charCodeAt(0) - 1632).replace(/٫/g, '.').match(/\d[\d,٬]*(?:\.\d+)?/);
-  return m ? parseFloat(m[0].replace(/[,٬]/g, '')) : 0;
-};
+// card prints both as text and N is worked out here (priceNum, from qissa-pack-card.js).
 const fillCardDeals = () => document.querySelectorAll('.qprod__off[data-was][hidden]').forEach((off) => {
   const was = priceNum(off.dataset.was), now = priceNum(off.dataset.now);
   const n = was > now && now > 0 ? Math.round((was - now) / was * 100) : 0;

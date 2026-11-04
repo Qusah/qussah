@@ -125,12 +125,12 @@
                     <b class="qpack__price-now">{{ product.sale_price|money }}</b>
                     <s class="qpack__price-old">{{ product.regular_price|money }}</s>
                     {# «خصم 14%» — from the two prices, rounded down so it never claims more than the
-                       real discount; not shown under 1% (ClickUp z91pu68tp9) #}
-                    {% if show_discount and product.regular_price > 0 and product.regular_price > product.sale_price %}
-                        {% set off_pct = ((product.regular_price - product.sale_price) / product.regular_price * 100)|round(0, 'floor') %}
-                        {% if off_pct >= 1 %}
-                            <span class="qpack__price-off"{% if discount_color is defined and discount_color %} style="color: {{ discount_color }}"{% endif %}>{{ trans('blocks.qissa.discount_off')|replace({':pct': off_pct}) }}</span>
-                        {% endif %}
+                       real discount; not shown under 1% (ClickUp z91pu68tp9). No sums or comparisons on
+                       prices here: Salla's renderer drops the whole section over them (the hero vanished
+                       from the preview, Nov 2026). The two prices go out as text; qissa-pack-card.js works
+                       out the percent and shows it. #}
+                    {% if show_discount and product.regular_price %}
+                        <span class="qpack__price-off" data-was="{{ product.regular_price|money|striptags|trim }}" data-now="{{ product.sale_price|money|striptags|trim }}" data-text="{{ trans('blocks.qissa.discount_off') }}"{% if discount_color is defined and discount_color %} style="color: {{ discount_color }}"{% endif %} hidden></span>
                     {% endif %}
                 {% else %}
                     <b class="qpack__price-now">{{ product.price|money }}</b>

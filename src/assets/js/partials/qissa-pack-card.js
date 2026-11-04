@@ -18,6 +18,26 @@ import { insideLines } from './qissa-quick-view';
 
 const INSIDE_MAX = 6;   // three rows of two
 
+// A price printed as text («299 ر.س», «١٬٢٩٩٫٥٠») as a number: Twig on Salla can't do sums on prices, so the
+// cards print them and the discounts are worked out here (product-card.js too). Arabic digits and separators
+// read as numbers.
+export const priceNum = (s) => {
+  const m = String(s || '').replace(/[٠-٩]/g, d => d.charCodeAt(0) - 1632).replace(/٫/g, '.').match(/\d[\d,٬]*(?:\.\d+)?/);
+  return m ? parseFloat(m[0].replace(/[,٬]/g, '')) : 0;
+};
+
+// «خصم 14%» after the struck price (show_discount): rounded down so it never claims more than the real
+// discount, none under 1%.
+function fillDiscount(card) {
+  const off = card.querySelector('.qpack__price-off[data-was][hidden]');
+  if (!off) return;
+  const was = priceNum(off.dataset.was), now = priceNum(off.dataset.now);
+  const n = was > now && now > 0 ? Math.floor((was - now) / was * 100) : 0;
+  if (n < 1) return;
+  off.textContent = (off.dataset.text || '').replace(':pct', n);
+  off.hidden = false;
+}
+
 // A description line as [count, name]. «1 كرتون مناديل 600 مفرد / 32 عبوة» carries
 // its count after the slash; a spec line «عدد الشدات: 10 شدات» its value after the
 // colon, which takes the bold line and leaves its label under it; «32 عبوة مناديل
@@ -151,6 +171,7 @@ export function initPackCards(root = document) {
   root.querySelectorAll('[data-qpack]:not([data-qpack-init])').forEach(card => {
     card.setAttribute('data-qpack-init', '');
     fillInside(card);
+    fillDiscount(card);
     gallery(card);
     buyNow(card);
   });
