@@ -151,7 +151,26 @@
     width: 693px;
     aspect-ratio: 693 / 416;
 
-    picture { display: block; height: 100%; }
+    picture {
+      position: relative;   // over the light
+      display: block;
+      height: 100%;
+    }
+  }
+  // the light behind the products, Figma's «Ellipse 11» (802:699, hidden in the file; the client asked for it):
+  // a 387 circle of #D1E7DD at 40%, blurred 216.8 — its SVG spreads 1254.2 across. Its middle sits 329.5 down
+  // the 416 photo, on its centre line; it scales with the photo (phones draw none, so their 482 photo takes it
+  // at the same 180.98%).
+  &__glow {
+    position: absolute;
+    top: 79.21%;
+    left: 50%;
+    display: block;
+    width: 180.98%;
+    max-width: none;
+    height: auto;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
   }
   &__img {
     display: block;

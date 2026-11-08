@@ -42,6 +42,9 @@ the panel's top (qissa-header.scss), so the panel keeps the frame's room for it 
         </div>
 
         <{{ media_tag }} class="qissa-hero__media"{% if component.link %} href="{{ component.link }}" aria-label="{{ (component.title_line1 ~ ' ' ~ component.title_line2)|trim|default(store.name) }}"{% endif %}>
+            {# the light behind the products: Figma's «Ellipse 11» (802:699), hidden in the file, shown at the
+               client's ask (8 Nov 2026) #}
+            <img class="qissa-hero__glow" src="{{ 'images/qhero/glow.svg'|asset }}" alt="" width="1254" height="1254"/>
             {# the page's largest paint on every screen: never lazy, fetched first #}
             <picture>
                 <source media="(max-width: 768px)" srcset="{{ img_m }}" width="964" height="580"/>
