@@ -1,204 +1,211 @@
 // ====================================================================
-// Qissa Hero  —  custom homepage hero
-// Values are EXACT from Figma design system (node 100:3 + tokens 0:1)
-// Font: GE SS Two | Primary #30378E | Navy #172951 | Accent #daeff7
+// Qissa Hero — Figma «Qusah Re-Vamp» 803:727
+//   desktop 802:645: a 1400 × 745 panel at x 20 / y 22 of the 1440 frame
+//   phones  806:678: 374 × 499.59 at x 8 / y 8 of the 390 frame
+// Values are the frames' own. The panel lays out as the frame's auto layout:
+// one centred column — the navbar's row, the copy, the photo — 34 apart (phones
+// 24), the photo standing on the panel's foot. The navbar is not drawn here: as
+// the page's first block the hero carries it (qissa-header.scss, same test), and
+// the panel keeps the row's room — the frame's 93 (phones 62.59) — on top.
+// Tablets (769–1150) take the desktop panel; no frame covers them.
 // ====================================================================
 
 .qissa-hero {
-  position: relative;
-  overflow: hidden;
-  // Figma: dark navy (top) -> royal blue (bottom-right) diagonal
-  background: linear-gradient(125deg, #172951 0%, #25307a 50%, #30378e 100%);
-  border-radius: 24px;
-  margin-top: 12px;
+  padding: 0 20px;
 
-  &__inner {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;   // RTL → pins the text block to the RIGHT
-    gap: 96px;
-    min-height: 700px;
-    padding: 190px 80px 60px;      // Figma px-80 py-190
+  // the page's first block (qissa-image-banner.scss has the same test): flush
+  // under the navbar, which rides on the panel
+  &:first-child,
+  &:not(.s-block ~ *):not(.s-blocks-wrapper:not(:empty) ~ *) {
+    margin-top: 0;
+    --qhero-top: 127px;   // the row's 93 + 34
   }
 
-  // ---- text side (right in RTL) — fixed width per Figma (542px) ----
-  &__content {
-    position: relative; z-index: 2;
-    flex: 0 0 542px;
-    max-width: 542px;
+  &__panel {
+    position: relative;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;         // right-aligned column
-    text-align: right;
-    color: #ffffff;
-    gap: 16px;                     // Figma spacing
+    align-items: center;
+    gap: 34px;
+    padding: var(--qhero-top, 34px) 24px 0;   // the row's own 24 at the sides
+    overflow: hidden;
+    border-radius: 40px;
+    background: #30378e;
+    color: #fff;
+    text-align: center;
+  }
+
+  // the beams: a blurred white ellipse (the frame's SVG, 10% opacity) turned in
+  // a box at each top corner, nested exactly as the frame nests them. The SVG
+  // spreads 100 past its ellipse on every side for the blur.
+  &__beam {
+    position: absolute;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+
+    > span {
+      position: relative;
+      flex: none;
+      height: 54px;
+    }
+    img {
+      position: absolute;
+      top: -100px;
+      left: -100px;
+      display: block;
+      width: calc(100% + 200px);
+      max-width: none;
+      height: 254px;
+    }
+
+    &--l {
+      left: -0.18px;
+      width: 854.03px;
+      height: 854.03px;
+
+      > span { width: 1153.79px; transform: rotate(45deg); }
+    }
+    &--r {
+      right: -0.18px;
+      width: 858.65px;
+      height: 858.65px;
+
+      > span { width: 1160.32px; transform: rotate(135deg) scaleY(-1); }
+    }
+    // phones
+    &--ml {
+      display: none;
+      top: -0.16px;
+      left: -21.22px;
+      width: 197px;
+      height: 637.07px;
+
+      > span { width: 641.38px; transform: rotate(76.99deg) scaleY(-1); }
+    }
+    &--mr {
+      display: none;
+      top: 5px;
+      right: -7.77px;
+      width: 113.74px;
+      height: 555.14px;
+
+      > span { width: 552.55px; transform: rotate(96.24deg) scaleY(-1); }
+    }
+  }
+
+  // the headline and the text: 853 wide at most, 16 apart
+  &__copy {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 853.01px;
   }
 
   &__title {
-    font-family: 'GE SS Two', sans-serif;
-    font-size: 64px;               // Figma Title-2
-    font-weight: 500;              // Medium
-    line-height: 76px;
-    letter-spacing: -0.8px;
-    margin: 0;
-    color: #ffffff;
-    width: 100%;
-
-    @media (max-width: 1280px) { font-size: 48px; line-height: 1.25; }
-    @media (max-width: 768px)  { font-size: 32px; line-height: 1.3; }
-  }
-
-  &__subtitle {
-    font-family: 'GE SS Two', sans-serif;
-    font-size: 16px;               // Figma Body-2
-    font-weight: 300;
-    line-height: 24px;
-    color: #f8f8f8;
-    margin: 0;
-    width: 534px;                  // Figma width
-    max-width: 100%;
-  }
-  // desktop shows the long description; the short mobile tagline is hidden here
-  &__subtitle--mobile { display: none; }
-
-  // ---- CTA button ----
-  &__btn {
-    display: inline-flex;
-    direction: ltr;               // lay children L→R so the arrow sits on the LEFT
-                                  // and the cart on the RIGHT (DOM order: arrow · text · cart).
-                                  // Without this the button inherits page RTL and flips them.
-    align-self: flex-end;         // right side in RTL
-    margin-inline-start: auto;    // push to the right
-    margin-inline-end: 0;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: 200px;                 // Figma
-    height: 55px;
-    margin-top: 16px;
-    background: #91e6f7;          // Figma button color
-    border: 1px solid #30378e;
-    color: #0a1f30;              // Figma chosen-blue
-    font-family: 'GE SS Two', sans-serif;
-    font-weight: 500;
-    font-size: 16px;
-    border-radius: 16px;
-    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
-
-    &:hover {
-      background: #c5e6f2;
-      transform: translateY(-2px);
-      box-shadow: 0 12px 28px rgba(218, 239, 247, 0.3);
-    }
-
-    // Figma: arrow_left 16px (leftmost), cart 23px (rightmost)
-    &-arrow { font-size: 16px; line-height: 1; }
-    &-cart  { font-size: 20px; line-height: 1; }
-  }
-
-  // ---- image side (left in RTL) — Figma: fills left ~55%, pinned to the
-  // hero's bottom-left corner, bleeding to the left + bottom edges. ----
-  &__media {
-    position: absolute;
-    left: 0; bottom: 0;
-    width: 56%; height: 90%;
     display: flex;
-    align-items: flex-end;
-    justify-content: flex-start;
-    pointer-events: none;
-    z-index: 1;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    color: #fff;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.8px;
+  }
+  &__line { display: block; }
+  // the first line: its words, then the logo on their left, 8 apart
+  &__line--logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  &__logo {
+    display: block;
+    flex: none;
+    width: auto;
+    height: 32px;
   }
 
+  &__text {
+    margin: 0;
+    color: #c9d8f6;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+
+    &--mobile { display: none; }
+  }
+
+  // the products photo, 693 × 416, flush with the panel's foot. Wider than a
+  // narrow panel it overflows both sides evenly and the panel clips it.
+  &__media {
+    position: relative;
+    display: block;
+    flex: none;
+    width: 693px;
+    aspect-ratio: 693 / 416;
+
+    picture { display: block; height: 100%; }
+  }
   &__img {
-    width: 100%; height: 100%;
-    object-fit: contain;
-    object-position: bottom left;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
+}
 
-  // ---- responsive ----
-  // tablet / in-between: the text was flex:0 0 542px and the image is an
-  // absolute 56% block — below ~1300px the fixed text overlapped the image.
-  // Constrain the text to the right ~48% and the image to the left ~50%.
-  @media (max-width: 1280px) and (min-width: 769px) {
-    &__inner { gap: 3rem; padding: 160px 48px 48px; min-height: 560px; }
-    &__content { flex: 0 1 48%; max-width: 48%; }
-    &__subtitle { width: 100%; }
-    &__media { width: 50%; }
-  }
-  @media (max-width: 1024px) and (min-width: 769px) {
-    &__inner { gap: 2rem; padding: 130px 32px 32px; min-height: 480px; }
-    &__title { font-size: 44px; line-height: 1.25; }
-  }
+@media (max-width: 768px) {
+  .qissa-hero {
+    padding: 0 8px;
 
-  // MOBILE — exact Figma "Home Mobile" hero (node 6036:21488 / content 6036:21545)
-  // Layout: small tagline (baby-blue) on TOP, big headline below — both
-  // right-aligned (RTL) — and the product photo full-bleed across the BOTTOM.
-  @media (max-width: 768px) {
-    &__inner {
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: flex-start;
-      gap: 20px;                        // Figma content gap
-      min-height: 600px;                // room for copy (top) + product photo (bottom)
-      padding: 32px 24px 0;             // top breathing room (nav no longer overlaps the hero)
-    }
-    &__content {
-      align-items: flex-end;            // right-aligned column (items-end)
-      text-align: right;
-      gap: 20px;
-      flex: 0 0 auto;
-      width: 100%;
+    &:first-child,
+    &:not(.s-block ~ *):not(.s-blocks-wrapper:not(:empty) ~ *) {
+      --qhero-top: 86.59px;   // the row's 62.59 + 24
     }
 
-    // Figma stacks the tagline ABOVE the headline on mobile (desktop keeps the
-    // headline first), so reorder the copy via flex order — no markup change.
-    &__subtitle { order: 1; }
-    &__title    { order: 2; }
-    &__btn      { order: 3; }
+    &__panel {
+      gap: 24px;
+      padding: var(--qhero-top, 24px) 8px 0;
+      border-radius: 28px;
+    }
 
+    &__beam--l,
+    &__beam--r { display: none; }
+    &__beam--ml,
+    &__beam--mr { display: flex; }
+
+    // 24 / 20 lines, 2 apart; the logo 4 from its words
     &__title {
-      font-size: 30px;                  // Figma heading/h5 mobile
-      font-weight: 700;                 // Bold
-      line-height: 40px;
-      letter-spacing: -0.15px;
-      width: 100%;
+      gap: 2px;
+      font-size: 20px;
+      letter-spacing: -0.5px;
     }
-    // swap copies: hide the long desktop description, show the short tagline
-    &__subtitle--desktop { display: none; }
-    &__subtitle--mobile  { display: block; }
-    &__subtitle {
-      font-size: 14px;                  // Figma label/label-2 — tagline above the title
+    &__line--logo {
+      gap: 4px;
+      font-size: 24px;
+      letter-spacing: -0.8px;
+    }
+    &__logo { height: 21.31px; }
+
+    &__text {
+      font-size: 14px;
       font-weight: 300;
-      line-height: 20px;
-      letter-spacing: -0.16px;
-      color: #daeff7;                   // baby-blue on mobile
-      width: 100%;
-    }
-    &__btn {
-      display: inline-flex;             // show the CTA button on mobile
+
+      &--desktop { display: none; }
+      &--mobile { display: block; }
     }
 
-    // product photo — full-bleed across the bottom of the hero card,
-    // bottom-aligned (overrides the desktop 56% bottom-left absolute box).
+    // 482 × 290 under a 358 column: 134.64% of it, running past both sides
     &__media {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100%;
-      height: 48%;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      pointer-events: none;
-      z-index: 1;
-    }
-    &__img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      object-position: bottom center;
-      max-height: none;
+      width: 134.64%;
+      aspect-ratio: 482 / 290;
     }
   }
 }

@@ -271,21 +271,21 @@ $qh-on-bleed: '.qheader.qheader:has(~ main > .qibanner.qibanner--bleed:not(.s-bl
   }
 }
 
-// hero starts right after the nav
-.qissa-hero {
-  margin: 0 50px !important;
-  border-radius: 30px !important;
-  overflow: hidden;
-  position: relative;
-  z-index: 1;
-}
-// desktop-only: top breathing room for the hero (nav no longer overlaps it)
-@media (min-width: 769px) {
-  .qissa-hero .qissa-hero__inner { padding-top: 70px; }
-}
-// mobile: tighter side margins (Figma hero x≈15 in a 428 frame)
-@media (max-width: 768px) {
-  .qissa-hero { margin: 0 16px !important; border-radius: 24px !important; }
+// ---- on the Qissa Hero — the hero panel is the page's first block ----
+// Figma 803:727 (qissa-hero.scss): the panel at x 20 / y 22 of the 1440 frame, its row 24 in from each side
+// and centred 46.5 down it (the row's frame is 93 tall); phones (806:678): at x 8 / y 8, the row 8 in and 20
+// down. The bar's box is placed so its row's middle lands there, then the panel slides up under it to its y.
+$qh-on-qhero: '.qheader:has(~ main > .qissa-hero:not(.s-block ~ *):not(.s-blocks-wrapper:not(:empty) ~ *))';
+#{$qh-on-qhero} {
+  --qh-t: 26.64px;      // 22 + 46.5 − 83.73 / 2
+  --qh-r: 20px;
+  --qh-l: 20px;
+  --qh-gap: -88.37px;   // 22 − (26.64 + 83.73)
+  --qh-nr: 24px;
+  --qh-nl: 24px;
+  --qh-navy: 0;
+  --qh-pe: none;
+  --qh-x: 20px;
 }
 
 // ---- MOBILE + TABLET ----
@@ -312,6 +312,13 @@ $qh-on-bleed: '.qheader.qheader:has(~ main > .qibanner.qibanner--bleed:not(.s-bl
     --qh-gap: -64.7px;   // 10 − (10 + 64.7)
     --qh-nr: 10px;
     --qh-nl: 10px;
+  }
+
+  // the Qissa Hero on tablets keeps the desktop panel (its row's middle 68.5 down the page) under the
+  // phones' 64.7 bar, whose row starts 11 into it
+  #{$qh-on-qhero} {
+    --qh-t: 36.15px;      // 68.5 − (11 + 42.59 / 2)
+    --qh-gap: -78.85px;   // 22 − (36.15 + 64.7)
   }
 
   .qheader .qheader-nav {
@@ -348,6 +355,20 @@ $qh-on-bleed: '.qheader.qheader:has(~ main > .qibanner.qibanner--bleed:not(.s-bl
     border-radius: 9.68px;
     font-size: 10.65px;
     line-height: 17.04px;
+  }
+}
+
+// the Qissa Hero on phones (806:678): the panel at y 8, its row 8 in from each side and 20 down — the bar's
+// row starts 11 into it, so the box starts 17 down
+@media (max-width: 768px) {
+  #{$qh-on-qhero} {
+    --qh-t: 17px;         // 8 + 20 − 11
+    --qh-r: 8px;
+    --qh-l: 8px;
+    --qh-gap: -73.7px;    // 8 − (17 + 64.7)
+    --qh-nr: 8px;
+    --qh-nl: 8px;
+    --qh-x: 8px;
   }
 }
 

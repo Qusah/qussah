@@ -1,46 +1,52 @@
 {#
-| Variable                | Type   | Description                          |
-|-------------------------|--------|--------------------------------------|
-| component               | object | merchant settings from twilight.json |
-| component.heading       | string | Main hero headline                   |
-| component.subheading    | string | Supporting paragraph                 |
-| component.image         | string | Hero product image                   |
-| component.button_text   | string | CTA button label                     |
-| component.button_url    | string | CTA button link                      |
-| position                | int    | sorting block                        |
-#}
-<section class="s-block qissa-hero" id="qissa-hero-{{ position }}">
-    <div class="container">
-        <div class="qissa-hero__inner">
-            {# Text side (right in RTL) #}
-            <div class="qissa-hero__content">
-                {% if component.heading %}
-                    <h1 class="qissa-hero__title">{{ component.heading }}</h1>
-                {% endif %}
-                {# desktop description — merchant subheading (falls back to the brand description) #}
-                <p class="qissa-hero__subtitle qissa-hero__subtitle--desktop">{{ component.subheading|default(trans('blocks.qissa.hero_subtitle')) }}</p>
-                {# mobile tagline — fixed short line per Figma 6036:21489 #}
-                <p class="qissa-hero__subtitle qissa-hero__subtitle--mobile">{{ trans('blocks.qissa.cleaning_tagline') }}</p>
-                {% if component.button_text %}
-                    {# Figma node 100:127 — order: arrow_left (left) · text · cart (right) #}
-                    {# fall back to the products listing (same target as the header "المنتجات") #}
-                    <a href="{{ (component.button_url and component.button_url not in ['#', '/products']) ? component.button_url : store.url ~ '/كل-المنتجات/c1390845573' }}" class="qissa-hero__btn">
-                        <i class="sicon-arrow-left qissa-hero__btn-arrow"></i>
-                        <span>{{ component.button_text }}</span>
-                        <i class="sicon-shopping-cart qissa-hero__btn-cart"></i>
-                    </a>
-                {% endif %}
-            </div>
+| Variable                    | Type   | Description                                                   |
+|-----------------------------|--------|---------------------------------------------------------------|
+| component.title_line1       | string | the headline's first line, the logo beside it                 |
+| component.title_logo        | string | that logo; empty → the pink قصة logo (images/qhero)            |
+| component.title_line2       | string | the headline's second line                                    |
+| component.subheading        | string | the text under the headline on desktop and tablets            |
+| component.subheading_mobile | string | the text under the headline on phones                         |
+| component.image             | string | the products photo, 1386 × 832; empty → the theme's own       |
+| component.image_mobile      | string | phones, 964 × 580; empty → component.image, else the theme's  |
+| component.link              | string | optional: the photo opens it                                  |
+| position                    | int    | sorting block                                                 |
 
-            {# Image side (left in RTL) #}
-            {% if component.image %}
-                <div class="qissa-hero__media">
-                    {# The hero photo is the LCP element on mobile. `eager` only
-                       stops it being deferred; `fetchpriority` is what moves it
-                       ahead of the other images the preload scanner finds. #}
-                    <img src="{{ component.image }}" alt="{{ component.heading }}" loading="eager" fetchpriority="high" decoding="async" class="qissa-hero__img"/>
-                </div>
-            {% endif %}
+Qissa Hero — Figma «Qusah Re-Vamp» 803:727: desktop 802:645 (1400 × 745), phones 806:678 (374 × 500).
+A navy panel lit by two soft beams from its top corners; the headline (its first line beside the pink logo),
+the text, then the products photo standing on the panel's foot. As the page's first block the navbar rides on
+the panel's top (qissa-header.scss), so the panel keeps the frame's room for it (qissa-hero.scss).
+#}
+{% set logo = component.title_logo ?: ('images/qhero/qusah-pink.svg'|asset) %}
+{% set img = component.image ?: ('images/qhero/products-1386.webp'|asset) %}
+{% set img_m = component.image_mobile ?: (component.image ?: ('images/qhero/products-964.webp'|asset)) %}
+{% set media_tag = component.link ? 'a' : 'div' %}
+
+<section class="s-block qissa-hero" id="qissa-hero-{{ position }}">
+    <div class="qissa-hero__panel">
+        {# the beams: Figma's own blurred ellipses (802:646 / 802:647, phones 803:704 / 806:680) #}
+        <span class="qissa-hero__beam qissa-hero__beam--l" aria-hidden="true"><span><img src="{{ 'images/qhero/beam-l.svg'|asset }}" alt="" width="1354" height="254"/></span></span>
+        <span class="qissa-hero__beam qissa-hero__beam--r" aria-hidden="true"><span><img src="{{ 'images/qhero/beam-r.svg'|asset }}" alt="" width="1360" height="254"/></span></span>
+        <span class="qissa-hero__beam qissa-hero__beam--ml" aria-hidden="true"><span><img src="{{ 'images/qhero/beam-m-l.svg'|asset }}" alt="" width="841" height="254"/></span></span>
+        <span class="qissa-hero__beam qissa-hero__beam--mr" aria-hidden="true"><span><img src="{{ 'images/qhero/beam-m-r.svg'|asset }}" alt="" width="753" height="254"/></span></span>
+
+        <div class="qissa-hero__copy">
+            <h1 class="qissa-hero__title">
+                <span class="qissa-hero__line qissa-hero__line--logo">
+                    {% if component.title_line1 %}<span>{{ component.title_line1 }}</span>{% endif %}
+                    <img class="qissa-hero__logo" src="{{ logo }}" alt="{{ store.name }}" width="84" height="32"/>
+                </span>
+                {% if component.title_line2 %}<span class="qissa-hero__line">{{ component.title_line2 }}</span>{% endif %}
+            </h1>
+            {% if component.subheading %}<p class="qissa-hero__text qissa-hero__text--desktop">{{ component.subheading }}</p>{% endif %}
+            {% if component.subheading_mobile %}<p class="qissa-hero__text qissa-hero__text--mobile">{{ component.subheading_mobile }}</p>{% endif %}
         </div>
+
+        <{{ media_tag }} class="qissa-hero__media"{% if component.link %} href="{{ component.link }}" aria-label="{{ (component.title_line1 ~ ' ' ~ component.title_line2)|trim|default(store.name) }}"{% endif %}>
+            {# the page's largest paint on every screen: never lazy, fetched first #}
+            <picture>
+                <source media="(max-width: 768px)" srcset="{{ img_m }}" width="964" height="580"/>
+                <img class="qissa-hero__img" src="{{ img }}" alt="" width="1386" height="832" fetchpriority="high" decoding="async"/>
+            </picture>
+        </{{ media_tag }}>
     </div>
 </section>

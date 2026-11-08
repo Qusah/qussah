@@ -917,54 +917,89 @@
             "path": "home.qissa-hero",
             "fields": [
                 {
-                    "id": "heading",
+                    "id": "title_line1",
                     "type": "string",
                     "format": "text",
                     "label": {
-                        "en": "Heading",
-                        "ar": "العنوان الرئيسي"
+                        "en": "Headline — first line",
+                        "ar": "العنوان — السطر الأول"
                     },
-                    "value": "وصل جديد قصة وخيارتك صارت اكثر و اروع"
+                    "description": "يظهر الشعار بجانبه",
+                    "value": "وصــــل جديد"
+                },
+                {
+                    "id": "title_logo",
+                    "type": "string",
+                    "format": "image",
+                    "label": {
+                        "en": "Logo beside the first line",
+                        "ar": "الشعار بجانب السطر الأول"
+                    },
+                    "description": "اتركه فارغاً ليظهر شعار قصة الوردي",
+                    "value": null
+                },
+                {
+                    "id": "title_line2",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Headline — second line",
+                        "ar": "العنوان — السطر الثاني"
+                    },
+                    "value": "وخيـــــارتك صـــارت اكثــــر و اروع"
                 },
                 {
                     "id": "subheading",
                     "type": "string",
                     "format": "textarea",
                     "label": {
-                        "en": "Subheading",
-                        "ar": "النص الفرعي"
+                        "en": "Text under the headline — desktop",
+                        "ar": "النص تحت العنوان — الكمبيوتر"
                     },
-                    "value": "متجر قصة وجهتك الأولى لمستلزمات النظافة المنزلية — مناديل، صابون، معطرات وأكثر، باختيار سهل وتوصيل سريع. كل ما تحتاجه لبيت نظيف ومرتب بجودة عالية وأسعار مباشرة من المصنع."
+                    "value": "متجر قُصة وجهتك الأولى لمستلزمات النظافة المنزلية — مناديل، صابون، معطرات وأكثر، باختيار سهل وتوصيل سريع من المنــاديل للمعطـــرات، كل ما تحتاجـــــه لبيت نظيف ومرتب — بجودة عالية وأسعار مباشرة من المصنع"
+                },
+                {
+                    "id": "subheading_mobile",
+                    "type": "string",
+                    "format": "text",
+                    "label": {
+                        "en": "Text under the headline — phones",
+                        "ar": "النص تحت العنوان — الجوال"
+                    },
+                    "value": "متجر قُصة وجهتك الأولى لمستلزمات النظافة المنزلية"
                 },
                 {
                     "id": "image",
                     "type": "string",
                     "format": "image",
                     "label": {
-                        "en": "Hero Image",
-                        "ar": "صورة الهيرو"
+                        "en": "Products photo — desktop",
+                        "ar": "صورة المنتجات — الكمبيوتر"
                     },
+                    "description": "بخلفية شفافة، مقاس 1386×832 بكسل. اتركها فارغة لصورة منتجات قصة",
                     "value": null
                 },
                 {
-                    "id": "button_text",
+                    "id": "image_mobile",
                     "type": "string",
-                    "format": "text",
+                    "format": "image",
                     "label": {
-                        "en": "Button Text",
-                        "ar": "نص الزر"
+                        "en": "Products photo — phones",
+                        "ar": "صورة المنتجات — الجوال"
                     },
-                    "value": "تسوق معنا"
+                    "description": "بخلفية شفافة، مقاس 964×580 بكسل. اتركها فارغة لتظهر صورة الكمبيوتر",
+                    "value": null
                 },
                 {
-                    "id": "button_url",
+                    "id": "link",
                     "type": "string",
                     "format": "text",
                     "label": {
-                        "en": "Button URL",
-                        "ar": "رابط الزر"
+                        "en": "Photo link",
+                        "ar": "رابط الصورة"
                     },
-                    "value": "/products"
+                    "description": "اختياري: الضغط على صورة المنتجات يفتح هذا الرابط",
+                    "value": null
                 }
             ]
         },
