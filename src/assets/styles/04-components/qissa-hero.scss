@@ -18,7 +18,7 @@
   &:first-child,
   &:not(.s-block ~ *):not(.s-blocks-wrapper:not(:empty) ~ *) {
     margin-top: 0;
-    --qhero-top: 127px;   // the row's 93 + 34
+    --qhero-head: 93px;   // the row's frame
   }
 
   &__panel {
@@ -27,7 +27,7 @@
     flex-direction: column;
     align-items: center;
     gap: 34px;
-    padding: var(--qhero-top, 34px) 24px 0;   // the row's own 24 at the sides
+    padding: calc(var(--qhero-head, 0px) + 34px) 24px 0;   // the row's own 24 at the sides
     overflow: hidden;
     border-radius: 40px;
     background: #30378e;
@@ -180,18 +180,45 @@
   }
 }
 
+// Fitting the screen. Each frame is a screen — desktop 1440 × 1024, phones 390 × 844 — and the panel ends three
+// quarters (phones: 60%) of the way down it, the next section in view below. On a shorter screen (a laptop at
+// 125%: about 693 tall; a phone's browser under its bars: about 664) the hero is the frame scaled to that screen —
+// the headline, the text, the photo and the gaps together — so it keeps the same share of it; never under 70%
+// (phones 80%), which keeps the text readable (client, 8 Nov 2026: «the height is not like the design», «still
+// taking the full height», «also for the mobile screens»). The navbar's room stays whole: the navbar doesn't
+// scale. tan(atan2()) turns the two lengths into a plain ratio; a browser without it keeps 1.
+.qissa-hero {
+  --qhero-s: 1;
+  --qhero-screen: 1024px;
+  --qhero-min: 0.7;
+}
+@supports (zoom: tan(atan2(1px, 1px))) {
+  .qissa-hero { --qhero-s: clamp(var(--qhero-min), tan(atan2(100svh, var(--qhero-screen))), 1); }
+}
+.qissa-hero__copy { zoom: var(--qhero-s); }
+
+@media (min-width: 769px) {
+  .qissa-hero__panel {
+    gap: calc(34px * var(--qhero-s));
+    padding-top: calc(var(--qhero-head, 0px) + 34px * var(--qhero-s));
+  }
+  .qissa-hero__media { zoom: var(--qhero-s); }
+}
+
 @media (max-width: 768px) {
   .qissa-hero {
+    --qhero-screen: 844px;
+    --qhero-min: 0.8;
     padding: 0 8px;
 
     &:first-child,
     &:not(.s-block ~ *):not(.s-blocks-wrapper:not(:empty) ~ *) {
-      --qhero-top: 86.59px;   // the row's 62.59 + 24
+      --qhero-head: 62.59px;   // the row's frame
     }
 
     &__panel {
-      gap: 24px;
-      padding: var(--qhero-top, 24px) 8px 0;
+      gap: calc(24px * var(--qhero-s));
+      padding: calc(var(--qhero-head, 0px) + 24px * var(--qhero-s)) 8px 0;
       border-radius: 28px;
     }
 
@@ -221,9 +248,10 @@
       &--mobile { display: block; }
     }
 
-    // 482 × 290 under a 358 column: 134.64% of it, running past both sides
+    // 482 × 290 under a 358 column: 134.64% of it, running past both sides — a share of the column, so it scales
+    // by its width rather than by zoom (a zoomed box keeps its percentage width)
     &__media {
-      width: 134.64%;
+      width: calc(134.64% * var(--qhero-s));
       aspect-ratio: 482 / 290;
     }
   }
