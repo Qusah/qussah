@@ -154,9 +154,10 @@
             sortCards(); // apply the default order on load so it matches the label
             sortBtn.addEventListener('click', function () {
                 asc = !asc;
+                // the words from the server: salla.lang no longer has the theme's (layouts/master.twig, window.qissaWords)
                 sortValue.textContent = asc
-                    ? salla.lang.get('blocks.qissa.sort_low_high')
-                    : salla.lang.get('blocks.qissa.sort_high_low');
+                    ? {{ trans('blocks.qissa.sort_low_high')|json_encode|raw }}
+                    : {{ trans('blocks.qissa.sort_high_low')|json_encode|raw }};
                 sortBtn.classList.toggle('is-asc', asc);
                 sortCards();
             });

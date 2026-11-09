@@ -122,6 +122,23 @@
         window.quick_view_button_color = "{{ theme.settings.get('quick_view_button_color') }}"
         {# The add-to-cart pill (qissa-cart-toast.js) binds only when this is "on". #}
         window.cart_toast_enabled = "{{ cart_toast_on ? 'on' : 'off' }}"
+        {# The theme's own words its scripts draw (partials/qissa-words.js). Since Nov 2026 Salla's browser
+           language data (salla.lang) holds only Salla's common words — the store feature «use-translations-cdn»
+           loads cdn.files.salla.network/translations/common/<lang>.json and never the store's file with the
+           theme's locales — so salla.lang hands back the bare key («blocks.qissa.sold»). trans() here still works. #}
+        window.qissaWords = {{ {
+            'sold': trans('blocks.qissa.sold'),
+            'times': trans('blocks.qissa.times'),
+            'sale': trans('blocks.qissa.sale'),
+            'add_to_cart': trans('blocks.qissa.add_to_cart'),
+            'add_to_cart_for': trans('blocks.qissa.add_to_cart_for'),
+            'wishlist': trans('blocks.qissa.wishlist'),
+            'photo_count': trans('blocks.qissa.photo_count'),
+            'viewer_close': trans('blocks.qissa.viewer_close'),
+            'viewer_title': trans('blocks.qissa.viewer_title'),
+            'zoom_hint': trans('blocks.qissa.zoom_hint'),
+            'zoom_in': trans('blocks.qissa.zoom_in')
+        }|json_encode|raw }}
     </script>
     
     {% hook 'head:start' %}

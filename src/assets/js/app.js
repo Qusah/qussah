@@ -4,6 +4,7 @@ import initTootTip from './partials/tooltip';
 import AppHelpers from "./app-helpers";
 import { autoEnhanceCarousels } from "./partials/card-carousel";
 import { soldLabel } from "./partials/qissa-sold-count";
+import { qword } from "./partials/qissa-words";
 import { swipeToClose } from "./partials/qissa-swipe-close";
 
 class App extends AppHelpers {
@@ -410,7 +411,7 @@ isElementLoaded(selector, timeout = 8000){
     const heart = document.querySelector('.qprod__like-ic');
     const base = heart ? ((/url\(['"]?(.*?)heart\.svg/.exec(heart.getAttribute('style') || '') || [])[1] || '') : '';
     const icon = name => `${base}${name}.svg`;
-    const word = key => salla.lang.get(`blocks.qissa.${key}`);
+    const word = key => qword(key);
     const paint = (product) => {
       const stars = parseFloat(product.rating && product.rating.stars) || 0;
       // the rounded figure («مباع +300 مرة»); '' under 10, and then no line

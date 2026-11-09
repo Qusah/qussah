@@ -4,6 +4,7 @@ import { bootQuickView, enhanceJsCard } from './qissa-quick-view';
 import { initPackCards, priceNum } from './qissa-pack-card';
 import { bindGallery } from './image-viewer';
 import { soldLabel } from './qissa-sold-count';
+import { qword } from './qissa-words';
 import { bootPromoCycle, promoFirst, promoBadgeAttr } from './promo-cycle';
 
 // Card add → «✓ أُضيف» → stepper, and the quick-view ticket (every page loads
@@ -170,7 +171,7 @@ class ProductCard extends HTMLElement {
 
     if (this.product.status === 'sale') {
       // the same words as the page-rendered card (partials/qprod-card.twig)
-      return salla.lang.get('blocks.qissa.add_to_cart') || salla.lang.get('pages.cart.add_to_cart');
+      return qword('add_to_cart') || salla.lang.get('pages.cart.add_to_cart');
     }
 
     if (this.product.type !== 'donating') {
@@ -389,7 +390,7 @@ class ProductCard extends HTMLElement {
     if (!sold) return '';
     return `<p class="qprod__sold">
         <img src="${this.qcardIcon('fire')}" alt="" width="20" height="20">
-        <span>${salla.lang.get('blocks.qissa.sold')} <bdi>${sold}</bdi> ${salla.lang.get('blocks.qissa.times')}</span>
+        <span>${qword('sold')} <bdi>${sold}</bdi> ${qword('times')}</span>
       </p>`;
   }
 
@@ -410,14 +411,14 @@ class ProductCard extends HTMLElement {
       return `<div class="qprod__price qprod__deal qprod__deal--full">
           <b class="qprod__price-now">${this.getPriceFormat(sale ? p.sale_price : p.price)}</b>
           ${sale ? `<s class="qprod__price-old">${this.getPriceFormat(p.regular_price)}</s>` : ''}
-          ${off >= 1 ? `<span class="qprod__off">${salla.lang.get('blocks.qissa.sale') || 'خصم'} ${off}<span class="qprod__pct">%</span></span>` : ''}
+          ${off >= 1 ? `<span class="qprod__off">${qword('sale') || 'خصم'} ${off}<span class="qprod__pct">%</span></span>` : ''}
         </div>`;
     }
     if (p.is_on_sale && Number(p.regular_price) > 0) {
       const off = Math.round((p.regular_price - p.sale_price) / p.regular_price * 100);
       return `<div class="qprod__price qprod__deal">
           <s class="qprod__price-old">${this.getPriceFormat(p.regular_price)}</s>
-          ${off >= 1 ? `<span class="qprod__off">${salla.lang.get('blocks.qissa.sale') || 'خصم'} ${off}<span class="qprod__pct">%</span></span>` : ''}
+          ${off >= 1 ? `<span class="qprod__off">${qword('sale') || 'خصم'} ${off}<span class="qprod__pct">%</span></span>` : ''}
         </div>`;
     }
     if (p.starting_price) {
@@ -437,10 +438,7 @@ class ProductCard extends HTMLElement {
       && !p.has_preorder_campaign && p.type !== 'booking'
       && !p.is_out_of_stock && p.status === 'sale' && Number(p.is_on_sale ? p.sale_price : p.price) > 0;
     if (!priced) return `<span>${plain}</span>`;
-    // a store whose locale files predate the key answers with the key itself
-    const said = salla.lang.get('blocks.qissa.add_to_cart_for');
-    const words = said && said !== 'blocks.qissa.add_to_cart_for' ? said
-      : (document.documentElement.dir === 'ltr' ? 'Add to cart for' : 'أضف للسلة بـ');
+    const words = qword('add_to_cart_for') || (document.documentElement.dir === 'ltr' ? 'Add to cart for' : 'أضف للسلة بـ');
     return `<span class="qprod__add-label">${words}</span>
       <b class="qprod__price-now">${this.getPriceFormat(p.is_on_sale ? p.sale_price : p.price)}</b>`;
   }
@@ -477,7 +475,7 @@ class ProductCard extends HTMLElement {
           class="qprod__like s-product-card-wishlist-btn ${this.isInWishlist ? 's-product-card-wishlist-added' : 'not-added'}"
           data-id="${p.id}"
           onclick="salla.wishlist.toggle('${p.id}')"
-          aria-label="${this.escapeHTML(salla.lang.get('blocks.qissa.wishlist'))}">
+          aria-label="${this.escapeHTML(qword('wishlist'))}">
           <span class="qprod__like-ic" style="--qprod-heart: url('${this.qcardIcon('heart')}')" aria-hidden="true"></span>
         </button>
       </div>

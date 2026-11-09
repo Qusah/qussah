@@ -245,10 +245,10 @@
                                     navigator.share({ title: title, url: url }).catch(function () {});
                                 } else if (navigator.clipboard && navigator.clipboard.writeText) {
                                     navigator.clipboard.writeText(url).then(function () {
-                                        if (window.salla && salla.notify) { salla.notify.success(salla.lang.get('blocks.qissa.link_copied')); }
+                                        if (window.salla && salla.notify) { salla.notify.success({{ trans('blocks.qissa.link_copied')|json_encode|raw }}); }
                                     });
                                 } else {
-                                    window.prompt(salla.lang.get('blocks.qissa.copy_link'), url);
+                                    window.prompt({{ trans('blocks.qissa.copy_link')|json_encode|raw }}, url);
                                 }
                             });
                         });
@@ -307,13 +307,14 @@
                         var prev = document.createElement('button');
                         prev.type = 'button';
                         prev.className = 'qpd__gallery-arrow qpd__gallery-arrow--prev';
-                        prev.setAttribute('aria-label', salla.lang.get('blocks.qissa.prev'));
+                        {# the words from the server: salla.lang no longer has the theme's (layouts/master.twig, window.qissaWords) #}
+                        prev.setAttribute('aria-label', {{ trans('blocks.qissa.prev')|json_encode|raw }});
                         prev.innerHTML = '<i class="sicon-keyboard_arrow_right"></i>';
 
                         var next = document.createElement('button');
                         next.type = 'button';
                         next.className = 'qpd__gallery-arrow qpd__gallery-arrow--next';
-                        next.setAttribute('aria-label', salla.lang.get('blocks.qissa.next'));
+                        next.setAttribute('aria-label', {{ trans('blocks.qissa.next')|json_encode|raw }});
                         next.innerHTML = '<i class="sicon-keyboard_arrow_left"></i>';
 
                         container.appendChild(prev);

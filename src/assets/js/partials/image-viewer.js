@@ -26,12 +26,14 @@
  * Styles: 04-components/image-viewer.scss.
  */
 
+import { qword } from './qissa-words';
+
 const MAX = 4;
 const STEP = 2.5;             // what one click zooms to
 const TAP_MOVE = 8;           // px a pointer may travel and still be a tap
 const SWIPE = 56;             // px of horizontal travel that turns the page at 1×
 
-const tr = (key, params) => (window.salla && salla.lang ? salla.lang.get(`blocks.qissa.${key}`, params) : '');
+const tr = (key, params) => qword(key, params);
 
 const esc = v => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
