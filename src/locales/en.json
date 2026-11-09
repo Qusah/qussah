@@ -235,6 +235,30 @@
       "step_arrived": "Your order has arrived",
       "step_delivering": "Out for delivery",
       "follow": "Follow us"
+    },
+    "qissa_journey": {
+      "help_title": "Not sure what to pick?",
+      "help_subtitle": "Let us help",
+      "badge_1": "Best value",
+      "badge_2": "Best seller · Best for families",
+      "badge_3": "Family pack for heavy use",
+      "note_free_shipping": "Free shipping",
+      "add": "Add to cart",
+      "dismiss": "No, thanks",
+      "close": "Close",
+      "instead": "instead of",
+      "options": "Choose options",
+      "out": "Out of stock",
+      "busy": "Adding…",
+      "added": "Added ✓",
+      "offer_title": "A limited offer, just for you",
+      "offer_text": "An extra discount on your order if you complete it within {دقائق} minutes",
+      "offer_ends": "Ends in",
+      "offer_cta": "Order now",
+      "offer_pill": "Your {نسبة}% discount ends in",
+      "offer_applied": "{نسبة}% discount applied · ends in",
+      "offer_ended": "Offer ended",
+      "offer_reopen": "Show details"
     }
   },
   "pages": {

@@ -1,0 +1,343 @@
+/**
+ * «نوافذ تحفيز قرار الشراء» — the decision journey (components/qissa-journey.twig).
+ *
+ * One visitor, one journey, kept in localStorage under `qissa-journey`:
+ *
+ *   browses product pages, cart empty
+ *     → after N distinct product pages (+ a delay): the «محتار؟» HELP popup —
+ *       the merchant's packages, cheapest first, «أضف للسلة» on each.
+ *       Adding closes it and ends the journey (no discount for a visitor who
+ *       decided). Closing it starts the browsing clock.
+ *     → after M minutes of visible-tab browsing with the cart still empty:
+ *       OFFER step 1 (10%, 10 min). «اطلب الآن» closes it and leaves the
+ *       countdown pill; «لا، شكراً» closes it with no pill. Either way the
+ *       coupon is applied the moment anything enters the cart inside the
+ *       window (salla.cart.addCoupon, quietly) and removed when it ends.
+ *     → the window ends without a purchase and the cart is still empty:
+ *       OFFER step 2 (5%, 15 min), right away if the tab is open, else on
+ *       the next page. Then the journey is over.
+ *
+ *   Never on cart / checkout / thank-you pages (the pill may show on the cart
+ *   page — it is not a popup). Thank-you marks the journey done and leaves the
+ *   coupon alone (the order is placed). Every popup shows once per visitor.
+ *
+ *   The timer is a nudge, not an enforcement: the codes are the merchant's
+ *   shared dashboard coupons, valid until their dashboard expiry. The theme
+ *   has no server, so there is no per-visitor code.
+ *
+ * QA switches on the URL: ?qj=reset clears the visitor's state, ?qj=help opens
+ * the help popup on this page, ?qj=offer opens offer step 1 on this page.
+ *
+ * Lean on purpose (the theme sits at Salla's 1 MB JS+CSS limit): one file, no
+ * library, the SDK's own money/cart/product calls.
+ */
+(function () {
+  'use strict';
+
+  var root = document.querySelector('[data-qj]');
+  if (!root) return;
+  var cfg, W;
+  try { cfg = JSON.parse(root.dataset.config || '{}'); W = JSON.parse(root.dataset.words || '{}'); } catch (e) { return; }
+  var help = cfg.help || {}, offer = cfg.offer || {}, steps = offer.steps || [];
+  var page = cfg.page || '';
+  var quiet = /^(cart|checkout|thank)/.test(page);     // no popups here
+  var thanks = /^thank/.test(page);
+  var qs = (location.search.match(/[?&]qj=(reset|help|offer)\b/) || [])[1];
+
+  /* ---------- state ---------- */
+  var KEY = 'qissa-journey', mem = null;
+  function load() {
+    try { return JSON.parse(localStorage.getItem(KEY) || 'null') || {}; } catch (e) { return mem || {}; }
+  }
+  function save() {
+    mem = S;
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* private mode: this page only */ }
+  }
+  if (qs === 'reset') { try { localStorage.removeItem(KEY); } catch (e) { /* ignore */ } }
+  var S = qs === 'reset' ? {} : load();
+  S.seen = S.seen || [];                 // distinct product ids viewed
+  var now = Date.now;
+
+  /* ---------- helpers ---------- */
+  function $(sel, el) { return (el || root).querySelector(sel); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function fill(s, vars) { return String(s || '').replace(/\{(دقائق|نسبة)\}/g, function (m, k) { return k in vars ? vars[k] : m; }); }
+  function money(n) { try { return salla.money(n); } catch (e) { return String(n); } }
+  function silent(fn) { return salla.api && typeof salla.api.withoutNotifier === 'function' ? salla.api.withoutNotifier(fn) : fn(); }
+  function cartCount() {
+    var n = Number(salla.storage && salla.storage.get('cart.summary.count'));
+    return n > 0 ? n : 0;
+  }
+  function clock(ms) {
+    var s = Math.max(0, Math.round(ms / 1000)), m = Math.floor(s / 60);
+    return (m < 10 ? '0' : '') + m + ':' + (s % 60 < 10 ? '0' : '') + (s % 60);
+  }
+  function reduced() { return matchMedia('(prefers-reduced-motion: reduce)').matches; }
+
+  /* ---------- dialogs ---------- */
+  var openName = null, lastFocus = null;
+  function dlg(name) { return $('[data-qj-bd="' + name + '"]'); }
+  function open(name) {
+    var bd = dlg(name);
+    if (!bd || openName) return false;
+    openName = name;
+    lastFocus = document.activeElement;
+    root.hidden = false;
+    bd.hidden = false;
+    if (name === 'offer') pill(false);               // the dialog carries the clock while it is open
+    document.body.classList.add('qj-lock');
+    requestAnimationFrame(function () { bd.classList.add('is-in'); });
+    $('.qj__dlg', bd).focus({ preventScroll: true });
+    return true;
+  }
+  function close(name) {
+    var bd = dlg(name);
+    if (!bd || openName !== name) return;
+    openName = null;
+    bd.classList.remove('is-in');
+    document.body.classList.remove('qj-lock');
+    setTimeout(function () { bd.hidden = true; }, reduced() ? 0 : 220);
+    if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+  }
+  function trap(e) {
+    // Tab stays inside the open dialog; Escape closes it the neutral way.
+    if (!openName) return;
+    var bd = dlg(openName);
+    if (e.key === 'Escape') { e.preventDefault(); act(openName === 'help' ? 'help-close' : 'offer-cta'); return; }
+    if (e.key !== 'Tab') return;
+    var f = bd.querySelectorAll('button:not([disabled]), a[href]');
+    if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  }
+
+  /* ---------- the help popup ---------- */
+  function notePage() {
+    var id = String(cfg.pid || (salla.config && salla.config.get('page.id')) || '');
+    if (id && S.seen.indexOf(id) < 0) { S.seen.push(id); save(); }
+  }
+  function helpDue() {
+    if (qs === 'help') return true;
+    return !S.help && !S.stop && !quiet && S.seen.length >= Number(help.minPages || 2);
+  }
+  function maybeHelp() {
+    if (!helpDue() || cartCount() > 0) return;
+    if (S.helpTry && now() - S.helpTry < 6e4 && qs !== 'help') return;   // the API failed a moment ago
+    var t0 = now();
+    var ids = (help.ids || []).map(String).filter(Boolean).slice(0, 3);
+    if (!ids.length) return;
+    salla.product.api.fetch({ source: 'selected', source_value: ids, limit: ids.length }).then(function (res) {
+      var byId = {};
+      ((res && res.data) || []).forEach(function (p) { byId[String(p.id)] = p; });
+      var products = ids.map(function (id) { return byId[id]; }).filter(function (p) { return p && p.name; });
+      if (!products.length) throw new Error('no products');
+      renderHelp(products);
+      var wait = Math.max(0, Number(qs === 'help' ? 0 : help.delay || 0) * 1000 - (now() - t0));
+      setTimeout(function () {
+        if (!helpDue() || cartCount() > 0 || !open('help')) return;
+        S.help = now(); save();
+      }, wait);
+    }).catch(function () { S.helpTry = now(); save(); });
+  }
+  function renderHelp(products) {
+    var featured = Number(help.featured);
+    $('[data-qj-list]').innerHTML = products.map(function (p, k) {
+      var badge = (help.badges || [])[k] || '', note = (help.notes || [])[k] || '';
+      var sale = p.is_on_sale && Number(p.regular_price) > Number(p.price);
+      var gone = p.is_out_of_stock || p.is_available === false;
+      var canAdd = !p.has_options && !gone;
+      return '<li class="qj__card' + (k + 1 === featured ? ' is-featured' : '') + '">'
+        + '<div class="qj__info">'
+        + (badge ? '<span class="qj__badge">' + esc(badge) + '</span>' : '')
+        + '<a class="qj__name" href="' + esc(p.url || '#') + '">' + esc(p.name) + '</a>'
+        + '<p class="qj__price"><b>' + money(Number(p.price)) + '</b>'
+        + (sale ? ' <span class="qj__was">' + esc(W.instead) + ' ' + money(Number(p.regular_price)) + '</span>' : '')
+        + (note ? ' <span class="qj__dot" aria-hidden="true">·</span> <span class="qj__note">' + esc(note) + '</span>' : '')
+        + '</p></div>'
+        + (canAdd
+          ? '<button class="qj__add" type="button" data-qj-add="' + esc(p.id) + '">' + esc(W.add) + '</button>'
+          : '<a class="qj__add qj__add--link' + (gone ? ' is-out' : '') + '" href="' + esc(p.url || '#') + '">' + esc(gone ? W.out : W.options) + '</a>')
+        + '</li>';
+    }).join('');
+  }
+  function add(btn) {
+    if (btn.dataset.s) return;
+    btn.dataset.s = 'busy';
+    btn.textContent = W.busy;
+    Promise.resolve(salla.cart.addItem({ id: String(btn.dataset.qjAdd), quantity: 1 })).then(function () {
+      btn.textContent = W.added;
+      S.stop = true; save();                               // decided: no discounts for them
+      setTimeout(function () { close('help'); }, 500);
+    }).catch(function () {
+      delete btn.dataset.s;
+      btn.textContent = W.add;
+    });
+  }
+  function helpClosed() {
+    close('help');
+    if (!S.helpAt) { S.helpAt = now(); S.browse = 0; S.tick = now(); save(); }
+    watchBrowsing();
+  }
+
+  /* ---------- the browsing clock (visible tab only, across pages) ---------- */
+  var ticking = false;
+  function offerDue() {
+    return steps.length && S.helpAt && !S.stop && !S.offer && !quiet;
+  }
+  function watchBrowsing() {
+    if (ticking || !offerDue()) return;
+    ticking = true;
+    S.tick = now();
+    setInterval(function () {
+      if (!offerDue()) return;
+      var t = now();
+      if (document.visibilityState !== 'hidden') S.browse = (S.browse || 0) + Math.min(2000, t - S.tick);
+      S.tick = t;
+      save();
+      if (S.browse >= Number(offer.wait || 3) * 6e4 && cartCount() === 0 && !openName) openOffer(0);
+    }, 1000);
+  }
+
+  /* ---------- the offer popup, its clock and the coupon ---------- */
+  var timer = null;
+  function step() { return steps[S.offer ? S.offer.i : -1]; }
+  function openOffer(i) {
+    var st = steps[i];
+    if (!st || !st.code) { S.stop = true; save(); return; }
+    S.offer = { i: i, at: now(), end: now() + Number(st.min || 10) * 6e4, applied: false, hid: false, done: false };
+    delete S.next;
+    save();
+    paintOffer();
+    open('offer');
+    runClock();
+  }
+  function paintOffer() {
+    var st = step();
+    if (!st) return;
+    $('[data-qj-pct]').textContent = st.pct + '%';
+    $('[data-qj-txt]').textContent = fill(W.offerText, { 'دقائق': st.min, 'نسبة': st.pct });
+    $('[data-qj-pill-text]').textContent = fill(S.offer.applied ? W.applied : W.pill, { 'نسبة': st.pct, 'دقائق': st.min });
+  }
+  function pill(show) {
+    var p = $('[data-qj-pill]');
+    if (!p) return;
+    if (show) root.hidden = false;
+    p.hidden = !show;
+  }
+  function runClock() {
+    clearInterval(timer);
+    var paint = function () {
+      var left = S.offer.end - now();
+      var txt = clock(left);
+      $('[data-qj-time]').textContent = txt;
+      $('[data-qj-pill-time]').textContent = txt;
+      if (left <= 0) endOffer();
+    };
+    paint();
+    timer = setInterval(paint, 1000);
+    pill(!S.offer.hid && !thanks);
+  }
+  function applyCoupon() {
+    var st = step();
+    if (!st || !S.offer || S.offer.done || S.offer.applied || now() >= S.offer.end) return;
+    if (S.offer.tried && now() - S.offer.tried < 15e3) return;
+    S.offer.tried = now(); save();
+    Promise.resolve(silent(function () { return salla.cart.addCoupon(st.code); })).then(function () {
+      S.offer.applied = true; save();
+      paintOffer();
+    }).catch(function () { /* min amount / already used: nothing to say */ });
+  }
+  function endOffer() {
+    clearInterval(timer);
+    var st = step(), o = S.offer;
+    if (!o || o.done) return;
+    o.done = true; save();
+    close('offer');
+    if (o.applied && st && !thanks) silent(function () { return salla.cart.deleteCoupon(st.code); });
+    var p = $('[data-qj-pill]');
+    if (p && !o.hid && !thanks) {
+      $('[data-qj-pill-text]').textContent = W.ended;
+      $('[data-qj-pill-time]').textContent = '';
+      p.classList.add('is-ended');
+      pill(true);
+      setTimeout(function () { pill(false); p.classList.remove('is-ended'); }, 4000);
+    }
+    // the next step: right away if they are still browsing with an empty cart, else on the next page
+    if (steps[o.i + 1]) {
+      S.next = o.i + 1; save();
+      if (!quiet && !S.stop && cartCount() === 0) setTimeout(function () { if (S.next === o.i + 1 && !openName) openOffer(o.i + 1); }, 4500);
+    } else { S.stop = true; save(); }
+  }
+  function resumeOffer() {
+    if (S.next != null) {                            // a step that was due when the last page ended
+      if (!quiet && !S.stop && cartCount() === 0) openOffer(S.next);
+      return;
+    }
+    var o = S.offer;
+    if (!o || o.done || !step()) return;
+    if (now() >= o.end) { runClock(); return; }     // paints 00:00 and ends it (coupon removed, next step)
+    paintOffer();
+    runClock();
+  }
+
+  /* ---------- the cart decides ---------- */
+  function onCartFilled() {
+    if (!S.stop) { S.stop = true; save(); }
+    if (openName === 'help') close('help');
+    applyCoupon();
+  }
+
+  /* ---------- actions ---------- */
+  function act(name) {
+    if (name === 'help-close') helpClosed();
+    else if (name === 'offer-cta') { if (S.offer) { S.offer.hid = false; save(); } close('offer'); pill(true); }
+    else if (name === 'offer-dismiss') { if (S.offer) { S.offer.hid = true; save(); } close('offer'); pill(false); }
+  }
+  function bind() {
+    root.addEventListener('click', function (e) {
+      var t = e.target.closest('[data-qj-act], [data-qj-add], [data-qj-pill]');
+      if (t && t.dataset.qjAct) act(t.dataset.qjAct);
+      else if (t && t.dataset.qjAdd != null) add(t);
+      else if (t && t.hasAttribute('data-qj-pill')) { if (S.offer && !S.offer.done) open('offer'); }
+      else if (e.target.matches('.qj__bd')) act(openName === 'help' ? 'help-close' : 'offer-cta');
+    });
+    document.addEventListener('keydown', trap);
+    document.addEventListener('visibilitychange', function () { S.tick = now(); });
+  }
+
+  /* ---------- boot ---------- */
+  function boot() {
+    bind();
+    if (thanks) {                                   // bought: the journey is over, the coupon stays on the order
+      S.buy = true; S.stop = true;
+      if (S.offer) S.offer.done = true;
+      delete S.next; save();
+      return;
+    }
+    if (!steps.length) { delete S.offer; delete S.next; }   // the offer was switched off since: forget it
+    if (qs === 'offer' && steps.length) { S.helpAt = S.helpAt || now(); S.browse = 9e9; delete S.offer; delete S.next; S.stop = false; save(); }
+    salla.cart.event.onUpdated(function (sum) { if (sum && Number(sum.count) > 0) onCartFilled(); });
+    salla.cart.event.onItemAdded(function () { onCartFilled(); });
+    if (cartCount() > 0) onCartFilled();
+    if (page === 'product.single') notePage();
+    resumeOffer();
+    if (qs === 'offer' && !S.offer) openOffer(0);
+    if (!quiet) { watchBrowsing(); maybeHelp(); }
+  }
+
+  /* Never touch salla.* before the SDK is up (Cloudflare Rocket Loader runs it
+     after theme scripts on live). app.js dispatches `theme::ready` from inside
+     salla.onReady and sets app.status. */
+  var booted = false;
+  function go() { if (!booted) { booted = true; boot(); } }
+  if (window.app && window.app.status === 'ready') go();
+  else {
+    document.addEventListener('theme::ready', go, { once: true });
+    (function poll(tries) {
+      if (booted) return;
+      if (window.salla && typeof salla.onReady === 'function') return salla.onReady(go);
+      if (tries < 40) setTimeout(function () { poll(tries + 1); }, 250);
+    })(0);
+  }
+})();

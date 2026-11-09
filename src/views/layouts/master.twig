@@ -208,6 +208,9 @@
     {% component 'footer.footer' %}
 </div>
 {% hook 'body:end' %}
+{# «محتار؟» help popup + timed offer popup + countdown pill (theme settings «نوافذ تحفيز قرار الشراء»).
+   The partial prints nothing, and loads no script, while both switches are off. #}
+{% include 'components.qissa-journey' %}
 {% if theme.settings.get('enable_add_product_toast', true) %}
     <salla-add-product-toast></salla-add-product-toast>
 {% endif %}

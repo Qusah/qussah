@@ -1,0 +1,240 @@
+// ====================================================================
+// «نوافذ تحفيز قرار الشراء» — help popup, timed offer popup, countdown pill
+// (components/qissa-journey.twig, js/partials/qissa-journey.js)
+//
+// No Figma: built from the growth deck's mocks (slides 7 and 10, Nov 2026)
+// with the theme's tokens — the quick view's ticket navy and type stack, the
+// revamp card's radii. Centred card on desktop, bottom sheet under 640px.
+//
+// Written lean (the theme sits at Salla's 1 MB CSS+JS limit): no :is(), no
+// place-items (postcss-preset-env multiplies both). RTL: the build downlevels
+// logical properties as if LTR, so every directional value is physical.
+// ====================================================================
+
+$qj-navy: #2c348e;
+$qj-ink: #172951;
+$qj-sky: #d6ecf8;
+$qj-cream: #fdf9f2;
+$qj-line: #dfe6f3;
+$qj-mute: #6b7280;
+$qj-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
+
+body.qj-lock { overflow: hidden; }
+
+.qj, .qj * { box-sizing: border-box; font-family: $qj-font !important; }
+.qj button { font: inherit; cursor: pointer; }
+
+// ---- backdrop + dialog shell -------------------------------------------
+.qj__bd {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;                          // over the header (1000); the cart drawer (9999) opens after an add
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  background: rgba(23, 41, 81, .55);
+  opacity: 0;
+  transition: opacity .22s ease;
+  direction: rtl;
+  &.is-in { opacity: 1; }
+  &[hidden] { display: none; }
+}
+.qj__dlg {
+  position: relative;
+  width: 100%;
+  max-height: 92vh;
+  overflow: auto;
+  background: $qj-cream;
+  color: $qj-ink;
+  border: 2px solid $qj-navy;
+  border-bottom: 0;
+  border-radius: 24px 24px 0 0;
+  padding: 22px 16px 24px;
+  text-align: right;
+  outline: none;
+  transform: translateY(24px);
+  transition: transform .26s cubic-bezier(.16, 1, .3, 1);
+  .is-in & { transform: none; }
+}
+@media (min-width: 640px) {
+  .qj__bd { align-items: center; padding: 24px; }
+  .qj__dlg {
+    width: min(520px, 100%);
+    max-height: calc(100vh - 48px);
+    border-bottom: 2px solid $qj-navy;
+    border-radius: 24px;
+    padding: 28px 28px 26px;
+    transform: translateY(12px) scale(.98);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .qj__bd, .qj__dlg { transition: none; }
+}
+
+// ---- help popup ----------------------------------------------------------
+.qj__x {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: $qj-mute;
+  &:hover { background: rgba(44, 52, 142, .08); color: $qj-navy; }
+}
+.qj__title {
+  margin: 0 40px 6px 0;
+  font-size: 22px;
+  line-height: 1.35;
+  font-weight: 700;
+  color: $qj-navy;
+}
+.qj__sub { margin: 0 0 16px; font-size: 15px; color: #4b5563; }
+.qj__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.qj__card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #fff;
+  border: 1px solid $qj-line;
+  border-radius: 16px;
+  &.is-featured { background: $qj-sky; border: 1.5px solid $qj-navy; }
+}
+.qj__info { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.qj__badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: $qj-sky;
+  color: $qj-navy;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+  .is-featured & { background: $qj-navy; color: #fff; }
+}
+.qj__name {
+  font-size: 16px;
+  font-weight: 700;
+  color: $qj-ink;
+  text-decoration: none;
+  line-height: 1.35;
+  &:hover { color: $qj-navy; }
+}
+.qj__price { margin: 0; font-size: 14px; color: $qj-navy; line-height: 1.5; b { font-weight: 700; } }
+.qj__was, .qj__note, .qj__dot { color: $qj-mute; font-weight: 400; }
+.qj__add {
+  flex: none;
+  min-width: 96px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 12px;
+  background: $qj-navy;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+  transition: background .15s ease, transform .15s ease;
+  &:hover { background: $qj-ink; }
+  &:active { transform: scale(.97); }
+  &[data-s] { opacity: .75; cursor: default; }
+  &--link { background: transparent; color: $qj-navy; border: 1.5px solid $qj-navy; &:hover { background: $qj-navy; color: #fff; } }
+  &.is-out { border-color: $qj-line; color: $qj-mute; pointer-events: none; }
+}
+.qj__no {
+  display: block;
+  margin: 16px auto 0;
+  padding: 6px 12px;
+  border: 0;
+  background: transparent;
+  color: $qj-mute;
+  font-size: 14px;
+  &:hover { color: $qj-navy; text-decoration: underline; }
+}
+
+// ---- offer popup ---------------------------------------------------------
+.qj__dlg--offer { text-align: center; }
+@media (min-width: 640px) { .qj__dlg--offer { width: min(420px, 100%); padding: 30px 28px 24px; } }
+.qj__kicker { margin: 0 0 4px; font-size: 18px; font-weight: 700; color: $qj-navy; }
+.qj__pct { margin: 0; font-size: 64px; line-height: 1.1; font-weight: 800; color: $qj-navy; letter-spacing: -.02em; }
+.qj__txt { margin: 8px auto 16px; max-width: 300px; font-size: 15px; line-height: 1.6; color: #4b5563; }
+.qj__timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: $qj-sky;
+  color: $qj-navy;
+  font-size: 14px;
+  b { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; direction: ltr; }
+}
+.qj__cta {
+  display: block;
+  width: min(220px, 100%);
+  margin: 0 auto;
+  padding: 13px 24px;
+  border: 0;
+  border-radius: 12px;
+  background: $qj-navy;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  transition: background .15s ease, transform .15s ease;
+  &:hover { background: $qj-ink; }
+  &:active { transform: scale(.98); }
+}
+.qj__dlg--offer .qj__no { margin-top: 12px; }
+
+// ---- countdown pill ------------------------------------------------------
+.qj__pill {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  z-index: 900;                           // under the header's menus (1000) and the cart drawer
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100% - 32px);
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: $qj-navy;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+  box-shadow: 0 10px 30px rgba(23, 41, 81, .35);
+  white-space: nowrap;
+  direction: rtl;
+  &[hidden] { display: none; }
+  &.is-ended { background: $qj-ink; }
+}
+.qj__pill-c {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .16);
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+  &:empty { display: none; }
+}
+// the sticky add-to-cart bar on phones sits at the bottom too: lift the pill above it
+body.is-sticky-product-bar .qj__pill { bottom: 84px; }
