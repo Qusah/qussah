@@ -36,8 +36,13 @@
   help switch off loads nothing. The coupon codes travel in data-config (page
   source, never on screen) — the theme has no server to hand out codes.
 #}
+{# Switches: plain truthiness plus a STRICT guard against the string 'false'.
+   Never `x != 'false'` here — Salla's Twig is PHP, where a boolean compared
+   with a string compares as booleans, so `true != 'false'` is FALSE and the
+   switch read as off whenever it was on (twig.js says the opposite, which is
+   how the local harness passed while the store showed nothing, 11 Nov). #}
 {% set qj_help_on = theme.settings.get('qj_help_enabled') %}
-{% set qj_help_on = qj_help_on == true and qj_help_on != 'false' %}
+{% set qj_help_on = qj_help_on and qj_help_on is not same as('false') %}
 
 {% set qj_list = theme.settings.get('qj_help_products') %}
 {% set qj_ids %}{% if qj_list is iterable %}{% for picked in qj_list %}{% if picked.id is defined %}{{ picked.id }}{% elseif picked.value is defined %}{{ picked.value }}{% elseif picked is not iterable %}{{ picked }}{% endif %},{% endfor %}{% elseif qj_list %}{{ qj_list }}{% endif %}{% endset %}
@@ -45,19 +50,19 @@
 
 {% if qj_help_on and qj_ids %}
     {% set qj_offer_on = theme.settings.get('qj_offer_enabled') %}
-    {% set qj_offer_on = qj_offer_on == true and qj_offer_on != 'false' %}
+    {% set qj_offer_on = qj_offer_on and qj_offer_on is not same as('false') %}
     {% set qj_code1 = (theme.settings.get('qj_offer1_code') ?: '')|trim %}
     {% set qj_code2 = (theme.settings.get('qj_offer2_code') ?: '')|trim %}
     {% set qj_offer2_on = theme.settings.get('qj_offer2_enabled', true) %}
-    {% set qj_offer2_on = qj_offer2_on is null or (qj_offer2_on == true and qj_offer2_on != 'false') %}
-    {% set qj_offer_on = qj_offer_on and qj_code1 != '' %}
+    {% set qj_offer2_on = qj_offer2_on is null or (qj_offer2_on and qj_offer2_on is not same as('false')) %}
+    {% set qj_offer_on = qj_offer_on and qj_code1 is not same as('') %}
     {% set qj_dismiss_on = theme.settings.get('qj_offer_show_dismiss') %}
-    {% set qj_dismiss_on = qj_dismiss_on == true and qj_dismiss_on != 'false' %}
+    {% set qj_dismiss_on = qj_dismiss_on and qj_dismiss_on is not same as('false') %}
 
     {% set qj_featured_raw = theme.settings.get('qj_help_featured') %}
     {% set qj_featured_raw = qj_featured_raw is iterable ? qj_featured_raw|first : qj_featured_raw %}
     {% set qj_featured = qj_featured_raw.value is defined ? qj_featured_raw.value : qj_featured_raw %}
-    {% set qj_featured = qj_featured is null or qj_featured == '' ? 2 : qj_featured %}
+    {% set qj_featured = (qj_featured is null or qj_featured is same as('')) ? 2 : qj_featured %}
 
     {% set qj_min_pages = theme.settings.get('qj_help_min_pages') %}
     {% set qj_delay = theme.settings.get('qj_help_delay') %}
@@ -73,7 +78,7 @@
             title: theme.settings.get('qj_offer_title') ?: trans('blocks.qissa_journey.offer_title'),
             text: theme.settings.get('qj_offer_text') ?: trans('blocks.qissa_journey.offer_text')
         }]) %}
-        {% if qj_offer2_on and qj_code2 != '' %}
+        {% if qj_offer2_on and qj_code2 is not same as('') %}
             {% set qj_steps = qj_steps|merge([{
                 code: qj_code2,
                 pct: theme.settings.get('qj_offer2_percent') ?: 5,

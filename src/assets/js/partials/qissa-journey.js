@@ -83,18 +83,25 @@
   function text(sel, s) { var el = $(sel); if (el) el.textContent = s; }
 
   /* ---------- dialogs ---------- */
-  var openName = null, lastFocus = null;
+  var openName = null, lastFocus = null, hiding = {};
   function dlg(name) { return $('[data-qj-bd="' + name + '"]'); }
   function open(name) {
     var bd = dlg(name);
     if (!bd || openName) return false;
     openName = name;
     lastFocus = document.activeElement;
+    clearTimeout(hiding[name]);                      // a close still fading out must not hide this open
     root.hidden = false;
     bd.hidden = false;
     if (name === 'offer') pill(false);               // the dialog carries the clock while it is open
     document.body.classList.add('qj-lock');
-    requestAnimationFrame(function () { bd.classList.add('is-in'); });
+    // Shown in this same task (a forced reflow starts the fade): requestAnimationFrame
+    // does not run in a background tab, which would leave a locked page under a
+    // backdrop nobody can see when the second offer opens while the visitor is
+    // elsewhere. (Wording note: Tailwind scans this file — naming one of its
+    // utility classes in a comment adds that rule to app.css.)
+    void bd.offsetWidth;
+    bd.classList.add('is-in');
     $('.qj__dlg', bd).focus({ preventScroll: true });
     return true;
   }
@@ -104,7 +111,8 @@
     openName = null;
     bd.classList.remove('is-in');
     document.body.classList.remove('qj-lock');
-    setTimeout(function () { bd.hidden = true; }, reduced() ? 0 : 220);
+    clearTimeout(hiding[name]);
+    hiding[name] = setTimeout(function () { bd.hidden = true; }, reduced() ? 0 : 220);
     if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
   }
   function trap(e) {
