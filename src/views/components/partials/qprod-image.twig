@@ -67,10 +67,12 @@
 
     {# The heart is the Figma icon used as a mask, so its colour can follow the
        wishlist state; an <img> here would also be read as a product photo by
-       the quick view (cardData() collects `.qprod__img img`). #}
+       the quick view (cardData() collects `.qprod__img img`). The phone v2 card
+       draws Figma 849:666 (heart-v2, a soft fill under the outline) instead;
+       wishlisted, every card fills it red (heart-filled, the same outline solid). #}
     {% if like %}
         <button type="button" class="qprod__like" data-id="{{ product.id }}" onclick="salla.wishlist.toggle('{{ product.id }}')" aria-label="{{ trans('blocks.qissa.wishlist') }}">
-            <span class="qprod__like-ic" style="--qprod-heart: url('{{ 'images/qcard/heart.svg' | asset }}')" aria-hidden="true"></span>
+            <span class="qprod__like-ic" style="--qprod-heart: url('{{ 'images/qcard/heart.svg' | asset }}'); --qprod-heart-v2: url('{{ 'images/qcard/heart-v2.svg' | asset }}'); --qprod-heart-on: url('{{ 'images/qcard/heart-filled.svg' | asset }}')" aria-hidden="true"></span>
         </button>
     {% endif %}
 </div>

@@ -24,8 +24,10 @@ $qpd-muted: #5a6874;
   > .s-blocks-wrapper:empty { margin: 0 !important; }
 }
 
-// ---- breadcrumb (113:36115) — the listing's, 45.67 under the header ----
-.qpd-crumbs { padding: 45.67px 48.68px 0; }
+// ---- breadcrumb (113:36115) — the listing's. Its frame put it 45.67 under the header and the photo 65.92
+// under it; the client found that too airy (ClickUp z91pu69qce), so the page takes the listing's own gaps
+// (113:35227: 14.94 over the line, 18.61 + 8.57 under it) — the two pages match, as they do on phones ----
+.qpd-crumbs { padding: 14.94px 48.68px 0; }
 
 // ====================================================================
 // Gallery (right) + details (left)
@@ -33,7 +35,7 @@ $qpd-muted: #5a6874;
 .qpd {
   width: 100%;   // <main> is a flex column: auto margins would shrink it to fit
   max-width: 1440px;
-  margin: 65.92px auto 0 !important;
+  margin: 27.18px auto 0 !important;   // the listing's 18.61 + 8.57 (see .qpd-crumbs)
   padding: 0 41.91px 0 47.49px;
   direction: rtl;
 

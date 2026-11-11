@@ -476,7 +476,7 @@ class ProductCard extends HTMLElement {
           data-id="${p.id}"
           onclick="salla.wishlist.toggle('${p.id}')"
           aria-label="${this.escapeHTML(qword('wishlist'))}">
-          <span class="qprod__like-ic" style="--qprod-heart: url('${this.qcardIcon('heart')}')" aria-hidden="true"></span>
+          <span class="qprod__like-ic" style="--qprod-heart: url('${this.qcardIcon('heart')}'); --qprod-heart-v2: url('${this.qcardIcon('heart-v2')}'); --qprod-heart-on: url('${this.qcardIcon('heart-filled')}')" aria-hidden="true"></span>
         </button>
       </div>
       <div class="qprod__info">

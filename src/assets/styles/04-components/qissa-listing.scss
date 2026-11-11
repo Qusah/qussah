@@ -23,10 +23,13 @@ $qlisting-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
 // ---- breadcrumb (113:35227): «الرئيسية / …», grey, from the right ----
 // Figma's line sits 14.94 below where <main> starts (the header's 18.6
 // margin) and 25.3 in from the page edge — further out than the bar.
+// !important on the margin: Salla opens <main> with its own <salla-hook> («product.index:start»,
+// «product.single:start»), so <main>'s space-y gave the breadcrumb 32px (64 from 640px) over Figma's gap —
+// the empty band under the header (ClickUp z91pu69qce). The product page's .qpd-crumbs is this nav too.
 .qlisting-crumbs {
   width: 100%;   // <main> is a flex column: auto margins would shrink it to fit
   max-width: 1440px;
-  margin: 0 auto;
+  margin: 0 auto !important;
   padding: 14.94px 25.3px 18.61px;
 
   .s-breadcrumb-wrapper {
@@ -277,7 +280,8 @@ $qlisting-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
     // 290:9027 — the products section's phone grid
     &__list { margin-top: 11.8px; }
     .s-products-list-wrapper { gap: 8px; }   // 524:1410 — cards 182.17 wide
-    custom-salla-product-card { min-height: 343.83px; }
+    // the first phone card's row; the v2 card (849:660) sizes itself — held to this it opened a band over its button
+    custom-salla-product-card:not(.qprod--v2) { min-height: 343.83px; }
   }
 }
 

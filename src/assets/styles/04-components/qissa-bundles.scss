@@ -67,6 +67,6 @@
   .qbund__grid {
     gap: 8px;
 
-    > .qprod { min-height: 343.83px; }
+    > .qprod:not(.qprod--v2) { min-height: 343.83px; }   // the first card's row; v2 sizes itself
   }
 }
