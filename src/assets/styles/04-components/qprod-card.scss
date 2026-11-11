@@ -544,6 +544,15 @@ custom-salla-product-card.qprod-js {
     color: #fff;
     font-weight: 400;
   }
+  // the heart, Figma 849:665: no disc; its icon is 849:666 as is (heart-v2.svg, a soft fill under the outline).
+  // Under the pointer the red outline, wishlisted the red fill (the rules above). Phones take the frame's size
+  // below; wider screens keep the button's box, so the heart stays where it was.
+  .qprod__img .qprod__like { background: none; }
+  .qprod__like:not(:hover):not([wishlisted]):not(.s-product-card-wishlist-added) .qprod__like-ic {
+    background: var(--qprod-heart-v2) center / contain no-repeat;
+    -webkit-mask: none;
+    mask: none;
+  }
   .qprod__rate {
     color: #767676;
     font-weight: 500;
@@ -655,24 +664,17 @@ custom-salla-product-card.qprod-js {
       font-size: 10px;
       line-height: 16px;
     }
-    // the heart, 849:665: no disc, 20 square, 4.74 / 3.48 from the photo's corner; its icon is 849:666 as is
-    // (heart-v2.svg, a soft fill under the outline). Under the pointer the red outline, wishlisted the red fill.
+    // the heart, 849:665: 20 square, 4.74 / 3.48 from the photo's corner
     .qprod__img .qprod__like {
       top: 4.74px;
       left: 3.48px;
       width: 20px;
       height: 20px;
-      background: none;
       filter: drop-shadow(0 7.32px 10.98px rgba(8, 32, 51, .06));
 
       &::after { content: ''; position: absolute; inset: -8px; }   // a finger-sized target round the 20px heart
     }
     .qprod__like-ic { width: 15.55px; height: 15.55px; }
-    .qprod__like:not(:hover):not([wishlisted]):not(.s-product-card-wishlist-added) .qprod__like-ic {
-      background: var(--qprod-heart-v2) center / contain no-repeat;
-      -webkit-mask: none;
-      mask: none;
-    }
     .qprod__img .qpc-dots {
       bottom: 6.94px;
       padding: 4px;

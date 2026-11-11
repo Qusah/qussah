@@ -208,6 +208,15 @@ class Product extends BasePage {
         app.toggleClassIf('.price_is_on_sale','showed','hidden', ()=> is_on_sale)
         app.toggleClassIf('.starting-or-normal-price','hidden','showed', ()=> is_on_sale)
 
+        // «خصم N%» beside the struck price, for this option's prices — the cards' rounding (product-card.js)
+        document.querySelectorAll('.qpd__off').forEach((off) => {
+          const was = Number(data.regular_price), now = Number(data.price);
+          const n = is_on_sale && was > 0 ? Math.round((was - now) / was * 100) : 0;
+          [...off.childNodes].forEach((t) => { if (t.nodeType === 3 && /^\d+$/.test(t.nodeValue)) t.remove(); });
+          if (n >= 1) off.insertBefore(document.createTextNode(n), off.querySelector('.qprod__pct'));
+          off.hidden = n < 1;
+        });
+
         document.querySelectorAll('.total-price, .product-weight').forEach(el => {
           el.classList.remove('scale-pulse');
           void el.offsetWidth; // trigger reflow

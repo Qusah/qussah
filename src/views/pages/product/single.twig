@@ -141,8 +141,10 @@
                             data-id="{{ product.id }}"
                             onclick="salla.wishlist.toggle('{{ product.id }}')"
                             aria-label="{{ trans('blocks.qissa.wishlist') }}">
-                        <svg viewBox="0 0 15.8149 15.8149" fill="none" aria-hidden="true" focusable="false">
-                            <path d="M1.31788 6.25968C1.31789 5.5264 1.54034 4.81037 1.95583 4.20616C2.37133 3.60195 2.96033 3.13799 3.64505 2.87555C4.32976 2.61312 5.07798 2.56456 5.79087 2.73628C6.50377 2.908 7.1478 3.29193 7.63791 3.83736C7.67243 3.87428 7.71417 3.9037 7.76053 3.92382C7.80689 3.94394 7.85689 3.95432 7.90743 3.95432C7.95796 3.95432 8.00796 3.94394 8.05432 3.92382C8.10068 3.9037 8.14242 3.87428 8.17694 3.83736C8.66552 3.28839 9.3097 2.90123 10.0237 2.72742C10.7378 2.55361 11.4879 2.60139 12.1741 2.86441C12.8603 3.12742 13.4502 3.59319 13.8651 4.19973C14.2801 4.80626 14.5005 5.52479 14.497 6.25968C14.497 7.76869 13.5085 8.8955 12.5201 9.88394L8.90113 13.385C8.77835 13.526 8.62696 13.6393 8.45703 13.7173C8.28709 13.7953 8.10251 13.8362 7.91553 13.8374C7.72854 13.8386 7.54345 13.8 7.37254 13.7241C7.20164 13.6483 7.04883 13.5369 6.92427 13.3975L3.29474 9.88394C2.30631 8.8955 1.31788 7.77528 1.31788 6.25968Z" stroke="currentColor" stroke-width="1.31791" stroke-linecap="round" stroke-linejoin="round"/>
+                        {# the cards' heart, Figma 849:666: a soft fill under the outline; the outline takes the
+                           button's colour, and once added the whole heart fills red (qissa-product-detail.scss) #}
+                        <svg viewBox="0 0 15.5501 15.5501" fill="none" aria-hidden="true" focusable="false">
+                            <path d="M1.2966 6.15537C1.29661 5.43437 1.51533 4.73032 1.92387 4.13623C2.33241 3.54214 2.91155 3.08595 3.5848 2.82791C4.25805 2.56987 4.99373 2.52212 5.69469 2.69097C6.39564 2.85982 7.02889 3.23732 7.5108 3.77362C7.54474 3.80991 7.58578 3.83884 7.63136 3.85862C7.67695 3.8784 7.72611 3.88861 7.7758 3.88861C7.82549 3.88861 7.87465 3.8784 7.92024 3.85862C7.96582 3.83884 8.00686 3.80991 8.0408 3.77362C8.52119 3.23383 9.15459 2.85316 9.85668 2.68226C10.5588 2.51136 11.2963 2.55834 11.971 2.81695C12.6457 3.07556 13.2257 3.53353 13.6337 4.12991C14.0417 4.72629 14.2584 5.43278 14.255 6.15537C14.255 7.63911 13.2831 8.74705 12.3112 9.71893L8.75286 13.1613C8.63214 13.3 8.48328 13.4114 8.3162 13.4881C8.14911 13.5648 7.96761 13.6051 7.78376 13.6062C7.59991 13.6074 7.41792 13.5694 7.24987 13.4948C7.08183 13.4203 6.93158 13.3108 6.8091 13.1736L3.24036 9.71893C2.26848 8.74705 1.2966 7.64559 1.2966 6.15537Z" fill="#D9D9D9" fill-opacity="0.5" stroke="currentColor" stroke-width="1.29584" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </button>
 
@@ -500,6 +502,11 @@
                                 <span class="qpd__price-sale-row">
                                     <span class="total-price qpd__price-now">{{ product.sale_price|money }}</span>
                                     <span class="before-price qpd__price-old">{{ product.regular_price|money }}</span>
+                                    {# «خصم N%», the cards' own (qprod-card.twig): Twig on Salla can't do sums on
+                                       prices, so product-card.js works N out from these two as it does for every
+                                       card (the same rounding, the same number), and product.js again for each
+                                       option's price. Under 1% it stays hidden. #}
+                                    <span class="qprod__off qpd__off" data-was="{{ product.regular_price|money|striptags|trim }}" data-now="{{ product.sale_price|money|striptags|trim }}" hidden>{{ trans('blocks.qissa.sale') }} <span class="qprod__pct">%</span></span>
                                 </span>
                             </div>
                             <div class="starting-or-normal-price {{ has_real_sale ? 'hidden' : '' }}">

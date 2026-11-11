@@ -120,7 +120,7 @@ $qpd-muted: #5a6874;
     padding: 0;
     border: 0;
     border-radius: 50%;
-    background: #fff;
+    background: none;   // no disc (the cards' heart, 849:665) — the heart and the share icon sit on the photo
     color: $qpd-ink;
     filter: drop-shadow(0 7.44px 11.16px rgba(8, 32, 51, .06));
     cursor: pointer;
@@ -128,9 +128,12 @@ $qpd-muted: #5a6874;
     svg { width: 19.56px; height: 19.56px; }
     &:hover,
     &.is-added { color: #dc3545; }
-    &.is-added path { fill: currentColor; }
+    &.is-added path { fill: currentColor; fill-opacity: 1; }
   }
-  // share — the same disc, beside the heart
+  // the heart's box stays (where it was, and the tap target). !important: buttons.scss paints any
+  // .btn--wishlist.is-added a red square (the wishlist page's button), which swallowed the red heart.
+  &__fav.btn--wishlist { background: none !important; }
+  // share — the same box, beside the heart
   &__share-btn {
     left: 64.82px;
 
@@ -514,6 +517,23 @@ $qpd-muted: #5a6874;
     white-space: nowrap;
 
     .sicon-sar { font-size: 11.18px; }
+  }
+  // «خصم N%» (ClickUp z91pu69qcp): the hero card's pill (qissa-package.scss, .qpack__price-off), the cards' red on
+  // its tint — a label beside the struck price, not a third price. Level with the struck price's line (32.78).
+  &__off {
+    margin-bottom: 3.64px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(206, 31, 60, .1);
+    color: #ce1f3c;
+    font-family: $qpd-font !important;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+    white-space: nowrap;
+
+    // the digits' face (WesternDigits) draws no «%»: the sign takes the Arabic face, as on the cards
+    .qprod__pct { font-family: 'GE SS Two', Tahoma, sans-serif !important; }
   }
   &__price-from {
     margin-left: 6px;
@@ -1616,11 +1636,14 @@ $qpd-muted: #5a6874;
       height: 40px;
       margin-top: -20px;
       padding: 0;
-      border: 1px solid #e9ecef;
+      border: 0;
       border-radius: 50%;
-      background: rgba(255, 255, 255, .92);
+      // lighter than the white disc it was (client, Nov 2026): a see-through frosted one. A bare chevron, as the
+      // heart and share now are, all but vanished on the busy photos.
+      background: rgba(255, 255, 255, .45);
       color: $qpd-navy;
-      box-shadow: 0 6px 16px rgba(10, 31, 48, .14);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
       font-size: 18px;
       cursor: pointer;
 
@@ -1717,6 +1740,11 @@ $qpd-muted: #5a6874;
       line-height: 26px;
 
       .sicon-sar { font-size: 11.86px; }
+    }
+    &__off {   // the hero's phone pill, level with the struck price's 26 line
+      margin-bottom: 3.2px;
+      padding: 2px 8px;
+      font-size: 12px;
     }
     &__oos {
       font-size: 16px;
@@ -2187,7 +2215,7 @@ body:not(.qpd-thumbs-plain) .qpd .details-slider .slide--one-fourth.swiper-slide
   box-shadow: inset 0 0 0 2px $qpd-navy;
 }
 
-// The photo arrows draw 40px; their tap area is 48 (the circle stays as drawn).
+// The photo arrows' box is 40px; their tap area is 48.
 .qpd__gallery-arrow::before {
   content: '';
   position: absolute;

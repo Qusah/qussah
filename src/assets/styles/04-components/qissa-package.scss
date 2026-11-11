@@ -786,7 +786,8 @@ $qpack-cyan: #91e6f7;
     font-size: 56px;
     line-height: 1.1;
 
-    .sicon-sar { font-size: 18px; }
+    // half the digits, as the v1 card and the product page — 18px read too small beside 56 (ClickUp z91pu69qcm)
+    .sicon-sar { font-size: .5em; }
   }
   .qpack__price-was {
     display: flex;
@@ -914,7 +915,7 @@ $qpack-cyan: #91e6f7;
       font-size: 40px;
       line-height: 1.1;
 
-      .sicon-sar { font-size: 14px; }
+      .sicon-sar { font-size: .5em; }   // 20px (was 14)
     }
     .qpack__price-was { gap: 4px; }
     .qpack__price .qpack__price-old {
