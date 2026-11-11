@@ -288,9 +288,16 @@
     if (S.offer.tried && now() - S.offer.tried < 15e3) return;
     S.offer.tried = now(); save();
     Promise.resolve(silent(function () { return salla.cart.addCoupon(st.code); })).then(function () {
-      S.offer.applied = true; save();
+      S.offer.applied = true; delete S.offer.err; save();
       paintOffer();
-    }).catch(function () { /* min amount / already used: nothing to say */ });
+    }).catch(function (e) {
+      // Nothing to tell the visitor, but the store's answer stays in the state
+      // (offer.err) — a refused coupon is otherwise untraceable (11 Nov).
+      var er = e && e.response && e.response.data && e.response.data.error;
+      if (!S.offer) return;
+      S.offer.err = String(er ? (er.message || '') + ' ' + JSON.stringify(er.fields || '') : (e && e.message) || e).slice(0, 300);
+      save();
+    });
   }
   function endOffer() {
     clearInterval(timer);
