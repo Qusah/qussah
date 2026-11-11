@@ -252,13 +252,15 @@
       "busy": "Adding…",
       "added": "Added ✓",
       "offer_title": "A limited offer, just for you",
-      "offer_text": "An extra discount on your order if you complete it within {دقائق} minutes",
+      "offer_text": "An extra {نسبة}% off your order if you complete it within {دقائق} minutes",
       "offer_ends": "Ends in",
-      "offer_cta": "Order now",
+      "offer_cta": "Continue shopping",
       "offer_pill": "Your {نسبة}% discount ends in",
       "offer_applied": "{نسبة}% discount applied · ends in",
       "offer_ended": "Offer ended",
-      "offer_reopen": "Show details"
+      "offer_reopen": "Show details",
+      "offer2_title": "One more chance",
+      "offer2_text": "An extra {نسبة}% off for {دقائق} minutes"
     }
   },
   "pages": {

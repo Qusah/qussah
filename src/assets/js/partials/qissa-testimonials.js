@@ -57,6 +57,7 @@ const CACHE_KEY = 'qtest:store-reviews';
 const CACHE_VERSION = 2;   // 2: city, date, the order flag, the store's total
 const CACHE_TTL = 6 * 60 * 60 * 1000;   // then a fresh walk picks up new reviews
 const PHONE = '(max-width: 768px)';
+const SWIPE_MIN = 24;   // px a finger travels sideways before a swipe can turn a row
 
 const mod = (n, m) => ((n % m) + m) % m;
 const clampStars = n => Math.max(0, Math.min(5, Math.round(Number(n) || 0))) || 5;
@@ -276,7 +277,8 @@ class Row {
     this.index = index;
     this.count = count;
     this.feed = feed;
-    this.dir = Number(viewport.dataset.dir) || 1;
+    this.dir = Number(viewport.dataset.dir) || 1;   // the row's reading order (review())
+    this.flow = this.dir;   // the way it moves now — a swipe can turn it round (turn())
     this.phase = Number(viewport.dataset.phase) || 0;
     this.secondsPerCard = Number(section.dataset.qtestSpeed) || 9;
     this.anon = section.dataset.qtestAnon || '';
@@ -296,6 +298,12 @@ class Row {
 
   get active() { return this.viewport.offsetParent !== null; }   // phones hide row two
 
+  // the only row showing (a phone): a swipe against it turns it round; on desktop
+  // the two rows keep running against each other
+  get alone() {
+    return [...this.section.querySelectorAll('[data-qtest-row]')].filter(v => v.offsetParent !== null).length === 1;
+  }
+
   measure() {
     const cs = getComputedStyle(this.viewport);
     this.cardW = parseFloat(cs.getPropertyValue('--qtest-card-w')) || 352;
@@ -312,7 +320,7 @@ class Row {
   pos() {
     if (!this.anim) return this.p0;
     const progress = this.anim.effect.getComputedTiming().progress ?? 0.5;
-    return this.p0 + this.dir * LAP * this.step * (progress - 0.5);
+    return this.p0 + this.flow * LAP * this.step * (progress - 0.5);
   }
 
   startPos() {
@@ -325,7 +333,7 @@ class Row {
   animate(from) {
     if (this.anim) this.anim.cancel();
     this.p0 = from ?? this.startPos();
-    const half = this.dir * LAP * this.step / 2;
+    const half = this.flow * LAP * this.step / 2;
     if (typeof this.track.animate !== 'function') { this.anim = null; this.place(); return; }
     this.anim = this.track.animate(
       [
@@ -410,7 +418,7 @@ class Row {
     clearTimeout(this.timer);
     if (!this.running) return;
     const into = mod(this.pos() - this.cardW, this.step);   // layout() turns over at these
-    const left = this.dir > 0 ? this.step - into : (into || this.step);
+    const left = this.flow > 0 ? this.step - into : (into || this.step);
     this.timer = setTimeout(() => { this.layout(); this.schedule(); }, (left / this.speed) * 1000 + 40);
   }
 
@@ -433,6 +441,16 @@ class Row {
     this.layout();
   }
 
+  // head the other way from where the row stands; the cards on screen keep their
+  // reviews, since review() reads the row's own order, not the way it moves
+  turn() {
+    const at = this.pos();
+    this.flow = -this.flow;
+    this.running = undefined;
+    this.animate(at);
+    this.layout();
+  }
+
   // a keyboard: the focused row holds still, the arrows step it one card
   bindKeys() {
     const vp = this.viewport;
@@ -442,12 +460,15 @@ class Row {
       if (!this.anim || this.still || (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) return;
       e.preventDefault();
       const dx = e.key === 'ArrowLeft' ? this.step : -this.step;   // the track moves by dx
-      this.anim.currentTime += ((dx * this.sgn) / (this.dir * this.speed)) * 1000;
+      this.anim.currentTime += ((dx * this.sgn) / (this.flow * this.speed)) * 1000;
       this.layout();
     });
   }
 
-  // a finger or mouse takes the row and hands it back where it was left
+  // a finger or mouse takes the row and hands it back where it was left. Let go
+  // after a swipe against the row (ClickUp: [All Stores] the testimonial component
+  // is not swiping smoothly) and the row carries on the way the finger last went —
+  // only when it is alone; a pointercancel (the page scrolled) never turns it
   bindDrag() {
     const vp = this.viewport;
     let d = null;
@@ -464,7 +485,8 @@ class Row {
         if (Math.abs(e.clientY - d.y) > Math.abs(dx)) { d = null; return; }   // a vertical scroll
         d.on = true;
         d.t = this.anim.currentTime;
-        d.x = e.clientX;
+        d.x = d.lx = e.clientX;
+        d.sw = 0;
         this.flags.drag = true;
         this.sync();
         vp.classList.add('is-dragging');
@@ -472,19 +494,24 @@ class Row {
         return;
       }
       // the finger moves the track by dx: the line moves by dx*sgn
-      this.anim.currentTime = d.t + ((dx * this.sgn) / (this.dir * this.speed)) * 1000;
+      this.anim.currentTime = d.t + ((dx * this.sgn) / (this.flow * this.speed)) * 1000;
       if (!frame) frame = requestAnimationFrame(() => { frame = 0; this.layout(); });
+      // the way the finger last went, a pixel of jitter aside
+      if (Math.abs(e.clientX - d.lx) >= 2) { d.sw = Math.sign(e.clientX - d.lx); d.lx = e.clientX; }
     });
-    const up = () => {
+    const up = e => {
       if (!d) return;
       const was = d.on;
+      // the row moves on screen the way sgn*flow points; a swipe the other way turns it
+      const turn = was && e?.type === 'pointerup' && d.sw && d.sw !== this.sgn * this.flow
+        && Math.abs(d.lx - d.x) >= SWIPE_MIN && this.alone;
       try { vp.releasePointerCapture(d.id); } catch (err) { /* ignore */ }
       d = null;
       if (!was) return;
       vp.classList.remove('is-dragging');
       this.layout();
       this.flags.drag = false;
-      this.sync();
+      if (turn) this.turn(); else this.sync();
     };
     vp.addEventListener('pointerup', up);
     vp.addEventListener('pointercancel', up);
@@ -499,7 +526,7 @@ class Row {
       e.preventDefault();
       this.flags.drag = true;
       this.sync();
-      this.anim.currentTime += ((-e.deltaX * this.sgn) / (this.dir * this.speed)) * 1000;
+      this.anim.currentTime += ((-e.deltaX * this.sgn) / (this.flow * this.speed)) * 1000;
       if (!frame) frame = requestAnimationFrame(() => { frame = 0; this.layout(); });
       clearTimeout(wheelEnd);
       wheelEnd = setTimeout(() => { if (!d) { this.flags.drag = false; this.sync(); } }, 220);

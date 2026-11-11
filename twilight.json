@@ -377,10 +377,28 @@
             "type": "number",
             "format": "integer",
             "icon": "sicon-time",
-            "label": "دقائق التصفح بعد إغلاق المساعدة",
+            "label": "دقائق التصفح بعد إغلاق المساعدة (لمن لم يضف شيئاً)",
             "description": "الوقت الفعلي الذي يقضيه الزائر في المتجر بعد إغلاق نافذة المساعدة قبل ظهور العرض",
             "value": 3,
             "minimum": 1,
+            "maximum": 60,
+            "conditions": [
+                {
+                    "id": "qj_offer_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_offer_after_add",
+            "type": "number",
+            "format": "integer",
+            "icon": "sicon-time",
+            "label": "دقائق التصفح بعد الإضافة من نافذة المساعدة",
+            "description": "لمن أضاف بكجاً من نافذة المساعدة ولم يُتم الشراء: بعد هذه الدقائق من التصفح يظهر له العرض ويُطبَّق الكوبون على سلته فوراً. 0 = لا يظهر له عرض",
+            "value": 1,
+            "minimum": 0,
             "maximum": 60,
             "conditions": [
                 {
@@ -519,11 +537,51 @@
             ]
         },
         {
+            "id": "qj_offer2_title",
+            "type": "string",
+            "icon": "sicon-format-text-alt",
+            "format": "text",
+            "label": "عنوان العرض الثاني",
+            "description": null,
+            "value": "باقي لك فرصة",
+            "required": false,
+            "placeholder": "باقي لك فرصة",
+            "minLength": 0,
+            "maxLength": 80,
+            "conditions": [
+                {
+                    "id": "qj_offer_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_offer2_text",
+            "type": "string",
+            "icon": "sicon-format-text-alt",
+            "format": "text",
+            "label": "نص العرض الثاني",
+            "description": "اكتب {نسبة} و{دقائق} ليظهر مكانهما رقم الخصم وعدد الدقائق",
+            "value": "خصم {نسبة}% إضافي لمدة {دقائق} دقيقة",
+            "required": false,
+            "placeholder": "خصم {نسبة}% إضافي لمدة {دقائق} دقيقة",
+            "minLength": 0,
+            "maxLength": 120,
+            "conditions": [
+                {
+                    "id": "qj_offer_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
             "id": "qj_offer_title",
             "type": "string",
             "icon": "sicon-format-text-alt",
             "format": "text",
-            "label": "العنوان",
+            "label": "عنوان العرض الأول",
             "description": null,
             "value": "عرض مؤقت لك أنت بس",
             "required": false,
@@ -544,10 +602,10 @@
             "icon": "sicon-format-text-alt",
             "format": "text",
             "label": "النص تحت النسبة",
-            "description": "اكتب {دقائق} ليظهر مكانها عدد دقائق العرض",
-            "value": "خصم إضافي على طلبك إذا تممته خلال {دقائق} دقايق",
+            "description": "اكتب {نسبة} و{دقائق} ليظهر مكانهما رقم الخصم وعدد الدقائق",
+            "value": "خصم {نسبة}% إضافي على طلبك إذا تممته خلال {دقائق} دقايق",
             "required": false,
-            "placeholder": "خصم إضافي على طلبك إذا تممته خلال {دقائق} دقايق",
+            "placeholder": "خصم {نسبة}% إضافي على طلبك إذا تممته خلال {دقائق} دقايق",
             "minLength": 0,
             "maxLength": 120,
             "conditions": [
@@ -584,12 +642,28 @@
             "icon": "sicon-format-text-alt",
             "format": "text",
             "label": "نص الزر",
-            "description": "يغلق النافذة ويبقي شريط العدّاد أسفل الشاشة",
-            "value": "اطلب الآن",
+            "description": "يغلق النافذة ويبقي شريط العدّاد أسفل الشاشة حتى نهاية المدة",
+            "value": "أكمل التسوّق",
             "required": false,
-            "placeholder": "اطلب الآن",
+            "placeholder": "أكمل التسوّق",
             "minLength": 0,
             "maxLength": 24,
+            "conditions": [
+                {
+                    "id": "qj_offer_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_offer_show_dismiss",
+            "type": "boolean",
+            "format": "switch",
+            "icon": "sicon-toggle-off",
+            "label": "إظهار رابط «لا، شكراً» في نافذة العرض",
+            "description": "مطفأ: الإغلاق بزر «أكمل التسوّق» فقط، ويبقى شريط العدّاد ظاهراً حتى نهاية المدة",
+            "value": false,
             "conditions": [
                 {
                     "id": "qj_offer_enabled",
@@ -603,7 +677,7 @@
             "type": "string",
             "icon": "sicon-format-text-alt",
             "format": "text",
-            "label": "نص رابط الرفض",
+            "label": "نص رابط الرفض (إن كان ظاهراً)",
             "description": "يغلق النافذة بلا شريط؛ الخصم يبقى صالحاً حتى نهاية المدة",
             "value": "لا، شكراً",
             "required": false,

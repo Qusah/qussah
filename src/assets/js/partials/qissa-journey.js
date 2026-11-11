@@ -1,29 +1,36 @@
 /**
- * «نوافذ تحفيز قرار الشراء» — the decision journey (components/qissa-journey.twig).
+ * «نوافذ تحفيز قرار الشراء» — the decision journey (components/partials/qissa-journey.twig).
  *
  * One visitor, one journey, kept in localStorage under `qissa-journey`:
  *
  *   browses product pages, cart empty
  *     → after N distinct product pages (+ a delay): the «محتار؟» HELP popup —
  *       the merchant's packages, cheapest first, «أضف للسلة» on each.
- *       Adding closes it and ends the journey (no discount for a visitor who
- *       decided). Closing it starts the browsing clock.
- *     → after M minutes of visible-tab browsing with the cart still empty:
- *       OFFER step 1 (10%, 10 min). «اطلب الآن» closes it and leaves the
- *       countdown pill; «لا، شكراً» closes it with no pill. Either way the
- *       coupon is applied the moment anything enters the cart inside the
- *       window (salla.cart.addCoupon, quietly) and removed when it ends.
- *     → the window ends without a purchase and the cart is still empty:
- *       OFFER step 2 (5%, 15 min), right away if the tab is open, else on
- *       the next page. Then the journey is over.
  *
- *   Never on cart / checkout / thank-you pages (the pill may show on the cart
- *   page — it is not a popup). Thank-you marks the journey done and leaves the
- *   coupon alone (the order is placed). Every popup shows once per visitor.
+ *     → ADDED FROM THE HELP POPUP (review, 11 Nov): the popup closes and the
+ *       "added but did not buy" clock starts — after A minutes of visible-tab
+ *       browsing without reaching the thank-you page, OFFER step 1 opens and the
+ *       coupon goes on the cart at once. A = 0 turns this path off.
  *
- *   The timer is a nudge, not an enforcement: the codes are the merchant's
- *   shared dashboard coupons, valid until their dashboard expiry. The theme
- *   has no server, so there is no per-visitor code.
+ *     → CLOSED THE HELP POPUP: the browsing clock starts — after M minutes of
+ *       visible-tab browsing with the cart still empty, OFFER step 1 opens; the
+ *       coupon goes on the cart (quietly, salla.cart.addCoupon) at the first add
+ *       inside the window. Anything added from elsewhere ends this path (deck
+ *       rule: a visitor who decided gets no discount).
+ *
+ *   OFFER popup: per-step title and text, «أكمل التسوّق» closes it and leaves
+ *   the countdown pill; «لا، شكراً» exists only when the merchant switches it on.
+ *   When the window ends the coupon comes off. A window that ends without a
+ *   purchase → step 2 («باقي لك فرصة», 5%, 15 min), right away if the tab is
+ *   open, else on the next page. Then the journey is over.
+ *
+ *   Never a popup on cart / checkout / thank-you pages (the pill may show on the
+ *   cart page — it is not a popup). Thank-you marks the journey bought and leaves
+ *   the coupon alone (the order is placed). Every popup shows once per visitor.
+ *
+ *   The timer is a nudge, not an enforcement: the codes are the merchant's shared
+ *   dashboard coupons, valid until their dashboard expiry. No server, no
+ *   per-visitor code.
  *
  * QA switches on the URL: ?qj=reset clears the visitor's state, ?qj=help opens
  * the help popup on this page, ?qj=offer opens offer step 1 on this page.
@@ -73,6 +80,7 @@
     return (m < 10 ? '0' : '') + m + ':' + (s % 60 < 10 ? '0' : '') + (s % 60);
   }
   function reduced() { return matchMedia('(prefers-reduced-motion: reduce)').matches; }
+  function text(sel, s) { var el = $(sel); if (el) el.textContent = s; }
 
   /* ---------- dialogs ---------- */
   var openName = null, lastFocus = null;
@@ -167,8 +175,11 @@
     btn.textContent = W.busy;
     Promise.resolve(salla.cart.addItem({ id: String(btn.dataset.qjAdd), quantity: 1 })).then(function () {
       btn.textContent = W.added;
-      S.stop = true; save();                               // decided: no discounts for them
+      S.stop = true;                                       // decided: no help popup again
+      if (!S.path) { S.path = 'add'; S.browse = 0; S.tick = now(); }   // the "added but did not buy" clock
+      save();
       setTimeout(function () { close('help'); }, 500);
+      watchBrowsing();
     }).catch(function () {
       delete btn.dataset.s;
       btn.textContent = W.add;
@@ -176,14 +187,19 @@
   }
   function helpClosed() {
     close('help');
-    if (!S.helpAt) { S.helpAt = now(); S.browse = 0; S.tick = now(); save(); }
+    if (!S.path) { S.path = 'help'; S.helpAt = now(); S.browse = 0; S.tick = now(); save(); }
     watchBrowsing();
   }
 
   /* ---------- the browsing clock (visible tab only, across pages) ---------- */
   var ticking = false;
+  function waitFor() {                                    // minutes this path has to browse before the offer
+    return S.path === 'add' ? Number(offer.afterAdd || 0) : Number(offer.wait || 3);
+  }
   function offerDue() {
-    return steps.length && S.helpAt && !S.stop && !S.offer && !quiet;
+    if (!steps.length || S.offer || S.next != null || S.buy || !S.path) return false;
+    if (S.path === 'add') return waitFor() > 0;
+    return !S.stop;                                        // closed-help path: any add from elsewhere ends it
   }
   function watchBrowsing() {
     if (ticking || !offerDue()) return;
@@ -195,29 +211,34 @@
       if (document.visibilityState !== 'hidden') S.browse = (S.browse || 0) + Math.min(2000, t - S.tick);
       S.tick = t;
       save();
-      if (S.browse >= Number(offer.wait || 3) * 6e4 && cartCount() === 0 && !openName) openOffer(0);
+      if (S.browse >= waitFor() * 6e4 && !quiet && !openName && (S.path === 'add' || cartCount() === 0)) openOffer(0);
     }, 1000);
   }
 
   /* ---------- the offer popup, its clock and the coupon ---------- */
   var timer = null;
   function step() { return steps[S.offer ? S.offer.i : -1]; }
+  function nextAllowed() {                                // may the next step open here and now?
+    return !quiet && !S.buy && !openName && (S.path === 'add' || (!S.stop && cartCount() === 0));
+  }
   function openOffer(i) {
     var st = steps[i];
-    if (!st || !st.code) { S.stop = true; save(); return; }
+    if (!st || !st.code) return;
     S.offer = { i: i, at: now(), end: now() + Number(st.min || 10) * 6e4, applied: false, hid: false, done: false };
     delete S.next;
     save();
     paintOffer();
     open('offer');
     runClock();
+    if (cartCount() > 0) applyCoupon();                  // added from the help popup: the discount goes on now
   }
   function paintOffer() {
     var st = step();
     if (!st) return;
-    $('[data-qj-pct]').textContent = st.pct + '%';
-    $('[data-qj-txt]').textContent = fill(W.offerText, { 'دقائق': st.min, 'نسبة': st.pct });
-    $('[data-qj-pill-text]').textContent = fill(S.offer.applied ? W.applied : W.pill, { 'نسبة': st.pct, 'دقائق': st.min });
+    text('[data-qj-kicker]', st.title || '');
+    text('[data-qj-pct]', st.pct + '%');
+    text('[data-qj-txt]', fill(st.text, { 'دقائق': st.min, 'نسبة': st.pct }));
+    text('[data-qj-pill-text]', fill(S.offer.applied ? W.applied : W.pill, { 'نسبة': st.pct, 'دقائق': st.min }));
   }
   function pill(show) {
     var p = $('[data-qj-pill]');
@@ -230,13 +251,13 @@
     var paint = function () {
       var left = S.offer.end - now();
       var txt = clock(left);
-      $('[data-qj-time]').textContent = txt;
-      $('[data-qj-pill-time]').textContent = txt;
+      text('[data-qj-time]', txt);
+      text('[data-qj-pill-time]', txt);
       if (left <= 0) endOffer();
     };
     paint();
     timer = setInterval(paint, 1000);
-    pill(!S.offer.hid && !thanks);
+    pill(!S.offer.hid && !thanks && openName !== 'offer');
   }
   function applyCoupon() {
     var st = step();
@@ -257,21 +278,21 @@
     if (o.applied && st && !thanks) silent(function () { return salla.cart.deleteCoupon(st.code); });
     var p = $('[data-qj-pill]');
     if (p && !o.hid && !thanks) {
-      $('[data-qj-pill-text]').textContent = W.ended;
-      $('[data-qj-pill-time]').textContent = '';
+      text('[data-qj-pill-text]', W.ended);
+      text('[data-qj-pill-time]', '');
       p.classList.add('is-ended');
       pill(true);
       setTimeout(function () { pill(false); p.classList.remove('is-ended'); }, 4000);
     }
-    // the next step: right away if they are still browsing with an empty cart, else on the next page
+    // the next step: right away if they are still browsing (and, on the closed-help path, the cart is still empty), else on the next page
     if (steps[o.i + 1]) {
       S.next = o.i + 1; save();
-      if (!quiet && !S.stop && cartCount() === 0) setTimeout(function () { if (S.next === o.i + 1 && !openName) openOffer(o.i + 1); }, 4500);
-    } else { S.stop = true; save(); }
+      setTimeout(function () { if (S.next === o.i + 1 && nextAllowed()) openOffer(o.i + 1); }, 4500);
+    }
   }
   function resumeOffer() {
     if (S.next != null) {                            // a step that was due when the last page ended
-      if (!quiet && !S.stop && cartCount() === 0) openOffer(S.next);
+      if (nextAllowed()) openOffer(S.next);
       return;
     }
     var o = S.offer;
@@ -279,11 +300,16 @@
     if (now() >= o.end) { runClock(); return; }     // paints 00:00 and ends it (coupon removed, next step)
     paintOffer();
     runClock();
+    if (cartCount() > 0) applyCoupon();
   }
 
   /* ---------- the cart decides ---------- */
   function onCartFilled() {
-    if (!S.stop) { S.stop = true; save(); }
+    // A journey under way ends here for good — unless the add came from the help
+    // popup itself, which has its own clock. A cart that merely holds something
+    // before any popup only pauses the help popup (maybeHelp checks the live
+    // cart), so a visitor who empties the cart later is not locked out.
+    if (!S.stop && (S.help || S.offer)) { S.stop = true; save(); }
     if (openName === 'help') close('help');
     applyCoupon();
   }
@@ -316,7 +342,7 @@
       return;
     }
     if (!steps.length) { delete S.offer; delete S.next; }   // the offer was switched off since: forget it
-    if (qs === 'offer' && steps.length) { S.helpAt = S.helpAt || now(); S.browse = 9e9; delete S.offer; delete S.next; S.stop = false; save(); }
+    if (qs === 'offer' && steps.length) { S.path = S.path || 'help'; S.helpAt = S.helpAt || now(); S.browse = 9e9; delete S.offer; delete S.next; S.stop = false; S.buy = false; save(); }
     salla.cart.event.onUpdated(function (sum) { if (sum && Number(sum.count) > 0) onCartFilled(); });
     salla.cart.event.onItemAdded(function () { onCartFilled(); });
     if (cartCount() > 0) onCartFilled();

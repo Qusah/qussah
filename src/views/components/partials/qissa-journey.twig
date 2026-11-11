@@ -2,10 +2,15 @@
   «نوافذ تحفيز قرار الشراء» — the decision journey: the «محتار؟» help popup
   (the three packages), the timed offer popup (10% then 5%) and its countdown
   pill. Site-wide, so it reads THEME SETTINGS (Theme Settings → «نوافذ تحفيز
-  قرار الشراء») and is included once from layouts/master.twig, after body:end.
+  قرار الشراء», first section) and is included once from layouts/master.twig,
+  after body:end (components/partials, the include path this theme uses).
 
   Source: the growth deck «تحفيز قرار الشراء ورفع معدل التحويل» (Nov 2026),
-  slides 5–10; no Figma — built from the slide mocks with the theme's tokens.
+  slides 5–10, plus the review of 11 Nov: the second offer has its own
+  wording («باقي لك فرصة»), the offer popup closes with «أكمل التسوّق» only
+  unless the dismiss switch is on, and a visitor who ADDED FROM THE HELP POPUP
+  but did not buy gets the offer after N minutes of browsing (coupon applied
+  to the cart at once). No Figma — built from the slide mocks.
 
   | Setting                      | Type     | Notes                                                    |
   |------------------------------|----------|----------------------------------------------------------|
@@ -17,15 +22,18 @@
   | qj_help_badge_N / note_N     | text     | chip above the name / words after the price, per card    |
   | qj_help_add_label / dismiss  | text     |                                                          |
   | qj_offer_enabled             | switch   | OFF until saved on; needs the help popup on + a code     |
-  | qj_offer_wait                | number   | visible-tab minutes after the help popup closed          |
+  | qj_offer_wait                | number   | visible-tab minutes after the help popup closed (no add) |
+  | qj_offer_after_add           | number   | visible-tab minutes after an add from the help popup; 0 = never |
   | qj_offer{1,2}_code/percent/minutes | text/number | the dashboard coupons; percent is display only     |
   | qj_offer2_enabled            | switch   | the 5% step after the first window ends                  |
-  | qj_offer_title … qj_offer_ended | text  | wording; {دقائق} and {نسبة} are filled by the script     |
+  | qj_offer_title / text, qj_offer2_title / text | text | per-step wording; {دقائق} and {نسبة} are filled  |
+  | qj_offer_show_dismiss        | switch   | «لا، شكراً» on the offer popup; OFF = «أكمل التسوّق» only |
+  | qj_offer_cta … qj_offer_ended | text    | the rest of the wording                                  |
 
   Only the shells are rendered here; partials/qissa-journey.js fills the
   package cards, owns the dialogs, the timers and the coupon. The script tag
-  is printed under the same conditions as the markup, so a store with both
-  switches off loads nothing. The coupon codes travel in data-config (page
+  is printed under the same conditions as the markup, so a store with the
+  help switch off loads nothing. The coupon codes travel in data-config (page
   source, never on screen) — the theme has no server to hand out codes.
 #}
 {% set qj_help_on = theme.settings.get('qj_help_enabled') %}
@@ -43,6 +51,8 @@
     {% set qj_offer2_on = theme.settings.get('qj_offer2_enabled', true) %}
     {% set qj_offer2_on = qj_offer2_on is null or (qj_offer2_on == true and qj_offer2_on != 'false') %}
     {% set qj_offer_on = qj_offer_on and qj_code1 != '' %}
+    {% set qj_dismiss_on = theme.settings.get('qj_offer_show_dismiss') %}
+    {% set qj_dismiss_on = qj_dismiss_on == true and qj_dismiss_on != 'false' %}
 
     {% set qj_featured_raw = theme.settings.get('qj_help_featured') %}
     {% set qj_featured_raw = qj_featured_raw is iterable ? qj_featured_raw|first : qj_featured_raw %}
@@ -52,12 +62,25 @@
     {% set qj_min_pages = theme.settings.get('qj_help_min_pages') %}
     {% set qj_delay = theme.settings.get('qj_help_delay') %}
     {% set qj_wait = theme.settings.get('qj_offer_wait') %}
+    {% set qj_after_add = theme.settings.get('qj_offer_after_add') %}
 
     {% set qj_steps = [] %}
     {% if qj_offer_on %}
-        {% set qj_steps = qj_steps|merge([{ code: qj_code1, pct: theme.settings.get('qj_offer1_percent') ?: 10, min: theme.settings.get('qj_offer1_minutes') ?: 10 }]) %}
+        {% set qj_steps = qj_steps|merge([{
+            code: qj_code1,
+            pct: theme.settings.get('qj_offer1_percent') ?: 10,
+            min: theme.settings.get('qj_offer1_minutes') ?: 10,
+            title: theme.settings.get('qj_offer_title') ?: trans('blocks.qissa_journey.offer_title'),
+            text: theme.settings.get('qj_offer_text') ?: trans('blocks.qissa_journey.offer_text')
+        }]) %}
         {% if qj_offer2_on and qj_code2 != '' %}
-            {% set qj_steps = qj_steps|merge([{ code: qj_code2, pct: theme.settings.get('qj_offer2_percent') ?: 5, min: theme.settings.get('qj_offer2_minutes') ?: 15 }]) %}
+            {% set qj_steps = qj_steps|merge([{
+                code: qj_code2,
+                pct: theme.settings.get('qj_offer2_percent') ?: 5,
+                min: theme.settings.get('qj_offer2_minutes') ?: 15,
+                title: theme.settings.get('qj_offer2_title') ?: trans('blocks.qissa_journey.offer2_title'),
+                text: theme.settings.get('qj_offer2_text') ?: trans('blocks.qissa_journey.offer2_text')
+            }]) %}
         {% endif %}
     {% endif %}
 
@@ -74,6 +97,7 @@
         },
         offer: {
             wait: qj_wait is null ? 3 : qj_wait,
+            afterAdd: qj_after_add is null ? 1 : qj_after_add,
             steps: qj_steps
         }
     } %}
@@ -87,7 +111,6 @@
         out: trans('blocks.qissa_journey.out'),
         busy: trans('blocks.qissa_journey.busy'),
         added: trans('blocks.qissa_journey.added'),
-        offerText: theme.settings.get('qj_offer_text') ?: trans('blocks.qissa_journey.offer_text'),
         pill: theme.settings.get('qj_offer_pill') ?: trans('blocks.qissa_journey.offer_pill'),
         applied: theme.settings.get('qj_offer_applied') ?: trans('blocks.qissa_journey.offer_applied'),
         ended: theme.settings.get('qj_offer_ended') ?: trans('blocks.qissa_journey.offer_ended'),
@@ -111,23 +134,28 @@
         </div>
 
         {% if qj_offer_on %}
-        {# ---- the timed offer popup: kicker, big percent, line, countdown chip, «اطلب الآن», «لا، شكراً» ---- #}
+        {# ---- the timed offer popup: per-step kicker + text, big percent, countdown chip, «أكمل التسوّق», optional «لا، شكراً» ---- #}
         <div class="qj__bd" data-qj-bd="offer" hidden>
             <div class="qj__dlg qj__dlg--offer" role="dialog" aria-modal="true" aria-labelledby="qj-offer-title" tabindex="-1">
-                <p class="qj__kicker" id="qj-offer-title">{{ theme.settings.get('qj_offer_title') ?: trans('blocks.qissa_journey.offer_title') }}</p>
+                <p class="qj__kicker" id="qj-offer-title" data-qj-kicker></p>
                 <p class="qj__pct" data-qj-pct></p>
                 <p class="qj__txt" data-qj-txt></p>
                 <p class="qj__timer"><span>{{ theme.settings.get('qj_offer_ends') ?: trans('blocks.qissa_journey.offer_ends') }}</span> <b data-qj-time>--:--</b></p>
                 <button class="qj__cta" type="button" data-qj-act="offer-cta">{{ theme.settings.get('qj_offer_cta') ?: trans('blocks.qissa_journey.offer_cta') }}</button>
+                {% if qj_dismiss_on %}
                 <button class="qj__no" type="button" data-qj-act="offer-dismiss">{{ theme.settings.get('qj_offer_dismiss') ?: trans('blocks.qissa_journey.dismiss') }}</button>
+                {% endif %}
             </div>
         </div>
 
-        {# the countdown pill after «اطلب الآن»: tapping it reopens the offer while it runs #}
+        {# the countdown pill after «أكمل التسوّق»: tapping it reopens the offer while it runs #}
         <button class="qj__pill" type="button" data-qj-pill hidden aria-haspopup="dialog" title="{{ qj_words.reopen }}">
             <span data-qj-pill-text></span><b class="qj__pill-c" data-qj-pill-time></b>
         </button>
         {% endif %}
     </div>
     <script defer data-cfasync="false" crossorigin="anonymous" src="{{ 'qissa-journey.js'|asset }}"></script>
+{% else %}
+    {# nothing to show — say why in the page source, so a merchant test can be read without the console #}
+    <!-- qissa-journey: {{ qj_help_on ? 'help switch on, but no packages picked in qj_help_products' : 'help switch off (qj_help_enabled)' }} · raw switch={{ theme.settings.get('qj_help_enabled')|json_encode|replace({'--': '- -'}) }} · raw products={{ theme.settings.get('qj_help_products')|json_encode|replace({'--': '- -'}) }} -->
 {% endif %}
