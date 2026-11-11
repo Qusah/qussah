@@ -17,7 +17,9 @@
     ribbon           string   «الأكثر مبيعًا» ribbon label; empty/false hides it
     show_thumbnails, show_rating, show_sold, show_inside, show_price, show_buy, show_discount
                      bool     per-element switches (qissa-dual-hero; show_discount in both blocks); unset reads as on
-    discount_color   string   colour of «خصم 14%»; empty = the struck price's colour
+    discount_color   string   colour of «خصم 14%»; empty = the cards' red (v2) / the struck price's colour
+    tag              string   a red tag on the photo (qissa-package: its own words, else the promotion title);
+                              empty/false/unset hides it
     look             string   'v2' = the Oct 2026 redesign (Figma «مجموعة المنزل · Desktop 1400» 723:761,
                               mobile 721:620; qissa-package's new_card_design): sold and rating over the
                               name, «تتضمن الآتي:» and the contents three across, the price and the button at
@@ -60,6 +62,10 @@
                     </a>
                 {% endfor %}
             </div>
+            {# the tag, as the product cards wear theirs; a title with commas turns its parts (qpromo-badge) #}
+            {% if tag is defined and tag %}
+                {% include 'components.partials.qpromo-badge' with { text: tag, class: 'qpack__tag' } %}
+            {% endif %}
             {# v2: a dot per photo over the photo's foot, the one on show a long navy pill. They are the
                thumbnails to qissa-pack-card.js (same data attributes), so a tap goes to that photo #}
             {% if v2 and images|length > 1 %}
@@ -123,15 +129,19 @@
             <div class="qpack__price">
                 {% if product.is_on_sale %}
                     <b class="qpack__price-now">{{ product.sale_price|money }}</b>
-                    <s class="qpack__price-old">{{ product.regular_price|money }}</s>
-                    {# «خصم 14%» — from the two prices, rounded down so it never claims more than the
-                       real discount; not shown under 1% (ClickUp z91pu68tp9). No sums or comparisons on
-                       prices here: Salla's renderer drops the whole section over them (the hero vanished
-                       from the preview, Nov 2026). The two prices go out as text; qissa-pack-card.js works
-                       out the percent and shows it. #}
-                    {% if show_discount and product.regular_price %}
-                        <span class="qpack__price-off" data-was="{{ product.regular_price|money|striptags|trim }}" data-now="{{ product.sale_price|money|striptags|trim }}" data-text="{{ trans('blocks.qissa.discount_off') }}"{% if discount_color is defined and discount_color %} style="color: {{ discount_color }}"{% endif %} hidden></span>
-                    {% endif %}
+                    {# what it was and the discount, together: v2 stacks them small beside the price, so the
+                       price leads (ClickUp z91pu69qbp); the other looks run them on the price's line #}
+                    <span class="qpack__price-was">
+                        <s class="qpack__price-old">{{ product.regular_price|money }}</s>
+                        {# «خصم 14%» — from the two prices, rounded down so it never claims more than the
+                           real discount; not shown under 1% (ClickUp z91pu68tp9). No sums or comparisons on
+                           prices here: Salla's renderer drops the whole section over them (the hero vanished
+                           from the preview, Nov 2026). The two prices go out as text; qissa-pack-card.js works
+                           out the percent and shows it. #}
+                        {% if show_discount and product.regular_price %}
+                            <span class="qpack__price-off" data-was="{{ product.regular_price|money|striptags|trim }}" data-now="{{ product.sale_price|money|striptags|trim }}" data-text="{{ trans('blocks.qissa.discount_off') }}"{% if discount_color is defined and discount_color %} style="color: {{ discount_color }}"{% endif %} hidden></span>
+                        {% endif %}
+                    </span>
                 {% else %}
                     <b class="qpack__price-now">{{ product.price|money }}</b>
                 {% endif %}

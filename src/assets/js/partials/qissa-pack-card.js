@@ -27,14 +27,22 @@ export const priceNum = (s) => {
 };
 
 // «خصم 14%» after the struck price (show_discount): rounded down so it never claims more than the real
-// discount, none under 1%.
+// discount, none under 1%. The card's digits face (WesternDigits) draws no «%» — iPhones showed «خصم 14» —
+// so the sign gets a span of its own in the Arabic face, as the product cards' .qprod__pct.
 function fillDiscount(card) {
   const off = card.querySelector('.qpack__price-off[data-was][hidden]');
   if (!off) return;
   const was = priceNum(off.dataset.was), now = priceNum(off.dataset.now);
   const n = was > now && now > 0 ? Math.floor((was - now) / was * 100) : 0;
   if (n < 1) return;
-  off.textContent = (off.dataset.text || '').replace(':pct', n);
+  const parts = (off.dataset.text || '').replace(':pct', n).split('%');
+  off.textContent = parts[0];
+  parts.slice(1).forEach((rest) => {
+    const pct = off.appendChild(document.createElement('span'));
+    pct.className = 'qpack__pct';
+    pct.textContent = '%';
+    off.appendChild(document.createTextNode(rest));
+  });
   off.hidden = false;
 }
 

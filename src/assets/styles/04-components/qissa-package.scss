@@ -253,6 +253,8 @@ $qpack-cyan: #91e6f7;
 
     .sicon-sar { font-size: 11.33px; }
   }
+  // what it was and the discount: on the price's line here; the v2 card stacks them
+  .qpack__price-was { display: contents; }
 
   // sold on the right, rating on the left
   .qpack__stats {
@@ -773,8 +775,11 @@ $qpack-cyan: #91e6f7;
     flex-direction: column;
     gap: 20px;
   }
+  // the price leads; what it was and «خصم 14%» stack small beside it (ClickUp z91pu69qbp: the discount at the
+  // struck price's size competed with the price). The discount's own look is at the end of the file.
   .qpack__price {
-    gap: 0 20px;
+    align-items: center;
+    gap: 0 16px;
     margin: 0;
   }
   .qpack__price .qpack__price-now {
@@ -783,13 +788,18 @@ $qpack-cyan: #91e6f7;
 
     .sicon-sar { font-size: 18px; }
   }
-  .qpack__price .qpack__price-old,
-  .qpack__price .qpack__price-off {
+  .qpack__price-was {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;   // against the price (RTL)
+    gap: 6px;
+  }
+  .qpack__price .qpack__price-old {
     color: #767676;
-    font-size: 26px;
+    font-size: 22px;
     line-height: 1.2;
 
-    .sicon-sar { font-size: 16px; }
+    .sicon-sar { font-size: 14px; }
   }
   .qpack__buy-btn {
     height: 68px;
@@ -897,7 +907,7 @@ $qpack-cyan: #91e6f7;
 
     .qpack__purchase { gap: 12px; }
     .qpack__price {
-      gap: 0 10px;
+      gap: 0 12px;
       margin-top: 0;
     }
     .qpack__price .qpack__price-now {
@@ -906,12 +916,12 @@ $qpack-cyan: #91e6f7;
 
       .sicon-sar { font-size: 14px; }
     }
-    .qpack__price .qpack__price-old,
-    .qpack__price .qpack__price-off {
-      font-size: 20px;
+    .qpack__price-was { gap: 4px; }
+    .qpack__price .qpack__price-old {
+      font-size: 16px;
       line-height: 1.2;
 
-      .sicon-sar { font-size: 12px; }
+      .sicon-sar { font-size: 10px; }
     }
     .qpack__buy-btn {
       height: 63.43px;
@@ -956,11 +966,71 @@ $qpack-cyan: #91e6f7;
   .qpack__head { margin-bottom: 24px; }
 }
 
-// «خصم 14%» after the struck price (ClickUp z91pu68tp9). It takes the struck price's size and colour in every
-// layout above (each rule lists both), and drops the strike. Size and colour wait on Eng. Mahmoud's approval:
-// change them here.
+// «خصم 14%» after the struck price (ClickUp z91pu68tp9). The first revamp's card gives it the struck price's size
+// and colour (each rule above lists both) and drops the strike.
 .qpack__card .qpack__price .qpack__price-off {
   font-weight: 500;
   text-decoration: none;
   white-space: nowrap;
+}
+// the card's digits face draws no «%»: the sign takes the Arabic face (qissa-pack-card.js puts it in its span)
+.qpack__card .qpack__price-off .qpack__pct { font-family: 'GE SS Two', Tahoma, sans-serif !important; }
+// The v2 card (ClickUp z91pu69qbp): a small pill under the struck price — the product cards' red (#CE1F3C) on a
+// light wash of the same colour, so it reads as a label and the price stays first. «لون نسبة الخصم» (inline
+// colour) recolours both. Size and colour wait on Eng. Mahmoud's approval: change them here.
+.qpack__card--v2 .qpack__price .qpack__price-off {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(206, 31, 60, .1);
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  color: #ce1f3c;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+@media (max-width: 768px) {
+  .qpack__card--v2 .qpack__price .qpack__price-off {
+    padding: 2px 8px;
+    font-size: 12px;
+  }
+}
+
+// The tag on the photo (qissa-package's show_tag; ClickUp z91pu69qbp): the product cards' red pill, at the photo's
+// start corner — or its far one when the corner band runs across the start.
+.qpack__tag {
+  position: absolute;
+  z-index: 3;
+  top: 16px;
+  right: 16px;
+  max-width: calc(100% - 32px);
+  height: 34px;
+  padding: 6px 16px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #ce1f3c;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 22px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+.qpack__card--ribbon .qpack__tag {
+  right: auto;
+  left: 16px;
+}
+@media (max-width: 768px) {
+  .qpack__tag {
+    top: 12px;
+    right: 12px;
+    height: 27px;
+    padding: 4px 12px;
+    font-size: 12px;
+    line-height: 19px;
+  }
+  .qpack__card--ribbon .qpack__tag {
+    right: auto;
+    left: 12px;
+  }
 }

@@ -2455,7 +2455,34 @@
                         "en": "Discount percentage colour",
                         "ar": "لون نسبة الخصم"
                     },
-                    "description": "لون «خصم 14%». اتركه فارغًا ليأخذ لون السعر القديم",
+                    "description": "لون «خصم 14%» وخلفيته الفاتحة. اتركه فارغًا للأحمر المستخدم في بطاقات المنتجات",
+                    "required": false,
+                    "value": null
+                },
+                {
+                    "type": "boolean",
+                    "id": "show_tag",
+                    "format": "switch",
+                    "icon": "sicon-tag",
+                    "label": {
+                        "en": "Show a tag on the product photo",
+                        "ar": "إظهار شارة على صورة المنتج"
+                    },
+                    "description": "شارة حمراء في زاوية الصورة، مثل شارة بطاقات المنتجات",
+                    "required": false,
+                    "value": true,
+                    "selected": true
+                },
+                {
+                    "id": "tag_text",
+                    "type": "string",
+                    "format": "text",
+                    "icon": "sicon-format-text-alt",
+                    "label": {
+                        "en": "Tag text",
+                        "ar": "نص الشارة"
+                    },
+                    "description": "اتركه فارغًا لعرض «العنوان الترويجي» للمنتج. نص فيه فواصل يتبدّل جزءًا جزءًا",
                     "required": false,
                     "value": null
                 },
