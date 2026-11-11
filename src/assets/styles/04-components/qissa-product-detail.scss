@@ -97,6 +97,12 @@ $qpd-muted: #5a6874;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
+  // the cards' tag (qprod-card.scss, .qprod--v2): the same red pill on a product's page as on its card (ClickUp
+  // z91pu69qcj); with the v2 card switched off (master.twig's body.qcard-v1) the cards and this stay cyan
+  @at-root body:not(.qcard-v1) #{&}__badge {
+    background: #ce1f3c;
+    color: #fff;
+  }
 
   // wishlist — the card's heart, top left
   &__fav {
