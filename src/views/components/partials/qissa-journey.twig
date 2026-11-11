@@ -45,8 +45,39 @@
 {% set qj_help_on = qj_help_on and qj_help_on is not same as('false') %}
 
 {% set qj_list = theme.settings.get('qj_help_products') %}
-{% set qj_ids %}{% if qj_list is iterable %}{% for picked in qj_list %}{% if picked.id is defined %}{{ picked.id }}{% elseif picked.value is defined %}{{ picked.value }}{% elseif picked is not iterable %}{{ picked }}{% endif %},{% endfor %}{% elseif qj_list %}{{ qj_list }}{% endif %}{% endset %}
-{% set qj_ids = qj_ids|trim(', ') %}
+{# The picker's value reached the store as something whose only plain entry was
+   the word "products" (11 Nov: the API was asked for the id "products" → 422),
+   i.e. the picks sit one level down, not in a flat list. So this walks two
+   levels and takes, per entry: its id, else its plain value, else the entry
+   itself when it is plain, else its children by the same rule. Words are
+   printed too — the script keeps only what looks like a product id. Nothing
+   iterable is ever printed (that is an error in PHP). #}
+{% set qj_ids %}
+{%- if qj_list is iterable -%}
+    {%- if qj_list.id is defined and qj_list.id is not iterable -%}
+        {{- qj_list.id -}}
+    {%- else -%}
+        {%- for a in qj_list -%}
+            {%- if a.id is defined and a.id is not iterable -%}{{- a.id -}},
+            {%- elseif a.value is defined and a.value is not iterable -%}{{- a.value -}},
+            {%- elseif a is not iterable -%}{{- a -}},
+            {%- else -%}
+                {%- for b in (a.value is defined ? a.value : a) -%}
+                    {%- if b.id is defined and b.id is not iterable -%}{{- b.id -}},
+                    {%- elseif b.value is defined and b.value is not iterable -%}{{- b.value -}},
+                    {%- elseif b is not iterable -%}{{- b -}},
+                    {%- endif -%}
+                {%- endfor -%}
+            {%- endif -%}
+        {%- endfor -%}
+    {%- endif -%}
+{%- elseif qj_list -%}
+    {{- qj_list -}}
+{%- endif -%}
+{% endset %}
+{% set qj_ids = qj_ids|trim|trim(', ') %}
+{# no product id in there: hand the script the raw value, so the visitor state says what the picker really holds #}
+{% set qj_raw = (qj_ids matches '/[0-9]{6}/') ? '' : qj_list|json_encode|slice(0, 600) %}
 
 {% if qj_help_on and qj_ids %}
     {% set qj_offer_on = theme.settings.get('qj_offer_enabled') %}
@@ -122,7 +153,7 @@
         reopen: trans('blocks.qissa_journey.offer_reopen')
     } %}
 
-    <div class="qj" data-qj hidden data-config="{{ qj_config|json_encode }}" data-words="{{ qj_words|json_encode }}">
+    <div class="qj" data-qj hidden data-config="{{ qj_config|json_encode }}" data-words="{{ qj_words|json_encode }}"{% if qj_raw %} data-raw="{{ qj_raw }}"{% endif %}>
 
         {# ---- the «محتار؟» help popup: title, line, up to three package rows, «لا، شكراً» ---- #}
         <div class="qj__bd" data-qj-bd="help" hidden>

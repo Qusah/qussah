@@ -137,24 +137,39 @@
     if (qs === 'help') return true;
     return !S.help && !S.stop && !quiet && S.seen.length >= Number(help.minPages || 2);
   }
+  /* A failed try leaves a trace in the state (helpTry = when, helpErr = why) and
+     nothing else: it never holds back the next page. It used to block every try
+     for a minute — a request cut off by the visitor moving to the next product
+     counted as a failure, and the popup then stayed away on the page where it
+     was due (11 Nov). A network failure is tried again on the same page, twice. */
+  var helpTries = 0;
+  function helpFailed(e) {
+    var r = e && e.response;
+    S.helpTry = now();
+    S.helpErr = String(typeof e === 'string' ? e : r ? 'http ' + r.status : (e && e.message) || e).slice(0, 700);
+    save();
+    if (typeof e !== 'string' && ++helpTries < 3) setTimeout(maybeHelp, helpTries * 4000);
+  }
   function maybeHelp() {
     if (!helpDue() || cartCount() > 0) return;
-    if (S.helpTry && now() - S.helpTry < 6e4 && qs !== 'help') return;   // the API failed a moment ago
     var t0 = now();
-    var ids = (help.ids || []).map(String).filter(Boolean).slice(0, 3);
-    if (!ids.length) return;
+    // Only what looks like a Salla product id (a long number): the template walks a
+    // picker value whose shape it cannot see, so words and small numbers come along.
+    var ids = (help.ids || []).map(function (x) { return String(x).trim(); }).filter(function (x) { return /^[0-9]{6,}$/.test(x); }).slice(0, 3);
+    if (!ids.length) { helpFailed('bad ids ' + JSON.stringify(help.ids) + ' raw ' + (root.dataset.raw || '')); return; }
     salla.product.api.fetch({ source: 'selected', source_value: ids, limit: ids.length }).then(function (res) {
-      var byId = {};
-      ((res && res.data) || []).forEach(function (p) { byId[String(p.id)] = p; });
+      var byId = {}, got = (res && res.data) || [];
+      got.forEach(function (p) { byId[String(p.id)] = p; });
       var products = ids.map(function (id) { return byId[id]; }).filter(function (p) { return p && p.name; });
-      if (!products.length) throw new Error('no products');
+      if (!products.length) throw 'asked ' + ids.join(',') + ' got ' + got.map(function (p) { return p.id; }).join(',');
+      if (S.helpTry) { delete S.helpTry; delete S.helpErr; save(); }
       renderHelp(products);
       var wait = Math.max(0, Number(qs === 'help' ? 0 : help.delay || 0) * 1000 - (now() - t0));
       setTimeout(function () {
         if (!helpDue() || cartCount() > 0 || !open('help')) return;
         S.help = now(); save();
       }, wait);
-    }).catch(function () { S.helpTry = now(); save(); });
+    }).catch(helpFailed);
   }
   function renderHelp(products) {
     var featured = Number(help.featured);
