@@ -1131,9 +1131,11 @@ $qpd-muted: #5a6874;
     min-height: 185px;
     margin: 0;
     padding: 12px;
-    border: 0;
+    // white with the product cards' hairline: the frame's #f4f5f7 all but vanished on the page's #f7f7f7
+    // (ClickUp z91pu69qcr)
+    border: 1px solid rgba(0, 0, 0, .08);
     border-radius: 24px;
-    background: #f4f5f7;
+    background: #fff;
     scroll-snap-align: center;
     animation: none;
   }
@@ -2396,3 +2398,11 @@ body:not(.qpd-loyalty-on) .qpd salla-loyalty-points-banner { display: none !impo
   }
 }
 html.qsheet-open { overflow: hidden; }
+
+// Salla's reviews translator (reviews-translator/app.js — Salla injects it, not the theme) asks Google which
+// language each review is in and offers «ترجمة إلى العربية» when the answer isn't the page's. Short Arabic reviews
+// come back wrong (a one-word «ممتاز» reads as Urdu), and translating them to Arabic changes nothing — the button
+// "does nothing" (ClickUp z91pu69qcr). The store is Arabic only and so are its reviews: on Arabic pages the
+// controls go; a page in another language keeps them, where translating the Arabic reviews does work.
+html[lang="ar"] .s-translate-wrap,
+html[lang="ar"] .s-translate-all-wrap { display: none !important; }
