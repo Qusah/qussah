@@ -203,13 +203,14 @@ $qcd-green: #008036;
   }
   &__total { color: $qcd-navy; font-size: 22.37px; font-weight: 700; line-height: 33.56px; white-space: nowrap; }
 
-  // checkout / «تصفح المنتجات» — navy, 10.17 round, 15.26 above and below
+  // checkout / «تصفح المنتجات» — navy, Qusah's large button: 52 / 12 / 16 bold, as the product page's and the
+  // quick view's on phones (ClickUp z91pu69qcz; the frame's was 55.51 / 10.17 / 16.27 medium)
   &__btn {
     display: flex; align-items: center; justify-content: center;
-    width: 100%; min-height: 55.51px; padding: 15.26px 16px; margin: 0;
-    border: 0; border-radius: 10.17px;
+    width: 100%; min-height: 52px; padding: 14px 16px; margin: 0;
+    border: 0; border-radius: 12px;
     background: $qcd-navy; color: #fff;
-    font-size: 16.27px; font-weight: 500; line-height: 24.41px; text-align: center;
+    font-size: 16px; font-weight: 700; line-height: 24px; text-align: center;
     cursor: pointer;
     transition: background-color 0.15s ease, color 0.15s ease;
     &:hover { background: #91e6f7; color: $qcd-navy; }   // the revamp's button hover

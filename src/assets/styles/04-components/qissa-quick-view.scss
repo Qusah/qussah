@@ -381,12 +381,12 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
 .qqv-row { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; margin-top: 4px; }
 @container (max-width: 269px) { .qqv-row { grid-template-columns: minmax(0, 1fr); } }
 .qqv-qty[hidden] + .qqv-btn { grid-column: 1 / -1; }   // out of stock: the disabled button spans the row
-// qty and buttons: the revamp card button — 48.38 tall, 7.44 round, 14.89 /
-// 700 type (phones: the Product Hero's 52 / 8 / 16)
+// qty and buttons: the revamp card button — 48.38 tall, 14.89 / 700 type (phones: 52 / 16), and every Qusah
+// button's 12 radius were 7.44, phones 8)
 .qqv-qty {
   display: inline-flex; align-items: center; justify-content: space-between; gap: 4px;
   min-width: 134px; height: 48.38px; padding: 4px;
-  border-radius: 7.44px; direction: rtl;
+  border-radius: 12px; direction: rtl;
   background: rgba(255, 255, 255, .08); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16);
   button { width: 40.38px; height: 40.38px; border-radius: 5.44px; color: #fff !important; transition: background-color .2s; }
   button:hover { background: rgba(255, 255, 255, .12) !important; }
@@ -398,7 +398,7 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
 .qqv-btn {
   position: relative; overflow: hidden; gap: 8px;
   width: 100%; min-height: 48.38px; padding: 0 18px !important;
-  border-radius: 7.44px;
+  border-radius: 12px;
   font-size: 14.89px !important; font-weight: 700 !important; line-height: 22.33px !important;
   text-decoration: none !important;
   transition: background-color .2s, transform .14s var(--qe);
@@ -482,9 +482,9 @@ salla-products-slider:has(.is-qv-open) .s-slider-block__title-nav { visibility: 
   .qqv-ths button { border-radius: 11.91px; }
   .qqv-ticket h2 { font-size: 18px; }
   .qqv-desc { font-size: 13.5px; }
-  .qqv-qty { height: 52px; border-radius: 8px; }
-  .qqv-qty button { width: 44px; height: 44px; border-radius: 6px; }
-  .qqv-btn { min-height: 52px; border-radius: 8px; font-size: 16px !important; line-height: 24px !important; }
+  .qqv-qty { height: 52px; }
+  .qqv-qty button { width: 44px; height: 44px; border-radius: 8px; }
+  .qqv-btn { min-height: 52px; font-size: 16px !important; line-height: 24px !important; }
 }
 // A card that turns at its own width in a slider (240–300px): the stub and the
 // order lines tighten so nothing is cut.

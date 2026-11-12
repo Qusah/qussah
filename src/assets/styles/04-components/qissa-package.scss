@@ -343,7 +343,7 @@ $qpack-cyan: #91e6f7;
     height: 48.43px;
     padding: 0 16px;
     border: 0;
-    border-radius: 7.45px;
+    border-radius: 12px;   // every Qusah button's radius 
     background: $qpack-navy;
     color: #fff;
     font-size: 14.9px;
@@ -471,7 +471,7 @@ $qpack-cyan: #91e6f7;
     .qpack__buy-btn {
       order: 6;
       height: 52px;
-      border-radius: 8px;
+      border-radius: 12px;
       font-size: 16.69px;
       line-height: 20px;
     }
@@ -568,7 +568,7 @@ $qpack-cyan: #91e6f7;
     .qpack__buy-btn {
       height: 44px;
       margin-top: auto;
-      border-radius: 8px;
+      border-radius: 12px;
       font-size: 14px;
       line-height: 22px;
     }
@@ -804,7 +804,7 @@ $qpack-cyan: #91e6f7;
   }
   .qpack__buy-btn {
     height: 68px;
-    border-radius: 10px;
+    border-radius: 12px;   // every Qusah button's radius (ClickUp z91pu69qcz); its size stays the hero's own
     font-size: 24px;
     line-height: 1.2;
   }
@@ -926,7 +926,7 @@ $qpack-cyan: #91e6f7;
     }
     .qpack__buy-btn {
       height: 63.43px;
-      border-radius: 9.06px;
+      border-radius: 12px;
       font-size: 18px;
       line-height: 1.2;
     }

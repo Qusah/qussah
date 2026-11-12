@@ -575,7 +575,7 @@ $qpd-muted: #5a6874;
     height: 48.43px;
     padding: 0 26.08px;
     border: 0;
-    border-radius: 7.45px;
+    border-radius: 12px;   // every Qusah button's radius, as the cards' 
     font-size: 14.9px;
     font-weight: 700;
     line-height: 22.35px;
@@ -600,7 +600,7 @@ $qpd-muted: #5a6874;
     height: 50.29px;
     overflow: hidden;
     border: 0;
-    border-radius: 7.45px;
+    border-radius: 12px;
     background: #f4f5f6;
   }
   .s-quantity-input-container {
@@ -1759,19 +1759,21 @@ $qpd-muted: #5a6874;
       margin-top: 9.03px;
     }
     &__qty { flex-basis: 148.49px; }
+    // the large buttons on phones, as the quick view's: 52 / 12 / 16 bold (ClickUp z91pu69qcz; were 52.73 /
+    // 11.15 / 14.86 medium)
     &__btn--cart .s-button-element,
     &__btn--buy {
-      height: 52.73px;
+      height: 52px;
       padding: 0 14.86px;
-      border-radius: 11.15px;
-      font-size: 14.86px;
-      font-weight: 500;
-      line-height: 22.3px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 24px;
     }
     salla-quantity-input {
-      height: 52.68px;
+      height: 52px;
       border: .93px solid #e9ecef;
-      border-radius: 9.28px;
+      border-radius: 12px;
       background: #fff;
     }
     .s-quantity-input-button { flex-basis: 43.4px; }
@@ -2070,7 +2072,7 @@ $qpd-muted: #5a6874;
     align-items: stretch;
     height: 48px;
     border: 1px solid #daeff7;
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
     background: #fff;
   }
@@ -2105,11 +2107,12 @@ $qpd-muted: #5a6874;
     justify-content: center;
     gap: 8px;
     border-radius: 12px;
-    background: #30378e;
+    // the product page's own button, in the floating bar: its navy, type and weight (ClickUp z91pu69qcz)
+    background: $qpd-navy;
     color: #fff;
-    font-size: 16px;
-    font-weight: 500;
-    font-family: "GE SS Two", sans-serif;
+    font-size: 14.9px;
+    font-weight: 700;
+    font-family: $qpd-font !important;
     cursor: pointer;
     transition: background 0.15s ease;
     &:hover { background: #262c72; }
@@ -2121,10 +2124,11 @@ $qpd-muted: #5a6874;
     padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
     &__inner { gap: 8px; }
     &__price { font-size: 15px; }
-    &__qty { height: 44px; }
+    // the compact buttons on phones, as the cards' «أضف للسلة»: 45 / 12 / 14 bold
+    &__qty { height: 45px; }
     &__step { width: 34px; font-size: 20px; }
     &__qty-val { min-width: 36px; }
-    &__add { height: 44px; font-size: 14px; }
+    &__add { height: 45px; font-size: 14px; }
   }
 }
 
