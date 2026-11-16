@@ -6,11 +6,18 @@
 | component.video_url    | string | optional video — direct file URL or YouTube link               |
 | component.autoplay     | bool   | video: muted autoplay loop (ambient) vs poster + play controls  |
 | component.link         | string | optional link wrapping the media (no visible CTA)              |
+| component.mini_player | bool | on: no place in the page — the video floats in the screen corner (partials/qissa-mini-player) |
 | position               | int    | sorting block                                                  |
 
 Chrome-free media block: displays ONLY the designer's banner image or their video.
 No heading, no text, no call-to-action — whatever the designers create is shown as-is.
 #}
+{# «فيديو عائم» switch. On: the block has no place in the page, its video floats in the
+   bottom corner of the screen (like YouTube / Facebook) and nothing below is rendered.
+   Off: the banner below, in its place. #}
+{% if component.mini_player and component.video_url %}
+    {% include 'components.partials.qissa-mini-player' with { video: component.video_url, poster: component.image, ambient: component.autoplay } %}
+{% else %}
 {% set has_link = component.link and component.link not in ['#', '/products'] %}
 {# a link is safe around an image or an ambient (controls-less) video, but not around a
    video with playback controls where a click should play/pause, not navigate. #}
@@ -23,7 +30,7 @@ No heading, no text, no call-to-action — whatever the designers create is show
             {% if component.video_url %}
                 <div class="qmedia__video"
                      data-qmedia-video="{{ component.video_url }}"
-                     data-qmedia-autoplay="{{ component.autoplay ? '1' : '' }}"{% if component.mini_player %} data-qmini{% endif %}>
+                     data-qmedia-autoplay="{{ component.autoplay ? '1' : '' }}">
                     {% if component.image %}
                         <img class="qmedia__poster" src="{{ component.image }}" alt="{{ store.name }}" loading="lazy"/>
                     {% endif %}
@@ -42,10 +49,6 @@ No heading, no text, no call-to-action — whatever the designers create is show
 </section>
 
 {% if component.video_url %}
-{# «مشغّل مصغّر عائم» switch: the shared floating mini player (style + script) #}
-{% if component.mini_player %}
-    {% include 'components.partials.qissa-mini-player' %}
-{% endif %}
 <script>
 (function () {
   // Build the player from the merchant URL: YouTube -> iframe, otherwise -> <video>.
@@ -63,14 +66,11 @@ No heading, no text, no call-to-action — whatever the designers create is show
     var autoplay = box.getAttribute('data-qmedia-autoplay') === '1';
     var posterEl = box.querySelector('.qmedia__poster');
     var poster = posterEl ? posterEl.getAttribute('src') : null;
-    var mini = box.hasAttribute('data-qmini') && window.qissaMini;
     var id = ytId(url), el;
     if (id) {
       el = document.createElement('iframe');
       el.src = 'https://www.youtube.com/embed/' + id + '?rel=0&playsinline=1'
-             + (autoplay ? '&autoplay=1&mute=1&loop=1&controls=0&playlist=' + id : '')
-             // the mini player reads YouTube's play/pause state through its iframe API
-             + (mini && !autoplay ? '&enablejsapi=1&origin=' + encodeURIComponent(location.origin) : '');
+             + (autoplay ? '&autoplay=1&mute=1&loop=1&controls=0&playlist=' + id : '');
       el.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
       el.setAttribute('allowfullscreen', '');
       el.setAttribute('title', 'video');
@@ -89,9 +89,8 @@ No heading, no text, no call-to-action — whatever the designers create is show
     el.className = 'qmedia__player';
     if (posterEl) { posterEl.remove(); }
     box.appendChild(el);
-    // ambient loop → mode 2; a video with controls floats once the shopper plays it → mode 0
-    if (mini) { mini(box, el, autoplay ? 2 : 0); }
   });
 })();
 </script>
+{% endif %}
 {% endif %}

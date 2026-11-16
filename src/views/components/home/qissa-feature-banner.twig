@@ -8,15 +8,22 @@
 | component.button_url  | string | CTA link                                     |
 | component.image       | string | video poster image (merchant upload)         |
 | component.video_url   | string | video source — direct file URL or YouTube    |
+| component.mini_player | bool | on: no place in the page — the video floats in the screen corner (partials/qissa-mini-player) |
 | position              | int    | sorting block                                |
 
 Figma: desktop 6036:1107 (1440) — navy banner, text+outlined CTA right, video (poster + play button) left.
        mobile  6036:21955 (428) — title only; subtitle + CTA hidden by Figma.
 The play button plays the merchant video in place (direct file → <video>, YouTube → iframe).
 #}
+{# «فيديو عائم» switch. On: the block has no place in the page, its video floats in the
+   bottom corner of the screen (like YouTube / Facebook) and nothing below is rendered.
+   Off: the banner below, in its place. #}
+{% if component.mini_player and component.video_url %}
+    {% include 'components.partials.qissa-mini-player' with { video: component.video_url, poster: component.image, ambient: false } %}
+{% else %}
 <section class="s-block qfbanner" id="qfbanner-{{ position }}">
     <div class="container">
-        <div class="qfbanner__box" data-video="{{ component.video_url }}"{% if component.mini_player and component.video_url %} data-qmini{% endif %}>
+        <div class="qfbanner__box" data-video="{{ component.video_url }}">
 
             {# video poster (left in RTL) — replaced by the player on play #}
             {% if component.image or component.video_url %}
@@ -59,11 +66,6 @@ The play button plays the merchant video in place (direct file → <video>, YouT
     </div>
 </section>
 
-{# «مشغّل مصغّر عائم» switch: the shared floating mini player (style + script) #}
-{% if component.mini_player and component.video_url %}
-    {% include 'components.partials.qissa-mini-player' %}
-{% endif %}
-
 <script>
 (function(){
   function ytId(u){
@@ -73,21 +75,16 @@ The play button plays the merchant video in place (direct file → <video>, YouT
     return /^[\w-]{11}$/.test(u) ? u : null;
   }
   document.querySelectorAll('.qfbanner__box[data-video]').forEach(function(box){
-    if(box.dataset.qfInit) return; // a second banner on the page runs this script again
-    box.dataset.qfInit = '1';
     var url = (box.getAttribute('data-video') || '').trim();
     var play = box.querySelector('button.qfbanner__play');
     if(!url || !play) return;
-    var mini = box.hasAttribute('data-qmini') && window.qissaMini;
     play.addEventListener('click', function(){
       var media = box.querySelector('.qfbanner__media');
       if(!media){ media = document.createElement('div'); media.className = 'qfbanner__media'; box.insertBefore(media, box.firstChild); }
       var id = ytId(url), el;
       if(id){
         el = document.createElement('iframe');
-        el.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0' +
-          // the mini player reads YouTube's play/pause state through its iframe API
-          (mini ? '&playsinline=1&enablejsapi=1&origin=' + encodeURIComponent(location.origin) : '');
+        el.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0';
         el.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
         el.setAttribute('allowfullscreen', '');
         el.setAttribute('title', play.getAttribute('aria-label') || 'video');
@@ -99,8 +96,8 @@ The play button plays the merchant video in place (direct file → <video>, YouT
       media.innerHTML = '';
       media.appendChild(el);
       play.style.display = 'none';
-      if(mini) mini(media, el, 1); // started by this click → mode 1
     });
   });
 })();
 </script>
+{% endif %}

@@ -12,6 +12,7 @@
 | component.bg_gradient| bool   | make the background a gradient                       |
 | component.bg_color2  | string | second gradient color                                |
 | component.bg_angle   | int    | gradient angle (deg)                                 |
+| component.mini_player | bool | on: no place in the page — the video floats in the screen corner (partials/qissa-mini-player) |
 | position             | int    | sorting block                                        |
 
 Same layout as qissa-banner (navy box, text RIGHT, media LEFT) but the media is an
@@ -19,6 +20,12 @@ autoplay + looping (muted) video. Direct files play via <video>; a YouTube URL i
 swapped for an autoplay/loop/muted iframe by the script below.
 When bg_color is left empty the section keeps its default background.
 #}
+{# «فيديو عائم» switch. On: the block has no place in the page, its video floats in the
+   bottom corner of the screen (like YouTube / Facebook) and nothing below is rendered.
+   Off: the banner below, in its place. #}
+{% if component.mini_player and component.video_url %}
+    {% include 'components.partials.qissa-mini-player' with { video: component.video_url, poster: component.image, ambient: true } %}
+{% else %}
 {% set qbg = '' %}
 {% if component.bg_gradient and component.bg_color and component.bg_color2 %}
     {% set qbg = 'linear-gradient(' ~ (component.bg_angle|default(135)) ~ 'deg, ' ~ component.bg_color ~ ', ' ~ component.bg_color2 ~ ')' %}
@@ -31,7 +38,7 @@ When bg_color is left empty the section keeps its default background.
 
             {# video (left in RTL) — autoplay + loop + muted #}
             {% if component.video_url or component.image %}
-                <div class="qvbanner__media" data-video="{{ component.video_url }}"{% if component.mini_player and component.video_url %} data-qmini{% endif %}>
+                <div class="qvbanner__media" data-video="{{ component.video_url }}">
                     {% if component.video_url %}
                         <video class="qvbanner__video" autoplay loop muted playsinline preload="auto"
                                {% if component.image %}poster="{{ component.image }}"{% endif %}>
@@ -64,11 +71,6 @@ When bg_color is left empty the section keeps its default background.
     </div>
 </section>
 
-{# «مشغّل مصغّر عائم» switch: the shared floating mini player (style + script) #}
-{% if component.mini_player and component.video_url %}
-    {% include 'components.partials.qissa-mini-player' %}
-{% endif %}
-
 <script>
 (function(){
   // A direct video file already autoplays + loops via the <video> tag.
@@ -80,25 +82,19 @@ When bg_color is left empty the section keeps its default background.
     return m ? m[1] : (/^[\w-]{11}$/.test(u) ? u : null);
   }
   document.querySelectorAll('.qvbanner__media[data-video]').forEach(function(media){
-    if(media.dataset.qvInit) return; // a second banner on the page runs this script again
-    media.dataset.qvInit = '1';
     var id = ytId((media.getAttribute('data-video') || '').trim());
-    if(id){ // direct file (or no video) → the <video>/<img> stays as-is
-      var ifr = document.createElement('iframe');
-      ifr.className = 'qvbanner__video';
-      ifr.src = 'https://www.youtube.com/embed/' + id +
-        '?autoplay=1&mute=1&loop=1&playlist=' + id +
-        '&controls=0&modestbranding=1&rel=0&showinfo=0&playsinline=1';
-      ifr.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
-      ifr.setAttribute('frameborder', '0');
-      ifr.setAttribute('title', 'video');
-      media.innerHTML = '';
-      media.appendChild(ifr);
-    }
-    // muted loop, always playing → mode 2 (ambient)
-    if(media.hasAttribute('data-qmini') && window.qissaMini){
-      window.qissaMini(media, media.querySelector('.qvbanner__video'), 2);
-    }
+    if(!id) return; // direct file (or no video) → leave the <video>/<img> as-is
+    var ifr = document.createElement('iframe');
+    ifr.className = 'qvbanner__video';
+    ifr.src = 'https://www.youtube.com/embed/' + id +
+      '?autoplay=1&mute=1&loop=1&playlist=' + id +
+      '&controls=0&modestbranding=1&rel=0&showinfo=0&playsinline=1';
+    ifr.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
+    ifr.setAttribute('frameborder', '0');
+    ifr.setAttribute('title', 'video');
+    media.innerHTML = '';
+    media.appendChild(ifr);
   });
 })();
 </script>
+{% endif %}
