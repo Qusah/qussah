@@ -4667,19 +4667,6 @@
                     "value": null
                 },
                 {
-                    "id": "mini_player",
-                    "type": "boolean",
-                    "format": "switch",
-                    "icon": "sicon-toggle-off",
-                    "label": {
-                        "en": "Floating video in the screen corner (no place in the page)",
-                        "ar": "فيديو عائم في زاوية الشاشة (بدون مكان في الصفحة)"
-                    },
-                    "description": "مفعّل: الفيديو لا يأخذ مكاناً في الصفحة ويظهر مصغّراً في الزاوية السفلية للشاشة مثل يوتيوب وفيسبوك، ويمكن للعميل تكبيره أو إغلاقه، ولا يظهر العنوان والنص والزر. غير مفعّل: يظهر كبانر في مكانه بالصفحة.",
-                    "value": false,
-                    "selected": false
-                },
-                {
                     "id": "image",
                     "type": "string",
                     "format": "image",
@@ -5190,19 +5177,6 @@
                         "ar": "رابط الفيديو (ملف مباشر أو يوتيوب)"
                     },
                     "value": null
-                },
-                {
-                    "id": "mini_player",
-                    "type": "boolean",
-                    "format": "switch",
-                    "icon": "sicon-toggle-off",
-                    "label": {
-                        "en": "Floating video in the screen corner (no place in the page)",
-                        "ar": "فيديو عائم في زاوية الشاشة (بدون مكان في الصفحة)"
-                    },
-                    "description": "مفعّل: الفيديو لا يأخذ مكاناً في الصفحة ويظهر مصغّراً في الزاوية السفلية للشاشة مثل يوتيوب وفيسبوك، ويمكن للعميل تكبيره أو إغلاقه، ولا يظهر العنوان والنص والزر. غير مفعّل: يظهر كبانر في مكانه بالصفحة.",
-                    "value": false,
-                    "selected": false
                 }
             ]
         },

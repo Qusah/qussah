@@ -12,7 +12,6 @@
 | component.bg_gradient| bool   | make the background a gradient                       |
 | component.bg_color2  | string | second gradient color                                |
 | component.bg_angle   | int    | gradient angle (deg)                                 |
-| component.mini_player | bool | on: no place in the page — the video floats in the screen corner (partials/qissa-mini-player) |
 | position             | int    | sorting block                                        |
 
 Same layout as qissa-banner (navy box, text RIGHT, media LEFT) but the media is an
@@ -20,12 +19,6 @@ autoplay + looping (muted) video. Direct files play via <video>; a YouTube URL i
 swapped for an autoplay/loop/muted iframe by the script below.
 When bg_color is left empty the section keeps its default background.
 #}
-{# «فيديو عائم» switch. On: the block has no place in the page, its video floats in the
-   bottom corner of the screen (like YouTube / Facebook) and nothing below is rendered.
-   Off: the banner below, in its place. #}
-{% if component.mini_player and component.video_url %}
-    {% include 'components.partials.qissa-mini-player' with { video: component.video_url, poster: component.image, ambient: true } %}
-{% else %}
 {% set qbg = '' %}
 {% if component.bg_gradient and component.bg_color and component.bg_color2 %}
     {% set qbg = 'linear-gradient(' ~ (component.bg_angle|default(135)) ~ 'deg, ' ~ component.bg_color ~ ', ' ~ component.bg_color2 ~ ')' %}
@@ -97,4 +90,3 @@ When bg_color is left empty the section keeps its default background.
   });
 })();
 </script>
-{% endif %}

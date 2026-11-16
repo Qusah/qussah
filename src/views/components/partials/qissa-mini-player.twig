@@ -1,13 +1,13 @@
 {#
-«فيديو عائم» — the floating corner video (like YouTube / Facebook), shared by the
-video blocks: qissa-video-banner, qissa-feature-banner, qissa-media.
+«فيديو عائم» — the floating corner video (like YouTube / Facebook) of the
+«بانر أو فيديو» block (home/qissa-media), the one video block that has the switch.
 
-Each of those blocks has a «mini_player» switch. Off: the block is a banner with
-its own place in the page, as always. On: the block renders nothing in the page
-and includes this partial instead — the video has no place in the page and sits
-in the bottom-left corner of the screen (WhatsApp sits bottom-right), over the
-store, from the moment the page has loaded. Two buttons: enlarge (centred over
-the page) and close (gone for this page view).
+The block has a «mini_player» switch. Off: it is a banner with its own place in
+the page, as always. On: the block renders nothing in the page and includes this
+partial instead — the video has no place in the page and sits in the bottom-left
+corner of the screen (WhatsApp sits bottom-right), over the store, from the
+moment the page has loaded. Two buttons: enlarge (centred over the page) and
+close (gone for this page view).
 
 | Variable | Type   | Description                                                  |
 |----------|--------|--------------------------------------------------------------|
@@ -18,7 +18,7 @@ the page) and close (gone for this page view).
 No Figma for it: sizes are our own. Style and script live here, not in app.css /
 public js: only a page that uses the switch loads them, and the theme's CSS+JS
 budget stays as it is. Nothing here passes the build, so directional values are
-physical on purpose. One floating video per page: the first block wins.
+physical on purpose. One floating video per page: the first such block wins.
 #}
 <div data-qmini="{{ video }}"{% if poster %} data-qmini-poster="{{ poster }}"{% endif %}{% if ambient %} data-qmini-ambient{% endif %} hidden></div>
 <style>

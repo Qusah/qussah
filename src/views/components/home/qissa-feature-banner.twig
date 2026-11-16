@@ -8,19 +8,12 @@
 | component.button_url  | string | CTA link                                     |
 | component.image       | string | video poster image (merchant upload)         |
 | component.video_url   | string | video source — direct file URL or YouTube    |
-| component.mini_player | bool | on: no place in the page — the video floats in the screen corner (partials/qissa-mini-player) |
 | position              | int    | sorting block                                |
 
 Figma: desktop 6036:1107 (1440) — navy banner, text+outlined CTA right, video (poster + play button) left.
        mobile  6036:21955 (428) — title only; subtitle + CTA hidden by Figma.
 The play button plays the merchant video in place (direct file → <video>, YouTube → iframe).
 #}
-{# «فيديو عائم» switch. On: the block has no place in the page, its video floats in the
-   bottom corner of the screen (like YouTube / Facebook) and nothing below is rendered.
-   Off: the banner below, in its place. #}
-{% if component.mini_player and component.video_url %}
-    {% include 'components.partials.qissa-mini-player' with { video: component.video_url, poster: component.image, ambient: false } %}
-{% else %}
 <section class="s-block qfbanner" id="qfbanner-{{ position }}">
     <div class="container">
         <div class="qfbanner__box" data-video="{{ component.video_url }}">
@@ -100,4 +93,3 @@ The play button plays the merchant video in place (direct file → <video>, YouT
   });
 })();
 </script>
-{% endif %}
