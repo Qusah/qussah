@@ -16,7 +16,7 @@ The play button plays the merchant video in place (direct file → <video>, YouT
 #}
 <section class="s-block qfbanner" id="qfbanner-{{ position }}">
     <div class="container">
-        <div class="qfbanner__box" data-video="{{ component.video_url }}">
+        <div class="qfbanner__box" data-video="{{ component.video_url }}"{% if component.mini_player and component.video_url %} data-qmini{% endif %}>
 
             {# video poster (left in RTL) — replaced by the player on play #}
             {% if component.image or component.video_url %}
@@ -59,6 +59,11 @@ The play button plays the merchant video in place (direct file → <video>, YouT
     </div>
 </section>
 
+{# «مشغّل مصغّر عائم» switch: the shared floating mini player (style + script) #}
+{% if component.mini_player and component.video_url %}
+    {% include 'components.partials.qissa-mini-player' %}
+{% endif %}
+
 <script>
 (function(){
   function ytId(u){
@@ -68,16 +73,21 @@ The play button plays the merchant video in place (direct file → <video>, YouT
     return /^[\w-]{11}$/.test(u) ? u : null;
   }
   document.querySelectorAll('.qfbanner__box[data-video]').forEach(function(box){
+    if(box.dataset.qfInit) return; // a second banner on the page runs this script again
+    box.dataset.qfInit = '1';
     var url = (box.getAttribute('data-video') || '').trim();
     var play = box.querySelector('button.qfbanner__play');
     if(!url || !play) return;
+    var mini = box.hasAttribute('data-qmini') && window.qissaMini;
     play.addEventListener('click', function(){
       var media = box.querySelector('.qfbanner__media');
       if(!media){ media = document.createElement('div'); media.className = 'qfbanner__media'; box.insertBefore(media, box.firstChild); }
       var id = ytId(url), el;
       if(id){
         el = document.createElement('iframe');
-        el.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0';
+        el.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0' +
+          // the mini player reads YouTube's play/pause state through its iframe API
+          (mini ? '&playsinline=1&enablejsapi=1&origin=' + encodeURIComponent(location.origin) : '');
         el.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
         el.setAttribute('allowfullscreen', '');
         el.setAttribute('title', play.getAttribute('aria-label') || 'video');
@@ -89,6 +99,7 @@ The play button plays the merchant video in place (direct file → <video>, YouT
       media.innerHTML = '';
       media.appendChild(el);
       play.style.display = 'none';
+      if(mini) mini(media, el, 1); // started by this click → mode 1
     });
   });
 })();

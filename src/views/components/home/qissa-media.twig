@@ -23,7 +23,7 @@ No heading, no text, no call-to-action — whatever the designers create is show
             {% if component.video_url %}
                 <div class="qmedia__video"
                      data-qmedia-video="{{ component.video_url }}"
-                     data-qmedia-autoplay="{{ component.autoplay ? '1' : '' }}">
+                     data-qmedia-autoplay="{{ component.autoplay ? '1' : '' }}"{% if component.mini_player %} data-qmini{% endif %}>
                     {% if component.image %}
                         <img class="qmedia__poster" src="{{ component.image }}" alt="{{ store.name }}" loading="lazy"/>
                     {% endif %}
@@ -42,6 +42,10 @@ No heading, no text, no call-to-action — whatever the designers create is show
 </section>
 
 {% if component.video_url %}
+{# «مشغّل مصغّر عائم» switch: the shared floating mini player (style + script) #}
+{% if component.mini_player %}
+    {% include 'components.partials.qissa-mini-player' %}
+{% endif %}
 <script>
 (function () {
   // Build the player from the merchant URL: YouTube -> iframe, otherwise -> <video>.
@@ -59,11 +63,14 @@ No heading, no text, no call-to-action — whatever the designers create is show
     var autoplay = box.getAttribute('data-qmedia-autoplay') === '1';
     var posterEl = box.querySelector('.qmedia__poster');
     var poster = posterEl ? posterEl.getAttribute('src') : null;
+    var mini = box.hasAttribute('data-qmini') && window.qissaMini;
     var id = ytId(url), el;
     if (id) {
       el = document.createElement('iframe');
       el.src = 'https://www.youtube.com/embed/' + id + '?rel=0&playsinline=1'
-             + (autoplay ? '&autoplay=1&mute=1&loop=1&controls=0&playlist=' + id : '');
+             + (autoplay ? '&autoplay=1&mute=1&loop=1&controls=0&playlist=' + id : '')
+             // the mini player reads YouTube's play/pause state through its iframe API
+             + (mini && !autoplay ? '&enablejsapi=1&origin=' + encodeURIComponent(location.origin) : '');
       el.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture');
       el.setAttribute('allowfullscreen', '');
       el.setAttribute('title', 'video');
@@ -82,6 +89,8 @@ No heading, no text, no call-to-action — whatever the designers create is show
     el.className = 'qmedia__player';
     if (posterEl) { posterEl.remove(); }
     box.appendChild(el);
+    // ambient loop → mode 2; a video with controls floats once the shopper plays it → mode 0
+    if (mini) { mini(box, el, autoplay ? 2 : 0); }
   });
 })();
 </script>

@@ -4667,6 +4667,19 @@
                     "value": null
                 },
                 {
+                    "id": "mini_player",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Floating mini player on scroll",
+                        "ar": "مشغّل مصغّر عائم عند التمرير"
+                    },
+                    "description": "عند تفعيله يصغر الفيديو في زاوية الشاشة السفلية ويستمر في العرض أثناء تصفح المتجر، ويمكن للعميل تكبيره أو إغلاقه",
+                    "value": false,
+                    "selected": false
+                },
+                {
                     "id": "image",
                     "type": "string",
                     "format": "image",
@@ -5177,6 +5190,19 @@
                         "ar": "رابط الفيديو (ملف مباشر أو يوتيوب)"
                     },
                     "value": null
+                },
+                {
+                    "id": "mini_player",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Floating mini player on scroll",
+                        "ar": "مشغّل مصغّر عائم عند التمرير"
+                    },
+                    "description": "عند تفعيله يصغر الفيديو في زاوية الشاشة السفلية ويستمر في العرض أثناء تصفح المتجر، ويمكن للعميل تكبيره أو إغلاقه",
+                    "value": false,
+                    "selected": false
                 }
             ]
         },
@@ -5218,6 +5244,19 @@
                         "ar": "رابط الفيديو (ملف مباشر أو يوتيوب، اختياري)"
                     },
                     "value": null
+                },
+                {
+                    "id": "mini_player",
+                    "type": "boolean",
+                    "format": "switch",
+                    "icon": "sicon-toggle-off",
+                    "label": {
+                        "en": "Floating mini player on scroll",
+                        "ar": "مشغّل مصغّر عائم عند التمرير"
+                    },
+                    "description": "عند تفعيله يصغر الفيديو في زاوية الشاشة السفلية ويستمر في العرض أثناء تصفح المتجر، ويمكن للعميل تكبيره أو إغلاقه",
+                    "value": false,
+                    "selected": false
                 },
                 {
                     "id": "autoplay",
