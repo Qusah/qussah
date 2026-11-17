@@ -11,6 +11,47 @@
 #}
 {% extends "layouts.master" %}
 
+{# The order value for the ad platforms (same block as the Latafa and Bareeq themes). Salla's `purchase` push on
+   this page and its GTM containers keep changing how they carry it: around 19 Oct the push lost `actionField.total`
+   and `revenue` became a bare number, and by 2 Nov Salla's shared container reads `actionField.revenue` as a number
+   (an object there sent value 0 to Snap, Meta and Google Ads) while the store's own container reads
+   `actionField.total` for every platform (Snap, Meta, TikTok, Google Ads, GA4 and the server container).
+   This runs in <head> before Salla's head hook prints that push and before gtm.js, and makes every reading work on
+   the `purchase` entry itself: `revenue` is a Number that also carries `.amount` and `.currency`, and `total` is
+   there. Since 3 Nov the shared container (v428) reads `0.subtotal` first and only falls back to `revenue`, so the
+   entry also carries `0: { subtotal }` as a plain number. It covers any entry already in the queue and the one pushed
+   later (Rocket Loader can delay Salla's push). It never pushes an event of its own, so no conversion is counted
+   twice. data-cfasync: Rocket Loader must not defer it past the push. #}
+{% block head_scripts %}
+    <script data-cfasync="false">
+    (function () {
+        function fix(e) {
+            var ec = e && e.event === 'purchase' && e.ecommerce;
+            var af = ec && ec.purchase && ec.purchase.actionField;
+            if (!af || typeof af !== 'object') return;
+            var amt = (af.revenue && typeof af.revenue === 'object') ? af.revenue.amount : af.revenue;
+            if (amt == null || amt === '') amt = af.total;
+            if (amt == null || amt === '') return;
+            if (af.total == null) af.total = amt;
+            var cur = (af.revenue && af.revenue.currency) || af.currency_code || ec.currencyCode || 'SAR';
+            af.revenue = new Number(amt);
+            af.revenue.amount = amt;
+            af.revenue.currency = cur;
+            if (!e[0] || e[0].subtotal == null || e[0].subtotal === '') e[0] = { subtotal: Number(amt) };
+        }
+        try {
+            var dl = window.dataLayer = window.dataLayer || [];
+            for (var i = 0; i < dl.length; i++) fix(dl[i]);
+            var push = dl.push;
+            dl.push = function () {
+                for (var j = 0; j < arguments.length; j++) { try { fix(arguments[j]); } catch (err) {} }
+                return push.apply(this, arguments);
+            };
+        } catch (err) {}
+    })();
+    </script>
+{% endblock %}
+
 {% block content %}
 {# «تصميم صفحة الشكر الجديد» (thank_you_redesign): on unless explicitly switched off —
    unset / null reads as on. Off = the page as it was (the tissue-box card), which
