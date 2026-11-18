@@ -105,17 +105,33 @@ body.qj-lock [id^="gb-widget"], body.qj-lock #tidio-chat, body.qj-lock a.wa-s-n 
   color: $qj-navy;
 }
 .qj__sub { margin: 0 0 16px; font-size: 15px; color: #4b5563; }
+// The cards scroll inside the window (review, 18 Nov: the browser's own bar on
+// the dialog was cut by its round corners). The title stays on top and
+// «لا، شكراً» below; the list reaches into the window's left padding so its
+// slim bar runs there, clear of the cards.
+.qj__dlg--help { display: flex; flex-direction: column; overflow: hidden; }
 .qj__list {
   list-style: none;
-  margin: 0;
-  padding: 0;
+  min-height: 0;
+  margin: 0 0 0 -12px;
+  padding: 0 0 0 12px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-thumb { background: $qj-rule; border-radius: 3px; }
+}
+// Firefox has no ::-webkit-scrollbar; the standard properties would switch the
+// rules above off in Chrome, so they are given to Firefox alone.
+@supports (-moz-appearance: none) {
+  .qj__list { scrollbar-width: thin; scrollbar-color: $qj-rule transparent; }
 }
 
 // the package card: the words on the right, the product's photo on the left
 .qj__card {
+  flex: none;
   display: flex;
   gap: 10px;
   padding: 10px;
@@ -223,7 +239,7 @@ body.qj-lock [id^="gb-widget"], body.qj-lock #tidio-chat, body.qj-lock a.wa-s-n 
   s { margin-right: 8px; padding-right: 8px; border-right: 1px solid $qj-rule; color: $qj-mute; font-size: 13px; }
 }
 @media (min-width: 640px) {
-  .qj__list { gap: 12px; }
+  .qj__list { gap: 12px; margin-left: -18px; padding-left: 18px; }
   .qj__card { gap: 14px; padding: 12px; }
   .qj__info { gap: 8px; }
   .qj__img { width: 34%; min-height: 140px; }
