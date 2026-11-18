@@ -52,7 +52,7 @@
             "icon": "sicon-keyboard_arrow_down",
             "label": "البكجات (حتى 3، من الأرخص للأغلى)",
             "format": "dropdown-list",
-            "description": "تظهر بالترتيب الذي تختاره، بسعرها الحالي والسعر قبل الخصم من المتجر",
+            "description": "تظهر بالترتيب الذي تختاره، بصورتها وسعرها الحالي والسعر قبل الخصم من المتجر",
             "selected": [],
             "options": [],
             "required": false,
@@ -212,17 +212,121 @@
             ]
         },
         {
-            "id": "qj_help_note_1",
+            "id": "qj_help_badge_icon_1",
+            "type": "string",
+            "format": "icon",
+            "label": "أيقونة شارة البكج الأول",
+            "description": null,
+            "value": "sicon-tag",
+            "required": false,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_1_1",
             "type": "string",
             "icon": "sicon-format-text-alt",
             "format": "text",
-            "label": "سطر بعد سعر البكج الأول",
-            "description": "مثل: توصيل مجاني. اتركه فارغاً لإخفائه",
+            "label": "محتويات البكج الأول — السطر 1",
+            "description": "ما بداخل البكج باختصار، مثل: 32 عبوة مناديل. اتركه فارغاً لإخفائه",
             "value": "",
             "required": false,
             "placeholder": "",
             "minLength": 0,
             "maxLength": 40,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_icon_1_1",
+            "type": "string",
+            "format": "icon",
+            "label": "أيقونة السطر 1 (اختيارية)",
+            "description": null,
+            "value": "",
+            "required": false,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_1_2",
+            "type": "string",
+            "icon": "sicon-format-text-alt",
+            "format": "text",
+            "label": "محتويات البكج الأول — السطر 2",
+            "description": null,
+            "value": "",
+            "required": false,
+            "placeholder": "",
+            "minLength": 0,
+            "maxLength": 40,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_icon_1_2",
+            "type": "string",
+            "format": "icon",
+            "label": "أيقونة السطر 2 (اختيارية)",
+            "description": null,
+            "value": "",
+            "required": false,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_1_3",
+            "type": "string",
+            "icon": "sicon-format-text-alt",
+            "format": "text",
+            "label": "محتويات البكج الأول — السطر 3",
+            "description": null,
+            "value": "",
+            "required": false,
+            "placeholder": "",
+            "minLength": 0,
+            "maxLength": 40,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_icon_1_3",
+            "type": "string",
+            "format": "icon",
+            "label": "أيقونة السطر 3 (اختيارية)",
+            "description": null,
+            "value": "",
+            "required": false,
             "conditions": [
                 {
                     "id": "qj_help_enabled",
@@ -252,17 +356,121 @@
             ]
         },
         {
-            "id": "qj_help_note_2",
+            "id": "qj_help_badge_icon_2",
+            "type": "string",
+            "format": "icon",
+            "label": "أيقونة شارة البكج الثاني",
+            "description": null,
+            "value": "sicon-crown",
+            "required": false,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_2_1",
             "type": "string",
             "icon": "sicon-format-text-alt",
             "format": "text",
-            "label": "سطر بعد سعر البكج الثاني",
-            "description": null,
-            "value": "توصيل مجاني",
+            "label": "محتويات البكج الثاني — السطر 1",
+            "description": "ما بداخل البكج باختصار، مثل: 32 عبوة مناديل. اتركه فارغاً لإخفائه",
+            "value": "",
             "required": false,
-            "placeholder": "توصيل مجاني",
+            "placeholder": "",
             "minLength": 0,
             "maxLength": 40,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_icon_2_1",
+            "type": "string",
+            "format": "icon",
+            "label": "أيقونة السطر 1 (اختيارية)",
+            "description": null,
+            "value": "",
+            "required": false,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_2_2",
+            "type": "string",
+            "icon": "sicon-format-text-alt",
+            "format": "text",
+            "label": "محتويات البكج الثاني — السطر 2",
+            "description": null,
+            "value": "",
+            "required": false,
+            "placeholder": "",
+            "minLength": 0,
+            "maxLength": 40,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_icon_2_2",
+            "type": "string",
+            "format": "icon",
+            "label": "أيقونة السطر 2 (اختيارية)",
+            "description": null,
+            "value": "",
+            "required": false,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_2_3",
+            "type": "string",
+            "icon": "sicon-format-text-alt",
+            "format": "text",
+            "label": "محتويات البكج الثاني — السطر 3",
+            "description": null,
+            "value": "",
+            "required": false,
+            "placeholder": "",
+            "minLength": 0,
+            "maxLength": 40,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_icon_2_3",
+            "type": "string",
+            "format": "icon",
+            "label": "أيقونة السطر 3 (اختيارية)",
+            "description": null,
+            "value": "",
+            "required": false,
             "conditions": [
                 {
                     "id": "qj_help_enabled",
@@ -292,17 +500,121 @@
             ]
         },
         {
-            "id": "qj_help_note_3",
+            "id": "qj_help_badge_icon_3",
+            "type": "string",
+            "format": "icon",
+            "label": "أيقونة شارة البكج الثالث",
+            "description": null,
+            "value": "sicon-users",
+            "required": false,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_3_1",
             "type": "string",
             "icon": "sicon-format-text-alt",
             "format": "text",
-            "label": "سطر بعد سعر البكج الثالث",
-            "description": null,
-            "value": "توصيل مجاني",
+            "label": "محتويات البكج الثالث — السطر 1",
+            "description": "ما بداخل البكج باختصار، مثل: 32 عبوة مناديل. اتركه فارغاً لإخفائه",
+            "value": "",
             "required": false,
-            "placeholder": "توصيل مجاني",
+            "placeholder": "",
             "minLength": 0,
             "maxLength": 40,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_icon_3_1",
+            "type": "string",
+            "format": "icon",
+            "label": "أيقونة السطر 1 (اختيارية)",
+            "description": null,
+            "value": "",
+            "required": false,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_3_2",
+            "type": "string",
+            "icon": "sicon-format-text-alt",
+            "format": "text",
+            "label": "محتويات البكج الثالث — السطر 2",
+            "description": null,
+            "value": "",
+            "required": false,
+            "placeholder": "",
+            "minLength": 0,
+            "maxLength": 40,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_icon_3_2",
+            "type": "string",
+            "format": "icon",
+            "label": "أيقونة السطر 2 (اختيارية)",
+            "description": null,
+            "value": "",
+            "required": false,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_3_3",
+            "type": "string",
+            "icon": "sicon-format-text-alt",
+            "format": "text",
+            "label": "محتويات البكج الثالث — السطر 3",
+            "description": null,
+            "value": "",
+            "required": false,
+            "placeholder": "",
+            "minLength": 0,
+            "maxLength": 40,
+            "conditions": [
+                {
+                    "id": "qj_help_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_help_item_icon_3_3",
+            "type": "string",
+            "format": "icon",
+            "label": "أيقونة السطر 3 (اختيارية)",
+            "description": null,
+            "value": "",
+            "required": false,
             "conditions": [
                 {
                     "id": "qj_help_enabled",
@@ -360,7 +672,7 @@
             "type": "static",
             "format": "title",
             "id": "static-label-qj2",
-            "value": "<div class='rounded-lg' style='background-color: #21636d; display: flex; justify-content: center; align-items: center;padding: 15px;margin-bottom: 20px !important; flex-direction: column;gap: 6px;'><h6 style='color: #ffffff;font-size: 15px; font-weight: bold;'>نافذة العرض المؤقت</h6><span style='color: #ffffff;font-size: 12px; opacity: .85; text-align: center;'>تظهر لمن أغلق نافذة المساعدة وواصل التصفح دون أن يضيف شيئاً. أنشئ الكوبونين في لوحة التحكم أولاً (نسبة مئوية، «استثناء المنتجات المخفّضة» غير مفعّل) ثم اكتب الكودين هنا. الكود لا يُعرض للزائر؛ يُطبَّق تلقائياً عند أول إضافة للسلة خلال مدة العرض ويُزال عند انتهائها</span></div>",
+            "value": "<div class='rounded-lg' style='background-color: #21636d; display: flex; justify-content: center; align-items: center;padding: 15px;margin-bottom: 20px !important; flex-direction: column;gap: 6px;'><h6 style='color: #ffffff;font-size: 15px; font-weight: bold;'>نافذة العرض المؤقت</h6><span style='color: #ffffff;font-size: 12px; opacity: .85; text-align: center;'>تظهر لمن أغلق نافذة المساعدة وواصل التصفح دون أن يضيف شيئاً. أنشئ الكوبونين في لوحة التحكم أولاً (نسبة مئوية أو مبلغ ثابت، «استثناء المنتجات المخفّضة» غير مفعّل) ثم اكتب الكودين هنا. مدة العرض تبدأ عند إغلاق الزائر للنافذة. الكود لا يُعرض للزائر؛ يُطبَّق تلقائياً على السلة خلال مدة العرض ويُزال عند انتهائها</span></div>",
             "variant": "h6"
         },
         {
@@ -396,10 +708,46 @@
             "format": "integer",
             "icon": "sicon-time",
             "label": "دقائق التصفح بعد الإضافة من نافذة المساعدة",
-            "description": "لمن أضاف بكجاً من نافذة المساعدة ولم يُتم الشراء: بعد هذه الدقائق من التصفح يظهر له العرض ويُطبَّق الكوبون على سلته فوراً. 0 = لا يظهر له عرض",
+            "description": "لمن أضاف بكجاً من نافذة المساعدة ولم يُتم الشراء: بعد هذه الدقائق من التصفح يظهر له العرض، ويُطبَّق الكوبون على سلته عند إغلاق النافذة. 0 = لا يظهر له عرض",
             "value": 1,
             "minimum": 0,
             "maximum": 60,
+            "conditions": [
+                {
+                    "id": "qj_offer_enabled",
+                    "operation": "=",
+                    "value": true
+                }
+            ]
+        },
+        {
+            "id": "qj_offer_type",
+            "type": "items",
+            "format": "dropdown-list",
+            "icon": "sicon-list",
+            "source": "Manual",
+            "label": "نوع الخصم (للعرضين معاً)",
+            "description": "كما يظهر للزائر: نسبة مثل 10% أو مبلغ ثابت بعملة المتجر. أنشئ الكوبونين في لوحة التحكم بالنوع نفسه",
+            "required": false,
+            "options": [
+                {
+                    "label": "نسبة مئوية (%)",
+                    "value": "percent",
+                    "key": "92da17a0-ab1e-401a-9dba-c9a8f8e7f7ce"
+                },
+                {
+                    "label": "مبلغ ثابت (بعملة المتجر)",
+                    "value": "amount",
+                    "key": "068d89d7-0ff1-403f-a675-d5569014d5b0"
+                }
+            ],
+            "selected": [
+                {
+                    "label": "نسبة مئوية (%)",
+                    "value": "percent",
+                    "key": "92da17a0-ab1e-401a-9dba-c9a8f8e7f7ce"
+                }
+            ],
             "conditions": [
                 {
                     "id": "qj_offer_enabled",
@@ -433,11 +781,11 @@
             "type": "number",
             "format": "integer",
             "icon": "sicon-time",
-            "label": "نسبة العرض الأول (كما تظهر للزائر)",
-            "description": "للعرض فقط؛ الخصم الفعلي من إعدادات الكوبون",
+            "label": "قيمة خصم العرض الأول (كما تظهر للزائر)",
+            "description": "رقم النسبة أو المبلغ حسب «نوع الخصم». للعرض فقط؛ الخصم الفعلي من إعدادات الكوبون",
             "value": 10,
             "minimum": 1,
-            "maximum": 90,
+            "maximum": 9999,
             "conditions": [
                 {
                     "id": "qj_offer_enabled",
@@ -505,11 +853,11 @@
             "type": "number",
             "format": "integer",
             "icon": "sicon-time",
-            "label": "نسبة العرض الثاني (كما تظهر للزائر)",
+            "label": "قيمة خصم العرض الثاني (كما تظهر للزائر)",
             "description": null,
             "value": 5,
             "minimum": 1,
-            "maximum": 90,
+            "maximum": 9999,
             "conditions": [
                 {
                     "id": "qj_offer_enabled",
@@ -562,7 +910,7 @@
             "icon": "sicon-format-text-alt",
             "format": "text",
             "label": "نص العرض الثاني",
-            "description": "اكتب {نسبة} و{دقائق} ليظهر مكانهما رقم الخصم وعدد الدقائق",
+            "description": "اكتب {نسبة} و{دقائق} ليظهر مكانهما قيمة الخصم وعدد الدقائق. مع المبلغ الثابت يحلّ المبلغ بعملته محل «{نسبة}%»",
             "value": "خصم {نسبة}% إضافي لمدة {دقائق} دقيقة",
             "required": false,
             "placeholder": "خصم {نسبة}% إضافي لمدة {دقائق} دقيقة",
@@ -601,8 +949,8 @@
             "type": "string",
             "icon": "sicon-format-text-alt",
             "format": "text",
-            "label": "النص تحت النسبة",
-            "description": "اكتب {نسبة} و{دقائق} ليظهر مكانهما رقم الخصم وعدد الدقائق",
+            "label": "النص تحت قيمة الخصم",
+            "description": "اكتب {نسبة} و{دقائق} ليظهر مكانهما قيمة الخصم وعدد الدقائق. مع المبلغ الثابت يحلّ المبلغ بعملته محل «{نسبة}%»",
             "value": "خصم {نسبة}% إضافي على طلبك إذا تممته خلال {دقائق} دقايق",
             "required": false,
             "placeholder": "خصم {نسبة}% إضافي على طلبك إذا تممته خلال {دقائق} دقايق",
@@ -642,7 +990,7 @@
             "icon": "sicon-format-text-alt",
             "format": "text",
             "label": "نص الزر",
-            "description": "يغلق النافذة ويبقي شريط العدّاد أسفل الشاشة حتى نهاية المدة",
+            "description": "يغلق النافذة ويبدأ العدّاد من لحظة الضغط، ويبقى شريط العدّاد أسفل الشاشة حتى نهاية المدة",
             "value": "أكمل التسوّق",
             "required": false,
             "placeholder": "أكمل التسوّق",
@@ -678,7 +1026,7 @@
             "icon": "sicon-format-text-alt",
             "format": "text",
             "label": "نص رابط الرفض (إن كان ظاهراً)",
-            "description": "يغلق النافذة بلا شريط؛ الخصم يبقى صالحاً حتى نهاية المدة",
+            "description": "يغلق النافذة بلا شريط ويبدأ العدّاد؛ الخصم يبقى صالحاً حتى نهاية المدة",
             "value": "لا، شكراً",
             "required": false,
             "placeholder": "لا، شكراً",
@@ -698,7 +1046,7 @@
             "icon": "sicon-format-text-alt",
             "format": "text",
             "label": "نص شريط العدّاد",
-            "description": "اكتب {نسبة} ليظهر مكانها رقم الخصم",
+            "description": "اكتب {نسبة} ليظهر مكانها قيمة الخصم",
             "value": "خصمك {نسبة}% ينتهي خلال",
             "required": false,
             "placeholder": "خصمك {نسبة}% ينتهي خلال",

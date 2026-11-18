@@ -5,24 +5,30 @@
  *
  *   browses product pages, cart empty
  *     → after N distinct product pages (+ a delay): the «محتار؟» HELP popup —
- *       the merchant's packages, cheapest first, «أضف للسلة» on each.
+ *       the merchant's packages as cards (photo, badge, name, contents, price),
+ *       cheapest first, «أضف للسلة» on each.
  *
  *     → ADDED FROM THE HELP POPUP (review, 11 Nov): the popup closes and the
  *       "added but did not buy" clock starts — after A minutes of visible-tab
- *       browsing without reaching the thank-you page, OFFER step 1 opens and the
- *       coupon goes on the cart at once. A = 0 turns this path off.
+ *       browsing without reaching the thank-you page, OFFER step 1 opens.
+ *       A = 0 turns this path off.
  *
  *     → CLOSED THE HELP POPUP: the browsing clock starts — after M minutes of
- *       visible-tab browsing with the cart still empty, OFFER step 1 opens; the
- *       coupon goes on the cart (quietly, salla.cart.addCoupon) at the first add
- *       inside the window. Anything added from elsewhere ends this path (deck
- *       rule: a visitor who decided gets no discount).
+ *       visible-tab browsing with the cart still empty, OFFER step 1 opens.
+ *       Anything added from elsewhere before that ends this path (deck rule: a
+ *       visitor who decided gets no discount).
  *
- *   OFFER popup: per-step title and text, «أكمل التسوّق» closes it and leaves
- *   the countdown pill; «لا، شكراً» exists only when the merchant switches it on.
- *   When the window ends the coupon comes off. A window that ends without a
- *   purchase → step 2 («باقي لك فرصة», 5%, 15 min), right away if the tab is
- *   open, else on the next page. Then the journey is over.
+ *   OFFER popup: per-step title and text, the discount as a percent or a fixed
+ *   amount (one type for both steps, display only). THE WINDOW STARTS WHEN THE
+ *   VISITOR CLOSES THE POPUP (V2, 18 Nov) — «أكمل التسوّق», Escape, the backdrop
+ *   or «لا، شكراً» (which exists only when the merchant switches it on): until
+ *   then the clock shows the full time and stands still, and a popup left open
+ *   when the page was left comes back on the next page. From the close on, the
+ *   coupon goes on the cart (quietly, salla.cart.addCoupon) as soon as the cart
+ *   holds something, and the countdown pill stays. When the window ends the
+ *   coupon comes off. A window that ends without a purchase → step 2 («باقي لك
+ *   فرصة», 5%, 15 min), right away if the tab is open, else on the next page.
+ *   Then the journey is over.
  *
  *   Never a popup on cart / checkout / thank-you pages (the pill may show on the
  *   cart page — it is not a popup). Thank-you marks the journey bought and leaves
@@ -68,8 +74,18 @@
   /* ---------- helpers ---------- */
   function $(sel, el) { return (el || root).querySelector(sel); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
-  function fill(s, vars) { return String(s || '').replace(/\{(دقائق|نسبة)\}/g, function (m, k) { return k in vars ? vars[k] : m; }); }
   function money(n) { try { return salla.money(n); } catch (e) { return String(n); } }
+  /* The discount as the visitor reads it: «10%», or the amount in the store's
+     currency. The sign sits in its own span: the theme's digits face draws no
+     «%» on iPhones — the big figure read «10» with a gap beside it (18 Nov). */
+  function off(st, sign) {
+    if (offer.type === 'amount') return money(Number(st.pct));
+    return esc(st.pct) + (sign ? '<span class="qj__sign">' + sign + '</span>' : '');
+  }
+  // a merchant sentence → safe HTML; {نسبة} (with the % or ٪ typed after it) and {دقائق} filled in
+  function fill(s, st) {
+    return esc(s).replace(/\{نسبة\}([%٪]?)/g, function (m, sign) { return off(st, sign); }).replace(/\{دقائق\}/g, esc(st.min));
+  }
   function silent(fn) { return salla.api && typeof salla.api.withoutNotifier === 'function' ? salla.api.withoutNotifier(fn) : fn(); }
   function cartCount() {
     var n = Number(salla.storage && salla.storage.get('cart.summary.count'));
@@ -81,6 +97,8 @@
   }
   function reduced() { return matchMedia('(prefers-reduced-motion: reduce)').matches; }
   function text(sel, s) { var el = $(sel); if (el) el.textContent = s; }
+  function html(sel, s) { var el = $(sel); if (el) el.innerHTML = s; }
+  function ico(c) { return /^sicon-[a-z0-9_-]+$/.test(c || '') ? '<i class="' + c + '" aria-hidden="true"></i>' : ''; }
 
   /* ---------- dialogs ---------- */
   var openName = null, lastFocus = null, hiding = {};
@@ -171,33 +189,39 @@
       }, wait);
     }).catch(helpFailed);
   }
+  /* The package cards (V2 mock, 18 Nov): badge with its icon, name, the lines of
+     contents the merchant wrote, then the button and the price (the price before
+     the sale struck beside it); the product's own photo on the other side. */
   function renderHelp(products) {
     var featured = Number(help.featured);
     $('[data-qj-list]').innerHTML = products.map(function (p, k) {
-      var badge = (help.badges || [])[k] || '', note = (help.notes || [])[k] || '';
+      var c = (help.cards || [])[k] || {}, lines = c.c || [];
       var sale = p.is_on_sale && Number(p.regular_price) > Number(p.price);
       var gone = p.is_out_of_stock || p.is_available === false;
       var canAdd = !p.has_options && !gone;
+      var url = esc(p.url || '#'), img = (p.image && p.image.url) || p.thumbnail || '';
       return '<li class="qj__card' + (k + 1 === featured ? ' is-featured' : '') + '">'
         + '<div class="qj__info">'
-        + (badge ? '<span class="qj__badge">' + esc(badge) + '</span>' : '')
-        + '<a class="qj__name" href="' + esc(p.url || '#') + '">' + esc(p.name) + '</a>'
-        + '<p class="qj__price"><b>' + money(Number(p.price)) + '</b>'
-        + (sale ? ' <span class="qj__was">' + esc(W.instead) + ' ' + money(Number(p.regular_price)) + '</span>' : '')
-        + (note ? ' <span class="qj__dot" aria-hidden="true">·</span> <span class="qj__note">' + esc(note) + '</span>' : '')
-        + '</p></div>'
+        + (c.b ? '<span class="qj__badge">' + ico(c.i) + esc(c.b) + '</span>' : '')
+        + '<a class="qj__name" href="' + url + '">' + esc(p.name) + '</a>'
+        + (lines.length ? '<ul class="qj__lines">' + lines.map(function (l) { return '<li>' + ico(l[1]) + esc(l[0]) + '</li>'; }).join('') + '</ul>' : '')
+        + '<div class="qj__buy">'
         + (canAdd
-          ? '<button class="qj__add" type="button" data-qj-add="' + esc(p.id) + '">' + esc(W.add) + '</button>'
-          : '<a class="qj__add qj__add--link' + (gone ? ' is-out' : '') + '" href="' + esc(p.url || '#') + '">' + esc(gone ? W.out : W.options) + '</a>')
+          ? '<button class="qj__add" type="button" data-qj-add="' + esc(p.id) + '"><i class="sicon-cart" aria-hidden="true"></i><span>' + esc(W.add) + '</span></button>'
+          : '<a class="qj__add qj__add--link' + (gone ? ' is-out' : '') + '" href="' + url + '">' + esc(gone ? W.out : W.options) + '</a>')
+        + '<p class="qj__price"><b>' + money(Number(p.price)) + '</b>' + (sale ? '<s>' + money(Number(p.regular_price)) + '</s>' : '') + '</p>'
+        + '</div></div>'
+        + (img ? '<a class="qj__img" href="' + url + '" tabindex="-1" aria-hidden="true"><img src="' + esc(img) + '" alt="" loading="lazy"></a>' : '')
         + '</li>';
     }).join('');
   }
   function add(btn) {
     if (btn.dataset.s) return;
+    var label = btn.lastChild;                             // the words beside the cart icon
     btn.dataset.s = 'busy';
-    btn.textContent = W.busy;
+    label.textContent = W.busy;
     Promise.resolve(salla.cart.addItem({ id: String(btn.dataset.qjAdd), quantity: 1 })).then(function () {
-      btn.textContent = W.added;
+      label.textContent = W.added;
       S.stop = true;                                       // decided: no help popup again
       if (!S.path) { S.path = 'add'; S.browse = 0; S.tick = now(); }   // the "added but did not buy" clock
       save();
@@ -205,7 +229,7 @@
       watchBrowsing();
     }).catch(function () {
       delete btn.dataset.s;
-      btn.textContent = W.add;
+      label.textContent = W.add;
     });
   }
   function helpClosed() {
@@ -247,21 +271,35 @@
   function openOffer(i) {
     var st = steps[i];
     if (!st || !st.code) return;
-    S.offer = { i: i, at: now(), end: now() + Number(st.min || 10) * 6e4, applied: false, hid: false, done: false };
+    // no `end` yet: the window (clock, pill, coupon) starts when the visitor closes the popup
+    S.offer = { i: i, at: now(), applied: false, hid: false, done: false };
     delete S.next;
     save();
     paintOffer();
     open('offer');
+  }
+  /* The popup was closed — button, Escape, backdrop or «لا، شكراً» (hid = no pill).
+     The first close starts the window; closing it again later (it reopens from
+     the pill) leaves the clock alone. A cart that already holds something — the
+     add came from the help popup — gets the coupon here. */
+  function startOffer(hid) {
+    var st = step(), o = S.offer;
+    close('offer');
+    if (!st || !o || o.done) return;
+    o.hid = hid;
+    if (!o.end) o.end = now() + Number(st.min || 10) * 6e4;
+    save();
     runClock();
-    if (cartCount() > 0) applyCoupon();                  // added from the help popup: the discount goes on now
+    if (cartCount() > 0) applyCoupon();
   }
   function paintOffer() {
     var st = step();
     if (!st) return;
     text('[data-qj-kicker]', st.title || '');
-    text('[data-qj-pct]', st.pct + '%');
-    text('[data-qj-txt]', fill(st.text, { 'دقائق': st.min, 'نسبة': st.pct }));
-    text('[data-qj-pill-text]', fill(S.offer.applied ? W.applied : W.pill, { 'نسبة': st.pct, 'دقائق': st.min }));
+    html('[data-qj-pct]', off(st, '%'));
+    html('[data-qj-txt]', fill(st.text, st));
+    html('[data-qj-pill-text]', fill(S.offer.applied ? W.applied : W.pill, st));
+    if (!S.offer.end) text('[data-qj-time]', clock(Number(st.min || 10) * 6e4));   // not started: the full time, standing still
   }
   function pill(show) {
     var p = $('[data-qj-pill]');
@@ -284,7 +322,7 @@
   }
   function applyCoupon() {
     var st = step();
-    if (!st || !S.offer || S.offer.done || S.offer.applied || now() >= S.offer.end) return;
+    if (!st || !S.offer || S.offer.done || S.offer.applied || !S.offer.end || now() >= S.offer.end) return;
     if (S.offer.tried && now() - S.offer.tried < 15e3) return;
     S.offer.tried = now(); save();
     Promise.resolve(silent(function () { return salla.cart.addCoupon(st.code); })).then(function () {
@@ -327,6 +365,10 @@
     }
     var o = S.offer;
     if (!o || o.done || !step()) return;
+    if (!o.end) {                                    // shown, never closed (the page was left): show it again, nothing has started
+      if (!quiet) { paintOffer(); open('offer'); }
+      return;
+    }
     if (now() >= o.end) { runClock(); return; }     // paints 00:00 and ends it (coupon removed, next step)
     paintOffer();
     runClock();
@@ -347,8 +389,8 @@
   /* ---------- actions ---------- */
   function act(name) {
     if (name === 'help-close') helpClosed();
-    else if (name === 'offer-cta') { if (S.offer) { S.offer.hid = false; save(); } close('offer'); pill(true); }
-    else if (name === 'offer-dismiss') { if (S.offer) { S.offer.hid = true; save(); } close('offer'); pill(false); }
+    else if (name === 'offer-cta') startOffer(false);
+    else if (name === 'offer-dismiss') startOffer(true);
   }
   function bind() {
     root.addEventListener('click', function (e) {

@@ -27,6 +27,8 @@ $qcd-green: #008036;
   color: $qcd-ink;
 
   &, & *:not([class*="sicon-"]) { font-family: $qcd-font !important; }
+  // the digits face (WesternDigits) draws no «%» on iPhones — the row read «الخصم (35 )»: the sign takes the Arabic face
+  & &__pct i { font-family: 'GE SS Two', Tahoma, sans-serif !important; font-style: normal; }
   &[hidden] { display: none; }
 
   &__backdrop {

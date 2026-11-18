@@ -12,6 +12,12 @@
   but did not buy gets the offer after N minutes of browsing (coupon applied
   to the cart at once). No Figma — built from the slide mocks.
 
+  V2 (ClickUp «Improve Qusah purchase-incentive popups (V2)», 18 Nov), from
+  the mock attached to the task: the packages are cards (photo, badge with an
+  icon, name, up to three lines of contents, button + price); one discount
+  type for both offers (percent or a fixed amount, display only); the offer's
+  window starts when the visitor closes the popup, not when it opens.
+
   | Setting                      | Type     | Notes                                                    |
   |------------------------------|----------|----------------------------------------------------------|
   | qj_help_enabled              | switch   | OFF until saved on; no products = nothing renders        |
@@ -19,12 +25,14 @@
   | qj_help_min_pages / delay    | number   | distinct product pages before it opens / seconds after   |
   | qj_help_title / subtitle     | text     |                                                          |
   | qj_help_featured             | dropdown | 1 / 2 / 3 / 0 (none): the card with the blue fill        |
-  | qj_help_badge_N / note_N     | text     | chip above the name / words after the price, per card    |
+  | qj_help_badge_N / badge_icon_N | text / icon | the chip above the name, per card                   |
+  | qj_help_item_N_M / item_icon_N_M | text / icon | the card's contents, lines 1–3; empty = no line   |
   | qj_help_add_label / dismiss  | text     |                                                          |
   | qj_offer_enabled             | switch   | OFF until saved on; needs the help popup on + a code     |
   | qj_offer_wait                | number   | visible-tab minutes after the help popup closed (no add) |
   | qj_offer_after_add           | number   | visible-tab minutes after an add from the help popup; 0 = never |
-  | qj_offer{1,2}_code/percent/minutes | text/number | the dashboard coupons; percent is display only     |
+  | qj_offer_type                | dropdown | percent / amount, for both offers; display only          |
+  | qj_offer{1,2}_code/percent/minutes | text/number | the dashboard coupons; "percent" holds the figure shown (percent or amount) |
   | qj_offer2_enabled            | switch   | the 5% step after the first window ends                  |
   | qj_offer_title / text, qj_offer2_title / text | text | per-step wording; {دقائق} and {نسبة} are filled  |
   | qj_offer_show_dismiss        | switch   | «لا، شكراً» on the offer popup; OFF = «أكمل التسوّق» only |
@@ -95,6 +103,32 @@
     {% set qj_featured = qj_featured_raw.value is defined ? qj_featured_raw.value : qj_featured_raw %}
     {% set qj_featured = (qj_featured is null or qj_featured is same as('')) ? 2 : qj_featured %}
 
+    {# the cards, in the picker's order: badge + its icon, and the lines of contents the merchant filled ([text, icon]) #}
+    {% set qj_cards = [] %}
+    {% for n in 1..3 %}
+        {% set qj_lines = [] %}
+        {% for m in 1..3 %}
+            {% set qj_line = theme.settings.get('qj_help_item_' ~ n ~ '_' ~ m) %}
+            {% set qj_line = (qj_line is iterable or not qj_line) ? '' : qj_line|trim %}
+            {% if qj_line is not same as('') %}
+                {% set qj_line_icon = theme.settings.get('qj_help_item_icon_' ~ n ~ '_' ~ m) %}
+                {% set qj_lines = qj_lines|merge([[qj_line, (qj_line_icon is iterable or not qj_line_icon) ? '' : qj_line_icon]]) %}
+            {% endif %}
+        {% endfor %}
+        {% set qj_badge_icon = theme.settings.get('qj_help_badge_icon_' ~ n) %}
+        {% set qj_cards = qj_cards|merge([{
+            b: theme.settings.get('qj_help_badge_' ~ n) ?: '',
+            i: (qj_badge_icon is iterable or not qj_badge_icon) ? '' : qj_badge_icon,
+            c: qj_lines
+        }]) %}
+    {% endfor %}
+
+    {# one discount type for both offers. The dropdown's value is read whichever way it arrives: a list of picks, one pick, or the plain value #}
+    {% set qj_type = theme.settings.get('qj_offer_type') %}
+    {% if qj_type is iterable and qj_type.value is not defined %}{% set qj_type = qj_type|first %}{% endif %}
+    {% set qj_type = qj_type.value is defined ? qj_type.value : qj_type %}
+    {% set qj_type = qj_type is same as('amount') ? 'amount' : 'percent' %}
+
     {% set qj_min_pages = theme.settings.get('qj_help_min_pages') %}
     {% set qj_delay = theme.settings.get('qj_help_delay') %}
     {% set qj_wait = theme.settings.get('qj_offer_wait') %}
@@ -128,10 +162,10 @@
             minPages: qj_min_pages is null ? 2 : qj_min_pages,
             delay: qj_delay is null ? 3 : qj_delay,
             featured: qj_featured,
-            badges: [theme.settings.get('qj_help_badge_1') ?: '', theme.settings.get('qj_help_badge_2') ?: '', theme.settings.get('qj_help_badge_3') ?: ''],
-            notes: [theme.settings.get('qj_help_note_1') ?: '', theme.settings.get('qj_help_note_2') ?: '', theme.settings.get('qj_help_note_3') ?: '']
+            cards: qj_cards
         },
         offer: {
+            type: qj_type,
             wait: qj_wait is null ? 3 : qj_wait,
             afterAdd: qj_after_add is null ? 1 : qj_after_add,
             steps: qj_steps
@@ -142,7 +176,6 @@
         add: theme.settings.get('qj_help_add_label') ?: trans('blocks.qissa_journey.add'),
         dismiss: theme.settings.get('qj_help_dismiss') ?: trans('blocks.qissa_journey.dismiss'),
         close: trans('blocks.qissa_journey.close'),
-        instead: trans('blocks.qissa_journey.instead'),
         options: trans('blocks.qissa_journey.options'),
         out: trans('blocks.qissa_journey.out'),
         busy: trans('blocks.qissa_journey.busy'),
@@ -155,7 +188,7 @@
 
     <div class="qj" data-qj hidden data-config="{{ qj_config|json_encode }}" data-words="{{ qj_words|json_encode }}"{% if qj_raw %} data-raw="{{ qj_raw }}"{% endif %}>
 
-        {# ---- the «محتار؟» help popup: title, line, up to three package rows, «لا، شكراً» ---- #}
+        {# ---- the «محتار؟» help popup: title, line, up to three package cards, «لا، شكراً» ---- #}
         <div class="qj__bd" data-qj-bd="help" hidden>
             <div class="qj__dlg qj__dlg--help" role="dialog" aria-modal="true" aria-labelledby="qj-help-title" tabindex="-1">
                 <button class="qj__x" type="button" data-qj-act="help-close" aria-label="{{ qj_words.close }}">
@@ -170,7 +203,8 @@
         </div>
 
         {% if qj_offer_on %}
-        {# ---- the timed offer popup: per-step kicker + text, big percent, countdown chip, «أكمل التسوّق», optional «لا، شكراً» ---- #}
+        {# ---- the timed offer popup: per-step kicker + text, the big discount figure, countdown chip (still until
+                the popup is closed — the window starts then), «أكمل التسوّق», optional «لا، شكراً» ---- #}
         <div class="qj__bd" data-qj-bd="offer" hidden>
             <div class="qj__dlg qj__dlg--offer" role="dialog" aria-modal="true" aria-labelledby="qj-offer-title" tabindex="-1">
                 <p class="qj__kicker" id="qj-offer-title" data-qj-kicker></p>

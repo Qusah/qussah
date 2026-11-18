@@ -5,6 +5,9 @@
 // No Figma: built from the growth deck's mocks (slides 7 and 10, Nov 2026)
 // with the theme's tokens — the quick view's ticket navy and type stack, the
 // revamp card's radii. Centred card on desktop, bottom sheet under 640px.
+// The package cards follow the mock attached to the V2 task (18 Nov): photo,
+// badge with an icon, name, lines of what is inside, button + price. The mock
+// is one wide frame; under 640px the same card is drawn smaller.
 //
 // Written lean (the theme sits at Salla's 1 MB CSS+JS limit): no :is(), no
 // place-items (postcss-preset-env multiplies both). RTL: the build downlevels
@@ -16,12 +19,18 @@ $qj-ink: #172951;
 $qj-sky: #d6ecf8;
 $qj-cream: #fdf9f2;
 $qj-line: #dfe6f3;
+$qj-rule: #c3cbdb;
 $qj-mute: #6b7280;
 $qj-font: 'Expo Arabic', 'WesternDigits', 'GE SS Two', sans-serif;
 
 body.qj-lock { overflow: hidden; }
+// The store's chat buttons float above every dialog (GetButton's WhatsApp sits
+// at z-index 16000160) and lay on the popups' words (review, 18 Nov): they
+// step aside while a popup is open.
+body.qj-lock [id^="gb-widget"], body.qj-lock #tidio-chat, body.qj-lock a.wa-s-n { display: none !important; }
 
-.qj, .qj * { box-sizing: border-box; font-family: $qj-font !important; }
+.qj, .qj * { box-sizing: border-box; }
+.qj, .qj *:not([class*="sicon-"]) { font-family: $qj-font !important; }   // the icons keep their own face
 .qj button { font: inherit; cursor: pointer; }
 
 // ---- backdrop + dialog shell -------------------------------------------
@@ -60,7 +69,7 @@ body.qj-lock { overflow: hidden; }
 @media (min-width: 640px) {
   .qj__bd { align-items: center; padding: 24px; }
   .qj__dlg {
-    width: min(520px, 100%);
+    width: min(640px, 100%);
     max-height: calc(100vh - 48px);
     border-bottom: 2px solid $qj-navy;
     border-radius: 24px;
@@ -104,20 +113,40 @@ body.qj-lock { overflow: hidden; }
   flex-direction: column;
   gap: 10px;
 }
+
+// the package card: the words on the right, the product's photo on the left
 .qj__card {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 14px 16px;
+  gap: 10px;
+  padding: 10px;
   background: #fff;
   border: 1px solid $qj-line;
-  border-radius: 16px;
-  &.is-featured { background: $qj-sky; border: 1.5px solid $qj-navy; }
+  border-radius: 18px;
+  &.is-featured { background: #eef4fc; border: 1.5px solid $qj-navy; }
 }
-.qj__info { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.qj__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 2px 2px 2px 0;
+}
+.qj__img {
+  position: relative;
+  flex: none;
+  width: 30%;
+  min-height: 112px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #edf1f8;
+  img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+}
 .qj__badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   padding: 3px 10px;
   border-radius: 999px;
   background: $qj-sky;
@@ -125,6 +154,7 @@ body.qj-lock { overflow: hidden; }
   font-size: 12px;
   font-weight: 700;
   line-height: 1.5;
+  i { font-size: 14px; }
   .is-featured & { background: $qj-navy; color: #fff; }
 }
 .qj__name {
@@ -135,27 +165,73 @@ body.qj-lock { overflow: hidden; }
   line-height: 1.35;
   &:hover { color: $qj-navy; }
 }
-.qj__price { margin: 0; font-size: 14px; color: $qj-navy; line-height: 1.5; b { font-weight: 700; } }
-.qj__was, .qj__note, .qj__dot { color: $qj-mute; font-weight: 400; }
+// What is inside the package: short lines with a rule between them. Every line
+// carries its rule on the right; the list hangs 9px past the column and clips
+// that strip, so the rule of whichever line starts a row is never seen.
+.qj__lines {
+  list-style: none;
+  margin: 0 -9px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 8px;
+  clip-path: inset(0 9px 0 0);
+  font-size: 12px;
+  line-height: 1.5;
+  color: #4b5563;
+  li { display: inline-flex; align-items: center; gap: 5px; padding-right: 8px; border-right: 1px solid $qj-rule; }
+  i { font-size: 14px; color: $qj-ink; }
+}
+.qj__buy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin-top: auto;
+}
 .qj__add {
   flex: none;
-  min-width: 96px;
-  padding: 10px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 12px;
   border: 0;
-  border-radius: 12px;
+  border-radius: 10px;
   background: $qj-navy;
   color: #fff;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   line-height: 1.3;
-  text-align: center;
   text-decoration: none;
   transition: background .15s ease, transform .15s ease;
+  i { font-size: 16px; }
   &:hover { background: $qj-ink; }
   &:active { transform: scale(.97); }
   &[data-s] { opacity: .75; cursor: default; }
   &--link { background: transparent; color: $qj-navy; border: 1.5px solid $qj-navy; &:hover { background: $qj-navy; color: #fff; } }
   &.is-out { border-color: $qj-line; color: $qj-mute; pointer-events: none; }
+}
+.qj__price {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  color: $qj-navy;
+  white-space: nowrap;
+  b { font-size: 18px; font-weight: 800; }
+  // the price before the sale, struck, after a rule
+  s { margin-right: 8px; padding-right: 8px; border-right: 1px solid $qj-rule; color: $qj-mute; font-size: 13px; }
+}
+@media (min-width: 640px) {
+  .qj__list { gap: 12px; }
+  .qj__card { gap: 14px; padding: 12px; }
+  .qj__info { gap: 8px; }
+  .qj__img { width: 34%; min-height: 140px; }
+  .qj__badge { font-size: 13px; i { font-size: 15px; } }
+  .qj__name { font-size: 19px; }
+  .qj__lines { font-size: 13.5px; i { font-size: 16px; } }
+  .qj__add { min-width: 150px; padding: 11px 18px; border-radius: 12px; font-size: 15px; i { font-size: 18px; } }
+  .qj__price { b { font-size: 24px; } s { font-size: 15px; } }
 }
 .qj__no {
   display: block;
@@ -172,7 +248,20 @@ body.qj-lock { overflow: hidden; }
 .qj__dlg--offer { text-align: center; }
 @media (min-width: 640px) { .qj__dlg--offer { width: min(420px, 100%); padding: 30px 28px 24px; } }
 .qj__kicker { margin: 0 0 4px; font-size: 18px; font-weight: 700; color: $qj-navy; }
-.qj__pct { margin: 0; font-size: 64px; line-height: 1.1; font-weight: 800; color: $qj-navy; letter-spacing: -.02em; }
+// the big figure: «10%», or the amount with the store's currency sign beside it
+.qj__pct {
+  margin: 0;
+  font-size: 64px;
+  line-height: 1.1;
+  font-weight: 800;
+  color: $qj-navy;
+  letter-spacing: -.02em;
+  i { font-size: .55em; }
+}
+// The theme's digits face (WesternDigits) draws no «%» on iPhones: the figure
+// read «10» with an empty gap beside it, off centre. The sign takes the
+// Arabic face, as on the product cards (.qprod__pct).
+.qj .qj__sign { font-family: 'GE SS Two', Tahoma, sans-serif !important; }
 .qj__txt { margin: 8px auto 16px; max-width: 300px; font-size: 15px; line-height: 1.6; color: #4b5563; }
 .qj__timer {
   display: inline-flex;
@@ -238,3 +327,10 @@ body.qj-lock { overflow: hidden; }
 }
 // the sticky add-to-cart bar on phones sits at the bottom too: lift the pill above it
 body.is-sticky-product-bar .qj__pill { bottom: 84px; }
+// Phones: the WhatsApp button sits in the bottom-right corner, where the pill's
+// first words would lie under it — the pill goes above it (as the mini video
+// does), and above both when the product page lifts the button over its buy bar.
+@media (max-width: 767px) {
+  body:has([id^="gb-widget"]) .qj__pill { bottom: 88px; }
+  body.qpd-has-sticky:has([id^="gb-widget"]) .qj__pill { bottom: calc(var(--qpd-sticky-h, 61px) + 88px); }
+}

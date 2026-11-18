@@ -362,7 +362,7 @@ class QissaCartDrawer {
     return `
       <footer class="qcd__foot">
         <div class="qcd__row"><span>${this.s.subtotal}</span><span class="qcd__val">${this.money(t.regular)}</span></div>
-        ${t.discount > 0.009 ? `<div class="qcd__row"><span>${this.s.discount} <em class="qcd__pct" dir="ltr">(${this.number(t.percent)}%)</em></span><span class="qcd__val">${this.money(t.discount)}</span></div>` : ''}
+        ${t.discount > 0.009 ? `<div class="qcd__row"><span>${this.s.discount} <em class="qcd__pct" dir="ltr">(${this.number(t.percent)}<i>%</i>)</em></span><span class="qcd__val">${this.money(t.discount)}</span></div>` : ''}
         <div class="qcd__row"><span>${this.s.shipping}</span>${free ? `<span class="qcd__free">${this.s.shipping_free}</span>` : `<span class="qcd__later">${this.s.shipping_later}</span>`}</div>
         <div class="qcd__row qcd__row--total"><span>${this.s.total}</span><b class="qcd__total">${this.money(t.total)}</b></div>
         <button type="button" class="qcd__btn" data-qcd-checkout>${this.s.checkout}</button>
