@@ -149,11 +149,17 @@ body.qj-lock [id^="gb-widget"], body.qj-lock #tidio-chat, body.qj-lock a.wa-s-n 
   gap: 7px;
   padding: 2px 2px 2px 0;
 }
+// Phones: a square at the top of the card, so the whole package shows (review,
+// 22 Nov: stretched down the card's full height it was a narrow strip that cut
+// two fifths of a square photo away). The top padding is a share of the card's
+// width, as the width is — that makes the square.
 .qj__img {
   position: relative;
   flex: none;
+  align-self: flex-start;
   width: 30%;
-  min-height: 112px;
+  height: 0;
+  padding-top: 30%;
   border-radius: 12px;
   overflow: hidden;
   background: #edf1f8;
@@ -242,7 +248,7 @@ body.qj-lock [id^="gb-widget"], body.qj-lock #tidio-chat, body.qj-lock a.wa-s-n 
   .qj__list { gap: 12px; margin-left: -18px; padding-left: 18px; }
   .qj__card { gap: 14px; padding: 12px; }
   .qj__info { gap: 8px; }
-  .qj__img { width: 34%; min-height: 140px; }
+  .qj__img { align-self: stretch; width: 34%; height: auto; min-height: 140px; padding-top: 0; }
   .qj__badge { font-size: 13px; i { font-size: 15px; } }
   .qj__name { font-size: 19px; }
   .qj__lines { font-size: 13.5px; i { font-size: 16px; } }
@@ -274,10 +280,11 @@ body.qj-lock [id^="gb-widget"], body.qj-lock #tidio-chat, body.qj-lock a.wa-s-n 
   letter-spacing: -.02em;
   i { font-size: .55em; }
 }
-// The theme's digits face (WesternDigits) draws no «%» on iPhones: the figure
-// read «10» with an empty gap beside it, off centre. The sign takes the
-// Arabic face, as on the product cards (.qprod__pct).
-.qj .qj__sign { font-family: 'GE SS Two', Tahoma, sans-serif !important; }
+// «%» and «·» come out blank on iPhones: the big figure read «10» with an empty
+// gap beside it, and the merchant's own lines lost them too («خصم 20 », review
+// 22 Nov). GE SS Two holds neither sign (its «٪» is there), so wherever the
+// script finds one it wraps it in this span, drawn by a system face outright.
+.qj .qj__sign { font-family: Tahoma, Arial, sans-serif !important; }
 .qj__txt { margin: 8px auto 16px; max-width: 300px; font-size: 15px; line-height: 1.6; color: #4b5563; }
 .qj__timer {
   display: inline-flex;

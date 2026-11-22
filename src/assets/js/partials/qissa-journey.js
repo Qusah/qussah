@@ -101,6 +101,23 @@
   function text(sel, s) { var el = $(sel); if (el) el.textContent = s; }
   function html(sel, s) { var el = $(sel); if (el) el.innerHTML = s; }
   function ico(c) { return /^sicon-[a-z0-9_-]+$/.test(c || '') ? '<i class="' + c + '" aria-hidden="true"></i>' : ''; }
+  /* «%» and «·» anywhere in the popups' words — the merchant's own lines, badges
+     and titles included — each go into a span of their own (review, 22 Nov: on
+     iPhones «خصم 20%» read «خصم 20 »; the store's Arabic face holds neither). */
+  function signs() {
+    var w = document.createTreeWalker(root, 4), n, found = [];
+    while ((n = w.nextNode())) if (/[%·]/.test(n.nodeValue) && n.parentNode.className !== 'qj__sign') found.push(n);
+    found.forEach(function (n) {
+      var f = document.createDocumentFragment();
+      n.nodeValue.split(/([%·])/).forEach(function (part, k) {
+        if (!part) return;
+        var el = k % 2 ? document.createElement('span') : document.createTextNode(part);
+        if (k % 2) { el.className = 'qj__sign'; el.textContent = part; }
+        f.appendChild(el);
+      });
+      n.parentNode.replaceChild(f, n);
+    });
+  }
   /* The moment the page finished loading. The help popup counts its delay from
      here (review, 19 Nov: it came up while the page was still drawing itself,
      and visitors left before reading it). A page whose loading never ends — one
@@ -218,9 +235,10 @@
       var url = esc(p.url || '#'), img = (p.image && p.image.url) || p.thumbnail || '';
       return '<li class="qj__card' + (k + 1 === featured ? ' is-featured' : '') + '">'
         + '<div class="qj__info">'
-        + (c.b ? '<span class="qj__badge">' + ico(c.i) + esc(c.b) + '</span>' : '')
+        // the words sit in one span of their own: badge and line are flex rows, and a sign wrapped by signs() must not become a flex item
+        + (c.b ? '<span class="qj__badge">' + ico(c.i) + '<span>' + esc(c.b) + '</span></span>' : '')
         + '<a class="qj__name" href="' + url + '">' + esc(p.name) + '</a>'
-        + (lines.length ? '<ul class="qj__lines">' + lines.map(function (l) { return '<li>' + ico(l[1]) + esc(l[0]) + '</li>'; }).join('') + '</ul>' : '')
+        + (lines.length ? '<ul class="qj__lines">' + lines.map(function (l) { return '<li>' + ico(l[1]) + '<span>' + esc(l[0]) + '</span></li>'; }).join('') + '</ul>' : '')
         + '<div class="qj__buy">'
         + (canAdd
           ? '<button class="qj__add" type="button" data-qj-add="' + esc(p.id) + '"><i class="sicon-cart" aria-hidden="true"></i><span>' + esc(W.add) + '</span></button>'
@@ -230,6 +248,7 @@
         + (img ? '<a class="qj__img" href="' + url + '" tabindex="-1" aria-hidden="true"><img src="' + esc(img) + '" alt="" loading="lazy"></a>' : '')
         + '</li>';
     }).join('');
+    signs();
   }
   function add(btn) {
     if (btn.dataset.s) return;
@@ -325,6 +344,7 @@
     html('[data-qj-txt]', fill(st.text, st));
     html('[data-qj-pill-text]', fill(S.offer.applied ? W.applied : W.pill, st));
     if (!S.offer.end) text('[data-qj-time]', clock(Number(st.min || 10) * 6e4));   // not started: the full time, standing still
+    signs();
   }
   function pill(show) {
     var p = $('[data-qj-pill]');
@@ -432,6 +452,7 @@
   /* ---------- boot ---------- */
   function boot() {
     bind();
+    signs();                                        // the words the template printed: titles, buttons
     if (thanks) {                                   // bought: the journey is over, the coupon stays on the order
       S.buy = true; S.stop = true;
       if (S.offer) S.offer.done = true;

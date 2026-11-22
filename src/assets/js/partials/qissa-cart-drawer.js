@@ -23,8 +23,10 @@ import { bindQuantityFields, typingIn } from './qissa-cart-quantity';
  *             types the quantity (qissa-cart-quantity.js). No delete button:
  *             − at 1 removes the line (the user's call, 1 Oct 2026). No
  *             «تفريغ السلة», no coupon link — the design has neither.
- *   foot      المجموع الفرعي · الخصم (N%) when there is one · الشحن (مجاني /
- *             يحسب عند الدفع) · dashed rule · الإجمالي · «إتمام الشراء».
+ *   foot      المجموع الفرعي · الخصم (N%) when there is one · dashed rule ·
+ *             الإجمالي · «إتمام الشراء». No «الشحن» row (the brand's call,
+ *             22 Nov 2026): Salla gives the theme no shipping cost before the
+ *             checkout page, so the row could only ever say «يحسب عند الدفع».
  *   empty     server-rendered into a <template> in layouts/master.twig (copy,
  *             illustration, «تصفح المنتجات») and cloned here.
  *
@@ -67,9 +69,6 @@ class QissaCartDrawer {
       free_done: 'مبروك لقد حصلت على شحن مجاني لطلبك',
       subtotal: 'المجموع الفرعي',
       discount: 'الخصم',
-      shipping: 'الشحن',
-      shipping_free: 'مجاني',
-      shipping_later: 'يحسب عند الدفع',
       total: 'الإجمالي',
       checkout: 'إتمام الشراء',
       inc: 'زيادة الكمية',
@@ -357,13 +356,11 @@ class QissaCartDrawer {
 
   renderFoot(cart, items) {
     const t = this.totals(cart, items);
-    const free = !!cart.free_shipping_bar?.has_free_shipping;
 
     return `
       <footer class="qcd__foot">
         <div class="qcd__row"><span>${this.s.subtotal}</span><span class="qcd__val">${this.money(t.regular)}</span></div>
         ${t.discount > 0.009 ? `<div class="qcd__row"><span>${this.s.discount} <em class="qcd__pct" dir="ltr">(${this.number(t.percent)}<i>%</i>)</em></span><span class="qcd__val">${this.money(t.discount)}</span></div>` : ''}
-        <div class="qcd__row"><span>${this.s.shipping}</span>${free ? `<span class="qcd__free">${this.s.shipping_free}</span>` : `<span class="qcd__later">${this.s.shipping_later}</span>`}</div>
         <div class="qcd__row qcd__row--total"><span>${this.s.total}</span><b class="qcd__total">${this.money(t.total)}</b></div>
         <button type="button" class="qcd__btn" data-qcd-checkout>${this.s.checkout}</button>
       </footer>`;

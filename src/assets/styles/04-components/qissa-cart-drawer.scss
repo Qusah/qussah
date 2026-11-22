@@ -27,8 +27,8 @@ $qcd-green: #008036;
   color: $qcd-ink;
 
   &, & *:not([class*="sicon-"]) { font-family: $qcd-font !important; }
-  // the digits face (WesternDigits) draws no «%» on iPhones — the row read «الخصم (35 )»: the sign takes the Arabic face
-  & &__pct i { font-family: 'GE SS Two', Tahoma, sans-serif !important; font-style: normal; }
+  // «%» came out blank on iPhones — the row read «الخصم (35 )». GE SS Two holds no «%» at all, so the sign takes a system face outright
+  & &__pct i { font-family: Tahoma, Arial, sans-serif !important; font-style: normal; }
   &[hidden] { display: none; }
 
   &__backdrop {
@@ -195,8 +195,6 @@ $qcd-green: #008036;
   }
   &__val { color: $qcd-ink; white-space: nowrap; }
   &__pct { color: #e90000; font-style: normal; }
-  &__free { color: $qcd-green; font-size: 13.22px; font-weight: 600; line-height: 19.83px; }
-  &__later { color: #1d8a5a; }
   &__row--total {
     min-height: 46.84px;   // 12.2 + the 34 frame + the rule
     padding-top: 12.2px;
