@@ -16,7 +16,9 @@
  *     → CLOSED THE HELP POPUP: the browsing clock starts — after M minutes of
  *       visible-tab browsing with the cart still empty, OFFER step 1 opens.
  *       Anything added from elsewhere before that ends this path (deck rule: a
- *       visitor who decided gets no discount).
+ *       visitor who decided gets no discount). LEAVING THE PAGE with the popup
+ *       still on screen — back, a closed tab, a link — counts as closing it
+ *       (review, 19 Nov): the clock starts on the next page they open.
  *
  *   OFFER popup: per-step title and text, the discount as a percent or a fixed
  *   amount (one type for both steps, display only). THE WINDOW STARTS WHEN THE
@@ -99,6 +101,19 @@
   function text(sel, s) { var el = $(sel); if (el) el.textContent = s; }
   function html(sel, s) { var el = $(sel); if (el) el.innerHTML = s; }
   function ico(c) { return /^sicon-[a-z0-9_-]+$/.test(c || '') ? '<i class="' + c + '" aria-hidden="true"></i>' : ''; }
+  /* The moment the page finished loading. The help popup counts its delay from
+     here (review, 19 Nov: it came up while the page was still drawing itself,
+     and visitors left before reading it). A page whose loading never ends — one
+     stuck request is enough — counts as loaded after 30 s. */
+  var loadedAt = 0, waiting = [];
+  function loaded() {
+    if (loadedAt) return;
+    loadedAt = now();
+    waiting.forEach(function (fn) { fn(); });
+  }
+  function afterLoad(fn) { if (loadedAt) fn(); else waiting.push(fn); }
+  if (document.readyState === 'complete') loaded();
+  else { window.addEventListener('load', loaded); setTimeout(loaded, 3e4); }
 
   /* ---------- dialogs ---------- */
   var openName = null, lastFocus = null, hiding = {};
@@ -170,7 +185,6 @@
   }
   function maybeHelp() {
     if (!helpDue() || cartCount() > 0) return;
-    var t0 = now();
     // Only what looks like a Salla product id (a long number): the template walks a
     // picker value whose shape it cannot see, so words and small numbers come along.
     var ids = (help.ids || []).map(function (x) { return String(x).trim(); }).filter(function (x) { return /^[0-9]{6,}$/.test(x); }).slice(0, 3);
@@ -182,11 +196,13 @@
       if (!products.length) throw 'asked ' + ids.join(',') + ' got ' + got.map(function (p) { return p.id; }).join(',');
       if (S.helpTry) { delete S.helpTry; delete S.helpErr; save(); }
       renderHelp(products);
-      var wait = Math.max(0, Number(qs === 'help' ? 0 : help.delay || 0) * 1000 - (now() - t0));
-      setTimeout(function () {
-        if (!helpDue() || cartCount() > 0 || !open('help')) return;
-        S.help = now(); save();
-      }, wait);
+      afterLoad(function () {                              // the merchant's delay, counted from the end of loading
+        var wait = Math.max(0, Number(qs === 'help' ? 0 : help.delay || 0) * 1000 - (now() - loadedAt));
+        setTimeout(function () {
+          if (!helpDue() || cartCount() > 0 || !open('help')) return;
+          S.help = now(); save();
+        }, wait);
+      });
     }).catch(helpFailed);
   }
   /* The package cards (V2 mock, 18 Nov): badge with its icon, name, the lines of
@@ -232,10 +248,19 @@
       label.textContent = W.add;
     });
   }
+  function helpPath() {                                    // the closed-help path: its browsing clock starts here
+    if (!S.path) { S.path = 'help'; S.helpAt = now(); S.browse = 0; S.tick = now(); save(); }
+  }
   function helpClosed() {
     close('help');
-    if (!S.path) { S.path = 'help'; S.helpAt = now(); S.browse = 0; S.tick = now(); save(); }
+    helpPath();
     watchBrowsing();
+  }
+  /* The popup was shown and its page was left with it still on screen — back, a
+     closed tab, a link (review, 19 Nov: four visitors in five left it that way
+     and their journey ended there, no offer). Leaving counts as closing. */
+  function helpLeft() {
+    if (S.help && openName !== 'help') helpPath();
   }
 
   /* ---------- the browsing clock (visible tab only, across pages) ---------- */
@@ -419,9 +444,19 @@
     salla.cart.event.onItemAdded(function () { onCartFilled(); });
     if (cartCount() > 0) onCartFilled();
     if (page === 'product.single') notePage();
+    helpLeft();
     resumeOffer();
     if (qs === 'offer' && !S.offer) openOffer(0);
     if (!quiet) { watchBrowsing(); maybeHelp(); }
+    // A page the browser brings back whole on «back» runs no boot and still holds
+    // the state it had when it was left: read it again and pick the journey up.
+    window.addEventListener('pageshow', function (e) {
+      if (!e.persisted) return;
+      S = load(); S.seen = S.seen || [];
+      helpLeft();
+      resumeOffer();
+      if (!quiet) watchBrowsing();
+    });
   }
 
   /* Never touch salla.* before the SDK is up (Cloudflare Rocket Loader runs it
