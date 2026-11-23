@@ -149,14 +149,15 @@ body.qj-lock [id^="gb-widget"], body.qj-lock #tidio-chat, body.qj-lock a.wa-s-n 
   gap: 7px;
   padding: 2px 2px 2px 0;
 }
-// Phones: a square at the top of the card, so the whole package shows (review,
-// 22 Nov: stretched down the card's full height it was a narrow strip that cut
-// two fifths of a square photo away). The top padding is a share of the card's
-// width, as the width is — that makes the square.
+// Phones: a square, so the whole package shows (review, 22 Nov: stretched down
+// the card's full height it was a narrow strip that cut two fifths of a square
+// photo away), centred on the card's height (23 Nov — it sat at the top). The
+// top padding is a share of the card's width, as the width is — that makes the
+// square.
 .qj__img {
   position: relative;
   flex: none;
-  align-self: flex-start;
+  align-self: center;
   width: 30%;
   height: 0;
   padding-top: 30%;
