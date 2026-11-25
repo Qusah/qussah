@@ -9,11 +9,24 @@ corner of the screen (WhatsApp sits bottom-right), over the store, from the
 moment the page has loaded. Two buttons: enlarge (centred over the page) and
 close (gone for this page view).
 
+Review of 24 Nov 2026 (the brand could neither move it nor control it enlarged):
+  - DRAG: the small video is dragged with the mouse or a finger and, let go,
+    slides to the nearest of the four corners (the user's call). A top corner
+    sits under the store's header, never on it.
+  - ENLARGED: an autoplay («ambient») video had no controls at all there. It now
+    gets the browser's own controls and its sound (the user's call: sound on
+    with the enlarging, silent again once small), and three buttons of ours —
+    from the start, back 10 s, forward 10 s. The buttons sit above the video,
+    not on it: iPhones draw their own buttons in the video's top corners.
+    A YouTube link is another site's player in a frame: enlarged it is loaded
+    again with YouTube's controls and sound (it starts over), our three buttons
+    cannot reach into it and are not shown, and it is dragged by its top strip.
+
 | Variable | Type   | Description                                                  |
 |----------|--------|--------------------------------------------------------------|
 | video    | string | direct file URL or YouTube link                              |
 | poster   | string | optional poster image                                        |
-| ambient  | bool   | true: muted autoplay loop, no controls · false: controls, the shopper presses play |
+| ambient  | bool   | true: muted autoplay loop, no controls while small · false: controls, the shopper presses play |
 
 No Figma for it: sizes are our own. Style and script live here, not in app.css /
 public js: only a page that uses the switch loads them, and the theme's CSS+JS
@@ -23,10 +36,11 @@ physical on purpose. One floating video per page: the first such block wins.
 <div data-qmini="{{ video }}"{% if poster %} data-qmini-poster="{{ poster }}"{% endif %}{% if ambient %} data-qmini-ambient{% endif %} hidden></div>
 <style>
     .qmini {
+        --qmini-gap: 24px;
         position: fixed;
         z-index: 890;                       /* under the offer pill (900), the header menus (1000) and the drawers */
-        left: 24px;
-        bottom: 24px;
+        left: var(--qmini-gap);
+        bottom: var(--qmini-gap);
         width: 360px;
         max-width: calc(100vw - 32px);
         aspect-ratio: var(--qmini-ar, 1.7778);
@@ -36,6 +50,11 @@ physical on purpose. One floating video per page: the first such block wins.
         box-shadow: 0 12px 36px rgba(23, 41, 81, .35);
         direction: ltr;
         animation: qmini-in .25s ease;
+        /* dragged, not scrolled: a finger on the small video moves the video, not the page */
+        touch-action: none;
+        -webkit-user-select: none;
+        user-select: none;
+        cursor: grab;
     }
     .qmini--tall { width: 200px; }
     .qmini__player { display: block; width: 100%; height: 100%; border: 0; object-fit: cover; }
@@ -66,24 +85,51 @@ physical on purpose. One floating video per page: the first such block wins.
     }
     .qmini__bar button:focus-visible { outline: 2px solid #91e6f7; outline-offset: 2px; }
     .qmini__bar svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    /* from the start · back 10 s · forward 10 s: with the enlarged video only */
+    .qmini__more { display: none; gap: 10px; }
+
+    /* the corner it was dropped nearest to (bottom-left until it is moved);
+       a top corner starts under the store's header (--qmini-top, set by the script) */
+    .qmini.qmini--r { left: auto; right: var(--qmini-gap); }
+    .qmini.qmini--t { bottom: auto; top: calc(var(--qmini-top, 0px) + 12px); }
+    .qmini.is-moved { animation: none; }
+    .qmini.is-drag { cursor: grabbing; }
+    .qmini.is-snap { transition: transform .25s cubic-bezier(.2, .8, .2, 1); }
+    /* a YouTube frame keeps the pointer to itself: its top strip is the handle */
+    .qmini--yt .qmini__bar { pointer-events: auto; }
 
     /* enlarged: centred over the page, as wide as the screen and its height allow;
-       over the header (1000), still under the offer popups (9000) and the cart drawer (9999) */
+       over the header (1000), still under the offer popups (9000) and the cart drawer (9999).
+       Our buttons stand above the video (the box is lowered by half their strip to make the room). */
     .qmini-bd { display: none; position: fixed; inset: 0; z-index: 8899; background: rgba(13, 34, 54, .6); }
     .qmini-bd.is-on { display: block; }
     .qmini.is-big {
         z-index: 8900;
         left: 50%;
-        top: 50%;
+        right: auto;
+        top: calc(50% + 28px);
         bottom: auto;
         width: min(92vw, 960px, calc(84vh * var(--qmini-ar, 1.7778)));
         max-width: none;
+        overflow: visible;
         transform: translate(-50%, -50%);
+        transition: none;
         animation: none;
+        touch-action: auto;
+        cursor: auto;
     }
+    .qmini.is-big .qmini__player { border-radius: 16px; }
+    .qmini.is-big .qmini__bar { top: -56px; padding: 8px 0; pointer-events: none; }
+    .qmini.is-big .qmini__bar button { width: 40px; height: 40px; }
+    .qmini.is-big .qmini__bar svg { width: 22px; height: 22px; }
+    .qmini.is-big .qmini__more { display: flex; }
 
     @keyframes qmini-in { from { opacity: 0; transform: translateY(16px); } }
 
+    @media (min-width: 768px) {
+        /* the store's WhatsApp button sits in the bottom-right corner: the video dropped there stands above it */
+        body:has([id^="gb-widget"]) .qmini.qmini--r:not(.qmini--t):not(.is-big) { bottom: 96px; }
+    }
     @media (max-width: 767px) {
         /* phones: whatever already sits along the bottom edge lifts the video above itself —
            the offer pill (centre), the store's WhatsApp button (GetButton, 176 px wide on the
@@ -92,7 +138,7 @@ physical on purpose. One floating video per page: the first such block wins.
         body:has([id^="gb-widget"]) { --qmini-wa: 88px; }
         body:has(.qct.is-on) { --qmini-toast: 118px; }
         .qmini {
-            left: 12px;
+            --qmini-gap: 12px;
             bottom: max(16px, var(--qmini-pill, 0px), var(--qmini-wa, 0px), var(--qmini-toast, 0px));
             width: min(56vw, 240px);
             border-radius: 12px;
@@ -116,13 +162,20 @@ physical on purpose. One floating video per page: the first such block wins.
   var WORDS = {{ {
       'close': trans('blocks.qissa.mini_close'),
       'expand': trans('blocks.qissa.mini_expand'),
-      'shrink': trans('blocks.qissa.mini_shrink')
+      'shrink': trans('blocks.qissa.mini_shrink'),
+      'restart': trans('blocks.qissa.mini_restart'),
+      'back': trans('blocks.qissa.mini_back'),
+      'forward': trans('blocks.qissa.mini_forward')
   }|json_encode|raw }};
   var ICON = {
     close: 'M6 6l12 12M18 6L6 18',
     expand: 'M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7',
-    shrink: 'M21 3l-7 7M14 4v6h6M3 21l7-7M10 20v-6H4'
+    shrink: 'M21 3l-7 7M14 4v6h6M3 21l7-7M10 20v-6H4',
+    restart: 'M19 19L9 12l10-7v14zM5 19V5',
+    back: 'M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5',       // a turn to the left, «10» inside
+    forward: 'M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8M21 3v5h-5'    // a turn to the right, «10» inside
   };
+  var TEN = '<text x="12" y="15.3" text-anchor="middle" font-size="8.5" font-weight="700" stroke="none" fill="currentColor">10</text>';
 
   // YouTube / Shorts -> id, matching the theme's other video blocks.
   function ytId(u) {
@@ -132,7 +185,8 @@ physical on purpose. One floating video per page: the first such block wins.
   }
   function paint(b, name) {
     b.setAttribute('aria-label', WORDS[name]);
-    b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + ICON[name] + '"/></svg>';
+    b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="' + ICON[name] + '"/>'
+                + (name === 'back' || name === 'forward' ? TEN : '') + '</svg>';
   }
   function button(name, fn) {
     var b = document.createElement('button');
@@ -151,13 +205,18 @@ physical on purpose. One floating video per page: the first such block wins.
     }
 
     var id = ytId(url), el;
+    // the YouTube frame: ambient while small (silent loop, no controls); enlarged, YouTube's own controls and sound
+    function yt(full) {
+      return 'https://www.youtube.com/embed/' + id + '?rel=0&playsinline=1'
+           + (ambient ? '&autoplay=1' + (full ? '' : '&mute=1&loop=1&controls=0&playlist=' + id) : '');
+    }
     if (id) {
       el = document.createElement('iframe');
-      el.src = 'https://www.youtube.com/embed/' + id + '?rel=0&playsinline=1'
-             + (ambient ? '&autoplay=1&mute=1&loop=1&controls=0&playlist=' + id : '');
+      el.src = yt(false);
       el.setAttribute('allow', 'autoplay; encrypted-media; picture-in-picture; fullscreen');
       el.setAttribute('allowfullscreen', '');
       el.setAttribute('title', 'video');
+      box.classList.add('qmini--yt');
       if (url.indexOf('/shorts/') > -1) { ratio(9 / 16); }
     } else {
       el = document.createElement('video');
@@ -175,32 +234,123 @@ physical on purpose. One floating video per page: the first such block wins.
     }
     el.className = 'qmini__player';
 
+    function play() { var p = el.play(); if (p && p.catch) { p.catch(function () {}); } }
+    // to the start (by = 0) or by ± seconds, kept inside the video
+    function seek(by) {
+      if (!isFinite(el.duration)) { return; }
+      el.currentTime = by ? Math.max(0, Math.min(el.duration, el.currentTime + by)) : 0;
+      if (!by) { play(); }
+    }
+
     var bd = document.createElement('div');
     bd.className = 'qmini-bd';
     var big = false;
     function size(on) {
       big = on;
+      box.classList.remove('is-snap');
+      box.style.transform = '';
       box.classList.toggle('is-big', on);
       bd.classList.toggle('is-on', on);
       paint(grow, on ? 'shrink' : 'expand');
+      if (!ambient) { return; }                 // a video with controls keeps them, and its sound, at both sizes
+      if (id) { el.src = yt(on); return; }
+      // the ambient video: controls and sound while enlarged; small again it is the silent loop it was,
+      // and plays on if it was paused — small, nothing could start it again
+      el.controls = on;
+      el.muted = !on;
+      if (!on && el.paused) { play(); }
     }
     function esc(e) { if (e.key === 'Escape' && big) { size(false); } }
+
+    // a top corner starts under the header: its full height, the inset it rides the hero with included
+    var head = document.querySelector('.qheader');
+    function inset() { box.style.setProperty('--qmini-top', (head ? head.offsetHeight : 0) + 'px'); }
 
     var grow = button('expand', function () { size(!big); });
     var close = button('close', function () {    // gone for this page view; removing the player stops it
       document.removeEventListener('keydown', esc);
+      window.removeEventListener('resize', inset);
+      document.removeEventListener('pointermove', move);
+      document.removeEventListener('pointerup', drop);
+      document.removeEventListener('pointercancel', drop);
       box.remove();
       bd.remove();
     });
     bd.addEventListener('click', function () { size(false); });
     document.addEventListener('keydown', esc);
+    window.addEventListener('resize', inset);
+    inset();
 
     var bar = document.createElement('div');
     bar.className = 'qmini__bar';
     bar.appendChild(grow);
+    if (!id) {
+      var more = document.createElement('div');
+      more.className = 'qmini__more';
+      more.appendChild(button('restart', function () { seek(0); }));
+      more.appendChild(button('back', function () { seek(-10); }));
+      more.appendChild(button('forward', function () { seek(10); }));
+      bar.appendChild(more);
+    }
     bar.appendChild(close);
     box.appendChild(el);
     box.appendChild(bar);
+
+    // ---- drag: the small video follows the pointer and, let go, slides to the nearest corner ----
+    // The moves and the release are heard on the page, not on the video: a quick pointer is
+    // outside the video before it has travelled far enough to count as a drag.
+    var drag = null, dropped = 0;
+    box.addEventListener('pointerdown', function (e) {
+      if (big || !e.isPrimary || e.button > 0 || e.target.closest('button')) { return; }
+      // a video showing the browser's controls: its bottom strip (play, the time bar) is theirs, not a handle
+      if (!id && el.controls && e.clientY > box.getBoundingClientRect().bottom - 48) { return; }
+      drag = { id: e.pointerId, x: e.clientX, y: e.clientY, on: false };
+      // Where a press does nothing anyway (the silent loop, the YouTube strip) the pointer is held
+      // from the start — over the YouTube frame its moves would go to YouTube. A video with
+      // controls keeps its press (play / pause) and is held only once the drag is certain.
+      if (id || !el.controls) { try { box.setPointerCapture(e.pointerId); } catch (err) { /* gone already */ } }
+    });
+    function move(e) {
+      if (!drag || e.pointerId !== drag.id) { return; }
+      if (e.pointerType === 'mouse' && !e.buttons) { drop(e); return; }     // let go where the page never heard it
+      var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (!drag.on) {
+        if (Math.abs(dx) + Math.abs(dy) < 8) { return; }     // a press, not a drag
+        drag.on = true;
+        box.classList.remove('is-snap');
+        box.classList.add('is-drag', 'is-moved');
+        try { box.setPointerCapture(drag.id); } catch (err) { /* gone already */ }
+      }
+      box.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+    }
+    function drop(e) {
+      if (!drag || e.pointerId !== drag.id) { return; }
+      var moved = drag.on;
+      drag = null;
+      if (!moved) { return; }
+      dropped = Date.now();
+      box.classList.remove('is-drag');
+      var from = box.getBoundingClientRect();
+      box.classList.toggle('qmini--r', from.left + from.width / 2 > window.innerWidth / 2);
+      box.classList.toggle('qmini--t', from.top + from.height / 2 < window.innerHeight / 2);
+      box.style.transform = '';
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
+      // slide from where it was let go to its corner
+      var to = box.getBoundingClientRect();
+      box.style.transform = 'translate(' + (from.left - to.left) + 'px,' + (from.top - to.top) + 'px)';
+      void box.offsetWidth;
+      box.classList.add('is-snap');
+      box.style.transform = '';
+    }
+    document.addEventListener('pointermove', move);
+    document.addEventListener('pointerup', drop);
+    document.addEventListener('pointercancel', drop);
+    box.addEventListener('transitionend', function (e) { if (e.target === box) { box.classList.remove('is-snap'); } });
+    // the click that ends a drag is not a press on the video
+    box.addEventListener('click', function (e) {
+      if (Date.now() - dropped < 400) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+
     // on <body>, not where the block stands: the home sections slide in with a transform
     // (.qreveal), and a transformed ancestor would pin a fixed child to itself
     document.body.appendChild(bd);
