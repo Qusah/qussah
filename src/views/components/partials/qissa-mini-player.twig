@@ -18,9 +18,12 @@ Review of 24 Nov 2026 (the brand could neither move it nor control it enlarged):
     with the enlarging, silent again once small), and two buttons of ours:
     back 10 s and forward 10 s, in the middle of the video, out of sight until
     the pointer is over it (the user's call, 25 Nov; a first «from the start»
-    button was taken out the same day). A finger does not hover: a touch on the
-    video shows them for three seconds. Shrink and close sit above the video,
-    not on it: iPhones draw their own buttons in the video's top corners.
+    button was taken out the same day). They exist only where a pointer can
+    hover — a computer. A phone gets none of ours: a first build showed them for
+    three seconds after a touch, and on iPhones they lay right on the −10 / pause
+    / +10 the phone itself draws in the middle of a video («duplicated and
+    overlapping», review 26 Nov). Shrink and close sit above the video, not on
+    it: iPhones draw their own buttons in the video's top corners too.
     A YouTube link is another site's player in a frame: enlarged it is loaded
     again with YouTube's controls and sound (it starts over), our two buttons
     cannot reach into it and are not shown, and it is dragged by its top strip.
@@ -89,7 +92,8 @@ physical on purpose. One floating video per page: the first such block wins.
     .qmini button:focus-visible { outline: 2px solid #91e6f7; outline-offset: 2px; }
     .qmini svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     /* back 10 s · forward 10 s: in the middle of the enlarged video, out of sight until the
-       pointer is over it (.is-hot: a touch shows them for three seconds — a finger does not hover; the keyboard's focus shows them too) */
+       pointer is over it (the keyboard's focus shows them too). Only where a pointer can hover:
+       a phone draws its own in that very place, and the script does not build ours there. */
     .qmini__more {
         display: none;
         position: absolute;
@@ -138,14 +142,12 @@ physical on purpose. One floating video per page: the first such block wins.
     .qmini.is-big .qmini__bar { top: -56px; padding: 8px 0; pointer-events: none; }
     .qmini.is-big .qmini__bar button { width: 40px; height: 40px; }
     .qmini.is-big .qmini__bar svg { width: 22px; height: 22px; }
-    .qmini.is-big .qmini__more { display: flex; }
-    .qmini.is-big.is-hot .qmini__more,
-    .qmini.is-big .qmini__more:has(:focus-visible) { opacity: 1; }
-    .qmini.is-big.is-hot .qmini__more button,
-    .qmini.is-big .qmini__more:has(:focus-visible) button { pointer-events: auto; }
     @media (hover: hover) {
-        .qmini.is-big:hover .qmini__more { opacity: 1; }
-        .qmini.is-big:hover .qmini__more button { pointer-events: auto; }
+        .qmini.is-big .qmini__more { display: flex; }
+        .qmini.is-big:hover .qmini__more,
+        .qmini.is-big .qmini__more:has(:focus-visible) { opacity: 1; }
+        .qmini.is-big:hover .qmini__more button,
+        .qmini.is-big .qmini__more:has(:focus-visible) button { pointer-events: auto; }
     }
 
     @keyframes qmini-in { from { opacity: 0; transform: translateY(16px); } }
@@ -270,7 +272,6 @@ physical on purpose. One floating video per page: the first such block wins.
       box.classList.remove('is-snap');
       box.style.transform = '';
       box.classList.toggle('is-big', on);
-      box.classList.remove('is-hot');
       bd.classList.toggle('is-on', on);
       paint(grow, on ? 'shrink' : 'expand');
       if (!ambient) { return; }                 // a video with controls keeps them, and its sound, at both sizes
@@ -308,21 +309,14 @@ physical on purpose. One floating video per page: the first such block wins.
     bar.appendChild(close);
     box.appendChild(el);
     box.appendChild(bar);
-    if (!id) {
-      // back / forward 10 s, in the middle of the enlarged video
+    // back / forward 10 s, in the middle of the enlarged video — only where a pointer can hover
+    // (a phone draws its own there, ours would lie on them)
+    if (!id && window.matchMedia('(hover: hover)').matches) {
       var more = document.createElement('div');
       more.className = 'qmini__more';
       more.appendChild(button('back', function () { seek(-10); }));
       more.appendChild(button('forward', function () { seek(10); }));
       box.appendChild(more);
-      // a finger does not hover: a touch on the enlarged video shows the two for three seconds
-      var hot = 0;
-      box.addEventListener('pointerdown', function (e) {
-        if (!big || e.pointerType === 'mouse') { return; }
-        box.classList.add('is-hot');
-        clearTimeout(hot);
-        hot = setTimeout(function () { box.classList.remove('is-hot'); }, 3000);
-      });
     }
 
     // ---- drag: the small video follows the pointer and, let go, slides to the nearest corner ----
